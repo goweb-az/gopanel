@@ -155,6 +155,12 @@ Modeldə checkbox və switch kimi inputların UI hissələrini avtomatik idarə 
 
 ---
 
+### 🔹 Admin panel template 
+
+[Skote - Admin & Dashboard Template](https://themesbrand.com/skote/layouts/index.html)
+
+---
+
 ## 📜 Lisenziya
 
 Bu layihə MIT lisenziyası ilə yayımlanır.  
