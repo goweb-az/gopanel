@@ -34,15 +34,6 @@ composer create-project goweb/gopanel your-project-name
 
 ## ⚙️ Verilənlər bazası ayarları
 
-Əgər sizdə aşağıdakılar varsa:
-
-- PHPMyAdmin aktivdirsə
-- MySQL istifadəçi adı: `root`, parol: `root` və ya boşdursa
-- `gopanel` adlı bir verilənlər bazası yaradılıbsa
-
-panel heç bir əlavə ayar olmadan işləyəcək.
-
-### Əks halda:
 
 `.env` faylını açın və aşağıdakı kimi düzəliş edin:
 
