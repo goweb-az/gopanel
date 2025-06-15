@@ -1,0 +1,38 @@
+[
+  {
+    "id": "1",
+    "locale": "az",
+    "key": "login",
+    "value": "Daxil ol",
+    "group": "title",
+    "platform": "website",
+    "filename": "website",
+    "created_at": "2025-04-06 22:53:54",
+    "updated_at": "2025-04-06 22:53:54",
+    "deleted_at": null
+  },
+  {
+    "id": "2",
+    "locale": "en",
+    "key": "login",
+    "value": "Daxil ol",
+    "group": "title",
+    "platform": "website",
+    "filename": "website",
+    "created_at": "2025-04-06 22:53:54",
+    "updated_at": "2025-04-06 22:53:54",
+    "deleted_at": null
+  },
+  {
+    "id": "3",
+    "locale": "ru",
+    "key": "login",
+    "value": "Daxil ol",
+    "group": "title",
+    "platform": "website",
+    "filename": "website",
+    "created_at": "2025-04-06 22:53:54",
+    "updated_at": "2025-04-06 22:53:54",
+    "deleted_at": null
+  },
+]

@@ -1,0 +1,33 @@
+{
+	"sEmptyTable":     "Cədvəldə heç bir məlumat yoxdur",
+	"sInfo":           " _TOTAL_ Nəticədən _START_ - _END_ Arası Nəticələr",
+	"sInfoEmpty":      "Nəticə Yoxdur",
+	"sInfoFiltered":   "( _MAX_ Nəticə İçindən Tapılanlar)",
+	"sInfoPostFix":    "",
+	"sInfoThousands":  ",",
+	"sLengthMenu":     "Səhifədə _MENU_ Nəticə Göstər",
+	"sLoadingRecords": "Yüklənir...",
+	"sProcessing":     "Yüklənir...",
+	"sSearch":         "Axtarış:",
+	"sZeroRecords":    "Nəticə Tapılmadı.",
+	"processing": 		"<div class=\"universal-loader-wrap\"><div class=\"universal-loader\"></div></div>",
+	"oPaginate": {
+		"sFirst":    "İlk",
+		"sLast":     "Axırıncı",
+		"sNext":     "Sonrakı",
+		"sPrevious": "Öncəki"
+	},
+	"oAria": {
+		"sSortAscending":  ": sütunu artma sırası üzərə aktiv etmək",
+		"sSortDescending": ": sütunu azalma sırası üzərə aktiv etmək"
+	},
+	"buttons": {
+        "colvis": "Gizlə",
+        "copyTitle": "Panoya kopyalayın",
+        "copyKeys": "Appuyez sur <i>ctrl</i> ou <i>\u2318</i> + <i>C</i> pour copier les données du tableau à votre presse-papiers. <br><br>Pour annuler, cliquez sur ce message ou appuyez sur Echap.,",
+        "copySuccess": {
+            "_": "%d sətir panoya kopyalandı",
+            "1": "Bir sətir panoya kopyalandı"
+        }
+    }
+}
