@@ -59,8 +59,7 @@ Sonra terminalda aşağıdakı əmrləri icra edin:
 
 ```bash
 php artisan key:generate
-php artisan migrate
-php artisan db:seed    # əgər seederlər mövcuddursa
+php artisan migrate --seed
 ```
 
 ---
