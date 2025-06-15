@@ -1,3 +1,4 @@
+
 <p align="center">
   <img src="https://proweb.az/uploads/images/statics/06df94f842-Proweb-bu-gunun-reqemsal-dunyasi-ucun-innovativ-veb-heller.png" alt="Gopanel Logo" width="320">
 </p>
@@ -11,7 +12,7 @@
 # Gopanel – Laravel əsaslı hazır admin panel
 
 **Gopanel** Laravel 10 ilə hazırlanmış, istifadəyə hazır və genişlənə bilən admin panel layihəsidir.  
-Bu panel yeni layihələr üçün sürətli başlanğıc imkanı yaradır və bir çox vacib funksionallıq artıq içərisində mövcuddur.
+Yeni Laravel layihələrinə sürətli və funksional başlanğıc üçün nəzərdə tutulmuşdur.
 
 ---
 
@@ -19,16 +20,15 @@ Bu panel yeni layihələr üçün sürətli başlanğıc imkanı yaradır və bi
 
 Layihəni qurmaq üçün terminalda aşağıdakı əmri icra edin:
 
-
-```composer create-project goweb/gopanel```
-
+```bash
+composer create-project goweb/gopanel
+```
 
 və ya öz layihə adınızı qeyd edərək:
 
-
-```composer create-project goweb/gopanel your-project-name```
-
-
+```bash
+composer create-project goweb/gopanel your-project-name
+```
 
 Bu əmr layihəni tam şəkildə qovluğa yükləyəcək.
 
@@ -39,12 +39,12 @@ Bu əmr layihəni tam şəkildə qovluğa yükləyəcək.
 Əgər sisteminizdə:
 
 - PHPMyAdmin quraşdırılıbsa
-- MySQL istifadəçi adı: `root`, parol: `root` və ya boşdursa
+- MySQL istifadəçi adı `root`, parol `root` və ya boşdursa
 - `gopanel` adlı bir database əvvəlcədən yaradılıbsa
 
-Bu zaman heç bir əlavə ayara ehtiyac olmadan sistem birbaşa işləyəcək.
+heç bir əlavə konfiqurasiya olmadan sistem birbaşa işləyəcək.
 
-Əks halda aşağıdakı düzəlişləri etməlisiniz:
+Əks halda aşağıdakı düzəlişləri edin:
 
 ---
 
@@ -61,35 +61,39 @@ DB_USERNAME=root
 DB_PASSWORD=
 ```
 
+2. Əgər hər hansı bir xəta yaranarsa, əvvəlcə database yaradın və sonra bu əmrləri icra edin:
 
-### Əgər hər hansı bir xəta yaranarsa
-
-öncə database yaradın və .env faylında bu məlumatları qeyd ederək aşağıldakı əmçrləri tək tək icra edin
-
-```
+```bash
 php artisan key:generate
 php artisan migrate
 php artisan db:seed    # (əgər seederlər mövcuddursa)
 ```
 
-### 📦 Daxil edilən paketlər
-Gopanel aşağıdakı Laravel paketlərini özündə ehtiva edir:
+---
 
-Spatie Laravel Permission – Rol və icazələrin idarə olunması
+## 📦 Daxil edilən paketlər
 
-Spatie Laravel Activity Log – Aktivlik qeydləri
+Aşağıdakı Laravel paketləri Gopanel daxilində avtomatik quraşdırılır:
 
-Opcodes Laravel Log Viewer – Geniş log izləmə paneli
+- [**Spatie Laravel Permission**](https://github.com/spatie/laravel-permission) – Rol və icazələrin idarə olunması
+- [**Spatie Laravel Activity Log**](https://github.com/spatie/laravel-activitylog) – İstifadəçi fəaliyyətlərinin qeydi
+- [**Opcodes Laravel Log Viewer**](https://github.com/opcodesio/log-viewer) – Geniş log izləmə interfeysi
 
-### 📁 Qovluq quruluşu
-Layihənin əsas qovluqları Laravel standartlarına uyğundur və əlavə olaraq aşağıdakıları da əhatə edir:
+---
 
-app/Helpers – Əlavə köməkçi funksiyalar
+## 📁 Qovluq quruluşu
 
-resources/views/panel – Panel interfeysi
+Layihənin əsas qovluqları Laravel standartlarına uyğundur və əlavə olaraq aşağıdakıları əhatə edir:
 
-routes/web.php – Web yönləndirmələri
+```
+app/Helpers             → Əlavə köməkçi funksiyalar
+resources/views/panel   → Admin panel interfeysi
+routes/web.php          → Web yönləndirmələr
+```
 
-### 📜 Lisenziya
-Bu layihə MIT lisenziyası ilə yayımlanır.
-© Oruc Seyidov
+---
+
+## 📜 Lisenziya
+
+Bu layihə MIT lisenziyası ilə yayımlanır.  
+© [Oruc Seyidov](https://github.com/orucseyidov)
