@@ -20,13 +20,13 @@ Bu panel yeni layihələr üçün sürətli başlanğıc imkanı yaradır və bi
 Layihəni qurmaq üçün terminalda aşağıdakı əmri icra edin:
 
 
-composer create-project goweb/gopanel
+```composer create-project goweb/gopanel```
 
 
 və ya öz layihə adınızı qeyd edərək:
 
 
-composer create-project goweb/gopanel your-project-name
+```composer create-project goweb/gopanel your-project-name```
 
 
 
@@ -66,11 +66,11 @@ DB_PASSWORD=
 
 öncə database yaradın və .env faylında bu məlumatları qeyd ederək aşağıldakı əmçrləri tək tək icra edin
 
-
+```
 php artisan key:generate
 php artisan migrate
 php artisan db:seed    # (əgər seederlər mövcuddursa)
-
+```
 
 ### 📦 Daxil edilən paketlər
 Gopanel aşağıdakı Laravel paketlərini özündə ehtiva edir:
