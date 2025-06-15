@@ -27,7 +27,7 @@ composer create-project goweb/gopanel
 və ya qovluq adı ilə:
 
 ```bash
-composer create-project goweb/gopanel your-project-name
+composer create-project goweb/gopanel your-project-name dev-master
 ```
 
 ---

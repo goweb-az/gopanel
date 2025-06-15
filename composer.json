@@ -56,7 +56,6 @@
     ],
     "post-create-project-cmd": [
       "@php artisan key:generate --ansi",
-      "@php artisan key:generate",
       "@php artisan vendor:publish --provider=\"Spatie\\Activitylog\\ActivitylogServiceProvider\" --tag=\"activitylog-config\"",
       "@php artisan vendor:publish --provider=\"Opcodes\\LogViewer\\LogViewerServiceProvider\"",
       "@php artisan vendor:publish --provider=\"Spatie\\Permission\\PermissionServiceProvider\""
