@@ -1,0 +1,8 @@
+Copyright © 2025 Oruc Seyidov. All rights reserved.
+
+This software is proprietary and confidential.  
+Unauthorized reproduction, modification, distribution, or use of this software or any part of it in any form or by any means is strictly prohibited without the prior written permission of the author.
+
+This software may not be copied, published, distributed, sublicensed, sold, or used for commercial or private purposes without explicit authorization.
+
+Violations will be prosecuted under applicable laws.
