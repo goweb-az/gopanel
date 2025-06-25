@@ -7,12 +7,12 @@
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h4 class="mb-sm-0 font-size-18">Adminlər</h4>
+                    <h4 class="mb-sm-0 font-size-18">Vəzifələr</h4>
 
                     <div class="page-title-right">
-                        <button class="btn btn-success" id="open-create-modal" data-route="{{route("gopanel.admins.get.form")}}">
+                        <a class="btn btn-success" href="{{route("gopanel.admins.roles.store")}}">
                             <i class="fas fa-plus"></i> Əlavə et
-                        </button>
+                        </a>
                     </div>
 
                 </div>
@@ -27,8 +27,8 @@
                         {{-- <h4 class="card-title">Striped columns</h4>
                         <p class="card-title-desc">Use <code>.table-striped-columns</code> to add zebra-striping to any table column.</p> --}}
                         @include('gopanel.component.datatable',[
-                            '__datatableName' => 'gopanel.admins.admin',
-                            '__datatableId' => 'admins'
+                            '__datatableName' => 'gopanel.admins.role',
+                            '__datatableId' => 'roles'
                         ])
                     </div>
                 </div>
@@ -38,5 +38,7 @@
     </div> <!-- container-fluid -->
 </div>
 <!-- End Page-content -->
-@include('gopanel.pages.admins.inc.modal')
 @endsection
+@push('scripts')
+    <script src="{{asset("assets/gopanel/js/modules/admins.js")}}"></script>
+@endpush

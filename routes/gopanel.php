@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Gopanel\Admins\AdminController;
+use App\Http\Controllers\Gopanel\Admins\RoleController;
 use App\Http\Controllers\Gopanel\AuthController;
 use App\Http\Controllers\Gopanel\BlogController;
 use App\Http\Controllers\Gopanel\Communications\MessageTemplateController;
@@ -42,6 +43,7 @@ Route::group(['middleware' => 'gopanel'], function () {
     Route::get('/', [DashboardController::class, 'index'])->name('index');
     //Datatable
     Route::get('datatable/{table}', [DatatableController::class, 'handle'])->name('datatable.source');
+
     //General default routes
     Route::prefix('general')->name("general.")->group(function () {
         Route::get('/clear/cache', [GeneralController::class, 'clearCache'])->name('clear.cache');
@@ -59,6 +61,12 @@ Route::group(['middleware' => 'gopanel'], function () {
         Route::get('/', [AdminController::class, 'index'])->name('index');
         Route::get('/get/form/{item?}', [AdminController::class, 'getForm'])->name('get.form');
         Route::post('/save/{item?}', [AdminController::class, 'save'])->name('save');
+
+        Route::prefix('roles')->name("roles.")->group(function () {
+            Route::get('/', [RoleController::class, 'index'])->name('index');
+            Route::get('/store/{item?}', [RoleController::class, 'store'])->name('store');
+            Route::post('/save/{item?}', [RoleController::class, 'save'])->name('save');
+        });
     });
 
     // Site Settings 

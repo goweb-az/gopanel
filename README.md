@@ -145,6 +145,39 @@ Modeldə checkbox və switch kimi inputların UI hissələrini avtomatik idarə 
 
 ---
 
+
+# 🔐 Rol və İcazə Sistemi
+
+**Gopanel**, `Spatie Laravel Permission` paketi üzərindən rol və icazə sistemini tam şəkildə dəstəkləyir.
+
+---
+
+## 🧩 Konfiqurasiya: `config/gopanel/permission_list.php`
+
+İcazələrin qruplar və guard-lar üzrə strukturlaşdırıldığı yerdir.
+
+**Məqsəd:** Yeni icazələr əlavə edərkən buraya yazılır, seeder faylı vasitəsilə verilənlər bazasına yazılır.
+
+**Struktur:**
+```php
+return [
+    'web' => [
+        'blog' => [
+            ['name' => 'blog.create', 'title' => 'Bloq yarat'],
+            ['name' => 'blog.edit', 'title' => 'Bloq redaktə et'],
+        ],
+        'services' => [
+            ['name' => 'service.view', 'title' => 'Xidmətləri görüntülə'],
+        ],
+    ],
+    'api' => [
+        'user' => [
+            ['name' => 'user.update', 'title' => 'İstifadəçini yenilə'],
+        ],
+    ],
+];
+```
+
 ### 🔹 Admin panel template 
 
 [Skote - Admin & Dashboard Template](https://themesbrand.com/skote/layouts/index.html)

@@ -7,5 +7,5 @@
     <meta content="Proweb.az" name="author" />
     <!-- App favicon -->
     <link rel="shortcut icon" href="/assets/gopanel/images/favicon.ico">
-    @include('gopanel.inc.styles')
+    @include('gopanel.assets.styles')
 </head>

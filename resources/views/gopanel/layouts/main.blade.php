@@ -30,6 +30,6 @@
 
         
         <!-- JAVASCRIPT -->
-        @include('gopanel.inc.scripts')
+        @include('gopanel.assets.scripts')
     </body>
 </html>

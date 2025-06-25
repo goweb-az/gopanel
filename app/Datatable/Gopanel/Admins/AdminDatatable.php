@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Datatable\Gopanel;
+namespace App\Datatable\Gopanel\Admins;
 
-
+use App\Datatable\Gopanel\GopanelDatatable;
 use App\Models\Gopanel\Admin;
 use \Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
