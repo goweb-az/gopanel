@@ -177,7 +177,12 @@ return [
     ],
 ];
 ```
+**İcazələri bazada yeniləmə:**
 
+```bash
+php artisan config:clear
+php artisan db:seed --class=PermissionSeeder
+```
 ### 🔹 Admin panel template 
 
 [Skote - Admin & Dashboard Template](https://themesbrand.com/skote/layouts/index.html)
