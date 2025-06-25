@@ -191,5 +191,10 @@ php artisan db:seed --class=PermissionSeeder
 
 ## 📜 Lisenziya
 
-Bu layihə MIT lisenziyası ilə yayımlanır.  
-© [Oruc Seyidov](https://github.com/orucseyidov)
+<!-- Bu layihə MIT lisenziyası ilə yayımlanır.   -->
+<!-- © [Oruc Seyidov](https://github.com/orucseyidov) -->
+
+Copyright © 2025 [Oruc Seyidov](https://github.com/orucseyidov). All rights reserved.
+
+This software is proprietary and confidential. Unauthorized copying of this file, via any medium is strictly prohibited.
+
