@@ -40,9 +40,9 @@ return [
     ],
     [
         'icon' => '<i class="bx bx-home-circle"></i>',
-        'title' => 'Rollar',
-        'route' => 'gopanel.index',
-        'can'   => 'gopanel.index',
+        'title' => 'Vəzifələr',
+        'route' => 'gopanel.admins.roles.index',
+        'can'   => 'gopanel.admins.roles.index',
     ],
     [
         'title' => 'Veb sayt'

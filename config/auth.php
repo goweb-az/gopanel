@@ -37,18 +37,21 @@ return [
 
     'guards' => [
         'web' => [
-            'driver' => 'session',
-            'provider' => 'users',
+            'driver'    => 'session',
+            'provider'  => 'users',
+            'name'      => 'İstifadəçilər'
         ],
 
         'gopanel' => [
-            'driver' => 'session',
-            'provider' => 'gopanel',
+            'driver'    => 'session',
+            'provider'  => 'gopanel',
+            'name'      => 'Adminlər'
         ],
 
         'api' => [
             'driver'    => 'jwt',
             'provider'  => 'users',
+            'name'      => 'İstifadəçilər',
             'hash'      => false,
         ],
     ],
