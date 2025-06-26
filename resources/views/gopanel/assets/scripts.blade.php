@@ -6,6 +6,8 @@
 <script src="/assets/gopanel/libs/node-waves/waves.min.js"></script>
 <script src="{{asset("/assets/gopanel/libs/bootstrap-tagsinput/bootstrap-tagsinput.min.js")}}"></script>
 <script src="{{asset("/assets/gopanel/libs/jquery.tagsinput/jquery.tagsinput.js")}}"></script>
+<script src="{{asset("/assets/gopanel/libs/jquery-ui-dist/jquery-ui.min.js")}}"></script>
+<script src="{{asset("assets/gopanel/libs/select2/js/select2.min.js")}}"></script>
 <!-- Sweet Alerts js -->
 <script src="/assets/gopanel/libs/sweetalert2/sweetalert2.min.js"></script>
 <script src="{{asset("/assets/gopanel/libs/bootstrap-switch-button/bootstrap-switch-button.min.js")}}"></script>

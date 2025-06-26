@@ -2,6 +2,7 @@
 
 namespace App\Models\Gopanel;
 
+use App\Traits\AddUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -10,7 +11,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class Admin extends Authenticatable
 {
-    use Notifiable, HasFactory, SoftDeletes, HasRoles;
+    use AddUuid, Notifiable, HasFactory, SoftDeletes, HasRoles;
 
     protected $logEnabled = false;
 

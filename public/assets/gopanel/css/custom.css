@@ -158,3 +158,12 @@
 .edit-pen{
     cursor: pointer;
 }
+
+
+.select2-container, .select2-container--default .select2-search--dropdown .select2-search__field{
+    z-index: 99999;
+}
+
+.ui-sortable-handle{
+    width: 100%!important;
+}

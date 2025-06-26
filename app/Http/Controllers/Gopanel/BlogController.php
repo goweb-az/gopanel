@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Gopanel;
 use App\Helpers\Gopanel\Site\GoPanelSiteHelper;
 use App\Helpers\Gopanel\Site\PageMetaDataHelper;
 use App\Http\Controllers\GoPanelController;
-use App\Models\Blog;
+use App\Models\Site\Blog;
 use Exception;
 use Illuminate\Http\Request;
 

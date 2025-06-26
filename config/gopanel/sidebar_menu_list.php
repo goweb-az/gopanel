@@ -22,6 +22,12 @@ return [
                 'can'   => 'gopanel.site-settings.index',
             ],
             [
+                'icon' => '<i class="fas fa-globe"></i>',
+                'title' => 'Dillər',
+                'route' => 'gopanel.languages.index',
+                'can'   => 'gopanel.languages.index',
+            ],
+            [
                 'icon' => '<i class="fas fa-language"></i>',
                 'title' => 'Tərcümələr',
                 'route' => 'gopanel.translations.index',
@@ -33,13 +39,13 @@ return [
         'title' => 'İdaretmə'
     ],
     [
-        'icon' => '<i class="bx bx-home-circle"></i>',
+        'icon' => '<i class="fas fa-user-tie"></i>',
         'title' => 'Adminlər',
         'route' => 'gopanel.admins.index',
         'can'   => 'gopanel.admins.index',
     ],
     [
-        'icon' => '<i class="bx bx-home-circle"></i>',
+        'icon' => '<i class="fas fa-user-shield"></i>',
         'title' => 'Vəzifələr',
         'route' => 'gopanel.admins.roles.index',
         'can'   => 'gopanel.admins.roles.index',
@@ -53,6 +59,13 @@ return [
         'title' => 'Bloqlar',
         'route' => 'gopanel.blog.index',
         'can'   => 'gopanel.blog.index',
+    ],
+
+    [
+        'icon' => '<i class="fas fa-images"></i>',
+        'title' => 'Slayder',
+        'route' => 'gopanel.slider.index',
+        'can'   => 'gopanel.slider.index',
     ],
 
 ];

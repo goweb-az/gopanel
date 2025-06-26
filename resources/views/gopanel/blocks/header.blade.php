@@ -35,9 +35,35 @@
             </form> --}}
 
             <div class="clear-cache-div">
-                <button class="btn btn-danger waves-effect waves-light clear-cache-btn" data-url="{{route("gopanel.general.clear.cache")}}">
-                    <i class="fas fa-recycle"></i> Keşi Təmizlə
-                </button>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-danger waves-effect waves-light clear-cache-btn" data-url="{{route("gopanel.general.clear.cache", ['type' => 'basic'])}}">
+                       <i class="fas fa-recycle"></i>  Keşi Təmizlə
+                    </button>
+                    <button type="button" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="mdi mdi-chevron-down"></i>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item clear-cache-btn" href="javascript:void(0)"
+                        data-url="{{ route('gopanel.general.clear.cache', ['type' => 'route']) }}">
+                            <i class="fas fa-project-diagram me-2"></i> Route Cache Təmizlə
+                        </a>
+
+                        <a class="dropdown-item clear-cache-btn" href="javascript:void(0)"
+                        data-url="{{ route('gopanel.general.clear.cache', ['type' => 'config']) }}">
+                            <i class="fas fa-cogs me-2"></i> Config Cache Təmizlə
+                        </a>
+
+                        <a class="dropdown-item clear-cache-btn" href="javascript:void(0)"
+                        data-url="{{ route('gopanel.general.clear.cache', ['type' => 'view']) }}">
+                            <i class="fas fa-eye me-2"></i> View Cache Təmizlə
+                        </a>
+
+                        <a class="dropdown-item clear-cache-btn" href="javascript:void(0)"
+                        data-url="{{ route('gopanel.general.clear.cache', ['type' => 'all']) }}">
+                            <i class="fas fa-broom me-2"></i> Hamısını Təmizlə
+                        </a>
+                    </div>
+                </div>
             </div>
 
         </div>

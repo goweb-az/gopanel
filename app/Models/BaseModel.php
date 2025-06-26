@@ -81,6 +81,15 @@ class BaseModel extends Model
                     return $this->getFileUrl($fileAttribute);
                 }
             }
+
+            if (property_exists($this, 'fillable') && is_array($this->fillable)) {
+                if (substr($key, -5) == '_view') {
+                    $field = substr($key, 0, -5);
+                    if (in_array($field, $this->fillable)) {
+                        return $this->getFieldView($field);
+                    }
+                }
+            }
         }
 
         return parent::getAttribute($key);
@@ -101,6 +110,25 @@ class BaseModel extends Model
             return url($this->{$file});
         return $this->{$file};
     }
+
+
+    public function getFieldView($field)
+    {
+        if (is_null($this->{$field})) return null;
+
+        $ext = pathinfo($this->{$field}, PATHINFO_EXTENSION);
+        $ext = strtolower($ext);
+        $path = $this->getFileUrl($field);
+        // Sadəcə şəkil formatları üçün (PNG, JPG, JPEG, GIF, WEBP)
+        if (in_array($ext, ['png', 'jpg', 'jpeg', 'gif', 'webp'])) {
+            return '<a href="' . $path . '" target="_blank"><img src="' . $path . '" style="max-width:100px"></a>';
+        }
+
+        return '<a href="' . $path . '" target="_blank">Fayla bax</a>';
+    }
+
+
+
 
     public static function getCachedAll()
     {

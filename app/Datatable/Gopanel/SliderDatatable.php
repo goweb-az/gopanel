@@ -4,18 +4,19 @@ namespace App\Datatable\Gopanel;
 
 use App\Datatable\Gopanel\GopanelDatatable;
 use App\Models\Site\Blog;
+use App\Models\Site\Slider;
 use \Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-class BlogDatatable extends GopanelDatatable
+class SliderDatatable extends GopanelDatatable
 {
     public function __construct()
     {
-        parent::__construct(Blog::class, [
+        parent::__construct(Slider::class, [
             'id'                    => 'ID',
+            'image_view'            => 'Şəkil',
             'title'                 => 'Başlıq',
-            'short_description'     => 'Məlumat',
-            'date_time'             => 'Tarix',
+            'description'           => 'Məlumat',
             'created_at'            => 'Əlavə edilmə tarixi'
         ], [
             'actions' => [
@@ -39,10 +40,10 @@ class BlogDatatable extends GopanelDatatable
     private function itemActions(Model $item): string
     {
         $view = '';
-        if (auth("gopanel")->user()->can("gopanel.blog.edit")) {
+        if (auth("gopanel")->user()->can("gopanel.slider.edit")) {
             $view .= $this->itemEditBtn($item);
         }
-        if (auth("gopanel")->user()->can("gopanel.blog.delete")) {
+        if (auth("gopanel")->user()->can("gopanel.slider.delete")) {
             $view .= $this->itemDeleteBtn($item);
         }
         return '<div class="actions text-center">' . $view . '</div>';
@@ -50,8 +51,8 @@ class BlogDatatable extends GopanelDatatable
 
     private function itemEditBtn(Model $item): string
     {
-        $url    = route("gopanel.blog.store", $item);
-        return ' <a href="' . $url . '" class="btn btn-outline-success waves-effect waves-light" data-bs-toggle="tooltip" data-bs-placement="top" title="Məlumata düzəliş et"> 
+        $url    = route("gopanel.slider.get.form", $item);
+        return ' <a href="' . $url . '" class="btn btn-outline-success waves-effect waves-light edit" data-bs-toggle="tooltip" data-bs-placement="top" title="Məlumata düzəliş et"> 
                     <i class="fas fa-pen f-20"></i> 
                 </a> ';
     }
