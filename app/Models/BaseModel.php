@@ -75,6 +75,7 @@ class BaseModel extends Model
     public function getAttribute($key)
     {
         if (property_exists($this, 'files') && is_array($this->files)) {
+
             if (substr($key, -4) == '_url') {
                 $fileAttribute = substr($key, 0, -4);
                 if (in_array($fileAttribute, $this->files)) {

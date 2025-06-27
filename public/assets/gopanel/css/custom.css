@@ -167,3 +167,7 @@
 .ui-sortable-handle{
     width: 100%!important;
 }
+
+.vertical-collpsed .logo span.logo-sm{
+    margin-left: -20px!important;
+}

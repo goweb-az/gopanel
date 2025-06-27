@@ -3,21 +3,21 @@
         <div class="d-flex">
             <!-- LOGO -->
             <div class="navbar-brand-box">
-                <a href="index.html" class="logo logo-dark">
+                <a href="{{url("gopanel")}}" class="logo logo-dark">
                     <span class="logo-sm">
-                        <img src="/assets/gopanel/images/logo.svg" alt="" height="22">
+                        <img src="/assets/gopanel/images/gopanel-logo-icon.png" alt="" height="70">
                     </span>
                     <span class="logo-lg">
-                        <img src="/assets/gopanel/images/logo-dark.png" alt="" height="17">
+                        <img src="/assets/gopanel/images/gopanel-logo.png" alt="" height="50">
                     </span>
                 </a>
 
-                <a href="index.html" class="logo logo-light">
+                <a href="{{url("gopanel")}}" class="logo logo-light">
                     <span class="logo-sm">
-                        <img src="/assets/gopanel/images/logo-light.svg" alt="" height="22">
+                        <img src="/assets/gopanel/images/gopanel-logo-icon.png" alt="" height="70">
                     </span>
                     <span class="logo-lg">
-                        <img src="/assets/gopanel/images/logo-light.png" alt="" height="19">
+                        <img src="{{is_null($settings->gopanel_logo) ? '/assets/gopanel/images/gopanel-logo.png' : url($settings->gopanel_logo)}}" alt="" height="50">
                     </span>
                 </a>
             </div>

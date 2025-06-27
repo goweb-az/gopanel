@@ -35,7 +35,7 @@
             </select>
         </div>
 
-        <div class="col-sm-6">                        
+        <div class="col-sm-4">                        
             <div class="mt-3">
                 <label for="formFile" class="form-label">Logo White <small class="text-danger">152x48</small></label>
                 <div class="input-group">
@@ -46,12 +46,24 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-6">                        
+        <div class="col-sm-4">                        
             <div class="mt-3">
                 <label for="formFile" class="form-label">Logo Dark <small class="text-danger">152x48</small></label>
                 <div class="input-group">
                     <input type="file" class="form-control" id="logo_dark" name="logo_dark" aria-describedby="logo_darkBtn" aria-label="Upload">
                     <a class="btn btn-primary" type="button" href="{{$item->logo_dark_url ?? 'javascript:void()'}}" target="_blank" id="logo_darkBtn">
+                        <i class="fas fa-eye"></i> Bax
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-4">                        
+            <div class="mt-3">
+                <label for="formFile" class="form-label">Gopanel logo <small class="text-danger">152x48</small></label>
+                <div class="input-group">
+                    <input type="file" class="form-control" id="gopanel_logo" name="gopanel_logo" aria-describedby="gopanel_logoBtn" aria-label="Upload">
+                    <a class="btn btn-primary" type="button" href="{{$item->gopanel_logo_url ?? 'javascript:void()'}}" target="_blank" id="gopanel_logoBtn">
                         <i class="fas fa-eye"></i> Bax
                     </a>
                 </div>

@@ -42,7 +42,6 @@
 @include('gopanel.pages.activity.histories.inc.modal')
 @endsection
 @push('scripts')
-<script src="//www.jqueryscript.net/demo/jQuery-Plugin-For-Easily-Readable-JSON-Data-Viewer/json-viewer/jquery.json-viewer.js"></script>
-{{-- <script src="{{asset("assets/gopanel/libs/json-viewer/jquery.json-viewer.js")}}"></script> --}}
+<script src="{{asset("assets/gopanel/libs/json-viewer/jquery.json-viewer.js")}}"></script>
 <script src="{{asset('/assets/gopanel/js/modules/activity.js?v='.time())}}"></script>
 @endpush

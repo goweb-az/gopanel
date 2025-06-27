@@ -33,6 +33,7 @@ class ViewServiceProvider extends ServiceProvider
         $this->generateGopanelSidebar();
         $this->shareLanguages();
         $this->shareSiteContent();
+        $this->shareGopanelContent();
     }
 
 
@@ -77,6 +78,17 @@ class ViewServiceProvider extends ServiceProvider
             if ($siteSettings?->site_status == 0)
                 return;
             $view->with('siteSettings', $siteSettings);
+        });
+    }
+
+
+    private function shareGopanelContent()
+    {
+        View::composer('gopanel.*', function ($view) {
+
+
+            $settings = SiteSetting::latest()->first();
+            $view->with('settings', $settings);
         });
     }
 
