@@ -45,14 +45,14 @@ class SiteSettingsController extends GoPanelController
 
         if ($request->hasFile("logo_light")) {
             $file                   = $request->file('logo_light');
-            $data['logo_light']     = (new GoPanelSiteHelper)->upload($file, 'site-logo', "qrgate-logo-light");
+            $data['logo_light']     = $this->gopanelHelper->upload($file, 'site-logo', "qrgate-logo-light");
         }
 
         if ($request->hasFile("logo_dark")) {
             $file                   = $request->file('logo_dark');
-            $data['logo_dark']      = (new GoPanelSiteHelper)->upload($file, 'site-logo', "qrgate-logo-dark");
+            $data['logo_dark']      = $this->gopanelHelper->upload($file, 'site-logo', "qrgate-logo-dark");
         }
-        $item  = $this->siteService->saveModel($item, $data);
+        $item  = $this->crudHelper->saveInstance($item, $data);
         if (isset($item->id)) {
             $metaDataInput = $request->input('meta', []);
             $metaFiles = $request->file('meta', []);

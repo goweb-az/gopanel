@@ -68,4 +68,22 @@ return [
         'can'   => 'gopanel.slider.index',
     ],
 
+
+    [
+        'title' => 'Aktivliklər'
+    ],
+
+    [
+        'title' => 'Hərkət Tarixçəsi',
+        'route' => 'gopanel.activity.history.index',
+        'can'   => 'gopanel.activity.history.index',
+        'icon'  => '<i class="bx bx-history"></i>'
+    ],
+    [
+        'title' => 'Loglar',
+        'route' => 'gopanel.activity.file-logs.index',
+        'can'   => 'gopanel.activity.file-logs.index',
+        'icon'  => '<i class="fas fa-laptop-medical"></i>'
+    ],
+
 ];

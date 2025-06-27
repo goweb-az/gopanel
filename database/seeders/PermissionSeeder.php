@@ -4,11 +4,13 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Gopanel\CustomPermission;
+use Illuminate\Support\Facades\Artisan;
 
 class PermissionSeeder extends Seeder
 {
     public function run(): void
     {
+        Artisan::call('config:clear');
         $permission_list = config('gopanel.permission_list');
 
         foreach ($permission_list as $guard => $groups) {

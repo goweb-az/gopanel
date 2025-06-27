@@ -2,6 +2,7 @@
 
 namespace App\Models\Gopanel;
 
+use App\Http\Middleware\Gopanel;
 use App\Traits\AddUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -24,6 +25,7 @@ class Admin extends Authenticatable
         'full_name',
         'email',
         'password',
+        'is_active',
         'is_super',
     ];
 
@@ -45,4 +47,15 @@ class Admin extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+    public function getIsActiveBtnAttribute()
+    {
+        return app('gopanel')->is_active_btn($this, "is_active", $this->is_active == 1);
+    }
+
+    public function getIsSuperBtnAttribute()
+    {
+        return app('gopanel')->is_active_btn($this, "is_super", $this->is_super == 1, [], null, "Bəli", "Xeyr");
+    }
 }

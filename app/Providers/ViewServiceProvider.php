@@ -58,7 +58,7 @@ class ViewServiceProvider extends ServiceProvider
     {
         View::composer('*', function ($view) {
             $languages = Cache::remember("languages", now()->addDay(), function () {
-                return Language::where('is_active', true)->get();
+                return Language::where('is_active', true)->orderBy("sort_order", "asc")->get();
             });
             $currentLocale = app()->getLocale();
             $view->with('languages', $languages);

@@ -51,7 +51,7 @@
                                                 <a href="{{route("gopanel.languages.get.form", $language)}}" class="btn btn-outline-success waves-effect waves-light edit" data-bs-toggle="tooltip" data-bs-placement="top" title="Məlumata düzəliş et"> 
                                                     <i class="fas fa-pen f-20"></i> 
                                                 </a>
-                                                <a href="{{route("gopanel.general.delete", $language)}}" class="btn btn-outline-danger waves-effect waves-light delete" data-url="" data-key="{{$language->getTable()}}" data-bs-toggle="tooltip" data-bs-placement="top" title="Məlumatı sil"> 
+                                                <a href="{{route("gopanel.general.delete", $language)}}" class="btn btn-outline-danger waves-effect waves-light delete" data-url="{{route("gopanel.general.delete", $language)}}" data-key="{{$language->getTable()}}" data-bs-toggle="tooltip" data-bs-placement="top" title="Məlumatı sil"> 
                                                     <i class="fas fa-trash"></i> 
                                                 </a>
                                             </td>

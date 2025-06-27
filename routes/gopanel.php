@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Gopanel\Activity\FileLogsController;
+use App\Http\Controllers\Gopanel\Activity\HistoryController;
 use App\Http\Controllers\Gopanel\Admins\AdminController;
 use App\Http\Controllers\Gopanel\Admins\RoleController;
 use App\Http\Controllers\Gopanel\AuthController;
@@ -102,5 +104,20 @@ Route::group(['middleware' => 'gopanel'], function () {
         Route::get('/', [SliderController::class, 'index'])->name('index');
         Route::get('/get/form/{item?}', [SliderController::class, 'getForm'])->name('get.form');
         Route::post('/save/{item?}', [SliderController::class, 'save'])->name('save');
+    });
+
+    //Activity
+    Route::prefix('activity')->name("activity.")->group(function () {
+        //tarixce
+        Route::prefix('history')->name("history.")->group(function () {
+            Route::get('/', [HistoryController::class, 'index'])->name('index');
+            Route::get('/show/{history}', [HistoryController::class, 'show'])->name('show');
+        });
+
+        //Logs
+        Route::prefix('file-logs')->name("file-logs.")->group(function () {
+            Route::get('/', [FileLogsController::class, 'index'])->name('index');
+            Route::get('/show/{log}', [FileLogsController::class, 'show'])->name('show');
+        });
     });
 });

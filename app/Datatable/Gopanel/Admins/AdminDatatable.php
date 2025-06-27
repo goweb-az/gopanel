@@ -15,6 +15,8 @@ class AdminDatatable extends GopanelDatatable
             'id'                => 'ID',
             'full_name'         => 'Ad soyad',
             'email'             => 'Elektron Poçt',
+            'is_active_btn'     => 'Status',
+            'is_super_btn'      => 'Super Admin',
             'created_at'        => 'Qeydiyyat tarixi'
         ], [
             'actions' => [
@@ -49,14 +51,16 @@ class AdminDatatable extends GopanelDatatable
 
     private function itemEditBtn(Model $item): string
     {
-        return ' <a href="" class="btn btn-outline-success waves-effect waves-light edit" data-bs-toggle="tooltip" data-bs-placement="top" title="Məlumata düzəliş et"> 
+
+        return ' <a href="' . route("gopanel.admins.get.form", $item) . '" class="btn btn-outline-success waves-effect waves-light edit" data-bs-toggle="tooltip" data-bs-placement="top" title="Məlumata düzəliş et"> 
                     <i class="fas fa-pen f-20"></i> 
                 </a> ';
     }
 
     private function itemDeleteBtn(Model $item)
     {
-        return ' <a href="#" class="btn btn-outline-danger waves-effect waves-light delete" data-url="" data-key="' . $item->getTable() . '"" data-bs-toggle="tooltip" data-bs-placement="top" title="Məlumatı sil"> 
+        $route = route("gopanel.general.delete", $item);
+        return ' <a href="' . $route . '" class="btn btn-outline-danger waves-effect waves-light delete" data-url="' . $route . '" data-key="' . $item->getTable() . '"" data-bs-toggle="tooltip" data-bs-placement="top" title="Məlumatı sil"> 
                     <i class="fas fa-trash"></i> 
                 </a> ';
     }

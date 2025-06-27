@@ -89,7 +89,7 @@ return [
             'handler_with' => [
                 'host' => env('PAPERTRAIL_URL'),
                 'port' => env('PAPERTRAIL_PORT'),
-                'connectionString' => 'tls://'.env('PAPERTRAIL_URL').':'.env('PAPERTRAIL_PORT'),
+                'connectionString' => 'tls://' . env('PAPERTRAIL_URL') . ':' . env('PAPERTRAIL_PORT'),
             ],
             'processors' => [PsrLogMessageProcessor::class],
         ],
@@ -125,6 +125,49 @@ return [
 
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
+        ],
+
+        //Start custom logs
+
+        'gopanel-auth' => [
+            'driver'    => 'daily',
+            'path'      => storage_path('logs/gopanel-auth/gopanel-auth-day.log'),
+            'level'     => env('LOG_LEVEL', 'debug'),
+            'days'      => 30,
+            'manual'    => true,
+            'name'      => 'Giriş Və Qeydiyyat'
+        ],
+
+        'gopanel' => [
+            'driver'    => 'daily',
+            'path'      => storage_path('logs/gopanel/gopanel-day.log'),
+            'level'     => env('LOG_LEVEL', 'debug'),
+            'days'      => 30,
+            'manual'    => true,
+            'name'      => 'Giriş Və Qeydiyyat'
+        ],
+
+
+
+        //Elave numuneler
+
+        'transactions' => [
+            'driver'    => 'daily',
+            'path'      => storage_path('logs/payment/transactions/transactions-day.log'),
+            'level'     => env('LOG_LEVEL', 'debug'),
+            'days'      => 30,
+            'manual'    => true,
+            'name'      => 'Tranzaksialar'
+        ],
+
+
+        'mail' => [
+            'driver'    => 'daily',
+            'path'      => storage_path('logs/mail/mail-day.log'),
+            'level'     => env('LOG_LEVEL', 'debug'),
+            'days'      => 30,
+            'manual'    => true,
+            'name'      => 'Email logları'
         ],
     ],
 

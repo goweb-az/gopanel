@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Gopanel;
 
+use App\Helpers\Gopanel\TranslationHelper;
 use App\Http\Controllers\GoPanelController;
 use App\Models\Site\Slider;
 use Exception;
@@ -48,10 +49,10 @@ class SliderController extends GoPanelController
                 $fileName           = $this->gopanelHelper->file_name_genarte($data);
                 $data['image']      = $this->gopanelHelper->upload($file, $item->getTable(), 'slider-' . $fileName);
             }
-            $item       = $this->siteService->saveModel($item, $data);
-            if (isset($item->id)) {
-                $this->siteService->createTranslations($item, $request);
-            }
+            $item       = $this->crudHelper->saveInstance($item, $data);
+            if (isset($item->id))
+                TranslationHelper::create($item, $request);
+
             $this->success_response($item, $message);
         } catch (\Exception $e) {
             $this->response['message']   .= $e->getMessage();

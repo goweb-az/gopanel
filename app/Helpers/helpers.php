@@ -175,7 +175,7 @@ if (!function_exists("setLocaleInUrl")) {
 
 
 if (!function_exists("transction_id")) {
-    function transction_id($prefix = 'QRG', $customer_id = '', $customer_number = '')
+    function transction_id($prefix = 'GP', $customer_id = '', $customer_number = '')
     {
         $alphabet = range('A', 'Z');
         $random_letter = $alphabet[array_rand($alphabet)];

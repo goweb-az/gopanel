@@ -10,24 +10,6 @@ use Illuminate\Support\Str;
 
 class GoPanelHelper
 {
-    public static function save(Model $item, $data): Model
-    {
-        return (new static())->saveInstance($item, $data);
-    }
-
-    public function saveInstance(Model $item, $data): Model
-    {
-        if (is_null($item))
-            throw new InvalidArgumentException('Item cannot be null.');
-
-        foreach ($data as $key => $value) {
-            if (!is_array($value))
-                $item->$key = $value;
-        }
-        $item->save();
-        return $item->fresh();
-    }
-
 
     public function upload_public($file, $folder = 'other', $filename = null)
     {

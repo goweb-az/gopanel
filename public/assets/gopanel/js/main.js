@@ -149,10 +149,10 @@ $("body").on("click",".delete-button", function (e){
 
 $('body').on('click','.delete', function (e){
     e.preventDefault();
-    var key     =   $(this).attr('data-key');
-    var route   =   $(this).attr('data-url');
-    var hard    =   $(this).attr('data-hard');
-    var _this   =   $(this).parents('tr');
+    var key         =   $(this).attr('data-key');
+    var route       =   $(this).attr('data-url');
+    var hard        =   $(this).attr('data-hard');
+    var element     =   $(this).parents('tr');
     Swal.fire({
         title: 'Silmək istədiyinizə əminsiniz?',
         text: 'Qalıcı olaraq silinəcək',
@@ -169,7 +169,11 @@ $('body').on('click','.delete', function (e){
                 success: function (response) {
                     pageLoader(false);
                     basicAlert(response.message, response.status);
-                    _this.remove();
+                    if (window.dTable && typeof window.dTable.ajax === 'function') {
+                        window.dTable.ajax.reload();
+                    } else {
+                        element.remove();
+                    }
                 },
                 error: function (e) {
                     console.log(e);

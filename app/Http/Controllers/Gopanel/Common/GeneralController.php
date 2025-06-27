@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Gopanel\Common;
 
-use App\Enums\Gopanel\ModelList;
+use App\Helpers\Common\ModelList;
 use App\Http\Controllers\Controller;
 use App\Services\GeneralService;
 use Exception;
@@ -105,7 +105,7 @@ class GeneralController extends Controller
             if (is_null($id)) {
                 throw new Exception("Məlumatlar düzgün göndərilməyib");
             }
-            $class  = ModelList::get($request->key)->value ?? $request->key;
+            $class  = ModelList::get($request->key) ?? $request->key;
             $hard   = $request->has("hard") && $request->hard == 'true';
 
             if (class_exists($class)) {

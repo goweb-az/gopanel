@@ -1,20 +1,20 @@
-<div id="cerate-modal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+<div id="showHistoryModal" class="modal fade" tabindex="-1" aria-labelledby="showHistoryModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-right-side">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="myModalLabel">Adminlər</h5>
+                <h5 class="modal-title" id="showHistoryModalLabel">Tarixçə <span id="data_id"></span></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" id="form-wrap">
-                
+            <div class="modal-body" id="modalBody">
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">
-                    İmtina et
+                    Bağla
                 </button>
-                <button type="button" class="btn btn-primary waves-effect waves-light" id="save-form-btn">
-                    Yadda saxl
-                </button>
+                {{-- <button type="button" class="btn btn-primary waves-effect waves-light" id="save-form-btn">
+                    Yadda saxla
+                </button> --}}
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->

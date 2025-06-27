@@ -20,7 +20,7 @@ class LanguageController extends GoPanelController
 
     public function index(Request $request)
     {
-        $languagesList = Language::all();
+        $languagesList = Language::orderBy("sort_order", "ASC")->get();
         return view("gopanel.pages.languages.index", compact('languagesList'));
     }
 
@@ -46,7 +46,7 @@ class LanguageController extends GoPanelController
         try {
             $data       = $request->except(['_token']);
             $message    = !is_null($item->id) ? "Məlumat uğurla dəyişdirildi!" : "Məlumat uğurla yaradıldı!";
-            $item       = $this->siteService->saveModel($item, $data);
+            $item       = $this->crudHelper->saveInstance($item, $data);
             $this->success_response($item, $message);
         } catch (\Exception $e) {
             $this->response['message']   .= $e->getMessage();
