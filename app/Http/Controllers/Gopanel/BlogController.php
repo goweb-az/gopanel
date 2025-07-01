@@ -4,8 +4,9 @@ namespace App\Http\Controllers\Gopanel;
 
 use App\Helpers\Gopanel\Site\GoPanelSiteHelper;
 use App\Helpers\Gopanel\Site\PageMetaDataHelper;
+use App\Helpers\Gopanel\TranslationHelper;
 use App\Http\Controllers\GoPanelController;
-use App\Models\Blog;
+use App\Models\Site\Blog;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -41,12 +42,12 @@ class BlogController extends GoPanelController
             $message    = !is_null($item->id) ? "Məlumat uğurla dəyişdirildi!" : "Məlumat uğurla yaradıldı!";
             if ($request->hasFile("image")) {
                 $file               = $request->file('image');
-                $fileName           = (new GoPanelSiteHelper())->file_name_genarte($data);
-                $data['image']      = (new GoPanelSiteHelper)->upload($file, $item->getTable(), 'qrgate-blog-' . $fileName);
+                $fileName           = $this->gopanelHelper->file_name_genarte($data);
+                $data['image']      = $this->gopanelHelper->upload($file, $item->getTable(), 'blog-' . $fileName);
             }
-            $item       = $this->siteService->saveModel($item, $data);
+            $item       = $this->crudHelper->saveInstance($item, $data);
             if (isset($item->id)) {
-                $this->siteService->createTranslations($item, $request);
+                TranslationHelper::create($item, $request);
                 $metaDataInput = $request->input('meta', []);
                 $metaFiles = $request->file('meta', []);
                 PageMetaDataHelper::save($item, $metaDataInput, $metaFiles);

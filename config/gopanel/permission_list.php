@@ -15,9 +15,36 @@ return [
                 'name' => 'gopanel.site-settings.index',
                 'title' => 'Əsas Tənzimləmələr'
             ],
+        ],
+
+        'Dillər' => [
+            [
+                'name' => 'gopanel.languages.index',
+                'title' => 'Dillər siyahısı'
+            ],
+            [
+                'name' => 'gopanel.languages.store',
+                'title' => 'Dillər Add/Edit'
+            ],
+            [
+                'name' => 'gopanel.languages.delete',
+                'title' => 'Dillər Silmə Funksiası'
+            ],
+        ],
+
+
+        'Tərcümələr' => [
             [
                 'name' => 'gopanel.translations.index',
-                'title' => 'Tərcümələr'
+                'title' => 'Tərcümələr siyahısı'
+            ],
+            [
+                'name' => 'gopanel.translations.store',
+                'title' => 'Tərcümələr Add/Edit'
+            ],
+            [
+                'name' => 'gopanel.translations.delete',
+                'title' => 'Tərcümələr Silmə Funksiası'
             ],
         ],
 
@@ -50,6 +77,8 @@ return [
                 'title' => 'Vəzifələr Silmə Funksiası'
             ],
         ],
+
+
         'Bloqlar' => [
             [
                 'name' => 'gopanel.blog.index',
@@ -63,6 +92,43 @@ return [
                 'name' => 'gopanel.blog.delete',
                 'title' => 'Bloqlar Silmə Funksiası'
             ],
+        ],
+
+        'Slayder' => [
+            [
+                'name' => 'gopanel.slider.index',
+                'title' => 'Slayder siyahısı'
+            ],
+            [
+                'name' => 'gopanel.slider.store',
+                'title' => 'Slayder Add/Edit'
+            ],
+            [
+                'name' => 'gopanel.slider.delete',
+                'title' => 'Slayder Silmə Funksiası'
+            ],
+        ],
+
+        'Hərkət Tarixçəsi' => [
+            [
+                'name' => 'gopanel.activity.history.index',
+                'title' => 'Hərkət Tarixçəsi siyahı'
+            ],
+            [
+                'name' => 'gopanel.activity.history.store',
+                'title' => 'Hərkət Tarixçəsi detallı baxış'
+            ]
+        ],
+
+        'Loglar' => [
+            [
+                'name' => 'gopanel.activity.file-logs.index',
+                'title' => 'Loglar siyahı'
+            ],
+            [
+                'name' => 'gopanel.activity.file-logs.store',
+                'title' => 'Loglar detallı baxış'
+            ]
         ],
 
     ],

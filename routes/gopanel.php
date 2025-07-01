@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Gopanel\Activity\FileLogsController;
+use App\Http\Controllers\Gopanel\Activity\HistoryController;
 use App\Http\Controllers\Gopanel\Admins\AdminController;
 use App\Http\Controllers\Gopanel\Admins\RoleController;
 use App\Http\Controllers\Gopanel\AuthController;
@@ -7,10 +9,12 @@ use App\Http\Controllers\Gopanel\BlogController;
 use App\Http\Controllers\Gopanel\Communications\MessageTemplateController;
 use App\Http\Controllers\Gopanel\DashboardController;
 use App\Http\Controllers\Gopanel\DatatableController;
-use App\Http\Controllers\Gopanel\GeneralController;
+use App\Http\Controllers\Gopanel\Common\GeneralController;
 use App\Http\Controllers\Gopanel\Settings\MailSettingsController;
 use App\Http\Controllers\Gopanel\Settings\SiteSettingsController;
 use App\Http\Controllers\Gopanel\Settings\SubscriptionDurationController;
+use App\Http\Controllers\Gopanel\SliderController;
+use App\Http\Controllers\Gopanel\Translations\LanguageController;
 use App\Http\Controllers\Gopanel\Translations\TranslationController;
 use Illuminate\Support\Facades\Route;
 
@@ -75,6 +79,12 @@ Route::group(['middleware' => 'gopanel'], function () {
         Route::post('/save/{item?}', [SiteSettingsController::class, 'save'])->name('save.form');
     });
 
+    Route::prefix('languages')->name("languages.")->group(function () {
+        Route::get('/', [LanguageController::class, 'index'])->name('index');
+        Route::get('/get/form/{item?}', [LanguageController::class, 'getForm'])->name('get.form');
+        Route::post('/save/{item?}', [LanguageController::class, 'save'])->name('save');
+    });
+
     //Translates
     Route::prefix('translations')->name("translations.")->group(function () {
         Route::get('/', [TranslationController::class, 'index'])->name('index');
@@ -87,5 +97,27 @@ Route::group(['middleware' => 'gopanel'], function () {
         Route::get('/', [BlogController::class, 'index'])->name('index');
         Route::get('/store/{item?}', [BlogController::class, 'store'])->name('store');
         Route::post('/save/{item?}', [BlogController::class, 'save'])->name('save');
+    });
+
+
+    Route::prefix('slider')->name("slider.")->group(function () {
+        Route::get('/', [SliderController::class, 'index'])->name('index');
+        Route::get('/get/form/{item?}', [SliderController::class, 'getForm'])->name('get.form');
+        Route::post('/save/{item?}', [SliderController::class, 'save'])->name('save');
+    });
+
+    //Activity
+    Route::prefix('activity')->name("activity.")->group(function () {
+        //tarixce
+        Route::prefix('history')->name("history.")->group(function () {
+            Route::get('/', [HistoryController::class, 'index'])->name('index');
+            Route::get('/show/{history}', [HistoryController::class, 'show'])->name('show');
+        });
+
+        //Logs
+        Route::prefix('file-logs')->name("file-logs.")->group(function () {
+            Route::get('/', [FileLogsController::class, 'index'])->name('index');
+            Route::get('/show/{log}', [FileLogsController::class, 'show'])->name('show');
+        });
     });
 });

@@ -12,7 +12,7 @@
                 <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">
                     İmtina et
                 </button>
-                <button type="button" class="btn btn-primary waves-effect waves-light">
+                <button type="button" class="btn btn-primary waves-effect waves-light" id="save-form-btn">
                     Yadda saxl
                 </button>
             </div>

@@ -21,7 +21,8 @@ class SiteSetting extends BaseModel
         'logo_light',
         'logo_dark',
         'mail_logo',
+        'gopanel_logo',
     ];
 
-    protected $files = ['logo_white', 'logo_dark', 'mail_logo'];
+    protected $files = ['logo_light', 'logo_dark', 'mail_logo', 'gopanel_logo'];
 }

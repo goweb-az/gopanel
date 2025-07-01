@@ -3,7 +3,7 @@
 namespace App\Datatable\Gopanel;
 
 use App\Datatable\Gopanel\GopanelDatatable;
-use App\Models\Blog;
+use App\Models\Site\Blog;
 use \Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 

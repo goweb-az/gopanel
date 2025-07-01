@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\Gopanel;
+namespace App\Http\Controllers\Gopanel\Common;
 
-use App\Enums\Gopanel\ModelList;
+use App\Helpers\Common\ModelList;
 use App\Http\Controllers\Controller;
 use App\Services\GeneralService;
 use Exception;
@@ -105,7 +105,7 @@ class GeneralController extends Controller
             if (is_null($id)) {
                 throw new Exception("Məlumatlar düzgün göndərilməyib");
             }
-            $class  = ModelList::get($request->key)->value ?? $request->key;
+            $class  = ModelList::get($request->key) ?? $request->key;
             $hard   = $request->has("hard") && $request->hard == 'true';
 
             if (class_exists($class)) {
@@ -206,15 +206,15 @@ class GeneralController extends Controller
     {
         try {
             $row            = $request->row;
-            $rows           = $request->rows;
-            $requestModel   = $request->model;
+            $rows           = $request->data;
+            $requestModel   = $request->key;
             $counter        = 0;
             $updatedData    = [];
             if (class_exists($requestModel)) {
                 $modelInstance = app($requestModel);
                 parse_str(urldecode($rows), $rows);
-                if (isset($rows['ord']) && count($rows['ord'])) {
-                    foreach ($rows['ord'] as $key => $value) {
+                if (isset($rows['item']) && count($rows['item'])) {
+                    foreach ($rows['item'] as $key => $value) {
                         $item = $modelInstance->find($value);
                         $item->$row = $key;
                         if ($item->save()) {
@@ -222,14 +222,14 @@ class GeneralController extends Controller
                             $updatedData[] = $item;
                         }
                     }
-                    if (count($rows['ord']) == $counter) {
+                    if (count($rows['item']) == $counter) {
                         $this->success_response($item, "Məlumat uğurla dəyişdirildi");
                     } else if ($counter) {
                         $this->success_response($item, "Bütün məlumatlar dəyişdirilə bilmədi !!!");
                     } else {
                         throw new Exception("Yenilənmə zamanı xəta baş verdi !!!");
                     }
-                    $this->response['requestedData'] = $rows['ord'];
+                    $this->response['requestedData'] = $rows['item'];
                     $this->response['updatedData']   = $updatedData;
                 } else {
                     throw new Exception("Göndərilən məlumat tapılmadı!!!");
@@ -281,17 +281,36 @@ class GeneralController extends Controller
     public function clearCache(Request $request)
     {
         try {
-            // Cache::forget("site_menus");
-            Cache::clear();
-            Cache::flush();
-            Artisan::call('cache:clear');
-            Artisan::call('optimize:clear');
-            $this->success_response([], "Keş uğurla təmizləndi <br>" . (Artisan::output() ?? ''));
+            $type = $request->input('type', 'basic');
+            switch ($type) {
+                case 'basic':
+                    Cache::clear();
+                    Cache::flush();
+                    Artisan::call('cache:clear');
+                    break;
+                case 'route':
+                    Artisan::call('route:clear');
+                    break;
+                case 'config':
+                    Artisan::call('config:clear');
+                    break;
+                case 'view':
+                    Artisan::call('view:clear');
+                    break;
+                case 'all':
+                    Cache::flush();
+                    Artisan::call('optimize:clear');
+                    break;
+                default:
+                    throw new Exception("Naməlum cache təmizləmə tipi");
+            }
+            $this->success_response([], "Cache təmizləndi: <strong> {$type} </strong><br>" . (Artisan::output() ?? ''));
         } catch (Exception $e) {
-            $this->response['message'] .= $e->getMessage();
+            $this->response['message'] = $e->getMessage();
         }
         return $this->response_json();
     }
+
 
     public function route()
     {

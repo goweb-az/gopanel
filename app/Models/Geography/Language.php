@@ -23,6 +23,7 @@ class Language extends BaseModel
         'country_id',
         'code',
         'name',
+        'sort_order',
         'is_active',
     ];
 

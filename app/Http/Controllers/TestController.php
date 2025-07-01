@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Settings\SiteSetting;
 use Illuminate\Http\Request;
 
 class TestController extends Controller
 {
     public function index(Request $request)
     {
-        $this->tesguadr();
+        // $this->tesguadr();
+        $settings = SiteSetting::latest()->first();
+        dd($settings->gopanel_logo_url);
     }
 
 

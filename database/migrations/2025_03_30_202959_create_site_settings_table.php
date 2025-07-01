@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('logo_light')->nullable();
             $table->string('logo_dark')->nullable();
             $table->string('mail_logo')->nullable();
+            $table->string('gopanel_logo')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

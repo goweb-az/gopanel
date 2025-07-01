@@ -7,6 +7,8 @@
 <link href="{{asset("/assets/gopanel/libs/bootstrap-tagsinput/bootstrap-tagsinput.css")}}" rel="stylesheet" type="text/css" />
 <!-- Jqury tags input -->
 <link href="{{asset("/assets/gopanel/libs/jquery.tagsinput/jquery.tagsinput.css")}}" rel="stylesheet" type="text/css" />
+<!-- Select2 input -->
+<link href="{{asset("/assets/gopanel/libs/select2/css/select2.min.css")}}" rel="stylesheet" type="text/css" />
 <!-- Icons Css -->
 <link href="/assets/gopanel/css/icons.min.css" rel="stylesheet" type="text/css" />
 {{-- bootstrap-switch-button  --}}

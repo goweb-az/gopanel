@@ -31,6 +31,9 @@ $("body").on("click", "#open-create-modal", function(e){
         if (response.status == 'success') {
             setTimeout(() => {
                 formwrap.html(response.html);
+                if ($("#form-wrap").find(".select2").length) {
+                    $("#form-wrap").find(".select2").select2();
+                }
             }, 500);
         }
         else{

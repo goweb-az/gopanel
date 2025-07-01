@@ -41,7 +41,7 @@ class RoleController extends GoPanelController
             $permissions    = $request->permissions;
             $data           = $request->except(['_token', 'permissions']);
             $message        = !is_null($item->id) ? "Məlumat uğurla dəyişdirildi!" : "Məlumat uğurla yaradıldı!";
-            $item           = $this->siteService->saveModel($item, $data);
+            $item           = $this->crudHelper->saveInstance($item, $data);
             if (count($permissions ?? []))
                 $item->syncPermissions($permissions);
             $this->response['redirect'] = isset($item->id) ? route("gopanel.admins.roles.index") : false;
