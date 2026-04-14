@@ -27,6 +27,8 @@ class Blog extends BaseModel
     public $slug_key = 'title';
     public $translatedAttributes = ['title', 'description', 'slug'];
 
+    public $controller = \App\Http\Controllers\Site\BlogController::class;
+
     public function getShortDescriptionAttribute()
     {
         return Str::limit(strip_tags($this->description), 50);
@@ -62,5 +64,31 @@ class Blog extends BaseModel
         if (empty($this->date_time))
             return $this->date_time;
         return Carbon::parse($this->date_time)->locale(app()->getLocale())->isoFormat('D MMMM YYYY');
+    }
+
+
+    /**
+     * Blog single səhifəsinin URL-ini qaytarır
+     */
+    public function getSingleUrlAttribute(): ?string
+    {
+        $locale = app()->getLocale();
+        $slug   = $this->getTranslation('slug', $locale, true);
+        if (!$slug) {
+            return null;
+        }
+        return url("{$locale}/{$slug}");
+    }
+
+
+    /**
+     * Bütün aktiv bloqları cache-dən qaytarır
+     */
+    public static function getCachedAll()
+    {
+        $locale = app()->getLocale();
+        return Cache::remember("site_blogs_all_{$locale}", now()->addDays(5), function () {
+            return self::where('is_active', true)->latest()->get();
+        });
     }
 }

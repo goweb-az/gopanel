@@ -21,7 +21,7 @@ class SiteSettingsController extends GoPanelController
     public function index(Request $request)
     {
         $item = SiteSetting::latest()->first() ?? new SiteSetting();
-        return view("gopanel.pages.site_settings.index", compact("item"));
+        return view("gopanel.pages.settings.site_settings.index", compact("item"));
     }
 
 

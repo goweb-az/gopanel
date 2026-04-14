@@ -10,6 +10,8 @@
 <script src="{{asset("assets/gopanel/libs/select2/js/select2.min.js")}}"></script>
 <!-- Sweet Alerts js -->
 <script src="/assets/gopanel/libs/sweetalert2/sweetalert2.min.js"></script>
+<!-- Toastr js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script src="{{asset("/assets/gopanel/libs/bootstrap-switch-button/bootstrap-switch-button.min.js")}}"></script>
 <script src="/assets/gopanel/js/app.js"></script>
 <script src="/assets/gopanel/js/main.js?={{time()}}"></script>

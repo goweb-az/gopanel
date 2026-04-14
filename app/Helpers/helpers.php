@@ -33,7 +33,9 @@ if (!function_exists("getLogDetails")) {
             'route'         => $request->route() ? $request->route()->getName() : null,
             'full_url'      => $request->fullUrl() ?? null,
 
-            'headers'       => $request->headers->all() ?? [],
+            'headers'       => collect($request->headers->all())
+                ->except(['cookie', 'authorization', 'x-api-key', 'x-csrf-token'])
+                ->toArray(),
 
             // User agent bilgisi (Brovser ve cihaz)
             'user_agent'    => $request->header('User-Agent') ?? null,

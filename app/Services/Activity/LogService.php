@@ -2,29 +2,32 @@
 
 namespace App\Services\Activity;
 
-use App\Contracts\CustomLogInterface;
+
 use App\Models\Activity\FileLog;
 use BadMethodCallException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Schema;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 class LogService
 {
 
     protected string|null $channel;
     protected bool $saveDatabaseEnable = true;
+    public bool $log_detail = true;
 
     public LoggerInterface $logging;
 
 
-    public function __construct($channel = null, $saveDatabaseEnable = true)
+    public function __construct($channel = null, $saveDatabaseEnable = true, $log_detail = true)
     {
         $this->channel              = $channel;
         $this->saveDatabaseEnable   = $saveDatabaseEnable;
+        $this->log_detail           = $log_detail;
         $this->setChannel($channel);
     }
 
@@ -45,38 +48,80 @@ class LogService
         }
     }
 
+    /**
+     * Tez istifadə üçün static method.
+     * LogService::channel('cron')->info('mesaj');
+     */
+    public static function channel(string $channel, $saveDatabaseEnable = true, $log_detail = false): self
+    {
+        return new self($channel, $saveDatabaseEnable, $log_detail);
+    }
+
 
     private function logMessage(string $level, string $message, $context = [])
     {
-        if ($context instanceof Model) {
-            $context = $context->toArray();
+        // Bütün tip-ləri safely array-ə çevir
+        $context = $this->normalizeContext($context);
+
+        if (!app()->environment('local')) {
+            $context = $this->sanitizeContext($context);
         }
 
-        if ($context instanceof JsonResource) {
-            $context = $context->toArray(request());
+        //Start writing log data
+        $logPayload = ['data' => $context];
+        $errorLevels = ['error', 'critical', 'alert', 'emergency'];
+        if ($this->log_detail && in_array($level, $errorLevels)) {
+            $logPayload['log_details'] = $this->safeGetLogDetails();
+        }
+        $this->logging->$level($message, $logPayload);
+
+        if ($this->saveDatabaseEnable) {
+            $this->safeLogToDatabase($level, $message, $context);
         }
 
-        if (env("APP_ENV") != 'local')
-            $context    = $this->sanitizeContext($context);
-
-        $this->logging->$level($message, [
-            'data'      => $context,
-            'lg-detail' => getLogDetails()
-        ]);
-        if ($this->saveDatabaseEnable)
-            $this->logToDatabase($level, $message, $context);
         return $this;
     }
 
     public function __call($method, $arguments)
     {
-        $logLevels = config("custom.logging.levels");
-        if (in_array($method, $logLevels)) {
-            $message = $arguments[0] ?? '';
-            $context = $arguments[1] ?? [];
-            return $this->logMessage($method, $message, $context);
+        try {
+            $logLevels = config("custom.logging.levels");
+            if (in_array($method, $logLevels)) {
+                $message = $arguments[0] ?? '';
+                $context = $arguments[1] ?? [];
+                return $this->logMessage($method, $message, $context);
+            }
+            throw new BadMethodCallException("Method [$method] does not exist.");
+        } catch (Throwable $th) {
+            Log::warning("[LogService] Log yazma xətası: {$th->getMessage()}", [
+                'method' => $method,
+                'original_message' => $arguments[0] ?? '',
+                'exception' => $th->getTraceAsString()
+            ]);
         }
-        throw new BadMethodCallException("Method [$method] does not exist.");
+    }
+
+    /**
+     * Kontekst datasını safely array-ə çevir.
+     * Model, JsonResource, Collection, string, null — hamısını tutur.
+     */
+    private function normalizeContext($context): array
+    {
+        try {
+            if (is_null($context) || $context === '') return [];
+            if (is_array($context)) return $context;
+            if ($context instanceof Model) return $context->toArray();
+            if ($context instanceof JsonResource) return $context->toArray(request());
+            if ($context instanceof Collection) return $context->toArray();
+            if (is_object($context)) return (array) $context;
+            if (is_string($context)) return ['raw' => $context];
+            return ['raw' => $context];
+        } catch (Throwable $e) {
+            return [
+                '_parse_error' => $e->getMessage(),
+                'exception' => $e->getTraceAsString()
+            ];
+        }
     }
 
     private function sanitizeContext(array $context): array
@@ -85,9 +130,7 @@ class LogService
         foreach ($context as $key => &$value) {
             if (is_array($value)) {
                 $value = $this->sanitizeContext($value); // Recursive cleaning
-            } elseif (in_array(strtolower($key), $sensitiveKeys)) {
-                // Masking with stars based on the length of the value
-                // $value = str_repeat('*', strlen($value));
+            } elseif (in_array(strtolower($key), array_map('strtolower', $sensitiveKeys))) {
                 $value = '[' . $key . ']';
             }
         }
@@ -95,29 +138,41 @@ class LogService
         return $context;
     }
 
-    protected function to_array($context)
+    /**
+     * Database-ə log yaz — xəta sistemi çökdürməsin
+     */
+    private function safeLogToDatabase(string $level, string $message, array $context): void
     {
-        return array_map(function ($item) {
-            if ($item instanceof Model) {
-                return $item->toArray();
-            }
-            return $item;
-        }, $context);
+        try {
+            $fileLog = new FileLog();
+            $fileLog->admin_id    = Auth::guard('gopanel')->check() ? Auth::guard('gopanel')->user()->id : null;
+            $fileLog->user_id     = Auth::guard('web')->check() ? Auth::guard('web')->user()->id : null;
+            // $fileLog->company_id  = Auth::guard('web')->check() ? Auth::guard('web')->user()->current_company_id : null;
+            $fileLog->channel     = $this->channel;
+            $fileLog->level       = $level;
+            $fileLog->message     = $message;
+            $fileLog->context     = $context;
+            $errorLevels = ['error', 'critical', 'alert', 'emergency'];
+            $fileLog->log_details = in_array($level, $errorLevels) ? $this->safeGetLogDetails() : null;
+            $fileLog->save();
+        } catch (Throwable $e) {
+            // Log yazma xətası sistemi çökdürməməlidir
+            Log::warning("[LogService] DB log yazma xətası: {$e->getMessage()}");
+        }
     }
 
-    // save to database
-    private function logToDatabase(string $level, string $message, array $context)
+    /**
+     * Log details-i safely al
+     */
+    private function safeGetLogDetails(): ?array
     {
-        if (!Schema::hasTable('file_logs'))
-            return false;
-        $fileog = new FileLog();
-        $fileog->admin_id           = Auth::guard('gopanel')->check() ? Auth::guard('gopanel')->user()->id : NULL;
-        $fileog->user_id            = Auth::guard('web')->check() ? Auth::guard('web')->user()->id : NULL;
-        $fileog->channel            = $this->channel;
-        $fileog->level              = $level;
-        $fileog->message            = $message;
-        $fileog->context            = $context;
-        $fileog->log_details        = getLogDetails();
-        $fileog->save();
+        try {
+            return getLogDetails();
+        } catch (Throwable $e) {
+            return [
+                '_error' => 'Log details alına bilmədi: ' . $e->getMessage(),
+                'exception' => $e->getTraceAsString()
+            ];
+        }
     }
 }

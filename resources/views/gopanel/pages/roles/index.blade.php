@@ -40,5 +40,5 @@
 <!-- End Page-content -->
 @endsection
 @push('scripts')
-    <script src="{{asset("assets/gopanel/js/modules/admins.js")}}"></script>
+    <script src="{{asset("assets/gopanel/js/modules/admins.js?=" . time())}}"></script>
 @endpush

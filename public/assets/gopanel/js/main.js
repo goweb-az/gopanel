@@ -102,9 +102,27 @@ $('.modal').on('hidden.bs.modal', function () {
 
 
 function initDatatableUiElements(){
-    if ($('input.statusChange').length > 0) {
-        $('input.statusChange').bootstrapToggle();
-    }
+    // Bootstrap 5 form-switch: change olduqda label mətnini və rəngini yenilə
+    $('input.form-check-input.is_active, input.form-check-input.status').not('[data-switch-initialized]').each(function() {
+        $(this).attr('data-switch-initialized', 'true');
+        $(this).on('change', function() {
+            var $label = $(this).siblings('.form-check-label');
+            if ($(this).is(':checked')) {
+                $label.text($(this).data('on-text') || 'Aktiv')
+                      .removeClass('text-danger').addClass('text-success');
+            } else {
+                $label.text($(this).data('off-text') || 'Deaktiv')
+                      .removeClass('text-success').addClass('text-danger');
+            }
+        });
+    });
+
+    // Bootstrap Switch Button: AJAX sonrası dinamik init
+    $('input[data-toggle="switchbutton"]').not('[data-switchbutton-initialized]').each(function() {
+        $(this).attr('data-switchbutton-initialized', 'true');
+        this.switchButton();
+    });
+
     initToltip();
 }
 
@@ -193,25 +211,24 @@ $("body").on("change",".status", function(e){
     let id      = $(this).attr("data-id");
     let model   = $(this).attr("data-model");
     let route   = $(this).attr("data-route");
-    if(id > 0){
+    if(id){
         $.ajax({
             url: route,
             data: {id:id,row:row,model:model,status:status},
-            // contentType: "application/json",
             type: 'POST',
             success: function (response) {
                 pageLoader(false);
-                basicAlert(response.message, response.status);
-                $("#salesAddBackdrop").modal("hide");
-                window.dTable.ajax.reload();
                 if(response.status == 'success'){
-                    clearFormInputs("#addForm");
-                    salesCounter();
+                    toastr.success(response.message);
+                } else {
+                    basicAlert(response.message, response.status);
                 }
+                if(window.dTable) window.dTable.ajax.reload();
             },
             error: function (e) {
                 console.log(e);
                 pageLoader(false);
+                showError(e);
             }
         });
     }
@@ -224,25 +241,24 @@ $("body").on("change",".is_active", function(e){
     let id      = $(this).attr("data-id");
     let model   = $(this).attr("data-model");
     let route   = $(this).attr("data-url");
-    if(id > 0){
+    if(id){
         $.ajax({
             url: route,
             data: {id:id,row:row,model:model,status:status},
-            // contentType: "application/json",
             type: 'POST',
             success: function (response) {
                 pageLoader(false);
-                basicAlert(response.message, response.status);
-                $("#salesAddBackdrop").modal("hide");
-                window.dTable.ajax.reload();
                 if(response.status == 'success'){
-                    clearFormInputs("#addForm");
-                    salesCounter();
+                    toastr.success(response.message);
+                } else {
+                    basicAlert(response.message, response.status);
                 }
+                if(window.dTable) window.dTable.ajax.reload();
             },
             error: function (e) {
                 console.log(e);
                 pageLoader(false);
+                showError(e);
             }
         });
     }

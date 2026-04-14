@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Helpers\Common\ActivityLogHelper;
+use App\Traits\HasRouteKey;
 use App\Traits\Translation;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
@@ -15,7 +18,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class BaseModel extends Model
 {
-    use LogsActivity;
+    use HasRouteKey;
+    use LogsActivity {
+        shouldLogEvent as traitShouldLogEvent;
+    }
 
     // Hansi modelde loglanmas istenmirse false edilmelidir 
     protected $logEnabled = false;
@@ -41,23 +47,46 @@ class BaseModel extends Model
 
 
 
+    protected function shouldLogEvent(string $eventName): bool
+    {
+        if ($this->logEnabled === false) {
+            return false;
+        }
+
+        $modelName = class_basename($this);
+
+        if (!config("custom.activity_messages.{$modelName}")) {
+            return false;
+        }
+
+        return $this->traitShouldLogEvent($eventName);
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
-        // icaze yoxdursa loglama
-        if (!$this->logEnabled) {
-            return LogOptions::defaults()->logOnly([]);
+        if ($this->logEnabled === false) {
+            return LogOptions::defaults()
+                ->dontSubmitEmptyLogs()
+                ->logOnly([]);
         }
 
         return LogOptions::defaults()
-            ->logOnly($this->getFillable()) // Modelin doldurula bilən sahələrini qeyd edin
-            ->useLogName(class_basename($this)) // Günlük adı kimi modelin adını istifadə edin
-            ->logOnlyDirty() // Yalnız dəyişdirilmiş sahələri qeyd edin
-            ->dontSubmitEmptyLogs(); // Heç bir dəyişiklik edilmirsə, jurnalın yaradılması
+            ->logOnly($this->getFillable())
+            ->useLogName(class_basename($this))
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 
     public function tapActivity(Activity $activity, string $eventName)
     {
-        $activity->description = class_basename($this) . " modelində {$eventName} əməliyyatı aparıldı.";
+        // Causer-ı əllə təyin et: əvvəlcə gopanel, sonra web guard
+        if (Auth::guard('gopanel')->check()) {
+            $activity->causer()->associate(Auth::guard('gopanel')->user());
+        } elseif (Auth::guard('web')->check()) {
+            $activity->causer()->associate(Auth::guard('web')->user());
+        }
+
+        ActivityLogHelper::resolveDescription($this, $activity, $eventName);
     }
 
     public function activities()

@@ -21,14 +21,14 @@ class LanguageController extends GoPanelController
     public function index(Request $request)
     {
         $languagesList = Language::orderBy("sort_order", "ASC")->get();
-        return view("gopanel.pages.languages.index", compact('languagesList'));
+        return view("gopanel.pages.settings.languages.index", compact('languagesList'));
     }
 
     public function getForm(Language $item, Request $request)
     {
         try {
-            $route = route("gopanel.languages.save", $item);
-            $this->response['html'] = View::make('gopanel.pages.languages.partials.form', [
+            $route = route("gopanel.settings.languages.save", $item);
+            $this->response['html'] = View::make('gopanel.pages.settings.languages.partials.form', [
                 'item'          => $item,
                 'route'         => $route,
                 'countries'     => Country::all()

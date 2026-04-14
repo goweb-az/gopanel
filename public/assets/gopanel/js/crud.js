@@ -58,17 +58,17 @@ $("body").on("click","#save-form-btn", function(e){
     saveForm(form).then(response => {
         elementLoader("#form-wrap");
         if (response.status == 'success') {
-            if(response.status == 'success'){
-                if (response.redirect) {
-                    pageLoader(1);
-                    window.location.href = response.redirect;
-                } else {
-                    window.dTable.ajax.reload();
-                    $("#cerate-modal").modal("hide");
-                }
+            toastr.success(response.message);
+            if (response.redirect) {
+                pageLoader(1);
+                window.location.href = response.redirect;
+            } else {
+                if(window.dTable) window.dTable.ajax.reload();
+                $("#cerate-modal").modal("hide");
             }
+        } else {
+            basicAlert(response.message, response.status);
         }
-        basicAlert(response.message,response.status);
     }).catch(error => {
         console.log(error);
         elementLoader("#form-wrap");
@@ -165,7 +165,7 @@ $("body").on("submit", "#static-form", function(e) {
             },
             error: function(xhr) {
                 elementLoader("#static-form",false);
-                basicAlert(xhr.responseText ||  "Bilinmeyen bir xəta");
+                showError(xhr);
             }
         });
         
@@ -230,7 +230,7 @@ $('body').on('dblclick', '.editable', function() {
                 }
             },
             error: function(xhr) {
-                basicAlert(xhr.responseText,"error");
+                showError(xhr);
                 $saveButton.prop("disabled",false);
             }
         });

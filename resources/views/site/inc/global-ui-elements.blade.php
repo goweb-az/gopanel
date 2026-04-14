@@ -1,0 +1,1 @@
+{{-- Burada saytda acilmali mobil menyu whatsapp ikonu yuxari surushurmek ikonu ve sair elave edilecek  --}}

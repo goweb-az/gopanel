@@ -3,13 +3,20 @@
 // app/Providers/ViewServiceProvider.php
 namespace App\Providers;
 
+use App\Enums\Common\SocialIconTypeEnum;
 use App\Helpers\Gopanel\GoPanelSidebar;
+use App\Models\Contact\ContactInfo;
+use App\Models\Contact\Social;
 use App\Models\Geography\Language;
+use App\Models\Navigation\Menu;
+use App\Models\Seo\SeoAnalytics;
 use App\Models\Settings\SiteSetting;
-use App\Models\Site\Menu;
+use App\Services\Site\Seo\AlternatesService;
+use App\Services\Site\Seo\MetaService;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Http\Request;
 
 class ViewServiceProvider extends ServiceProvider
 {
@@ -34,6 +41,8 @@ class ViewServiceProvider extends ServiceProvider
         $this->shareLanguages();
         $this->shareSiteContent();
         $this->shareGopanelContent();
+        $this->shareSiteMetaData();
+        $this->shareAlternatesLinks();
     }
 
 
@@ -71,13 +80,16 @@ class ViewServiceProvider extends ServiceProvider
     private function shareSiteContent()
     {
         View::composer('site.*', function ($view) {
+            $siteSettings   = SiteSetting::getCached();
+            $seoAnalytics   = SeoAnalytics::getCached();
 
-
-            $siteSettings = SiteSetting::latest()->first();
             $view->with('siteSettings', $siteSettings);
-            if ($siteSettings?->site_status == 0)
-                return;
-            $view->with('siteSettings', $siteSettings);
+            $view->with('seoAnalytics', $seoAnalytics);
+            $view->with('contactInfo', ContactInfo::getCached());
+            $view->with('socials', Social::getCached());
+            $view->with('company_name', $siteSettings->company_name ?? config('app.name', 'Gopanel'));
+            $view->with('menus', Menu::getSiteMenu());
+            $view->with('SocialIconTypeEnum', SocialIconTypeEnum::class);
         });
     }
 
@@ -85,41 +97,51 @@ class ViewServiceProvider extends ServiceProvider
     private function shareGopanelContent()
     {
         View::composer('gopanel.*', function ($view) {
-
-
             $settings = SiteSetting::latest()->first();
             $view->with('settings', $settings);
         });
     }
 
-    private function sendViewMetaData($menus)
+
+    /**
+     * Site üçün meta data (title, description, keywords, image) paylaşır
+     */
+    private function shareSiteMetaData(): void
     {
-        // URL-dəki ikinci seqmenti al (sayfa adı)
-        $currentSegment = request()->segment(2);
+        View::composer('site.layouts.head', function ($view) {
+            // Artıq controller-dən share olunubsa (Blog single, Service single vs.), override etmə
+            $shared = View::getShared();
+            if (!empty($shared['meta_title'])) {
+                return;
+            }
 
-        // Segment ilə uyğun gələn menyu məlumatlarını tap
-        $menu = $menus->firstWhere('route', $currentSegment);
+            /** @var Request $request */
+            $request = app(Request::class);
 
-        // Əgər segmentlə uyğun gələn menyu tapılmazsa, varsayılan olaraq "home" menyusunu al
-        if (!$menu) {
-            $menu = Menu::where('route', 'home')->first();
-        }
-        // Menu məlumatları tapılarsa, meta məlumatlarını al
-        if ($menu) {
-            // Menu üçün meta məlumatlarını al
-            $metaData = $menu->meta()->first();
+            /** @var MetaService $metaService */
+            $metaService = app(MetaService::class);
 
-            // Əgər meta məlumatları yoxdursa, varsayılan meta məlumatlarını istifadə et
-            $metaTitle = $metaData->title ?? 'Qrgate.az';
-            $metaDescription = $metaData->description ?? 'Qragte - Vaxta Nəzarət et!!!';
-            $metaKeywords = $metaData->keywords ?? 'qrkod,giris cixis,';
-            $metaImage = $menu->getMetaImage() ?? null;
-
-            // Meta məlumatlarını view'a (görünümə) göndər
-            view()->share('meta_title', $metaTitle);
-            view()->share('meta_description', $metaDescription);
-            view()->share('meta_keywords', $metaKeywords);
-            view()->share('meta_image', $metaImage);
-        }
+            $menus = Menu::getSiteMenu();
+            $meta  = $metaService->compose($menus, $request);
+            MetaService::share($meta);
+        });
     }
+
+
+    /**
+     * Alternates və hreflang linkləri site layout-a enjekte edir
+     */
+    private function shareAlternatesLinks(): void
+    {
+        View::composer('site.layouts.head', function ($view) {
+            /** @var Request $request */
+            $request = request();
+
+            /** @var AlternatesService $alternateService */
+            $alternateService = app(AlternatesService::class);
+            $data = $alternateService->compose($request);
+            $view->with($data);
+        });
+    }
+
 }

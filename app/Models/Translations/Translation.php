@@ -15,7 +15,7 @@ class Translation extends BaseModel
 
     private $languages;
 
-    protected $logEnabled = false;
+    protected $logEnabled = true;
 
     public function __construct()
     {

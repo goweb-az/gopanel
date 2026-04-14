@@ -63,13 +63,39 @@ class TranslationHelper
         if (isset($item->slug_key) && $transAttribute == 'slug' && in_array($item?->slug_key, $item->translatedAttributes)) {
             $titleKey = $item?->slug_key;
             $titleValue = $request?->$titleKey[$lang->code] ?? null;
-            $newValue = null;
 
-            if ($titleValue) {
-                $newValue = Str::slug($titleValue);
+            if (empty($request?->$transAttribute[$lang->code])) {
+                $newValue = null;
+                if ($titleValue) {
+                    $newValue = Str::slug($titleValue, "-", $lang->code);
+                }
+            } else {
+                $newValue = $request?->$transAttribute[$lang->code];
+            }
+
+            if (!empty($item->slug_prefix[$lang->code]) && !empty($newValue)) {
+                $prefix = Str::slug($item->slug_prefix[$lang->code], '-', $lang->code);
+                if (!Str::startsWith($newValue, $prefix)) {
+                    $newValue = $prefix . '-' . Str::slug($newValue, '-', $lang->code);
+                }
             }
         }
 
         return $newValue;
+    }
+
+
+    public static function basic($item, $data, $transAttribute)
+    {
+        foreach (Language::all() as $lang) {
+
+            $newValue = $data[$lang->code] ?? null;
+            if (in_array($transAttribute, $item->translatedAttributes)) {
+                $item->translations()->updateOrCreate(
+                    ['locale' => $lang->code, 'key' => $transAttribute],
+                    ['value' => $newValue]
+                );
+            }
+        }
     }
 }

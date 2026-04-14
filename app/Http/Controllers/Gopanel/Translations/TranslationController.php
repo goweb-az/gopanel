@@ -23,7 +23,7 @@ class TranslationController extends GoPanelController
     {
         $items      = Translation::all();
         $locale     = $request->has("locale") ? $request->input("locale") : app()->getLocale();
-        return view("gopanel.pages.translations.index", compact("items", 'locale'));
+        return view("gopanel.pages.settings.translations.index", compact("items", 'locale'));
     }
 
 
@@ -32,8 +32,8 @@ class TranslationController extends GoPanelController
     public function getForm(Translation $item, Request $request)
     {
         try {
-            $route = route("gopanel.translations.save.form", $item);
-            $this->response['html'] = View::make('gopanel.pages.translations.partials.form', [
+            $route = route("gopanel.settings.translations.save.form", $item);
+            $this->response['html'] = View::make('gopanel.pages.settings.translations.partials.form', [
                 'item'              => $item,
                 'route'             => $route,
                 'platforms'         => TranslationPlatfroms::cases(),

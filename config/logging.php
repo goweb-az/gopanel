@@ -129,6 +129,16 @@ return [
 
         //Start custom logs
 
+
+        'system-errors' => [
+            'driver'    => 'daily',
+            'path'      => storage_path('logs/system-errors/system-errors-day.log'),
+            'level'     => env('LOG_LEVEL', 'debug'),
+            'days'      => 30,
+            'manual'    => true,
+            'name'      => 'Sistem Xətaları'
+        ],
+
         'gopanel-auth' => [
             'driver'    => 'daily',
             'path'      => storage_path('logs/gopanel-auth/gopanel-auth-day.log'),

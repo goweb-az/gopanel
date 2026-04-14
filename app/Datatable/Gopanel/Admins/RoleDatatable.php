@@ -49,14 +49,16 @@ class RoleDatatable extends GopanelDatatable
 
     private function itemEditBtn(Model $item): string
     {
-        return ' <a href="' . route("gopanel.admins.roles.store", $item) . '" class="btn btn-outline-success waves-effect waves-light" data-bs-toggle="tooltip" data-bs-placement="top" title="Məlumata düzəliş et"> 
+        $url = route("gopanel.admins.roles.store", $this->itemKey($item));
+        return ' <a href="' . $url . '" class="btn btn-outline-success waves-effect waves-light" data-bs-toggle="tooltip" data-bs-placement="top" title="Məlumata düzəliş et"> 
                     <i class="fas fa-pen f-20"></i> 
                 </a> ';
     }
 
     private function itemDeleteBtn(Model $item)
     {
-        return ' <a href="#" class="btn btn-outline-danger waves-effect waves-light delete" data-url="" data-key="' . $item->getTable() . '"" data-bs-toggle="tooltip" data-bs-placement="top" title="Məlumatı sil"> 
+        $url = route("gopanel.general.delete", $this->itemKey($item));
+        return ' <a href="#" class="btn btn-outline-danger waves-effect waves-light delete" data-url="' . $url . '" data-key="' . get_class($item) . '" data-bs-toggle="tooltip" data-bs-placement="top" title="Məlumatı sil"> 
                     <i class="fas fa-trash"></i> 
                 </a> ';
     }

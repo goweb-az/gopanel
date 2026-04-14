@@ -1,57 +1,45 @@
-<div class="row">
-    <div class="col-xl-12">
-        <div class="card">
-            <div class="card-body">
-                <form action='{{ route("gopanel.activity.file-logs.index", $_GET)}}' method="GET" >
-
-                    @if (count($_GET))
-                    @foreach ($_GET as $key => $value)
-                    @if (!in_array($key,['level','from','to','channel']))
-                        <input type="hidden" name="{{$key}}" value="{{$value}}">
-                    @endif
+<!-- Filter Panel -->
+<div class="collapse mb-3" id="filterPanel">
+    <div class="card card-body">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-2">
+                <label class="form-label">Level</label>
+                <select class="form-select" id="filter-level">
+                    <option value="">Hamısı</option>
+                    @foreach ($levels as $levelItem)
+                        <option value="{{$levelItem}}" @selected($levelItem == $level)>{{ucfirst($levelItem)}}</option>
                     @endforeach
-                    @endif
-
-                    <div class="row">
-                        <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12 mb-3">
-                            <div class="form_group">
-                                <label class="form-label" for="level">Səviyyə</label>
-                                <select class="form-select" name="level" id="level">
-                                    <option value="">Bütün Səviyyələr</option>
-                                    @foreach ($levels as $levelItem)
-                                        <option value="{{$levelItem}}" @selected($levelItem == $level)>{{ucfirst($levelItem)}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12 mb-3">
-                            <label class="form-label" for="channel">Kanal</label>
-                            <select name="channel" class="form-select" id="channel">
-                                <option value="">Bütün Kanallar</option>
-                                @foreach ($channels as $key => $channelItem)
-                                    <option value="{{$key}}" @selected($channel == $key)>{{ucfirst($channelItem['name'])}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 mb-3">
-                            <label for="from_date" class="form-label">Başlama</label>
-                            <input type="date" class="form-control" name="from" id="from_date" placeholder="" value="{{$from}}">
-                        </div>
-
-                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 mb-3">
-                            <label for="from_date" class="form-label">Bitmə</label>
-                            <input type="date" class="form-control" name="to" id="from_date" placeholder="" value="{{$to}}">
-                        </div>
-
-                        <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12 mb-3 filter-btn-div">
-                            <button type="submit" class="btn btn-success filter-btn" >
-                                <i class="fa fa-search"></i> Axtar
-                            </button>
-                        </div>
-                    </div>
-                </form>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Kanal</label>
+                <select class="form-select" id="filter-channel">
+                    <option value="">Hamısı</option>
+                    @foreach ($channels as $key => $channelItem)
+                        <option value="{{$key}}" @selected($channel == $key)>{{ $channelItem['show_name'] ?? ucfirst($key) }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">İstifadəçi</label>
+                <select class="form-select" id="filter-user" style="width: 100%;">
+                    <option value="">Hamısı</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Tarix (başlanğıc)</label>
+                <input type="date" class="form-control" id="filter-date-from">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Tarix (son)</label>
+                <input type="date" class="form-control" id="filter-date-to">
+            </div>
+            <div class="col-auto d-flex align-items-end gap-2">
+                <button type="button" class="btn btn-primary" id="apply-filters">
+                    <i class="fas fa-search"></i> Filtrlə
+                </button>
+                <button type="button" class="btn btn-light" id="clear-filters">Sıfırla</button>
             </div>
         </div>
-    </div><!--end col-->
+    </div>
 </div>
