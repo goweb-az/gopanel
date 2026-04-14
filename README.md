@@ -189,6 +189,251 @@ php artisan db:seed --class=PermissionSeeder
 
 ---
 
+# 🌐 Sayt tərəf – Funksionallıq sənədləşdirməsi
+
+---
+
+## 1. Menyu sistemi
+
+Menyular `menus` cədvəlində saxlanılır və `Menu` modeli (`App\Models\Navigation\Menu`) ilə idarə olunur.
+
+### Əsas struktur
+- Hər menyu: `route_name`, `type`, `position`, `parent_id`, `sort_order`, `is_active`, `is_dropdown` sahələri
+- `parent_id` ilə **parent → children** ağac strukturu qurulur
+- Tərcümə: `title`, `slug`, `description` → `field_translations` cədvəlində (`Translation` trait)
+- Meta data: `MetaData` trait ilə `page_meta_data` cədvəlinə bağlıdır
+
+### Menyu mövqeləri
+`MenuPositionEnum` ilə idarə olunur: `header`, `footer_community`, `other` və s.
+
+### Route qeydiyyatı
+`routes/web.php` faylında hər aktiv dil üçün `Menu::getRoutes($locale)` çağırılır.  
+Hər menyu üçün `config/site/menu_routes.php` faylından `route_name` ilə controller/method cütü tapılır:
+
+```php
+// config/site/menu_routes.php
+return [
+    'blogs' => [
+        'class'  => BlogController::class,
+        'method' => 'index',
+        'name'   => 'blog.index',
+    ],
+    'contact' => [
+        'class'  => StaticPageController::class,
+        'method' => 'contact',
+        'name'   => 'contact.index',
+    ],
+];
+```
+
+Nəticədə avtomatik olaraq `az/bloqlar`, `en/blogs`, `ru/blogi` kimi URL-lər yaranır.
+
+### Yeni menyu əlavə qaydası
+1. `MenuSeeder`-ə yeni menyu məlumatı əlavə et (`route_name`, `slug`, `title`)
+2. `config/site/menu_routes.php`-ə controller/method cütü əlavə et
+3. `php artisan db:seed --class=MenuSeeder && php artisan cache:clear`
+
+### Keşləmə
+- `Menu::getSiteMenu()` → sayt header/footer üçün (30 gün)
+- `Menu::getRoutes($locale)` → route qeydiyyatı üçün (30 gün)
+- `Menu::getBySlug($slug)` → meta hesablanması üçün (30 gün)
+
+---
+
+## 2. Meta sistemi (SEO Meta Data)
+
+Saytda meta məlumatları çoxsəviyyəli prioritet sistemi ilə idarə olunur.
+
+### Prioritet zənciri
+```
+Controller (Single) → Menyu (List/Static) → SiteSetting (Default)
+```
+
+| Səviyyə | Misal | Necə işləyir |
+|---|---|---|
+| **Controller** | Blog single | `$this->meta_share($blog)` → `MetaService::sharePageMeta()` |
+| **Menyu** | Blog list, Əlaqə | `MetaService::compose()` → URL segment-dən menyu tapıb meta alır |
+| **Default** | Ana səhifə (meta yoxdursa) | `SiteSetting::getCached()->meta()->first()` |
+
+### İşləmə mexanizmi
+- `ViewServiceProvider::shareSiteMetaData()` → `site.layouts.head` composer-ində çağırılır
+- Əgər controller artıq `meta_title` share edibsə, composer skip edir
+- `MetaService::compose()` URL-dən `segment(2)` götürür → `Menu::getBySlug()` ilə menyunu tapır → meta-nı oxuyur
+
+### Fayl strukturu
+- `app/Services/Site/Seo/MetaService.php` → meta hesablama/paylaşma
+- `app/Traits/MetaData.php` → `meta()`, `metaAll()`, `getMeta()` relation-lar
+- `resources/views/site/layouts/meta.blade.php` → og:title, og:description, twitter:card
+- `resources/views/site/layouts/head.blade.php` → bütün meta tag-lar, canonical, alternates
+
+### Yeni model üçün meta əlavə
+1. Modelə `use MetaData;` trait əlavə et
+2. Controller-dən `$this->meta_share($item)` çağır
+3. Admin paneldə meta form-u ilə məlumat daxil et
+
+---
+
+## 3. Analitik kodları
+
+Admin paneldə (`/gopanel/seo/seo-analytics`) idarə olunan kod parçaları.
+
+### Sahələr
+| Sahə | Harada render olunur | İstifadə |
+|---|---|---|
+| `head` | `<head>` tag-ı içində | Google Analytics, FB Pixel, meta verification |
+| `body` | `<body>` tag-ının əvvəlində | GTM noscript, chat widget |
+| `footer` | `</body>` əvvəlində | JS tracking scripts |
+| `robots_txt` | `/robots.txt` endpoint-i | Robots.txt məzmunu |
+| `ai_txt` | `/ai.txt` endpoint-i | AI crawlers üçün |
+| `other` | Ehtiyat sahə | Əlavə kodlar |
+
+### İşləmə
+- `SeoAnalytics::getCached()` → `ViewServiceProvider`-dən `site.*` view-larına share olunur
+- Head: `{!! $seoAnalytics->head !!}` → `site/layouts/head.blade.php`
+- Body: `{!! $seoAnalytics->body !!}` → `site/layouts/main.blade.php`
+- Footer: `{!! $seoAnalytics->footer !!}` → `site/assets/scripts.blade.php`
+- Textarea-lar fullscreen redaktə funksiyası ilə (`public/assets/gopanel/js/modules/seo.js`)
+
+---
+
+## 4. Link yönləndirmələri (Site Redirects)
+
+Admin paneldə (`/gopanel/seo/site-redirects`) idarə olunan URL yönləndirmə qaydaları.
+
+### İşləmə
+- `SiteRedirectMiddleware` hər sorğuda aktiv qaydaları yoxlayır
+- Qaydalar: `source` (şablon), `target` (hədəf URL), `http_code` (301/302), `locale`, `priority`
+- Match tipləri (`RedirectMatchTypeEnum`): exact, regex, wildcard
+- Hit sayğacı: hər uyğunluqda `registerHit()` çağırılır
+
+### Prioritet
+1. Dilə uyğun qaydalar (locale) → yüksək prioritet → aşağı ID
+2. Dildən asılı olmayan qaydalar (locale=NULL) → fallback
+
+### Keşləmə
+- `site_redirect_rules_{locale}` → 5 dəqiqə
+- Config-dən `gopanel.site_redirect_status` ilə söndürülə bilər
+
+---
+
+## 5. LLMs.txt
+
+Süni intellekt crawlers (ChatGPT, Claude, Gemini) üçün sayt haqqında məlumat faylı.
+
+### Struktur
+- Model: `App\Models\Seo\LlmsTxt` → `llms_txts` cədvəli
+- Admin: `/gopanel/seo/llms-txt` → fullscreen textarea ilə redaktə
+- Endpoint: `/llms.txt` → `TxtController::llms()` ilə `text/plain` qaytarır
+- Head tag: `<link rel="alternate" type="text/plain" href="/llms.txt" title="LLM Information">`
+
+### Seeder
+`LlmsTxtSeeder` ilə default məzmun yaradılır.
+
+---
+
+## 6. Sitemap
+
+Axtarış motorları üçün XML sitemap generasiyası.
+
+### Endpoint-lər
+| URL | Təsvir |
+|---|---|
+| `/sitemap.xml` | Master sitemap index (bütün dilləri əhatə edir) |
+| `/{locale}/sitemap.xml` | Dilə görə single sitemap |
+
+### Daxil edilən məlumatlar
+- **Ana səhifə**: hər dil üçün priority=1.00, changefreq=daily
+- **Menyular**: aktiv menyuların URL-ləri, priority=0.80, changefreq=weekly
+- **Bloqlar**: `Blog::getCachedAll()` ilə bütün aktiv bloqlar, priority=0.80, changefreq=weekly
+
+### Yeni model əlavə qaydası
+1. Modelə `getCachedAll()` və `getSingleUrlAttribute()` əlavə et
+2. `SitemapController::single()` metoduna yeni modeli əlavə et
+3. `sitemap-single.blade.php` view-una yeni bölmə əlavə et
+
+---
+
+## 7. RSS Feed
+
+RSS 2.0 formatında feed generasiyası.
+
+### Endpoint-lər
+| URL | Təsvir |
+|---|---|
+| `/rss-index.opml` | OPML index (bütün dillərin RSS-ləri) |
+| `/{locale}/rss.xml` | Dilə görə RSS feed |
+
+### Daxil edilən məlumatlar
+- `Blog::getCachedAll()` ilə bütün aktiv bloqlar
+- Hər blog: title, description, link, pubDate, guid
+
+---
+
+## 8. Dil sistemi
+
+Çoxdilli sayt strukturu.
+
+### İşləmə mexanizmi
+- `Language` modeli → `languages` cədvəli (`is_active`, `sort_order`, `code`)
+- `LanguageMiddleware` → URL-dən dil kodunu çıxarır → `app()->setLocale()` ilə tətbiq edir
+- Default dil: `az` (URL-də prefix olmadan)
+- Digər dillər: `/en/...`, `/ru/...` prefiksi ilə
+
+### Dil dəyişdirmə
+`Language::switchLanguage()` metodu cari URL-i digər dilə çevirir:
+- `/az/bloqlar` → `/en/blogs` (slug tərcüməsi ilə)
+- Ana səhifə: `/az` → `/en`
+
+### Alternates (hreflang)
+`AlternatesService::compose()` hər səhifə üçün bütün dillərdə alternate URL-lər generasiya edir:
+```html
+<link rel="alternate" hreflang="az" href="http://site.com/az/bloqlar" />
+<link rel="alternate" hreflang="en" href="http://site.com/en/blogs" />
+```
+
+### Canonical
+`site/inc/canonical.blade.php` → `<link rel="canonical" href="..." />`
+
+### Tərcümə sistemi
+- `Translation` trait → `field_translations` cədvəli (polimorfik)
+- `$translatedAttributes = ['title', 'description', 'slug']` → modeldə tanımlanır
+- `TranslationHelper::basic($model, $translations, $key)` → toplu tərcümə yaratma
+
+---
+
+## 9. Dinamik route sistemi
+
+`routes/web.php` faylında bütün sayt route-ları avtomatik qeydə alınır.
+
+### İşləmə sxemi
+```
+Hər aktiv dil üçün:
+  1. Ana səhifə: /{locale} → HomeController@index
+  2. Config route-lar: Menu::getRoutes() → config/site/menu_routes.php-dən controller tapılır
+  3. 404 səhifə: /{locale}/404 → StaticPageController@fallback
+  4. Catch-all: /{locale}/{slug} → DynamicContentController@index
+```
+
+### DynamicContentController
+Qeydə alınmamış hər hansı slug üçün:
+1. `FieldTranslation::getBySlug($slug)` → slug-ı `field_translations` cədvəsindən tapır
+2. İlgili modeli (`$data->model`) yükləyir
+3. `ContentResolver::handle($model)` → modelin `$controller` property-sindən controller tapır
+4. `$controller->single($model)` çağırır
+
+### Yeni dinamik model əlavə qaydası
+1. Modelə `public $controller = XXXController::class;` property əlavə et
+2. Controller-ə `single($model)` metodu yaz
+3. Seeder-dən model+slug yarat → avtomatik `/{locale}/{slug}` ilə əlçatan olacaq
+
+### Route prioritet sırası
+1. `/{locale}` → ana səhifə (dəqiq uyğunluq)
+2. `/{locale}/{config_slug}` → config route-lar (bloqlar, əlaqə)
+3. `/{locale}/404` → 404 səhifə
+4. `/{locale}/{slug}` → catch-all dinamik route
+
+---
+
 ## 📜 Lisenziya
 
 <!-- Bu layihə MIT lisenziyası ilə yayımlanır.   -->
