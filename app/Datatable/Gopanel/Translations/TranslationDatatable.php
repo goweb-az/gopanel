@@ -56,10 +56,10 @@ class TranslationDatatable extends GopanelDatatable
     private function itemActions(Model $item): string
     {
         $view = '';
-        if (auth("gopanel")->user()->can("gopanel.translations.edit")) {
+        if (auth("gopanel")->user()->can("gopanel.settings.translations.edit")) {
             $view .= $this->itemEditBtn($item);
         }
-        if (auth("gopanel")->user()->can("gopanel.translations.delete")) {
+        if (auth("gopanel")->user()->can("gopanel.settings.translations.delete")) {
             $view .= $this->itemDeleteBtn($item);
         }
         return '<div class="actions text-center">' . $view . '</div>';
@@ -67,7 +67,7 @@ class TranslationDatatable extends GopanelDatatable
 
     private function itemEditBtn(Model $item): string
     {
-        $url    = route("gopanel.translations.get.form", $item);
+        $url    = route("gopanel.settings.translations.get.form", $this->itemKey($item));
         return ' <a href="' . $url . '" class="btn btn-outline-success waves-effect waves-light edit" data-bs-toggle="tooltip" data-bs-placement="top" title="Məlumata düzəliş et"> 
                     <i class="fas fa-pen f-20"></i> 
                 </a> ';
@@ -75,8 +75,8 @@ class TranslationDatatable extends GopanelDatatable
 
     private function itemDeleteBtn(Model $item)
     {
-        $url        = route("gopanel.general.delete", $item);
-        return '<a  class="btn btn-outline-danger waves-effect waves-light delete" data-url="' . $url . '" data-key="' . get_class($item)  . '"" data-bs-toggle="tooltip" data-bs-placement="top" title="Məlumatı sil">
+        $url        = route("gopanel.general.delete", $this->itemKey($item));
+        return '<a  class="btn btn-outline-danger waves-effect waves-light delete" data-url="' . $url . '" data-key="' . get_class($item)  . '" data-bs-toggle="tooltip" data-bs-placement="top" title="Məlumatı sil">
                     <i class="fas fa-trash"></i>
                 </a> ';
     }

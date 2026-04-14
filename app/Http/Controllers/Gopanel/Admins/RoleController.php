@@ -42,8 +42,31 @@ class RoleController extends GoPanelController
             $data           = $request->except(['_token', 'permissions']);
             $message        = !is_null($item->id) ? "Məlumat uğurla dəyişdirildi!" : "Məlumat uğurla yaradıldı!";
             $item           = $this->crudHelper->saveInstance($item, $data);
-            if (count($permissions ?? []))
+
+            if (count($permissions ?? [])) {
+                $oldPermissions = $item->permissions->pluck('name')->toArray();
                 $item->syncPermissions($permissions);
+                $newPermissions = $item->fresh()->permissions->pluck('name')->toArray();
+
+                // Permission dəyişikliyi varsa əl ilə activity log yaz
+                $added   = array_diff($newPermissions, $oldPermissions);
+                $removed = array_diff($oldPermissions, $newPermissions);
+                if (!empty($added) || !empty($removed)) {
+                    activity()
+                        ->performedOn($item)
+                        ->causedBy(Auth::guard('gopanel')->user())
+                        ->event('updated')
+                        ->withProperties([
+                            'old' => ['permissions' => $oldPermissions],
+                            'attributes' => ['permissions' => $newPermissions],
+                            'added' => array_values($added),
+                            'removed' => array_values($removed),
+                        ])
+                        ->useLog('CustomRole')
+                        ->log(":causer «{$item->name}» vəzifəsinin icazələrini yenilədi (" . count($newPermissions) . ' icazə)');
+                }
+            }
+
             $this->response['redirect'] = isset($item->id) ? route("gopanel.admins.roles.index") : false;
             $this->success_response($item, $message);
         } catch (\Exception $e) {

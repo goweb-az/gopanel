@@ -171,3 +171,60 @@
 .vertical-collpsed .logo span.logo-sm{
     margin-left: -20px!important;
 }
+
+
+/* Gopanel Atcitity Start */
+
+.json-document { font-size: 13px; }
+.json-viewer-section { border: 1px solid #e9ecef; border-radius: 6px; margin-bottom: 1rem; }
+.json-viewer-section .section-header {
+    background: #f8f9fa; padding: 10px 15px; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid #e9ecef; border-radius: 6px 6px 0 0;
+}
+.json-viewer-section .section-header:hover { background: #e9ecef; }
+.json-viewer-section .section-body { padding: 15px; }
+.json-viewer-section.collapsed .section-body { display: none; }
+.json-viewer-section.collapsed .section-header { border-radius: 6px; border-bottom: none; }
+.log-meta-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+.log-meta-item { background: #f8f9fa; padding: 10px 14px; border-radius: 6px; }
+.log-meta-item .label { font-size: 11px; color: #6c757d; text-transform: uppercase; margin-bottom: 2px; }
+.log-meta-item .value { font-size: 14px; font-weight: 500; }
+.copy-json-btn { font-size: 12px; }
+
+/* Gopanel Atcitity ENd */
+
+/* ─── Role Permission Form ──────────────────────────── */
+.role-permission-form .rpf-card {
+    transition: box-shadow .2s ease, transform .15s ease;
+}
+.role-permission-form .rpf-card:hover {
+    box-shadow: 0 4px 15px rgba(0,0,0,.1) !important;
+    transform: translateY(-1px);
+}
+.role-permission-form .rpf-card-header {
+    border-radius: .375rem .375rem 0 0;
+}
+.role-permission-form .rpf-check-label {
+    font-size: 0.875rem;
+    color: #495057;
+    cursor: pointer;
+}
+.role-permission-form .rpf-check-row:hover {
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}
+.role-permission-form .rpf-badge-primary {
+    background-color: rgba(63, 106, 216, 0.15) !important;
+    color: #3f6ad8;
+}
+.role-permission-form .rpf-badge-success {
+    background-color: rgba(25, 135, 84, 0.15) !important;
+    color: #0f5132;
+}
+.role-permission-form .rpf-counter {
+    min-width: 28px;
+    text-align: center;
+    font-size: 0.8rem;
+}
+/* ─── Role Permission Form End ──────────────────────── */

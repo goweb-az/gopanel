@@ -1,6 +1,6 @@
 <?php return array (
   'title' => 
   array (
-    'dfg' => 'dfgdfgdfg',
+    'hfg' => 'fghfgh',
   ),
 );

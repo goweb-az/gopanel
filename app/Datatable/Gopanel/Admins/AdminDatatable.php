@@ -51,16 +51,16 @@ class AdminDatatable extends GopanelDatatable
 
     private function itemEditBtn(Model $item): string
     {
-
-        return ' <a href="' . route("gopanel.admins.get.form", $item) . '" class="btn btn-outline-success waves-effect waves-light edit" data-bs-toggle="tooltip" data-bs-placement="top" title="Məlumata düzəliş et"> 
+        $url = route("gopanel.admins.get.form", $this->itemKey($item));
+        return ' <a href="' . $url . '" class="btn btn-outline-success waves-effect waves-light edit" data-bs-toggle="tooltip" data-bs-placement="top" title="Məlumata düzəliş et"> 
                     <i class="fas fa-pen f-20"></i> 
                 </a> ';
     }
 
     private function itemDeleteBtn(Model $item)
     {
-        $route = route("gopanel.general.delete", $item);
-        return ' <a href="' . $route . '" class="btn btn-outline-danger waves-effect waves-light delete" data-url="' . $route . '" data-key="' . $item->getTable() . '"" data-bs-toggle="tooltip" data-bs-placement="top" title="Məlumatı sil"> 
+        $route = route("gopanel.general.delete", $this->itemKey($item));
+        return ' <a href="' . $route . '" class="btn btn-outline-danger waves-effect waves-light delete" data-url="' . $route . '" data-key="' . get_class($item) . '" data-bs-toggle="tooltip" data-bs-placement="top" title="Məlumatı sil"> 
                     <i class="fas fa-trash"></i> 
                 </a> ';
     }

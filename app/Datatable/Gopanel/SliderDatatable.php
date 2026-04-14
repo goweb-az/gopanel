@@ -51,7 +51,7 @@ class SliderDatatable extends GopanelDatatable
 
     private function itemEditBtn(Model $item): string
     {
-        $url    = route("gopanel.slider.get.form", $item);
+        $url    = route("gopanel.slider.get.form", $this->itemKey($item));
         return ' <a href="' . $url . '" class="btn btn-outline-success waves-effect waves-light edit" data-bs-toggle="tooltip" data-bs-placement="top" title="Məlumata düzəliş et"> 
                     <i class="fas fa-pen f-20"></i> 
                 </a> ';
@@ -59,8 +59,8 @@ class SliderDatatable extends GopanelDatatable
 
     private function itemDeleteBtn(Model $item)
     {
-        $url        = route("gopanel.general.delete", $item);
-        return '<a  class="btn btn-outline-danger waves-effect waves-light delete" data-url="' . $url . '" data-key="' . get_class($item)  . '"" data-bs-toggle="tooltip" data-bs-placement="top" title="Məlumatı sil">
+        $url        = route("gopanel.general.delete", $this->itemKey($item));
+        return '<a  class="btn btn-outline-danger waves-effect waves-light delete" data-url="' . $url . '" data-key="' . get_class($item)  . '" data-bs-toggle="tooltip" data-bs-placement="top" title="Məlumatı sil">
                     <i class="fas fa-trash"></i>
                 </a> ';
     }

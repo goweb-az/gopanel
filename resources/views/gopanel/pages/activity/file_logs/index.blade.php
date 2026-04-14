@@ -7,18 +7,21 @@
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <div>
-                        <h4 class="mb-sm-0 font-size-18">Fayl logları</h4>
-                        <small class="text-danger">Burada yalnız son 15 günün logunu görəbilərsiniz daha çoxu üçün sayt adminstarsiası ilə əlaqə saxlayın</small>
-                    </div>
+                    <h4 class="mb-sm-0 font-size-18">Sistem Logları</h4>
 
-                    @if (count($_GET))
-                    <div class="page-title-right">
-                        <a class="btn btn-outline-primary" href="{{route("gopanel.activity.file-logs.index")}}">
-                            <i class="fas fa-trash-restore-alt"></i> Filteri sıfırla
+                    <div class="page-title-right d-flex align-items-center gap-2">
+                        <a href="/log-viewer" target="_blank" class="btn btn-outline-primary">
+                            <i class="fas fa-external-link-alt"></i> Log Viewer
                         </a>
+                        @if(auth('gopanel')->user()->can('gopanel.activity.file-logs.cleanup'))
+                        <button class="btn btn-outline-danger" id="cleanup-btn" data-url="{{ route('gopanel.activity.file-logs.cleanup') }}">
+                            <i class="fas fa-broom"></i> Təmizlə
+                        </button>
+                        @endif
+                        <button class="btn btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#filterPanel">
+                            <i class="fas fa-filter"></i> Filter
+                        </button>
                     </div>
-                    @endif
 
                 </div>
             </div>
@@ -43,7 +46,17 @@
 <!-- End Page-content -->
 @include('gopanel.pages.activity.file_logs.inc.modal')
 @endsection
-@push('scripts')
-<script src="{{asset("assets/gopanel/libs/json-viewer/jquery.json-viewer.js")}}"></script>
-<script src="{{asset('/assets/gopanel/js/modules/activity.js?v='.time())}}"></script>
+
+@push('styles')
+<link rel="stylesheet" href="{{asset('/assets/gopanel/libs/select2/css/select2.min.css')}}">
+<link rel="stylesheet" href="{{asset('/assets/gopanel/libs/toastr/build/toastr.min.css')}}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery.json-viewer@1.5.0/json-viewer/jquery.json-viewer.css">
 @endpush
+
+@push('scripts')
+<script src="{{asset('/assets/gopanel/libs/select2/js/select2.min.js')}}"></script>
+<script src="{{asset('/assets/gopanel/libs/toastr/build/toastr.min.js')}}"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery.json-viewer@1.5.0/json-viewer/jquery.json-viewer.js"></script>
+<script src="{{asset("/assets/gopanel/js/modules/activity/file-logs.js?v=".time())}}"></script>
+@endpush
+

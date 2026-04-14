@@ -55,16 +55,11 @@ function initTable(_columns, dTableSourceRoute, dTableElement, options, callback
                 orderable: false
             }
         ],
-        "fnPreDrawCallback": function() {
-            //alert("Pre Draw");
-            setTimeout(function() {
-                initDatatableUiElements();
-            }, 100);
-            $('#dataTables_processing').attr('style',
-                'font-size: 20px; font-weight: bold; padding-bottom: 60px; display: block; z-index: 10000 !important'
-            );
+        "drawCallback": function() {
+            initDatatableUiElements();
         },
         "initComplete": function(settings, json) {
+            initDatatableUiElements();
             if (typeof callback === 'function') {
                 callback();
             }

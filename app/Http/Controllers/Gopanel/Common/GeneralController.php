@@ -23,6 +23,15 @@ class GeneralController extends Controller
         $this->service = $service;
     }
 
+    /**
+     * Gələn dəyərin uid və ya id olduğunu müəyyən edib modeli tapır.
+     */
+    private function resolveItem($modelInstance, $id)
+    {
+        $column = is_numeric($id) && (int)$id == $id ? 'id' : 'uid';
+        return $modelInstance->where($column, $id)->first();
+    }
+
     public function add(Request $request)
     {
         try {
@@ -70,7 +79,7 @@ class GeneralController extends Controller
                 $attributes                     = $request->except(['id', 'key']);
                 if (class_exists($class)) {
                     $modelInstance = app($class);
-                    $item = $modelInstance->where("id", $id)->first();
+                    $item = $this->resolveItem($modelInstance, $id);
                     if (isset($item->id)) {
                         foreach ($attributes as $key => $value) {
                             if (isset($item->$key)) {
@@ -99,7 +108,7 @@ class GeneralController extends Controller
         return $this->response_json();
     }
 
-    public function delete($id = null, Request $request)
+    public function delete(Request $request, $id = null)
     {
         try {
             if (is_null($id)) {
@@ -152,7 +161,7 @@ class GeneralController extends Controller
                 $class          = '\\' . $class;
                 if (class_exists($class)) {
                     $modelInstance = app($class);
-                    $item = $modelInstance->where("id", $id)->first();
+                    $item = $this->resolveItem($modelInstance, $id);
                     $item->$row = $request->value;
                     if (!$item->save())
                         throw new Exception("Xeta bash verdi");
@@ -180,7 +189,7 @@ class GeneralController extends Controller
                 if ($this->service->class_exists($class)) {
                     $modelInstance = $this->service->modelInstance($class);
 
-                    $item = $modelInstance->where("id", $id)->first();
+                    $item = $this->resolveItem($modelInstance, $id);
                     if (isset($item->id) && isset($item->$row)) {
                         $item->$row = $status == 'true' ? 1 : 0;
                         if ($item->save()) {
@@ -207,7 +216,7 @@ class GeneralController extends Controller
         try {
             $row            = $request->row;
             $rows           = $request->data;
-            $requestModel   = $request->key;
+            $requestModel   = ModelList::get($request->key) ?? $request->key;
             $counter        = 0;
             $updatedData    = [];
             if (class_exists($requestModel)) {
@@ -254,7 +263,7 @@ class GeneralController extends Controller
                 $class  = $this->service->getMorphClass($class, $hash);
                 if (class_exists($class)) {
                     $modelInstance = app($class);
-                    $item = $modelInstance->where("id", $id)->first();
+                    $item = $this->resolveItem($modelInstance, $id);
                     if (isset($item->id)) {
                         $item->archived_at = now();
                         if ($item->save()) {

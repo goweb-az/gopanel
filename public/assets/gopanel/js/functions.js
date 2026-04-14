@@ -136,11 +136,28 @@ function getCookie(cname) {
 }
 
 function showError(error){
-    let errorMessage = 'An error occurred';
-    if (error.responseJSON && error.responseJSON.message) {
+    var errorMessage = 'Bilinməyən xəta baş verdi';
+    if (error.status === 422 && error.responseJSON && error.responseJSON.errors) {
+        var msgs = [];
+        $.each(error.responseJSON.errors, function(key, val){
+            msgs.push(val[0]);
+        });
+        errorMessage = msgs.join('<br>');
+    } else if (error.responseJSON && error.responseJSON.message) {
         errorMessage = error.responseJSON.message;
     } else if (error.responseText) {
-        errorMessage = error.responseText;
+        try {
+            var parsed = JSON.parse(error.responseText);
+            if (parsed.errors) {
+                var msgs2 = [];
+                $.each(parsed.errors, function(key, val){ msgs2.push(val[0]); });
+                errorMessage = msgs2.join('<br>');
+            } else if (parsed.message) {
+                errorMessage = parsed.message;
+            }
+        } catch(e) {
+            errorMessage = error.responseText.substring(0, 300);
+        }
     }
     basicAlert(errorMessage, 'error');
 }

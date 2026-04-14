@@ -12,6 +12,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call(AdminSeeder::class);
+        $this->call(SiteSettingSeeder::class);
         $this->call(DefaultCountriesAndCitiesSeeder::class);
         $this->call(LanguageSeeder::class);
         // $this->call(RolesTableSeeder::class);

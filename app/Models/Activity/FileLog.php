@@ -48,24 +48,44 @@ class FileLog extends BaseModel
         return $this?->admin?->full_name ?? NULL;
     }
 
+    public function getLevelColorAttribute()
+    {
+        return match ($this->level) {
+            'error', 'critical', 'alert', 'emergency' => 'danger',
+            'warning' => 'warning',
+            'notice'  => 'info',
+            'info'    => 'primary',
+            'debug'   => 'secondary',
+            default   => 'secondary',
+        };
+    }
 
-    // public function getUserLinkAttribute()
-    // {
-    //     return !empty($this->user_name) ? '<a href="' . route("gopanel.file-logs.index", ['user_id' => $this->user->id]) . '">' . $this->user_name . '</a>' : null;
-    // }
+    public function getLevelIconAttribute()
+    {
+        return match ($this->level) {
+            'error', 'critical', 'alert', 'emergency' => 'fas fa-exclamation-circle',
+            'warning' => 'fas fa-exclamation-triangle',
+            'notice', 'info' => 'fas fa-info-circle',
+            'debug' => 'fas fa-bug',
+            default => 'fas fa-file-alt',
+        };
+    }
 
-    // public function getAdminLinkAttribute()
-    // {
-    //     return !empty($this->admin_name) ? '<a href="' . route("gopanel.file-logs.index", ['admin_id' => $this->admin->id]) . '">' . $this->admin_name . '</a>' : null;
-    // }
+    public function getLevelBadgeAttribute(): string
+    {
+        return '<span class="badge bg-' . $this->level_color . '">' . strtoupper($this->level ?? '-') . '</span>';
+    }
 
-    // public function getChannelLinkAttribute()
-    // {
-    //     return !empty($this->channel) ? '<a href="' . route("gopanel.file-logs.index", ['channel' => $this->channel]) . '">' . $this->channel . '</a>' : null;
-    // }
+    public function getMessageShortAttribute(): string
+    {
+        $msg = $this->message ?? '-';
+        $short = mb_substr($msg, 0, 60);
+        $dots = mb_strlen($msg) > 60 ? '...' : '';
+        return '<span title="' . e($msg) . '">' . e($short) . $dots . '</span>';
+    }
 
-    // public function getLevelLinkAttribute()
-    // {
-    //     return !empty($this->level) ? '<a href="' . route("gopanel.file-logs.index", ['level' => $this->level]) . '">' . $this->level . '</a>' : null;
-    // }
+    public function getCreatedAtFormattedAttribute(): string
+    {
+        return $this->created_at ? $this->created_at->format('Y-m-d H:i:s') : '-';
+    }
 }

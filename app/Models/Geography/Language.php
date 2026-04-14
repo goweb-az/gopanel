@@ -62,4 +62,40 @@ class Language extends BaseModel
             return $query->get();
         });
     }
+
+    /**
+     * Route regex üçün aktiv dil kodlarını qaytarır (az|en|ru)
+     */
+    public static function getActiveCodesForRouteRegex(): string
+    {
+        $codes = self::getCachedAll()->pluck('code')->toArray();
+        return implode('|', $codes) ?: 'az';
+    }
+
+    /**
+     * Dil dəyişdirmə URL-ini qaytarır
+     */
+    public function switchLanguage(): string
+    {
+        $currentLocale = app()->getLocale();
+        $currentUrl    = url()->current();
+        $baseUrl       = url('/');
+
+        // URL-dən base hissəni çıxar, yalnız path saxla
+        $path = str_replace($baseUrl, '', $currentUrl);
+        $path = ltrim($path, '/');
+
+        // Path-in əvvəlində dil kodu varsa dəyişdir, yoxdursa əlavə et
+        $segments = $path ? explode('/', $path) : [];
+
+        $activeCodes = self::getCachedAll()->pluck('code')->toArray();
+
+        if (!empty($segments) && in_array($segments[0], $activeCodes)) {
+            $segments[0] = $this->code;
+        } else {
+            array_unshift($segments, $this->code);
+        }
+
+        return $baseUrl . '/' . implode('/', $segments);
+    }
 }

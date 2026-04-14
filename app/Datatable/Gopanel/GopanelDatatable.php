@@ -69,6 +69,14 @@ abstract class GopanelDatatable
     }
 
     /**
+     * Modelin identifier_id-sini qaytarır, yoxdursa id.
+     */
+    protected function itemKey(Model $item)
+    {
+        return $item->identifier_id ?? $item->id;
+    }
+
+    /**
      * @return Builder
      */
     protected abstract function query(): Builder;

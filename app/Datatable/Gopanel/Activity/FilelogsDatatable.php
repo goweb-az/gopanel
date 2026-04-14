@@ -4,26 +4,25 @@ namespace App\Datatable\Gopanel\Activity;
 
 use App\Datatable\Gopanel\GopanelDatatable;
 use App\Models\Activity\FileLog;
-use \Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-class FilelogsDatatable extends GopanelDatatable
+class FileLogsDatatable extends GopanelDatatable
 {
     public function __construct()
     {
         parent::__construct(FileLog::class, [
-            'id' => 'ID',
-            'user_link'     => 'İstifadəçi',
-            'admin_link'    => 'Admin',
-            'channel_link'  => 'Kanal',
-            'level_link'    => 'Səviyyə',
-            'message'       => 'Mesaj',
-            'created_at'    => 'Tarixi'
+            'id'                   => 'ID',
+            'level_badge'          => 'Level',
+            'channel'              => 'Kanal',
+            'user_name'            => 'İstifadəçi',
+            'message_short'        => 'Mesaj',
+            'created_at_formatted' => 'Tarix',
         ], [
-            [
+            'actions' => [
                 'title' => 'Əməliyyatlar',
-                'type' => 'callable',
-                'view' => function ($item) {
+                'type'  => 'callable',
+                'view'  => function ($item) {
                     return $this->itemActions($item);
                 }
             ],
@@ -34,60 +33,74 @@ class FilelogsDatatable extends GopanelDatatable
     {
         $query = $this->baseQueryScope();
 
-        if (request()->has("user_id") and request()->user_id >= 0) {
-            $query->where('user_id', request()->user_id);
+        // Filtrlar
+        if (request('level')) {
+            $query->where('level', request('level'));
         }
 
-        if (request()->has("admin_id") and request()->admin_id >= 0) {
-            $query->where('admin_id', request()->admin_id);
+        if (request('channel')) {
+            $query->where('channel', request('channel'));
         }
 
-        if (request()->has("channel") and !empty(request()->channel)) {
-            $query->where('channel', request()->channel);
+        if (request('company_id')) {
+            $query->where('company_id', request('company_id'));
         }
 
-        if (request()->has("level") and !empty(request()->level)) {
-            $query->where('level', request()->level);
+        if (request('user_id')) {
+            $query->where('user_id', request('user_id'));
         }
 
-        if (request()->has('from') || request()->has('to')) {
-            $from = request()->get('from');
-            $to = request()->get('to');
-            if (!is_null($from) && !is_null($to)) {
-                $query->whereBetween('created_at', [$from, $to]);
-            } elseif (!is_null($from)) {
-                $query->where('created_at', '>=', $from);
-            } elseif (!is_null($to)) {
-                $query->where('created_at', '<=', $to);
-            }
+        if (request('date_from')) {
+            $query->where('created_at', '>=', request('date_from') . ' 00:00:00');
         }
 
-        if ($this->getSearchInput()) {
-            $searchInput = strtolower($this->getSearchInput());
-            $query->where(function ($q) use ($searchInput) {
-                $q->whereRaw('LOWER(channel) LIKE ?', ["%{$searchInput}%"]);
-                $q->whereRaw('LOWER(level) LIKE ?', ["%{$searchInput}%"]);
-                $q->orWhere('message', 'LIKE', "%{$searchInput}%");
-                $q->orWhere('context', 'LIKE', "%{$searchInput}%");
-                $q->orWhere('log_details', 'LIKE', "%{$searchInput}%");
+        if (request('date_to')) {
+            $query->where('created_at', '<=', request('date_to') . ' 23:59:59');
+        }
+
+        // Axtarış — yalnız file_logs cədvəlinə
+        if ($search = $this->getSearchInput()) {
+            $query->where(function ($q) use ($search) {
+                $q->where('message', 'LIKE', "%{$search}%")
+                    ->orWhere('channel', 'LIKE', "%{$search}%")
+                    ->orWhere('level', 'LIKE', "%{$search}%");
             });
         }
+
         return $query;
+    }
+
+    protected function order(Builder $query, string $columnName, string $columnSort): void
+    {
+        $query->orderBy("id", "DESC");
     }
 
 
     private function itemActions(Model $item): string
     {
         $view = '';
-        $view .= $this->itemDeleteBtn($item);
+        if (auth("gopanel")->user()->can("gopanel.activity.file-logs.view")) {
+            $view .= $this->itemViewBtn($item);
+        }
+        if (auth("gopanel")->user()->can("gopanel.activity.file-logs.delete")) {
+            $view .= $this->itemDeleteBtn($item);
+        }
         return '<div class="actions text-center">' . $view . '</div>';
     }
 
-    private function itemDeleteBtn(Model $item, $url = null)
+    private function itemViewBtn(Model $item): string
     {
-        $url = route('gopanel.activity.file-logs.show', $item->id);
-        return '<a  class="btn btn-outline-primary waves-effect waves-light show-log" data-url="' . $url . '" data-bs-toggle="tooltip" data-bs-placement="top" title="Ətarflı bax">
-                    <i class="fas fa-eye"></i>
+        $url = route("gopanel.activity.file-logs.view", $this->itemKey($item));
+        return ' <a href="' . $url . '" class="btn btn-outline-primary waves-effect waves-light view-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Bax">
+                    <i class="fas fa-eye f-20"></i>
+                </a> ';
+    }
+
+    private function itemDeleteBtn(Model $item): string
+    {
+        $url = route("gopanel.activity.file-logs.delete", $this->itemKey($item));
+        return '<a class="btn btn-outline-danger waves-effect waves-light delete-btn" data-url="' . $url . '" data-key="' . get_class($item) . '" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="Sil">
+                    <i class="fas fa-trash"></i>
                 </a> ';
     }
 }

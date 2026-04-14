@@ -25,9 +25,9 @@ trait UiElements
      */
     public function getStarIconAttribute(): string
     {
-        $id = in_array('uid', $this->getFillable()) ? $this->uid : $this->id;
+        $key = $this->identifier_id;
         $filled = $this->is_favorite == 1 ? 'filled' : '';
-        return '<div class="set-star rating-select is_favorite ' . $filled . ' " data-url="' . route("crm.general.is.favorite", $id) . '" data-key="' . $this->getTableHash() . '" data-id="' . $this->id . '"><i class="fa fa-star"></i></div>';
+        return '<div class="set-star rating-select is_favorite ' . $filled . ' " data-url="' . route("crm.general.is.favorite", $key) . '" data-key="' . $this->getTableHash() . '" data-id="' . $key . '"><i class="fa fa-star"></i></div>';
     }
 
     /**
@@ -97,13 +97,14 @@ trait UiElements
 
     public  function double_click_edit($row, $routeName = null)
     {
-        $route      = is_null($routeName) ? route("gopanel.general.editable", $this->id) : route($routeName, $this);
+        $key        = $this->identifier_id;
+        $route      = is_null($routeName) ? route("gopanel.general.editable", $key) : route($routeName, $this);
         $text_title = !empty($this->{$row}) ? str(html_entity_decode(strip_tags($this->{$row})))->limit(55) : $this->{$row};
         return '
         <span class="editable"
             data-model="' . addslashes($this->getModelClass()) . '"
             data-row="' . addslashes($row) . '"
-            data-id="' . addslashes($this->id) . '"
+            data-id="' . addslashes($key) . '"
             data-url="' . addslashes($route) . '"
             data-text="' . $this->{$row} . '"
         >
@@ -115,7 +116,38 @@ trait UiElements
     {
         $class      = count($class) ? implode(" ", $class) : 'is_active';
         $model      = get_class($this);
-        $checked    = $checked ? 'checked' : '';
+        $checkedAttr = $checked ? 'checked' : '';
+        $url        = is_null($url) ? route("general.status.change") : $url;
+        $labelText  = $checked ? $active_text : $deactive_text;
+        $labelClass = $checked ? 'text-success' : 'text-danger';
+        return '
+            <div class="form-check form-switch">
+                <input
+                      class="form-check-input ' . $class . '"
+                      type="checkbox"
+                      role="switch"
+                      data-id="' . $this->identifier_id . '"
+                      data-row="' . $row . '"
+                      data-model="' . $model . '"
+                      data-url="' . $url . '"
+                      data-on-text="' . $active_text . '"
+                      data-off-text="' . $deactive_text . '"
+                      ' . $checkedAttr . '
+                />
+                <label class="form-check-label ' . $labelClass . ' fw-semibold" style="font-size:12px;">' . $labelText . '</label>
+            </div>
+        ';
+    }
+
+    /**
+     * Bootstrap Switch Button toggle (requires bootstrap-switch-button library)
+     * Used for datatable rows where switch-style toggle is needed.
+     */
+    public function toggle_btn($row = 'is_active', $checked = false, $class = [], $url = null, $active_text = 'Aktiv', $deactive_text = 'Deaktiv')
+    {
+        $class      = count($class) ? implode(" ", $class) : 'is_active';
+        $model      = get_class($this);
+        $checkedAttr = $checked ? 'checked' : '';
         $url        = is_null($url) ? route("general.status.change") : $url;
         return '
             <input
@@ -126,12 +158,12 @@ trait UiElements
                   data-offlabel="' . $deactive_text . '"
                   data-onstyle="success"
                   data-offstyle="danger"
-                  data-id="' . $this->uid . '"
+                  data-id="' . $this->identifier_id . '"
                   data-row="' . $row . '"
                   data-model="' . $model . '"
                   data-url="' . $url . '"
                   data-size="sm"
-                  ' . $checked . '
+                  ' . $checkedAttr . '
             />
         ';
     }

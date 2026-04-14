@@ -13,25 +13,33 @@ class AdminStoreRequest extends FormRequest
 
     public function rules(): array
     {
+        // Yalnız şifrə dəyişdirmə sorğusu
+        if ($this->_change_password_only) {
+            return [
+                'password' => ['required', 'string', 'min:6', 'confirmed'],
+            ];
+        }
+
         $isUpdate = $this->route('item') ? true : false;
 
-        return [
+        $rules = [
             'full_name'  => ['required', 'string', 'max:255'],
-            'email'      => [
-                'required',
-                'email',
-                'max:255',
-                $isUpdate
-                    ? 'unique:users,email,' . $this->route('item') // yenilemede bu emaili istisna et
-                    : 'unique:users,email',                      // yeni isə tam uniq olsun
-            ],
-            'password'   => $isUpdate
-                ? ['nullable', 'string', 'min:6', 'confirmed']
-                : ['required', 'string', 'min:6', 'confirmed'],
             'role'       => ['nullable', 'exists:roles,id'],
             'is_super'   => ['required', 'in:0,1'],
             'is_active'  => ['required', 'in:0,1'],
+            'image'      => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ];
+
+        if ($isUpdate) {
+            // Update zamanı email disabled olduğu üçün göndərilmir
+            $rules['email'] = ['nullable', 'email', 'max:255', 'unique:users,email,' . $this->route('item')];
+        } else {
+            // Create zamanı email + password mütləqdir
+            $rules['email']    = ['required', 'email', 'max:255', 'unique:users,email'];
+            $rules['password'] = ['required', 'string', 'min:6', 'confirmed'];
+        }
+
+        return $rules;
     }
 
     public function attributes(): array
