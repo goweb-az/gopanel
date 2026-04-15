@@ -10,9 +10,11 @@
                     <h4 class="mb-sm-0 font-size-18">Slayder</h4>
 
                     <div class="page-title-right">
+                        @can('gopanel.slider.add')
                         <button class="btn btn-success" id="open-create-modal" data-route="{{route("gopanel.slider.get.form")}}">
                             <i class="fas fa-plus"></i> Əlavə et
                         </button>
+                        @endcan
                     </div>
 
                 </div>

@@ -414,17 +414,73 @@ Hər aktiv dil üçün:
   4. Catch-all: /{locale}/{slug} → DynamicContentController@index
 ```
 
-### DynamicContentController
-Qeydə alınmamış hər hansı slug üçün:
-1. `FieldTranslation::getBySlug($slug)` → slug-ı `field_translations` cədvəsindən tapır
-2. İlgili modeli (`$data->model`) yükləyir
-3. `ContentResolver::handle($model)` → modelin `$controller` property-sindən controller tapır
-4. `$controller->single($model)` çağırır
+### DynamicContentController + ContentResolver
+Config-də qeydə alınmamış hər hansı `/{locale}/{slug}` sorğusu bu axınla həll olunur:
+
+```
+Sorğu: /az/veb-sayt-hazirlanmasinin-esas-merhelele
+  │
+  ▼
+DynamicContentController::index('veb-sayt-hazirlanmasinin-esas-merhelele')
+  │
+  ├─ 1. FieldTranslation::getBySlug($slug)
+  │     → field_translations cədvəlindən slug-ı tapır
+  │     → Nəticə: model_type=App\Models\Site\Blog, model_id=5
+  │
+  ├─ 2. $data->model (morphTo relation)
+  │     → Blog modeli yüklənir (id=5)
+  │
+  ├─ 3. ContentResolver::handle($model)
+  │     → $model->controller property oxunur
+  │     → BlogController instance yaradılır
+  │     → BlogController::single($blog) çağırılır
+  │
+  └─ 4. Nəticə qaytarılır (blog detail view)
+```
+
+#### ContentResolver (`app/Services/Site/ContentResolver.php`)
+```php
+class ContentResolver
+{
+    public function handle($model)
+    {
+        $controller = $model->controller;           // Model-dən controller class-ı al
+        $controllerInstance = app($controller);      // Laravel container ilə instance yarat
+        return $controllerInstance->single($model);  // single() metodunu çağır
+    }
+}
+```
+
+#### Model tərəfdə controller tanıtma
+Hər model öz detail səhifəsini hansı controller-in idarə edəcəyini bildirir:
+```php
+// App\Models\Site\Blog
+class Blog extends BaseModel
+{
+    public $controller = \App\Http\Controllers\Site\BlogController::class;
+    // ...
+}
+```
+
+#### Controller tərəfdə single() metodu
+```php
+// App\Http\Controllers\Site\BlogController
+public function single(Blog $blog)
+{
+    $this->check_item($blog);        // is_active yoxlanışı
+    $blog->incrementViews();          // baxış sayğacı
+    $this->meta_share($blog);         // meta data share (title, description)
+    $this->setSchema("...", [...]);    // schema markup
+    return view("site.pages.blog.single", compact("blog"));
+}
+```
 
 ### Yeni dinamik model əlavə qaydası
 1. Modelə `public $controller = XXXController::class;` property əlavə et
-2. Controller-ə `single($model)` metodu yaz
-3. Seeder-dən model+slug yarat → avtomatik `/{locale}/{slug}` ilə əlçatan olacaq
+2. Modelə `use MetaData, Translation;` trait-lərini əlavə et
+3. `$translatedAttributes`-a `'slug'` daxil et
+4. Controller-ə `single($model)` metodu yaz (meta_share, setSchema, view return)
+5. Seeder-dən model+slug yarat → avtomatik `/{locale}/{slug}` ilə əlçatan olacaq
 
 ### Route prioritet sırası
 1. `/{locale}` → ana səhifə (dəqiq uyğunluq)

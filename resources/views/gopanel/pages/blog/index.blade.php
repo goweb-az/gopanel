@@ -10,9 +10,11 @@
                     <h4 class="mb-sm-0 font-size-18">Bloq</h4>
 
                     <div class="page-title-right">
+                        @can('gopanel.blog.add')
                         <a class="btn btn-success" href="{{route("gopanel.blog.store")}}">
                             <i class="fas fa-plus"></i> Əlavə et
                         </a>
+                        @endcan
                     </div>
 
                 </div>

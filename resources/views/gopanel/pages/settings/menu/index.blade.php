@@ -10,9 +10,11 @@
                     <h4 class="mb-sm-0 font-size-18">Bloq</h4>
 
                     <div class="page-title-right">
+                        @can('gopanel.settings.menu.add')
                         <a class="btn btn-success" href="{{route("gopanel.settings.menu.store", ['parent_id' => $parent_id])}}">
                             <i class="fas fa-plus"></i> Əlavə et
                         </a>
+                        @endcan
                     </div>
 
                 </div>
@@ -51,12 +53,16 @@
                                             <td>{{$menu->menu_position}}</td>
                                             <td>{!! app('gopanel')->is_active_btn($menu, "is_active", ($menu->is_active == "1" ? true : false)) !!}</td>
                                             <td>
+                                                @can('gopanel.settings.menu.edit')
                                                 <a href="{{route("gopanel.settings.menu.store", $menu)}}" class="btn btn-outline-success waves-effect waves-light" data-bs-toggle="tooltip" data-bs-placement="top" title="Məlumata düzəliş et"> 
                                                     <i class="fas fa-pen f-20"></i> 
                                                 </a>
+                                                @endcan
+                                                @can('gopanel.settings.menu.delete')
                                                 <a href="{{route("gopanel.general.delete", $menu)}}" class="btn btn-outline-danger waves-effect waves-light delete" data-url="{{route("gopanel.general.delete", $menu)}}" data-key="{{ get_class($menu) }}" data-bs-toggle="tooltip" data-bs-placement="top" title="Məlumatı sil"> 
                                                     <i class="fas fa-trash"></i> 
                                                 </a>
+                                                @endcan
                                             </td>
                                         </tr>
                                     @endforeach

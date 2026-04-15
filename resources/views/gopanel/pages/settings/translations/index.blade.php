@@ -22,9 +22,11 @@
                             </a>
                         @endforeach
 
+                        @can('gopanel.settings.translations.add')
                         <button class="btn btn-success" id="open-create-modal" data-route="{{route("gopanel.settings.translations.get.form")}}">
                             <i class="fas fa-plus"></i> Əlavə et
                         </button>
+                        @endcan
                     </div>
 
                 </div>

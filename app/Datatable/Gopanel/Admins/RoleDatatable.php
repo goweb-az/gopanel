@@ -38,10 +38,10 @@ class RoleDatatable extends GopanelDatatable
     private function itemActions(Model $item): string
     {
         $view = '';
-        if (auth("gopanel")->user()->can("gopanel.admins.edit")) {
+        if (auth("gopanel")->user()->can("gopanel.admins.roles.edit")) {
             $view .= $this->itemEditBtn($item);
         }
-        if (auth("gopanel")->user()->can("gopanel.admins.delete") && $item->is_super == 0) {
+        if (auth("gopanel")->user()->can("gopanel.admins.roles.delete") && $item->is_super == 0) {
             $view .= $this->itemDeleteBtn($item);
         }
         return '<div class="actions text-center">' . $view . '</div>';
