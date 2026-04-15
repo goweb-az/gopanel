@@ -66,5 +66,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'gopanel' => \App\Http\Middleware\Gopanel::class,
         'language' => \App\Http\Middleware\LanguageMiddleware::class,
+        'site.redirects' => \App\Http\Middleware\Seo\SiteRedirectMiddleware::class,
+        // 'track.analytics' => \App\Http\Middleware\Seo\TrackAnalyticsMiddleware::class,
     ];
 }
