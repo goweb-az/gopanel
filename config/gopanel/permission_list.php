@@ -13,37 +13,43 @@ return [
 
         'Dillər' => [
             ['name' => 'gopanel.settings.languages.index', 'title' => 'Dillər siyahısı'],
-            ['name' => 'gopanel.settings.languages.store', 'title' => 'Dillər Add/Edit'],
-            ['name' => 'gopanel.settings.languages.delete', 'title' => 'Dillər silmə'],
+            ['name' => 'gopanel.settings.languages.add', 'title' => 'Dil əlavə etmə'],
+            ['name' => 'gopanel.settings.languages.edit', 'title' => 'Dil redaktə'],
+            ['name' => 'gopanel.settings.languages.delete', 'title' => 'Dil silmə'],
         ],
 
         'Tərcümələr' => [
             ['name' => 'gopanel.settings.translations.index', 'title' => 'Tərcümələr siyahısı'],
-            ['name' => 'gopanel.settings.translations.store', 'title' => 'Tərcümələr Add/Edit'],
-            ['name' => 'gopanel.settings.translations.delete', 'title' => 'Tərcümələr silmə'],
+            ['name' => 'gopanel.settings.translations.add', 'title' => 'Tərcümə əlavə etmə'],
+            ['name' => 'gopanel.settings.translations.edit', 'title' => 'Tərcümə redaktə'],
+            ['name' => 'gopanel.settings.translations.delete', 'title' => 'Tərcümə silmə'],
         ],
 
         'Adminlər' => [
             ['name' => 'gopanel.admins.index', 'title' => 'Adminlər siyahısı'],
-            ['name' => 'gopanel.admins.store', 'title' => 'Admin Add/Edit'],
+            ['name' => 'gopanel.admins.add', 'title' => 'Admin əlavə etmə'],
+            ['name' => 'gopanel.admins.edit', 'title' => 'Admin redaktə'],
             ['name' => 'gopanel.admins.delete', 'title' => 'Admin silmə'],
         ],
 
         'Vəzifələr' => [
             ['name' => 'gopanel.admins.roles.index', 'title' => 'Vəzifələr siyahısı'],
-            ['name' => 'gopanel.admins.roles.store', 'title' => 'Vəzifə Add/Edit'],
+            ['name' => 'gopanel.admins.roles.add', 'title' => 'Vəzifə əlavə etmə'],
+            ['name' => 'gopanel.admins.roles.edit', 'title' => 'Vəzifə redaktə'],
             ['name' => 'gopanel.admins.roles.delete', 'title' => 'Vəzifə silmə'],
         ],
 
         'Bloqlar' => [
             ['name' => 'gopanel.blog.index', 'title' => 'Bloqlar siyahısı'],
-            ['name' => 'gopanel.blog.store', 'title' => 'Bloq Add/Edit'],
+            ['name' => 'gopanel.blog.add', 'title' => 'Bloq əlavə etmə'],
+            ['name' => 'gopanel.blog.edit', 'title' => 'Bloq redaktə'],
             ['name' => 'gopanel.blog.delete', 'title' => 'Bloq silmə'],
         ],
 
         'Slayder' => [
             ['name' => 'gopanel.slider.index', 'title' => 'Slayder siyahısı'],
-            ['name' => 'gopanel.slider.store', 'title' => 'Slayder Add/Edit'],
+            ['name' => 'gopanel.slider.add', 'title' => 'Slayder əlavə etmə'],
+            ['name' => 'gopanel.slider.edit', 'title' => 'Slayder redaktə'],
             ['name' => 'gopanel.slider.delete', 'title' => 'Slayder silmə'],
         ],
 
@@ -55,7 +61,8 @@ return [
 
         'Sosial Şəbəkələr' => [
             ['name' => 'gopanel.contact.socials.index', 'title' => 'Sosial siyahısı'],
-            ['name' => 'gopanel.contact.socials.edit', 'title' => 'Sosial Add/Edit'],
+            ['name' => 'gopanel.contact.socials.add', 'title' => 'Sosial əlavə etmə'],
+            ['name' => 'gopanel.contact.socials.edit', 'title' => 'Sosial redaktə'],
             ['name' => 'gopanel.contact.socials.delete', 'title' => 'Sosial silmə'],
         ],
 
@@ -75,7 +82,8 @@ return [
 
         'SEO Yönləndirmələr' => [
             ['name' => 'gopanel.seo.site-redirects.index', 'title' => 'Yönləndirmələr siyahısı'],
-            ['name' => 'gopanel.seo.site-redirects.edit', 'title' => 'Yönləndirmə Add/Edit'],
+            ['name' => 'gopanel.seo.site-redirects.add', 'title' => 'Yönləndirmə əlavə etmə'],
+            ['name' => 'gopanel.seo.site-redirects.edit', 'title' => 'Yönləndirmə redaktə'],
             ['name' => 'gopanel.seo.site-redirects.delete', 'title' => 'Yönləndirmə silmə'],
         ],
 
@@ -91,7 +99,8 @@ return [
 
         'Menyu' => [
             ['name' => 'gopanel.settings.menu.index', 'title' => 'Menyu siyahısı'],
-            ['name' => 'gopanel.settings.menu.store', 'title' => 'Menyu Add/Edit'],
+            ['name' => 'gopanel.settings.menu.add', 'title' => 'Menyu əlavə etmə'],
+            ['name' => 'gopanel.settings.menu.edit', 'title' => 'Menyu redaktə'],
             ['name' => 'gopanel.settings.menu.delete', 'title' => 'Menyu silmə'],
         ],
 

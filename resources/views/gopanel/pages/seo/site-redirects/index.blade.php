@@ -10,9 +10,11 @@
                     <h4 class="mb-sm-0 font-size-18">Link yönləndirmələri</h4>
 
                     <div class="page-title-right">
+                        @can('gopanel.seo.site-redirects.add')
                         <button class="btn btn-success" id="open-create-modal" data-route="{{route("gopanel.seo.site-redirects.get.form")}}">
                             <i class="fas fa-plus"></i> Əlavə et
                         </button>
+                        @endcan
                     </div>
 
                 </div>

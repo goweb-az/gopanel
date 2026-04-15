@@ -10,9 +10,11 @@
                     <h4 class="mb-sm-0 font-size-18">Vəzifələr</h4>
 
                     <div class="page-title-right">
+                        @can('gopanel.admins.roles.add')
                         <a class="btn btn-success" href="{{route("gopanel.admins.roles.store")}}">
                             <i class="fas fa-plus"></i> Əlavə et
                         </a>
+                        @endcan
                     </div>
 
                 </div>

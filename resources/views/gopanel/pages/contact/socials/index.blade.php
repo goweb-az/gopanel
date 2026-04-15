@@ -10,9 +10,11 @@
                     <h4 class="mb-sm-0 font-size-18">Dillər</h4>
 
                     <div class="page-title-right">
+                        @can('gopanel.contact.socials.add')
                         <button class="btn btn-success" id="open-create-modal" data-route="{{route("gopanel.contact.socials.get.form")}}">
                             <i class="fas fa-plus"></i> Əlavə et
                         </button>
+                        @endcan
                     </div>
 
                 </div>

@@ -10,9 +10,11 @@
                     <h4 class="mb-sm-0 font-size-18">Dillər</h4>
 
                     <div class="page-title-right">
+                        @can('gopanel.settings.languages.add')
                         <button class="btn btn-success" id="open-create-modal" data-route="{{route("gopanel.settings.languages.get.form")}}">
                             <i class="fas fa-plus"></i> Əlavə et
                         </button>
+                        @endcan
                     </div>
 
                 </div>
@@ -48,12 +50,16 @@
                                             <td>{{$language?->country?->name}}</td>
                                             <td>{!! app('gopanel')->is_active_btn($language, "is_active", ($language->is_active == "1" ? true : false)) !!}</td>
                                             <td>
+                                                @can('gopanel.settings.languages.edit')
                                                 <a href="{{route("gopanel.settings.languages.get.form", $language)}}" class="btn btn-outline-success waves-effect waves-light edit" data-bs-toggle="tooltip" data-bs-placement="top" title="Məlumata düzəliş et"> 
                                                     <i class="fas fa-pen f-20"></i> 
                                                 </a>
+                                                @endcan
+                                                @can('gopanel.settings.languages.delete')
                                                 <a href="{{route("gopanel.general.delete", $language)}}" class="btn btn-outline-danger waves-effect waves-light delete" data-url="{{route("gopanel.general.delete", $language)}}" data-key="{{get_class($language)}}" data-bs-toggle="tooltip" data-bs-placement="top" title="Məlumatı sil"> 
                                                     <i class="fas fa-trash"></i> 
                                                 </a>
+                                                @endcan
                                             </td>
                                         </tr>
                                     @endforeach
