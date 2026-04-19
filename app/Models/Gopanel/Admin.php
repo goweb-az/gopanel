@@ -11,6 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -115,8 +116,8 @@ class Admin extends Authenticatable
 
     public function getAvatarUrlAttribute(): string
     {
-        if (!empty($this->image) && file_exists(public_path($this->image))) {
-            return asset($this->image);
+        if (!empty($this->image) && Storage::disk('public')->exists($this->image)) {
+            return Storage::disk('public')->url($this->image);
         }
 
         return Cache::rememberForever("admin_avatar_{$this->id}", function () {
