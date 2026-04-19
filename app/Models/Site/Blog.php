@@ -21,12 +21,13 @@ class Blog extends BaseModel
         'image',
         'date_time',
         'is_active',
-        'views'
+        'views',
     ];
+
     protected $files = ['image'];
+
     public $slug_key = 'title';
     public $translatedAttributes = ['title', 'description', 'slug'];
-
     public $controller = \App\Http\Controllers\Site\BlogController::class;
 
     public function getShortDescriptionAttribute()
@@ -39,10 +40,24 @@ class Blog extends BaseModel
         return Str::limit(html_entity_decode(strip_tags($this->description)), 100);
     }
 
+    public function getImageViewAttribute(): string
+    {
+        if (empty($this->image_url)) {
+            return '<span class="text-muted">Şəkil yoxdur</span>';
+        }
+
+        return '<img src="' . e($this->image_url) . '" alt="' . e($this->title ?? 'Blog') . '" style="width:50px;height:50px;object-fit:cover;border-radius:8px;">';
+    }
+
+    public function getIsActiveBtnAttribute(): string
+    {
+        return app('gopanel')->toggle_btn($this, 'is_active', $this->is_active == 1);
+    }
 
     public static function getBySlug($slug, $locale = null)
     {
         $locale = $locale ?? app()->getLocale();
+
         return Cache::remember("site_blog_{$locale}_{$slug}", now()->addDays(5), function () use ($slug, $locale) {
             return self::whereHas('translations', function ($query) use ($slug, $locale) {
                 $query->where('key', 'slug')
@@ -58,35 +73,31 @@ class Blog extends BaseModel
         $this->save();
     }
 
-
     public function getFormattedDateTimeAttribute()
     {
-        if (empty($this->date_time))
+        if (empty($this->date_time)) {
             return $this->date_time;
+        }
+
         return Carbon::parse($this->date_time)->locale(app()->getLocale())->isoFormat('D MMMM YYYY');
     }
 
-
-    /**
-     * Blog single səhifəsinin URL-ini qaytarır
-     */
     public function getSingleUrlAttribute(): ?string
     {
         $locale = app()->getLocale();
-        $slug   = $this->getTranslation('slug', $locale, true);
+        $slug = $this->getTranslation('slug', $locale, true);
+
         if (!$slug) {
             return null;
         }
+
         return url("{$locale}/{$slug}");
     }
 
-
-    /**
-     * Bütün aktiv bloqları cache-dən qaytarır
-     */
     public static function getCachedAll()
     {
         $locale = app()->getLocale();
+
         return Cache::remember("site_blogs_all_{$locale}", now()->addDays(5), function () {
             return self::where('is_active', true)->latest()->get();
         });

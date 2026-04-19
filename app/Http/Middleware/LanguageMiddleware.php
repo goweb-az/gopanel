@@ -8,33 +8,66 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
+use Symfony\Component\HttpFoundation\Response;
 
 class LanguageMiddleware
 {
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
-        $this->language($request, $next);
+        $response = $this->language($request);
+
+        if ($response) {
+            return $response;
+        }
+
         return $next($request);
     }
 
-
-    private function language($request, $next)
+    private function language(Request $request): ?Response
     {
-        $languages = Language::where("is_active", 1)->get()->pluck('code')->toArray();
-        if (count($languages)) {
-            $language = $request->route('language', 'az');
-            if ($language == 'gopanel') {
-                return $next($request);
-            }
-            if (in_array($language, $languages)) {
-                App::setLocale($language);
-                Session::put('locale', $language);
-            } else {
-                Log::channel("site")->warning("Gonderilen dil tapılmadı dil: {$language} [log LanguageMiddleware faylindan yazilib]", ['languages' => $languages]);
-                abort(404);
-            }
-        } else {
-            Log::channel("site")->warning("Dillər yaradılmayıb yaradılmayıb [log LanguageMiddleware faylindan yazilib]");
+        $defaultLanguage = Language::getDefaultCode(config('app.locale', 'az'));
+        $languages = Language::where('is_active', 1)->pluck('code')->toArray();
+
+        if (!count($languages)) {
+            Log::channel('site')->warning('Diller yaradilmayib [log LanguageMiddleware faylindan yazilib]');
+            App::setLocale($defaultLanguage);
+            Session::put('locale', $defaultLanguage);
+            return null;
         }
+
+        $routeLanguage = $request->route('language') ?? $request->segment(1);
+
+        if ($routeLanguage === 'gopanel') {
+            return null;
+        }
+
+        $language = $routeLanguage;
+
+        if (!$language || !in_array($language, $languages, true)) {
+            $sessionLanguage = Session::get('locale');
+            $language = in_array($sessionLanguage, $languages, true)
+                ? $sessionLanguage
+                : $defaultLanguage;
+        }
+
+        if (!$request->segment(1) && $request->path() === '/') {
+            App::setLocale($language);
+            Session::put('locale', $language);
+
+            return redirect()->route("site.{$language}.home.index");
+        }
+
+        if (in_array($language, $languages, true)) {
+            App::setLocale($language);
+            Session::put('locale', $language);
+            return null;
+        }
+
+        Log::channel('site')->warning(
+            "Gonderilen dil tapilmadi dil: {$language} [log LanguageMiddleware faylindan yazilib]",
+            ['languages' => $languages]
+        );
+
+        abort(404);
     }
 }

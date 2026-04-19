@@ -93,6 +93,7 @@ Route::group(['middleware' => 'gopanel'], function () {
             Route::get('/', [LanguageController::class, 'index'])->name('index');
             Route::get('/get/form/{item?}', [LanguageController::class, 'getForm'])->name('get.form');
             Route::post('/save/{item?}', [LanguageController::class, 'save'])->name('save');
+            Route::post('/toggle-default', [LanguageController::class, 'toggleDefault'])->name('toggle.default');
         });
 
         //Translates

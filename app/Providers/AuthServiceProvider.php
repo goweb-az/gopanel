@@ -25,9 +25,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         //eger adminin is_super columu 1 dirse o zaman butun role ve permissionlardan uzaq tutur
         Gate::before(function ($user, $ability) {
-
-            // Gopanel guard'dan gelen istekler
-            if (Auth::guard('gopanel')->check()) {
+            if ($user && isset($user->is_super)) {
                 return $user->is_super == 1 ? true : null;
             }
         });

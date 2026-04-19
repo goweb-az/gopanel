@@ -25,6 +25,9 @@ class Gopanel extends Middleware
         if (!Auth::guard("gopanel")->check()) {
             return redirect()->route('gopanel.auth.login');
         }
+
+        Auth::shouldUse('gopanel');
+
         return $next($request);
     }
 }
