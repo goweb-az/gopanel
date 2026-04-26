@@ -1,56 +1,56 @@
-# Gopanel Sənədləri
+# Gopanel Documentation
 
-Bu qovluqda Gopanel-in əsas modulları və istifadə qaydaları üzrə ayrıca sənədlər saxlanılır. Əsas `README.md` qısa giriş və quraşdırma üçün qalır, detallar isə burada bölmələrə ayrılıb.
+This directory contains separate documentation files for the main Gopanel modules and workflows. The root `README.md` stays focused on the project overview and quick installation, while detailed documentation lives here.
 
-## Sənəd Bölmələri
+## Documentation Sections
 
-- [Quraşdırma](installation.md)  
-  Layihənin yaradılması, `.env` ayarları, migrate və ilk seed prosesi.
+- [Installation](installation.md)  
+  Project setup, `.env` configuration, migrations, and first seed flow.
 
-- [Mock Seeder-lər və `mock:seed`](mock-seeders.md)  
-  Demo/test datalarının ayrıca idarə edilməsi, interaktiv seeder menyusu, `$mockName` qaydası və yeni mock seeder yaratmaq.
+- [Mock Seeders and `mock:seed`](mock-seeders.md)  
+  Optional demo/test data, the interactive seeder menu, `$mockName`, and how to create new mock seeders.
 
-- [Analitika Dashboard](analytics.md)  
-  Analytics axını, middleware, event/listener, dashboard blokları, UTM və reklam platformaları.
+- [Analytics Dashboard](analytics.md)  
+  Analytics flow, middleware, event/listener, dashboard widgets, UTM tracking, and ad platforms.
 
-- [Analytics və Bot Qeydləri](analytics-and-bots-readme.md)  
-  Analitika və bot izləmə ilə bağlı geniş qeydlər.
+- [Analytics and Bots Notes](analytics-and-bots-readme.md)  
+  Extended notes about analytics and bot tracking.
 
-- [GeoIP və `geoip:restore`](geoip.md)  
-  MaxMind GeoLite2 faylları, backup-dan bərpa, `geoip:restore --force` və path-lər.
+- [GeoIP and `geoip:restore`](geoip.md)  
+  MaxMind GeoLite2 files, restoring from backups, `geoip:restore --force`, and expected paths.
 
 - [SEO, Meta, Redirects, LLMs.txt](seo.md)  
-  Meta sistemi, SEO kodları, yönləndirmələr və LLMs.txt mexanizmi.
+  Meta resolution, SEO snippets, redirects, and LLMs.txt support.
 
-- [Tərcümələr](translations.md)  
-  `translations` və `field_translations` strukturu, `Translation` trait və translation seeder-ləri.
+- [Translations](translations.md)  
+  The `translations` and `field_translations` tables, the `Translation` trait, and translation seeders.
 
-- [Menyular və Dinamik Route-lar](menus-and-routes.md)  
-  Menyu sistemi, çoxdilli route qeydiyyatı və slug-a görə dinamik səhifə həlli.
+- [Menus and Dynamic Routes](menus-and-routes.md)  
+  Menu structure, multilingual route registration, and dynamic page resolution by slug.
 
-- [Sitemap və RSS](sitemap-rss.md)  
-  XML sitemap, RSS endpoint-ləri və yeni model əlavə etmə qaydası.
+- [Sitemap and RSS](sitemap-rss.md)  
+  XML sitemap, RSS endpoints, and how to add new models.
 
-- [Yeniləmə Sistemi](updater.md)  
-  `gopanel_updates.json`, GitHub update yoxlaması, action tipləri və backup mexanizmi.
+- [Updater System](updater.md)  
+  `gopanel_updates.json`, GitHub update checks, action types, and backup behavior.
 
-- [Development Qeydləri](development.md)  
-  Trait-lər, permission sistemi, fayl strukturu və developer üçün qısa qeydlər.
+- [Development Notes](development.md)  
+  Traits, permissions, file structure, and short development references.
 
-## Tövsiyə Olunan Oxuma Sırası
+## Recommended Reading Order
 
-1. [Quraşdırma](installation.md)
-2. [Mock Seeder-lər və `mock:seed`](mock-seeders.md)
-3. [GeoIP və `geoip:restore`](geoip.md)
-4. [Analitika Dashboard](analytics.md)
+1. [Installation](installation.md)
+2. [Mock Seeders and `mock:seed`](mock-seeders.md)
+3. [GeoIP and `geoip:restore`](geoip.md)
+4. [Analytics Dashboard](analytics.md)
 5. [SEO, Meta, Redirects, LLMs.txt](seo.md)
-6. [Menyular və Dinamik Route-lar](menus-and-routes.md)
+6. [Menus and Dynamic Routes](menus-and-routes.md)
 
-## Fayl Əlavə Etmə Qaydası
+## Adding New Documentation
 
-Yeni modul üçün sənəd əlavə ediləndə:
+When adding documentation for a new module:
 
-1. `docs/` altında ayrıca `.md` faylı yaradın.
-2. Bu `docs/README.md` faylındakı “Sənəd Bölmələri” siyahısına link əlavə edin.
-3. Lazımdırsa əsas `README.md` içindəki documentation siyahısına da link əlavə edin.
+1. Create a separate `.md` file under `docs/`.
+2. Add the link to the “Documentation Sections” list in this file.
+3. If needed, also add the link to the documentation list in the root `README.md`.
 
