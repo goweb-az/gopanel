@@ -203,8 +203,8 @@ function showDiff(path) {
     document.getElementById('diffModalLabel').textContent = path;
     document.getElementById('diff-content').classList.add('d-none');
     document.getElementById('diff-loading').classList.remove('d-none');
-    document.getElementById('diff-local').textContent = '';
-    document.getElementById('diff-remote').textContent = '';
+    document.getElementById('diff-local').innerHTML = '';
+    document.getElementById('diff-remote').innerHTML = '';
     modal.show();
 
     fetch(routeUrl('gopanel.system.updates.diff'), {
@@ -227,14 +227,70 @@ function showDiff(path) {
         }
 
         const data = response.data;
-        document.getElementById('diff-local').textContent = data.local_content || '(Fayl mövcud deyil)';
-        document.getElementById('diff-remote').textContent = data.remote_content || '(Fayl mövcud deyil)';
+        const localLines = (data.local_content || '').split('\n');
+        const remoteLines = (data.remote_content || '').split('\n');
+
+        document.getElementById('diff-local').innerHTML = data.local_content
+            ? renderDiffLines(localLines, remoteLines, 'local')
+            : '<span class="diff-line" style="color:#6e7681;padding:16px;">(Fayl mövcud deyil)</span>';
+
+        document.getElementById('diff-remote').innerHTML = data.remote_content
+            ? renderDiffLines(remoteLines, localLines, 'remote')
+            : '<span class="diff-line" style="color:#6e7681;padding:16px;">(Fayl mövcud deyil)</span>';
     })
     .catch(err => {
         document.getElementById('diff-loading').classList.add('d-none');
         document.getElementById('diff-content').classList.remove('d-none');
         document.getElementById('diff-local').textContent = 'Əlaqə xətası: ' + err.message;
     });
+}
+
+/**
+ * Diff sətrlərini rəngli render et
+ */
+function renderDiffLines(lines, otherLines, side) {
+    const maxLen = Math.max(lines.length, otherLines.length);
+    let html = '';
+
+    for (let i = 0; i < maxLen; i++) {
+        const line = lines[i];
+        const otherLine = otherLines[i];
+        const lineNum = i + 1;
+
+        if (i >= lines.length) {
+            // Bu tərəfdə sətir yoxdur
+            html += `<span class="diff-line diff-removed"><span class="line-num"></span>&nbsp;</span>`;
+        } else if (i >= otherLines.length) {
+            // Digər tərəfdə sətir yoxdur — bu tərəfə əlavə edilib
+            const cls = side === 'remote' ? 'diff-added' : 'diff-removed';
+            html += `<span class="diff-line ${cls}"><span class="line-num">${lineNum}</span>${escapeHtml(line)}</span>`;
+        } else if (line !== otherLine) {
+            // Fərqli sətir
+            const cls = side === 'remote' ? 'diff-added' : 'diff-changed';
+            html += `<span class="diff-line ${cls}"><span class="line-num">${lineNum}</span>${escapeHtml(line)}</span>`;
+        } else {
+            // Eyni sətir
+            html += `<span class="diff-line"><span class="line-num">${lineNum}</span>${escapeHtml(line)}</span>`;
+        }
+    }
+
+    return html;
+}
+
+/**
+ * Diff modal fullscreen toggle
+ */
+function toggleDiffFullscreen() {
+    const modal = document.getElementById('diffModal');
+    const btn = document.getElementById('btn-diff-fullscreen');
+
+    modal.classList.toggle('diff-fullscreen');
+
+    if (modal.classList.contains('diff-fullscreen')) {
+        btn.innerHTML = '<i class="fas fa-compress"></i>';
+    } else {
+        btn.innerHTML = '<i class="fas fa-expand"></i>';
+    }
 }
 
 /**
@@ -256,15 +312,35 @@ function applyUpdates() {
         }
     });
 
-    let confirmMsg = `${checkboxes.length} fayl yenilənəcək.`;
+    let htmlContent = `<p class="mb-2">${checkboxes.length} fayl yenilənəcək.</p>`;
     if (conflictFiles.length > 0) {
-        confirmMsg += `\n\n⚠️ ${conflictFiles.length} faylda konflikt var — lokal dəyişiklikləriniz itəcək:\n`;
-        conflictFiles.forEach(f => confirmMsg += `• ${f}\n`);
+        htmlContent += `<div class="alert alert-warning text-start py-2 px-3 mb-0" style="font-size: 13px;">`;
+        htmlContent += `<strong>⚠️ ${conflictFiles.length} faylda konflikt var</strong> — lokal dəyişiklikləriniz itəcək:<br>`;
+        conflictFiles.forEach(f => htmlContent += `<code style="font-size: 11px;">• ${f}</code><br>`);
+        htmlContent += `</div>`;
     }
-    confirmMsg += '\nDavam etmək istəyirsiniz?';
 
-    if (!confirm(confirmMsg)) return;
+    Swal.fire({
+        title: 'Yeniləmə təsdiqi',
+        html: htmlContent,
+        icon: conflictFiles.length > 0 ? 'warning' : 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#34c38f',
+        cancelButtonColor: '#74788d',
+        confirmButtonText: '<i class="bx bx-check"></i> Bəli, yenilə',
+        cancelButtonText: 'Ləğv et',
+        reverseButtons: true,
+    }).then((result) => {
+        if (!result.isConfirmed) return;
 
+        doApply(checkboxes);
+    });
+}
+
+/**
+ * Yeniləmə əməliyyatını icra et
+ */
+function doApply(checkboxes) {
     // Faylları versiyalara görə qruplama
     const filesByVersion = {};
     checkboxes.forEach(cb => {
@@ -347,29 +423,41 @@ function applyUpdates() {
  * Backup-dan geri al
  */
 function rollback(backupId) {
-    if (!confirm('Bu yeniləmə geri alınacaq. Davam etmək istəyirsiniz?')) return;
+    Swal.fire({
+        title: 'Geri alma təsdiqi',
+        text: 'Bu yeniləmə geri alınacaq. Davam etmək istəyirsiniz?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#f46a6a',
+        cancelButtonColor: '#74788d',
+        confirmButtonText: '<i class="bx bx-undo"></i> Bəli, geri al',
+        cancelButtonText: 'Ləğv et',
+        reverseButtons: true,
+    }).then((result) => {
+        if (!result.isConfirmed) return;
 
-    fetch(routeUrl('gopanel.system.updates.rollback'), {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': CSRF_TOKEN,
-            'Accept': 'application/json',
-        },
-        body: JSON.stringify({ backup_id: backupId }),
-    })
-    .then(res => res.json())
-    .then(response => {
-        if (response.status === 'error') {
-            showToast(response.message, 'error');
-            return;
-        }
+        fetch(routeUrl('gopanel.system.updates.rollback'), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': CSRF_TOKEN,
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({ backup_id: backupId }),
+        })
+        .then(res => res.json())
+        .then(response => {
+            if (response.status === 'error') {
+                showToast(response.message, 'error');
+                return;
+            }
 
-        showToast(response.message, 'success');
-        setTimeout(() => location.reload(), 1500);
-    })
-    .catch(err => {
-        showToast('Əlaqə xətası: ' + err.message, 'error');
+            showToast(response.message, 'success');
+            setTimeout(() => location.reload(), 1500);
+        })
+        .catch(err => {
+            showToast('Əlaqə xətası: ' + err.message, 'error');
+        });
     });
 }
 
