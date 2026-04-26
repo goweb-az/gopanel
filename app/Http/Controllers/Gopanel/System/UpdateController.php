@@ -6,6 +6,7 @@ use App\Http\Controllers\GoPanelController;
 use App\Services\Gopanel\GitHubUpdateService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\File;
 
 class UpdateController extends GoPanelController
 {
@@ -113,7 +114,10 @@ class UpdateController extends GoPanelController
                 return $this->response_json();
             }
 
-            $result = $this->updateService->applyFiles($files, $version);
+            $result = $this->updateService->applyFiles($files, $version, [
+                'admin_name' => auth()->user()->name ?? 'Admin',
+                'description' => $request->input('description', ''),
+            ]);
 
             if (!empty($result['errors'])) {
                 $this->response['message'] = count($result['errors']) . ' faylda xəta baş verdi';
@@ -166,6 +170,80 @@ class UpdateController extends GoPanelController
             }
 
             $this->success_response($result, count($result['restored_files']) . ' fayl geri qaytarıldı');
+        } catch (\Exception $e) {
+            $this->response['message'] = 'Xəta: ' . $e->getMessage();
+        }
+
+        return $this->response_json();
+    }
+
+    /**
+     * Tarixçədəki faylın backup vs cari müqayisəsi (AJAX)
+     */
+    public function historyDiff(Request $request)
+    {
+        try {
+            $backupId = $request->input('backup_id');
+            $path = $request->input('path');
+
+            if (!$backupId || !$path) {
+                $this->response['message'] = 'backup_id və path lazımdır';
+                return $this->response_json();
+            }
+
+            $backupDir = config('gopanel.updater.backup_path');
+            $backupFilePath = "{$backupDir}/{$backupId}/{$path}";
+            $localPath = base_path($path);
+
+            $backupContent = File::exists($backupFilePath)
+                ? File::get($backupFilePath)
+                : null;
+
+            $currentContent = File::exists($localPath)
+                ? File::get($localPath)
+                : null;
+
+            $this->success_response([
+                'path' => $path,
+                'backup_content' => $backupContent,
+                'current_content' => $currentContent,
+                'backup_exists' => $backupContent !== null,
+                'current_exists' => $currentContent !== null,
+            ], 'Diff hazırdır');
+        } catch (\Exception $e) {
+            $this->response['message'] = 'Xəta: ' . $e->getMessage();
+        }
+
+        return $this->response_json();
+    }
+
+    /**
+     * Tək faylı backup-dan geri al (AJAX)
+     */
+    public function rollbackFile(Request $request)
+    {
+        try {
+            $backupId = $request->input('backup_id');
+            $path = $request->input('path');
+
+            if (!$backupId || !$path) {
+                $this->response['message'] = 'backup_id və path lazımdır';
+                return $this->response_json();
+            }
+
+            $backupDir = config('gopanel.updater.backup_path');
+            $backupFilePath = "{$backupDir}/{$backupId}/{$path}";
+
+            if (!File::exists($backupFilePath)) {
+                $this->response['message'] = 'Backup faylı tapılmadı';
+                return $this->response_json();
+            }
+
+            $targetPath = base_path($path);
+            File::ensureDirectoryExists(dirname($targetPath));
+            File::copy($backupFilePath, $targetPath);
+
+            $this->success_response(['path' => $path], "{$path} uğurla geri qaytarıldı");
         } catch (\Exception $e) {
             $this->response['message'] = 'Xəta: ' . $e->getMessage();
         }

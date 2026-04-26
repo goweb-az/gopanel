@@ -258,7 +258,7 @@ class GitHubUpdateService
     /**
      * Faylları yenilə (backup + yüklə)
      */
-    public function applyFiles(array $filePaths, string $targetVersion): array
+    public function applyFiles(array $filePaths, string $targetVersion, array $meta = []): array
     {
         $backupDir = config('gopanel.updater.backup_path');
         $timestamp = now()->format('Y-m-d_H-i-s');
@@ -313,10 +313,13 @@ class GitHubUpdateService
         $localVersion['installed_commit']  = $latestCommit;
         $localVersion['last_updated_at']   = now()->toIso8601String();
         $localVersion['update_history'][]  = [
-            'version'   => $targetVersion,
-            'backup_id' => $timestamp,
-            'date'      => now()->toIso8601String(),
-            'files'     => count($results['updated_files']),
+            'version'      => $targetVersion,
+            'backup_id'    => $timestamp,
+            'date'         => now()->toIso8601String(),
+            'files'        => count($results['updated_files']),
+            'file_details' => $results['updated_files'],
+            'applied_by'   => $meta['admin_name'] ?? 'System',
+            'description'  => $meta['description'] ?? '',
         ];
 
         $this->saveLocalVersion($localVersion);

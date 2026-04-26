@@ -217,6 +217,8 @@ Route::group(['middleware' => 'gopanel'], function () {
             Route::post('/diff', [UpdateController::class, 'diff'])->name('diff');
             Route::post('/apply', [UpdateController::class, 'apply'])->name('apply');
             Route::post('/rollback', [UpdateController::class, 'rollback'])->name('rollback');
+            Route::post('/history-diff', [UpdateController::class, 'historyDiff'])->name('history-diff');
+            Route::post('/rollback-file', [UpdateController::class, 'rollbackFile'])->name('rollback-file');
         });
     });
 });
