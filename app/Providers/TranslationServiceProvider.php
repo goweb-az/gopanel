@@ -19,28 +19,31 @@ class TranslationServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        if (!Schema::hasTable('languages')) {
-            Log::warning("Languages table does not exist. Skipping database translations.");
-            return;
-        }
-
-        // Aynı istek içinde tekrar çağrılmasını önlemek için flag kullan
-        if (app()->has('site.translations.loaded')) {
-            return;
-        }
-
-        app()->instance('site.translations.loaded', true);
-
-        $languages = Language::getCachedAll();
-
-        foreach ($languages as $language) {
-            $locale = $language->code;
-
-            if (config('app.debug')) {
-                Cache::forget("site_translations_{$locale}");
+        try {
+            if (!Schema::hasTable('languages') || !Schema::hasTable('translations')) {
+                return;
             }
 
-            $this->siteTranslations($locale, app('translator'));
+            // Aynı istek içinde tekrar çağrılmasını önlemek için flag kullan
+            if (app()->has('site.translations.loaded')) {
+                return;
+            }
+
+            app()->instance('site.translations.loaded', true);
+
+            $languages = Language::getCachedAll();
+
+            foreach ($languages as $language) {
+                $locale = $language->code;
+
+                if (config('app.debug')) {
+                    Cache::forget("site_translations_{$locale}");
+                }
+
+                $this->siteTranslations($locale, app('translator'));
+            }
+        } catch (\Exception $e) {
+            Log::warning('TranslationServiceProvider: ' . $e->getMessage());
         }
     }
 

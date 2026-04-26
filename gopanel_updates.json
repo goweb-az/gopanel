@@ -1,4 +1,24 @@
 {
-    "current_version": "1.0.0",
-    "updates": []
+    "current_version": "1.0.1",
+    "updates": [
+        {
+            "version": "1.0.1",
+            "date": "2026-04-26",
+            "description": "Migration xətası düzəldildi, yeniləmə sistemi əlavə edildi",
+            "files": [
+                {
+                    "path": "routes/web.php",
+                    "action": "modified"
+                },
+                {
+                    "path": "app/Providers/ViewServiceProvider.php",
+                    "action": "modified"
+                },
+                {
+                    "path": "app/Providers/TranslationServiceProvider.php",
+                    "action": "modified"
+                }
+            ]
+        }
+    ]
 }

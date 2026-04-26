@@ -16,6 +16,7 @@ use App\Services\Site\Seo\MetaService;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Http\Request;
 
 class ViewServiceProvider extends ServiceProvider
@@ -67,6 +68,11 @@ class ViewServiceProvider extends ServiceProvider
     private function shareLanguages()
     {
         View::composer('*', function ($view) {
+            if (!Schema::hasTable('languages')) {
+                $view->with('languages', collect());
+                $view->with('currentLocale', config('app.locale', 'az'));
+                return;
+            }
             $languages = Cache::remember("languages", now()->addDay(), function () {
                 return Language::where('is_active', true)->orderBy("sort_order", "asc")->get();
             });
