@@ -7,6 +7,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Session;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -25,6 +26,11 @@ class LanguageMiddleware
 
     private function language(Request $request): ?Response
     {
+        if (!Schema::hasTable('languages')) {
+            App::setLocale(config('app.locale', 'az'));
+            return null;
+        }
+
         $defaultLanguage = Language::getDefaultCode(config('app.locale', 'az'));
         $languages = Language::where('is_active', 1)->pluck('code')->toArray();
 
