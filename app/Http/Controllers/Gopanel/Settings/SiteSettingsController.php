@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Gopanel\Settings;
 
+use App\Helpers\Gopanel\FileUploader;
 use App\Helpers\Gopanel\Site\GoPanelSiteHelper;
 use App\Helpers\Gopanel\Site\PageMetaDataHelper;
 use App\Http\Controllers\GoPanelController;
@@ -44,18 +45,15 @@ class SiteSettingsController extends GoPanelController
         $data       = $request->except(['_token']);
 
         if ($request->hasFile("logo_light")) {
-            $file                   = $request->file('logo_light');
-            $data['logo_light']     = $this->gopanelHelper->upload($file, 'site-logo', "logo-light");
+            $data['logo_light']     = FileUploader::toPublic($request->file('logo_light'), 'site-logo', 'logo-light');
         }
 
         if ($request->hasFile("logo_dark")) {
-            $file                   = $request->file('logo_dark');
-            $data['logo_dark']      = $this->gopanelHelper->upload($file, 'site-logo', "logo-dark");
+            $data['logo_dark']      = FileUploader::toPublic($request->file('logo_dark'), 'site-logo', 'logo-dark');
         }
 
         if ($request->hasFile("gopanel_logo")) {
-            $file                   = $request->file('gopanel_logo');
-            $data['gopanel_logo']      = $this->gopanelHelper->upload($file, 'site-logo', "gopanel_logo");
+            $data['gopanel_logo']   = FileUploader::toPublic($request->file('gopanel_logo'), 'site-logo', 'gopanel_logo');
         }
 
         $item  = $this->crudHelper->saveInstance($item, $data);

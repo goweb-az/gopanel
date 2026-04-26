@@ -48,22 +48,13 @@ trait MetaData
     public function getMetaImage($locale = null)
     {
         $imagePath = $this->getMeta('image', $locale);
-        if (!empty($imagePath))
-            return $this->getFileUrl($imagePath); // Return the full URL to the image (assuming it's stored in the public disk)
-        return null; // If no image path is found, return null
+        if (!empty($imagePath)) {
+            if (file_exists(public_path($imagePath))) {
+                return url($imagePath);
+            }
+            return $imagePath;
+        }
+        return null;
     }
 
-
-    /**
-     * Faylin yolunu qaytar
-     * 
-     * @param  string  $file
-     * @return string
-     */
-    public function getFileUrl($file)
-    {
-        if (file_exists(public_path($file)))
-            return url($file);
-        return $file;
-    }
 }

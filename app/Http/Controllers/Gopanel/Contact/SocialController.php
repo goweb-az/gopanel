@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Gopanel\Contact;
 
 use App\Enums\Common\SocialIconTypeEnum;
+use App\Helpers\Gopanel\FileUploader;
 use App\Http\Controllers\GoPanelController;
 use App\Models\Contact\Social;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
-use Illuminate\Support\Str;
 
 class SocialController extends GoPanelController
 {
@@ -62,8 +62,8 @@ class SocialController extends GoPanelController
 
         if ($request->hasFile("image")) {
             $file               = $request->file('image');
-            $fileName           = Str::slug($request->name ?? uniqid());
-            $data['icon']       = $this->gopanelHelper->upload($file, $item->getTable(), 'social-' . $fileName);
+            $fileName           = FileUploader::nameGenerate($data, 'social');
+            $data['icon']       = FileUploader::toPublic($file, $item->getTable(), $fileName);
         }
 
         $item  = $this->crudHelper->saveInstance($item, $data);

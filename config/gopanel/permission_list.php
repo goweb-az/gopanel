@@ -104,6 +104,11 @@ return [
             ['name' => 'gopanel.settings.menu.delete', 'title' => 'Menyu silmə'],
         ],
 
+        'Yeniləmələr' => [
+            ['name' => 'gopanel.system.updates.index', 'title' => 'Yeniləmələri gör'],
+            ['name' => 'gopanel.system.updates.apply', 'title' => 'Yeniləmələri tətbiq et'],
+        ],
+
     ],
 
     'api' => [

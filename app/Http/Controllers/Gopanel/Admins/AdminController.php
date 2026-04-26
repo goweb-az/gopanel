@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Gopanel\Admins;
 
+use App\Helpers\Gopanel\FileUploader;
 use App\Http\Controllers\GoPanelController;
 use App\Http\Requests\Gopanel\Admin\AdminStoreRequest;
 use App\Models\Gopanel\Admin;
@@ -114,8 +115,7 @@ class AdminController extends GoPanelController
 
         if ($request->hasFile('image')) {
             $file = $request->file('image');
-            $fileName = 'admin-' . time() . '.' . $file->getClientOriginalExtension();
-            $data['image'] = $file->storeAs('admins', $fileName, 'public');
+            $data['image'] = FileUploader::toStorage($file, 'admins', 'admin-' . time());
         }
 
         return $data;

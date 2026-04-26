@@ -2,6 +2,7 @@
 
 namespace App\Helpers\Gopanel\Site;
 
+use App\Helpers\Gopanel\FileUploader;
 use App\Models\Geography\Language;
 use App\Models\Seo\PageMetaData;
 use Illuminate\Http\UploadedFile;
@@ -60,14 +61,9 @@ class PageMetaDataHelper
 
         if ($image instanceof UploadedFile) {
             $table      = $item->getTable();
-            $folder     = public_path("site/meta/{$table}");
             $imageName  = !empty($title) ? ("{$table}-") . Str::slug($title, '-', $locale) : uniqid($table . "-");
-            $fileName   = "qrgate-{$imageName}." . $image->getClientOriginalExtension();
 
-            if (!file_exists($folder))
-                mkdir($folder, 0755, true);
-            $image->move($folder, $fileName);
-            return "site/meta/{$table}/" . $fileName;
+            return FileUploader::toPublic($image, "meta/{$table}", "qrgate-{$imageName}");
         }
 
         return null;

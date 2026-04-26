@@ -490,6 +490,105 @@ public function single(Blog $blog)
 
 ---
 
+## 10. Avtomatik yeniləmə sistemi
+
+Gopanel admin panelindən GitHub repo-dan yeniləmələri yoxlamaq, dəyişən faylları görmək və seçilən faylları yeniləmək imkanı.
+
+### İş prinsipi
+
+Yeniləmə sistemi **manifest fayl** əsaslı işləyir:
+1. Developer (siz) faylları dəyişib `gopanel_updates.json` manifest faylını yeniləyir
+2. GitHub-a push edir
+3. İstifadəçi admin paneldən "Yeniləmələri yoxla" düyməsinə klikləyir
+4. Sistem yalnız manifestdəki faylları göstərir — başqa heç nəyə toxunmur
+
+### Manifest faylı: `gopanel_updates.json`
+
+Repo root-da saxlanılır. Hər yeniləmədə developer tərəfindən redaktə olunur.
+
+```json
+{
+    "current_version": "1.1.0",
+    "updates": [
+        {
+            "version": "1.1.0",
+            "date": "2026-04-26",
+            "description": "Loglar səhifəsi yenidən dizayn edildi",
+            "files": [
+                {
+                    "path": "app/Http/Controllers/Gopanel/Activity/FileLogController.php",
+                    "action": "modified"
+                },
+                {
+                    "path": "public/assets/gopanel/js/modules/new-chart.js",
+                    "action": "added"
+                },
+                {
+                    "path": "public/assets/gopanel/js/modules/old-widget.js",
+                    "action": "deleted"
+                }
+            ]
+        }
+    ]
+}
+```
+
+### Action tipləri
+
+| Action | Nə edir |
+|---|---|
+| `added` | GitHub-dan yükləyib **yeni fayl yaradır** (qovluq yoxdursa yaradır) |
+| `modified` | GitHub-dan yükləyib **mövcud faylı əvəz edir** (backup ilə) |
+| `deleted` | Lokal faylı **silir** (backup ilə) |
+
+### Konflikt aşkarlama
+
+Sistem hər fayl üçün lokal versiyanı istifadəçinin quraşdırdığı andakı versiya ilə müqayisə edir:
+- **Eynidirsə** → istifadəçi toxunmayıb → ✅ təhlükəsiz yeniləmə
+- **Fərqlidirsə** → istifadəçi dəyişib → ⚠️ konflikt xəbərdarlığı göstərilir
+
+Konflikt halında istifadəçiyə seçim verilir: uzaq versiyanı almaq və ya lokaldakını saxlamaq.
+
+### Konfiqurasiya
+
+`.env` faylında (opsional):
+```env
+GOPANEL_UPDATER_ENABLED=true
+GOPANEL_GITHUB_OWNER=goweb-az
+GOPANEL_GITHUB_REPO=gopanel
+GOPANEL_GITHUB_BRANCH=master
+GOPANEL_GITHUB_TOKEN=               # Opsional, rate limit artırmaq üçün
+```
+
+### Developer iş axını
+
+1. Faylları dəyiş (misal: loglar səhifəsini yenidən dizayn et)
+2. `gopanel_updates.json` manifest faylını redaktə et:
+   - `current_version` dəyərini yenilə
+   - `updates` massivinin əvvəlinə yeni versiya bloku əlavə et
+   - `files` massivində dəyişən faylları qeyd et
+3. `git add . && git commit -m "v1.1.0" && git push`
+4. İstifadəçilər admin paneldən `/gopanel/system/updates` səhifəsindən görəcəklər
+
+### Fayl strukturu
+
+```
+gopanel_updates.json                          → Manifest (repo-da, developer yazır)
+gopanel_version.json                          → Lokal versiya (.gitignore-da)
+config/gopanel/updater.php                    → Konfiqurasiya
+app/Services/Gopanel/GitHubUpdateService.php  → GitHub API service
+app/Http/Controllers/Gopanel/System/UpdateController.php → Controller
+resources/views/gopanel/pages/system/updates/ → View
+public/assets/gopanel/js/modules/updater.js   → Frontend JS
+```
+
+### Backup və geri alma
+
+Hər yeniləmədə avtomatik backup yaradılır: `storage/app/gopanel-backups/{timestamp}/`
+Admin paneldən "Yeniləmə tarixçəsi" bölməsindən istənilən yeniləməni geri almaq mümkündür.
+
+---
+
 ## 📜 Lisenziya
 
 <!-- Bu layihə MIT lisenziyası ilə yayımlanır.   -->

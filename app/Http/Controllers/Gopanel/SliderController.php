@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Gopanel;
 
+use App\Helpers\Gopanel\FileUploader;
 use App\Helpers\Gopanel\TranslationHelper;
 use App\Http\Controllers\GoPanelController;
 use App\Models\Site\Slider;
@@ -46,8 +47,8 @@ class SliderController extends GoPanelController
             $message    = !is_null($item->id) ? "Məlumat uğurla dəyişdirildi!" : "Məlumat uğurla yaradıldı!";
             if ($request->hasFile("image")) {
                 $file               = $request->file('image');
-                $fileName           = $this->gopanelHelper->file_name_genarte($data);
-                $data['image']      = $this->gopanelHelper->upload($file, $item->getTable(), 'slider-' . $fileName);
+                $fileName           = FileUploader::nameGenerate($data, 'slider');
+                $data['image']      = FileUploader::toPublic($file, $item->getTable(), $fileName);
             }
             $item       = $this->crudHelper->saveInstance($item, $data);
             if (isset($item->id))
