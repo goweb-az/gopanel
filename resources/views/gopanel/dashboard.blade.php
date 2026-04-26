@@ -20,27 +20,6 @@
             </div>
         </div>
         <!-- end page title -->
-
-        <!-- Gopanel v1.0.1 Update -->
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <div class="avatar-sm me-3">
-                                <span class="avatar-title rounded-circle bg-soft-primary text-primary font-size-24">
-                                    <i class="bx bx-rocket"></i>
-                                </span>
-                            </div>
-                            <div>
-                                <h5 class="mb-1">Gopanel-ə xoş gəlmisiniz! 🎉</h5>
-                                <p class="text-muted mb-0">Bu mesaj v1.0.1 yeniləməsi ilə əlavə edildi. Yeniləmə sistemi uğurla işləyir!</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         
     </div> <!-- container-fluid -->
 </div>

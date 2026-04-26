@@ -1,16 +1,4 @@
 {
-    "current_version": "1.0.1",
-    "updates": [
-        {
-            "version": "1.0.1",
-            "date": "2026-04-26",
-            "description": "Dashboard-a xoş gəldin kartı əlavə edildi",
-            "files": [
-                {
-                    "path": "resources/views/gopanel/dashboard.blade.php",
-                    "action": "modified"
-                }
-            ]
-        }
-    ]
+    "current_version": "1.0.0",
+    "updates": []
 }
