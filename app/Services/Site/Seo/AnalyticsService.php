@@ -178,7 +178,7 @@ class AnalyticsService
         return $geo['code'] ?? 'Unknown';
     }
 
-    protected function geoipCountryFlag(?string $ip): string
+    protected function geoipCountryFlag(?string $ip): ?string
     {
         $geo = GeoIpHelper::geoipCountry($ip);
         return $geo['flag_url'] ?? null;

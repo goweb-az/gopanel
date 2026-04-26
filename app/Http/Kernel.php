@@ -36,6 +36,8 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            //Kopyalama alətlərini dayanadırmaq üçün
+            \App\Http\Middleware\HumanGate::class,
         ],
 
         'api' => [
@@ -67,6 +69,6 @@ class Kernel extends HttpKernel
         'gopanel' => \App\Http\Middleware\Gopanel::class,
         'language' => \App\Http\Middleware\LanguageMiddleware::class,
         'site.redirects' => \App\Http\Middleware\Seo\SiteRedirectMiddleware::class,
-        // 'track.analytics' => \App\Http\Middleware\Seo\TrackAnalyticsMiddleware::class,
+        'track.analytics' => \App\Http\Middleware\Seo\TrackAnalyticsMiddleware::class,
     ];
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Middleware\Seo;
 
 use App\Models\Seo\SiteRedirect;
+use App\Models\Settings\SiteSetting;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -23,7 +24,7 @@ class SiteRedirectMiddleware
 
     protected function maybeRedirect(Request $request): ?Response
     {
-        $site_redirect_status = config('gopanel.site_redirect_status', true);
+        $site_redirect_status = SiteSetting::getCached()?->site_redirect_status ?? true;
         if (!$site_redirect_status)
             return null;
 

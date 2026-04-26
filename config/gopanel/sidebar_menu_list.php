@@ -83,6 +83,12 @@ return [
                 'route' => 'gopanel.seo.llms-txt.index',
                 'can'   => 'gopanel.seo.llms-txt.index',
             ],
+            [
+                'icon' => '<i class="bx bx-bar-chart-alt-2"></i>',
+                'title' => 'Analitika',
+                'route' => 'gopanel.analytics.index',
+                'can'   => 'gopanel.analytics.index',
+            ],
         ],
     ],
     [
