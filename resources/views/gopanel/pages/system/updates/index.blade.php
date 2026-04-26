@@ -131,22 +131,79 @@
                                         <th>Versiya</th>
                                         <th>Tarix</th>
                                         <th>Fayl sayı</th>
+                                        <th>Qeyd</th>
                                         <th>Əməliyyat</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach(array_reverse($localVersion['update_history']) as $history)
+                                    @foreach(array_reverse($localVersion['update_history']) as $hIndex => $history)
                                     <tr>
                                         <td><span class="badge bg-info">v{{ $history['version'] }}</span></td>
-                                        <td>{{ $history['date_formatted'] }}</td>
+                                        <td>
+                                            {{ $history['date_formatted'] }}
+                                            @if(!empty($history['applied_by']))
+                                                <br><small class="text-muted"><i class="bx bx-user"></i> {{ $history['applied_by'] }}</small>
+                                            @endif
+                                        </td>
                                         <td>{{ $history['files'] }} fayl</td>
                                         <td>
-                                            <button class="btn btn-sm btn-outline-warning" 
-                                                    onclick="rollback('{{ $history['backup_id'] }}')">
+                                            @if(!empty($history['description']))
+                                                <small class="text-muted d-block mb-1">{{ $history['description'] }}</small>
+                                            @endif
+                                        </td>
+                                        <td class="text-nowrap">
+                                            @if(!empty($history['file_details']))
+                                            <button class="btn btn-outline-info me-1" 
+                                                    onclick="toggleHistoryFiles('history-files-{{ $hIndex }}')"
+                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Dəyişdirilmiş faylların siyahısını göstər">
+                                                <i class="bx bx-show"></i>
+                                            </button>
+                                            @endif
+                                            <button class="btn btn-outline-warning" 
+                                                    onclick="rollback('{{ $history['backup_id'] }}')"
+                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Bütün faylları əvvəlki vəziyyətinə qaytar">
                                                 <i class="bx bx-undo"></i> Geri al
                                             </button>
                                         </td>
                                     </tr>
+                                    @if(!empty($history['file_details']))
+                                    <tr class="d-none" id="history-files-{{ $hIndex }}">
+                                        <td colspan="5" class="p-0">
+                                            <div class="bg-light p-2">
+                                                <table class="table table-sm mb-0" style="font-size: 12px;">
+                                                    @foreach($history['file_details'] as $fd)
+                                                    <tr>
+                                                        <td class="border-0" style="width: 70px;">
+                                                            @if($fd['action'] === 'added')
+                                                                <span class="badge bg-success">Yeni</span>
+                                                            @elseif($fd['action'] === 'deleted')
+                                                                <span class="badge bg-danger">Silinib</span>
+                                                            @else
+                                                                <span class="badge bg-primary">Dəyişib</span>
+                                                            @endif
+                                                        </td>
+                                                        <td class="border-0">
+                                                            <code>{{ $fd['path'] }}</code>
+                                                        </td>
+                                                        <td class="border-0 text-end text-nowrap" style="width: 100px;">
+                                                            <button class="btn btn-outline-secondary py-0 px-1"
+                                                                    onclick="showHistoryDiff('{{ $history['backup_id'] }}', '{{ $fd['path'] }}')"
+                                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Əvvəlki və mövcud versiya arasındakı fərqi göstər">
+                                                                <i class="bx bx-git-compare"></i>
+                                                            </button>
+                                                            <button class="btn btn-outline-warning py-0 px-1 ms-1"
+                                                                    onclick="rollbackSingleFile('{{ $history['backup_id'] }}', '{{ $fd['path'] }}')"
+                                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Bu faylı backup-dan geri qaytar">
+                                                                <i class="bx bx-undo"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    @endforeach
+                                                </table>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    @endif
                                     @endforeach
                                 </tbody>
                             </table>
@@ -161,99 +218,9 @@
 </div>
 <!-- End Page-content -->
 
-<!-- Diff Modal -->
-<div class="modal fade" id="diffModal" tabindex="-1" aria-labelledby="diffModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-scrollable" id="diffModalDialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="diffModalLabel">Fayl müqayisəsi</h5>
-                <div class="d-flex align-items-center gap-2">
-                    <button type="button" class="btn btn-sm btn-outline-secondary" id="btn-diff-fullscreen" onclick="toggleDiffFullscreen()">
-                        <i class="fas fa-expand"></i>
-                    </button>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Bağla"></button>
-                </div>
-            </div>
-            <div class="modal-body p-0">
-                <div class="row g-0" id="diff-content">
-                    <div class="col-md-6 border-end">
-                        <div class="p-2 bg-light border-bottom">
-                            <strong class="text-danger"><i class="bx bx-file"></i> Lokal versiya</strong>
-                        </div>
-                        <pre class="p-3 mb-0 diff-pre" id="diff-local"></pre>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="p-2 bg-light border-bottom">
-                            <strong class="text-success"><i class="bx bx-cloud-download"></i> Uzaq versiya (GitHub)</strong>
-                        </div>
-                        <pre class="p-3 mb-0 diff-pre" id="diff-remote"></pre>
-                    </div>
-                </div>
-                <div class="text-center py-4 d-none" id="diff-loading">
-                    <div class="spinner-border text-primary spinner-border-sm"></div>
-                    <span class="ms-2 text-muted">Yüklənir...</span>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bağla</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<style>
-    .diff-pre {
-        font-size: 12px;
-        max-height: 500px;
-        overflow: auto;
-        background: #1e1e1e;
-        color: #d4d4d4;
-        margin: 0;
-        white-space: pre-wrap;
-        word-break: break-all;
-    }
-    .diff-pre .diff-line { display: block; padding: 0 4px; min-height: 20px; }
-    .diff-pre .diff-added { background: rgba(46, 160, 67, 0.25); color: #7ee787; }
-    .diff-pre .diff-removed { background: rgba(248, 81, 73, 0.25); color: #ffa198; }
-    .diff-pre .diff-changed { background: rgba(210, 153, 34, 0.2); color: #e3b341; }
-    .diff-pre .line-num { 
-        display: inline-block; 
-        width: 40px; 
-        color: #6e7681; 
-        text-align: right; 
-        padding-right: 8px; 
-        margin-right: 8px; 
-        border-right: 1px solid #30363d;
-        user-select: none; 
-    }
-
-    /* Fullscreen mode */
-    .diff-fullscreen .modal-dialog {
-        max-width: 100% !important;
-        width: 100% !important;
-        height: 100% !important;
-        margin: 0 !important;
-    }
-    .diff-fullscreen .modal-content {
-        height: 100vh;
-        border-radius: 0;
-    }
-    .diff-fullscreen .modal-body {
-        overflow: hidden;
-    }
-    .diff-fullscreen .diff-pre {
-        max-height: calc(100vh - 130px) !important;
-    }
-    .diff-fullscreen .modal-body > .row {
-        height: calc(100vh - 130px);
-    }
-    .diff-fullscreen .modal-body > .row > div {
-        height: 100%;
-        overflow: hidden;
-    }
-</style>
+@include('gopanel.pages.system.updates._diff_modal')
 
 @endsection
 @push('scripts')
-<script src="/assets/gopanel/js/modules/updater.js?={{time()}}"></script>
+<script src="{{ asset('assets/gopanel/js/modules/updater.js') }}?v={{time()}}"></script>
 @endpush

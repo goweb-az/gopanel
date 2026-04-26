@@ -228,3 +228,55 @@
     font-size: 0.8rem;
 }
 /* ─── Role Permission Form End ──────────────────────── */
+
+/* ─── Updater Diff Modal ──────────────────────────── */
+.diff-pre {
+    font-size: 12px;
+    max-height: 500px;
+    overflow: auto;
+    background: #1e1e1e;
+    color: #d4d4d4;
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+.diff-pre .diff-line { display: block; padding: 0 4px; min-height: 20px; }
+.diff-pre .diff-added { background: rgba(46, 160, 67, 0.25); color: #7ee787; }
+.diff-pre .diff-removed { background: rgba(248, 81, 73, 0.25); color: #ffa198; }
+.diff-pre .diff-changed { background: rgba(210, 153, 34, 0.2); color: #e3b341; }
+.diff-pre .line-num {
+    display: inline-block;
+    width: 40px;
+    color: #6e7681;
+    text-align: right;
+    padding-right: 8px;
+    margin-right: 8px;
+    border-right: 1px solid #30363d;
+    user-select: none;
+}
+
+/* Fullscreen mode */
+.diff-fullscreen .modal-dialog {
+    max-width: 100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+}
+.diff-fullscreen .modal-content {
+    height: 100vh;
+    border-radius: 0;
+}
+.diff-fullscreen .modal-body {
+    overflow: hidden;
+}
+.diff-fullscreen .diff-pre {
+    max-height: calc(100vh - 130px) !important;
+}
+.diff-fullscreen .modal-body > .row {
+    height: calc(100vh - 130px);
+}
+.diff-fullscreen .modal-body > .row > div {
+    height: 100%;
+    overflow: hidden;
+}
+/* ─── Updater Diff Modal End ──────────────────────── */

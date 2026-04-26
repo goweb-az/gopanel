@@ -205,6 +205,11 @@ function showDiff(path) {
     document.getElementById('diff-loading').classList.remove('d-none');
     document.getElementById('diff-local').innerHTML = '';
     document.getElementById('diff-remote').innerHTML = '';
+
+    // Label-ləri GitHub diff rejimində qoy
+    document.getElementById('diff-label-left').innerHTML = '<i class="bx bx-file"></i> Lokal versiya';
+    document.getElementById('diff-label-right').innerHTML = '<i class="bx bx-cloud-download"></i> Uzaq versiya (GitHub)';
+
     modal.show();
 
     fetch(routeUrl('gopanel.system.updates.diff'), {
@@ -463,6 +468,116 @@ function rollback(backupId) {
 
 // ─── Helpers ────────────────────────────────────────────────
 
+/**
+ * Tək faylı backup-dan geri al
+ */
+function rollbackSingleFile(backupId, path) {
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            title: 'Faylı geri qaytarmaq istəyirsiniz?',
+            html: '<code>' + path + '</code> backup versiyası ilə əvəz olunacaq.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Bəli, geri qaytar',
+            cancelButtonText: 'Ləğv et',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                executeRollbackFile(backupId, path);
+            }
+        });
+    } else if (confirm(path + ' faylını geri qaytarmaq istəyirsiniz?')) {
+        executeRollbackFile(backupId, path);
+    }
+}
+
+function executeRollbackFile(backupId, path) {
+    fetch(routeUrl('gopanel.system.updates.rollback-file'), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': CSRF_TOKEN,
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify({ backup_id: backupId, path: path }),
+    })
+    .then(res => res.json())
+    .then(response => {
+        if (response.status === 'success') {
+            showToast(response.message, 'success');
+        } else {
+            showToast(response.message || 'Xəta baş verdi', 'error');
+        }
+    })
+    .catch(err => {
+        showToast('Əlaqə xətası: ' + err.message, 'error');
+    });
+}
+
+/**
+ * Tarixçədə fayl detallarını göstər/gizlət
+ */
+function toggleHistoryFiles(id) {
+    const row = document.getElementById(id);
+    if (row) {
+        row.classList.toggle('d-none');
+    }
+}
+
+/**
+ * Tarixçədəki fayl üçün backup vs cari diff
+ */
+function showHistoryDiff(backupId, path) {
+    const modal = new bootstrap.Modal(document.getElementById('diffModal'));
+    document.getElementById('diffModalLabel').textContent = path + ' (Tarixçə)';
+    document.getElementById('diff-content').classList.add('d-none');
+    document.getElementById('diff-loading').classList.remove('d-none');
+    document.getElementById('diff-local').innerHTML = '';
+    document.getElementById('diff-remote').innerHTML = '';
+
+    // Label-ləri backup diff rejimində qoy
+    document.getElementById('diff-label-left').innerHTML = '<i class="bx bx-history"></i> Əvvəlki versiya (backup)';
+    document.getElementById('diff-label-right').innerHTML = '<i class="bx bx-file"></i> Mövcud versiya';
+
+    modal.show();
+
+    fetch(routeUrl('gopanel.system.updates.history-diff'), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': CSRF_TOKEN,
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify({ backup_id: backupId, path: path }),
+    })
+    .then(res => res.json())
+    .then(response => {
+        document.getElementById('diff-loading').classList.add('d-none');
+        document.getElementById('diff-content').classList.remove('d-none');
+
+        if (response.status === 'error') {
+            document.getElementById('diff-local').textContent = 'Xəta: ' + response.message;
+            return;
+        }
+
+        const data = response.data;
+        const backupLines = (data.backup_content || '').split('\n');
+        const currentLines = (data.current_content || '').split('\n');
+
+        document.getElementById('diff-local').innerHTML = data.backup_content
+            ? renderDiffLines(backupLines, currentLines, 'local')
+            : '<span class="diff-line" style="color:#6e7681;padding:16px;">(Backup mövcud deyil)</span>';
+
+        document.getElementById('diff-remote').innerHTML = data.current_content
+            ? renderDiffLines(currentLines, backupLines, 'remote')
+            : '<span class="diff-line" style="color:#6e7681;padding:16px;">(Fayl mövcud deyil)</span>';
+    })
+    .catch(err => {
+        document.getElementById('diff-loading').classList.add('d-none');
+        document.getElementById('diff-content').classList.remove('d-none');
+        document.getElementById('diff-local').textContent = 'Əlaqə xətası: ' + err.message;
+    });
+}
+
 function showSection(id) {
     document.getElementById(id)?.classList.remove('d-none');
 }
@@ -495,10 +610,12 @@ function escapeHtml(str) {
 function routeUrl(name) {
     // Gopanel route helper — route adından URL yarat
     const routes = {
-        'gopanel.system.updates.check':    '/gopanel/system/updates/check',
-        'gopanel.system.updates.diff':     '/gopanel/system/updates/diff',
-        'gopanel.system.updates.apply':    '/gopanel/system/updates/apply',
-        'gopanel.system.updates.rollback': '/gopanel/system/updates/rollback',
+        'gopanel.system.updates.check':        '/gopanel/system/updates/check',
+        'gopanel.system.updates.diff':         '/gopanel/system/updates/diff',
+        'gopanel.system.updates.apply':        '/gopanel/system/updates/apply',
+        'gopanel.system.updates.rollback':     '/gopanel/system/updates/rollback',
+        'gopanel.system.updates.history-diff':  '/gopanel/system/updates/history-diff',
+        'gopanel.system.updates.rollback-file': '/gopanel/system/updates/rollback-file',
     };
     return routes[name] || name;
 }
