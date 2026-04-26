@@ -6,7 +6,7 @@ return [
     'github' => [
         'owner'  => env('GOPANEL_GITHUB_OWNER', 'goweb-az'),
         'repo'   => env('GOPANEL_GITHUB_REPO', 'gopanel'),
-        'branch' => env('GOPANEL_GITHUB_BRANCH', 'my-fix'),
+        'branch' => env('GOPANEL_GITHUB_BRANCH', 'master'),
         'token'  => env('GOPANEL_GITHUB_TOKEN', null),
     ],
 
