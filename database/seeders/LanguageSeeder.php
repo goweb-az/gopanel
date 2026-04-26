@@ -26,6 +26,7 @@ class LanguageSeeder extends Seeder
                         'code' => $lang['code'],
                         'name' => $lang['name'],
                         'is_active' => true,
+                        'default' => ($lang['code'] == 'az'),
                     ]);
                     $this->command->info("Create language {$code}");
                 }

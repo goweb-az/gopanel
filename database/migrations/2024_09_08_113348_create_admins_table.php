@@ -37,7 +37,7 @@ return new class extends Migration
         ]);
 
         Admin::create([
-            'full_name' => "Test Admin",
+            'full_name' => "Admin",
             'email'     => "test@gmail.com",
             'password'  => Hash::make('12345'),
             'is_super'  => 0,

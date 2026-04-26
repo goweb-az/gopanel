@@ -3,44 +3,12 @@
 
 namespace App\Helpers\Gopanel;
 
-use Exception;
 use Illuminate\Database\Eloquent\Model;
-use InvalidArgumentException;
-use Illuminate\Support\Str;
 
 class GoPanelHelper
 {
 
-    public function upload_public($file, $folder = 'other', $filename = null)
-    {
-        if (!$file->isValid())
-            throw new Exception("Fayl formatı düzgün deyil");
-        $extension      = $file->getClientOriginalExtension();
-        if (!$filename) {
-            $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME) . "-" . uniqid();
-        }
-        $filename = Str::slug($filename) . '.' . $extension;
 
-
-        $path = "site/{$folder}/{$filename}";
-
-        $targetPath = public_path("site/{$folder}");
-        if (!file_exists($targetPath)) {
-            mkdir($targetPath, 0755, true);
-        }
-
-        $file->move(public_path("site/{$folder}"), $filename);
-        return $path;
-    }
-
-
-    public function getFile($path)
-    {
-        if (file_exists(public_path($path))) {
-            return url($path);
-        }
-        return $path;
-    }
 
 
     public function is_active_btn(Model $item, $row = 'is_active', $checked = false, $class = [], $url = null, $active_text = 'Aktiv', $deactive_text = 'Deaktiv')
@@ -119,26 +87,6 @@ class GoPanelHelper
 
 
 
-    public function upload($file, $folder = 'other', $filename = null)
-    {
-        if (!$file->isValid())
-            throw new Exception("Fayl formatı düzgün deyil");
-        $extension      = $file->getClientOriginalExtension();
-        if (!$filename) {
-            $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME) . "-" . uniqid();
-        }
-        $filename = Str::slug($filename) . '.' . $extension;
-
-
-        $path = "site/{$folder}/{$filename}";
-
-
-        $file->move(public_path("site/{$folder}"), $filename);
-        return $path;
-    }
-
-
-
     public function getYoutuebId($url)
     {
         preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $url, $match);
@@ -146,15 +94,4 @@ class GoPanelHelper
     }
 
 
-    public function file_name_genarte(array $request)
-    {
-        $name = uniqid();
-        if (isset($request['title']['az'])) {
-            $name = Str::slug($request['title']['az'] ?? uniqid(), '-', 'az') . "-" . uniqid();
-        }
-        if (isset($request['name']['az'])) {
-            $name = Str::slug($request['name']['az'] ?? uniqid(), '-', 'az') . "-" . uniqid();
-        }
-        return $name;
-    }
 }

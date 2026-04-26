@@ -16,9 +16,10 @@ return new class extends Migration
             $table->unsignedBigInteger('country_id'); // country_id int [ref: > countries.id]
             $table->string('code', 10)->notNullable(); // code varchar(10) [not null]
             $table->string('name', 100)->notNullable(); // name varchar(100) [not null]
-            $table->integer("sort_order")->default(0);
+            $table->boolean('default')->default(false);
             $table->boolean('is_active')->default(true); // is_active bool [default: true]
             $table->boolean('is_show')->default(true); // is_active bool [default: true]
+            $table->integer("sort_order")->default(0);
             $table->timestamps(); // created_at ve updated_at için
             $table->softDeletes();
             // Foreign key relationship

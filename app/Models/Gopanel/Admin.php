@@ -11,20 +11,17 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Permission\PermissionRegistrar;
 use Spatie\Permission\Traits\HasRoles;
 
 class Admin extends Authenticatable
 {
     use AddUuid, HasRouteKey, Notifiable, HasFactory, SoftDeletes, HasRoles, LogsActivity;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'uid',
         'full_name',
@@ -35,21 +32,11 @@ class Admin extends Authenticatable
         'image',
     ];
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
@@ -76,18 +63,61 @@ class Admin extends Authenticatable
 
     public function getIsActiveBtnAttribute()
     {
-        return app('gopanel')->toggle_btn($this, "is_active", $this->is_active == 1);
+        return app('gopanel')->toggle_btn($this, 'is_active', $this->is_active == 1);
     }
 
     public function getIsSuperBtnAttribute()
     {
-        return app('gopanel')->toggle_btn($this, "is_super", $this->is_super == 1, [], null, "Bəli", "Xeyr");
+        return app('gopanel')->toggle_btn($this, 'is_super', $this->is_super == 1, [], null, 'Beli', 'Xeyr');
+    }
+
+    public function getRoleSummaryAttribute(): string
+    {
+        $roles = $this->relationLoaded('roles') ? $this->roles : $this->roles()->get();
+        $roleNames = $roles->pluck('name')->filter()->values();
+
+        if ($roleNames->isEmpty()) {
+            return '<span class="text-muted">Vəzifə verilməyib</span>';
+        }
+
+        $primaryRole = e($roleNames->first());
+        $extraCount = max($roleNames->count() - 1, 0);
+
+        if ($extraCount === 0) {
+            return "<span class=\"fw-semibold\">{$primaryRole}</span>";
+        }
+
+        return "<span class=\"fw-semibold\" title=\"" . e($roleNames->join(', ')) . "\">{$primaryRole}</span> <span class=\"text-muted\">(+{$extraCount})</span>";
+    }
+
+    public function getPermissionSummaryAttribute(): string
+    {
+        $grantedCount = $this->granted_permissions_count;
+        $totalCount = $this->getTotalPermissionsCount();
+
+        return "<span class=\"fw-semibold\">{$totalCount}</span><span class=\"text-muted\"> / {$grantedCount}</span>";
+    }
+
+    public function getGrantedPermissionsCountAttribute(): int
+    {
+        return $this->getAllPermissions()->count();
+    }
+
+    public function getTotalPermissionsCount(): int
+    {
+        return Cache::rememberForever('gopanel_permissions_total_count', function () {
+            $permissionClass = app(PermissionRegistrar::class)->getPermissionClass();
+
+            return $permissionClass::query()
+                ->where('guard_name', $this->getDefaultGuardName())
+                ->count();
+        });
     }
 
     public function getAvatarUrlAttribute(): string
     {
-        if (!empty($this->image) && file_exists(public_path($this->image))) {
-            return asset($this->image);
+        if (!empty($this->image) && Storage::disk('public')->exists($this->image)) {
+            return Storage::disk('public')->url($this->image);
         }
 
         return Cache::rememberForever("admin_avatar_{$this->id}", function () {

@@ -39,8 +39,34 @@ class CustomRole extends Role
         ActivityLogHelper::resolveDescription($this, $activity, $eventName);
     }
 
-    public function getPermissionsCountAttribute(): string|null
+    public function getPermissionsCountAttribute(): string
     {
-        return ' İcazələri [' . $this->permissions()->count() . ']';
+        $permissions = $this->relationLoaded('permissions') ? $this->permissions : $this->permissions()->get();
+        $count = $permissions->count();
+        $groups = $permissions->pluck('group')->filter()->unique()->count();
+
+        if ($count === 0) {
+            return '<span class="text-muted">İcazə verilməyib</span>';
+        }
+
+        $groupText = $groups ? " <span class=\"text-muted\">{$groups} qrup</span>" : '';
+
+        return "<span class=\"fw-semibold\">{$count} icazə</span>{$groupText}";
+    }
+
+    public function getAssignedAdminsCountAttribute(): string
+    {
+        $users = $this->relationLoaded('users') ? $this->users : $this->users()->get();
+        $count = $users->count();
+
+        if ($count === 0) {
+            return '<span class="text-muted">Heç kimə verilməyib</span>';
+        }
+
+        if ($count === 1) {
+            return '<span class="fw-semibold">1 nəfərə verilib</span>';
+        }
+
+        return "<span class=\"fw-semibold\">{$count} nəfərə verilib</span>";
     }
 }

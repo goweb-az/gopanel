@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Gopanel;
 
+use App\Helpers\Gopanel\FileUploader;
 use App\Helpers\Gopanel\Site\GoPanelSiteHelper;
 use App\Helpers\Gopanel\Site\PageMetaDataHelper;
 use App\Helpers\Gopanel\TranslationHelper;
@@ -29,8 +30,8 @@ class BlogController extends GoPanelController
 
     public function store(Blog $item, Request $request)
     {
-        $item   = is_null($item->id) ? new Blog() : $item;
-        $route  = route("gopanel.blog.save", $item);
+        $item = is_null($item->id) ? new Blog() : $item;
+        $route = route("gopanel.blog.save", $item);
         return view('gopanel.pages.blog.store', compact("item", "route"));
     }
 
@@ -38,14 +39,14 @@ class BlogController extends GoPanelController
     public function save(Blog $item, Request $request)
     {
         try {
-            $data       = $request->except(['_token']);
-            $message    = !is_null($item->id) ? "Məlumat uğurla dəyişdirildi!" : "Məlumat uğurla yaradıldı!";
+            $data = $request->except(['_token']);
+            $message = !is_null($item->id) ? "Məlumat uğurla dəyişdirildi!" : "Məlumat uğurla yaradıldı!";
             if ($request->hasFile("image")) {
-                $file               = $request->file('image');
-                $fileName           = $this->gopanelHelper->file_name_genarte($data);
-                $data['image']      = $this->gopanelHelper->upload($file, $item->getTable(), 'blog-' . $fileName);
+                $file = $request->file('image');
+                $fileName = FileUploader::nameGenerate($data, 'blog');
+                $data['image'] = FileUploader::toPublic($file, $item->getTable(), $fileName);
             }
-            $item       = $this->crudHelper->saveInstance($item, $data);
+            $item = $this->crudHelper->saveInstance($item, $data);
             if (isset($item->id)) {
                 TranslationHelper::create($item, $request);
                 $metaDataInput = $request->input('meta', []);
@@ -55,7 +56,7 @@ class BlogController extends GoPanelController
             $this->response['redirect'] = isset($item->id) ? route("gopanel.blog.index") : false;
             $this->success_response($item, $message);
         } catch (\Exception $e) {
-            $this->response['message']   .= $e->getMessage();
+            $this->response['message'] .= $e->getMessage();
         }
         return $this->response_json();
     }

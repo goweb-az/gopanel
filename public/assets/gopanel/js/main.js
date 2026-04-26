@@ -126,6 +126,20 @@ function initDatatableUiElements(){
     initToltip();
 }
 
+function handleToggleSuccess(response) {
+    pageLoader(false);
+
+    if (response.status == 'success') {
+        toastr.success(response.message);
+    } else {
+        basicAlert(response.message, response.status);
+    }
+
+    if (window.dTable && typeof window.dTable.ajax === 'function') {
+        window.dTable.ajax.reload(null, false);
+    }
+}
+
 
 if ($('#editor').length) {
     ClassicEditor
@@ -216,15 +230,7 @@ $("body").on("change",".status", function(e){
             url: route,
             data: {id:id,row:row,model:model,status:status},
             type: 'POST',
-            success: function (response) {
-                pageLoader(false);
-                if(response.status == 'success'){
-                    toastr.success(response.message);
-                } else {
-                    basicAlert(response.message, response.status);
-                }
-                if(window.dTable) window.dTable.ajax.reload();
-            },
+            success: handleToggleSuccess,
             error: function (e) {
                 console.log(e);
                 pageLoader(false);
@@ -246,15 +252,7 @@ $("body").on("change",".is_active", function(e){
             url: route,
             data: {id:id,row:row,model:model,status:status},
             type: 'POST',
-            success: function (response) {
-                pageLoader(false);
-                if(response.status == 'success'){
-                    toastr.success(response.message);
-                } else {
-                    basicAlert(response.message, response.status);
-                }
-                if(window.dTable) window.dTable.ajax.reload();
-            },
+            success: handleToggleSuccess,
             error: function (e) {
                 console.log(e);
                 pageLoader(false);

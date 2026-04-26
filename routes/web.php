@@ -29,7 +29,7 @@ use Illuminate\Support\Facades\Route;
 //     return view('welcome');
 // });
 
-Route::get('/', [HomeController::class, 'index'])->name('home.index');
+Route::get('/', [HomeController::class, 'index'])->middleware(['language'])->name('home.index');
 
 Route::withoutMiddleware(['site.redirects', 'track.analytics'])->group(function () {
     Route::get('/test', [TestController::class, 'index'])->name('test.index');

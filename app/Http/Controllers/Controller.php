@@ -35,13 +35,7 @@ class Controller extends BaseController
         return view()->share($data);
     }
 
-    public function uploadImage($model, $upload, $type, $folder)
-    {
-        @unlink(public_path('/storage/' . $folder . '/' . $model->$type));
-        $filename = uniqid() . uniqid() . '.' . $upload->extension();
-        $upload->storeAs('public', $folder . '/' . $filename);
-        return $filename;
-    }
+
 
     public function success_response($item = [], $message = ' Məlumat uğurla yaradıldı! ')
     {

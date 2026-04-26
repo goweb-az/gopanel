@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Gopanel\Admins;
 
+use App\Helpers\Gopanel\FileUploader;
 use App\Http\Controllers\GoPanelController;
 use App\Http\Requests\Gopanel\Admin\ChangePasswordRequest;
 use App\Http\Requests\Gopanel\Admin\ProfileUpdateRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends GoPanelController
 {
@@ -31,8 +33,7 @@ class ProfileController extends GoPanelController
 
             if ($request->hasFile('image')) {
                 $file     = $request->file('image');
-                $fileName = 'admin-' . $item->id . '-' . time();
-                $data['image'] = $this->gopanelHelper->upload($file, 'admins', $fileName);
+                $data['image'] = FileUploader::toStorage($file, 'admins', 'admin-' . $item->id . '-' . time());
             }
 
             $item->update($data);

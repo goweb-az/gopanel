@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Gopanel\Activity\FileLogController;
 use App\Http\Controllers\Gopanel\Activity\ActivityLogController;
+use App\Http\Controllers\Gopanel\System\UpdateController;
 use App\Http\Controllers\Gopanel\Admins\AdminController;
 use App\Http\Controllers\Gopanel\Admins\ProfileController;
 use App\Http\Controllers\Gopanel\Admins\RoleController;
@@ -93,6 +94,7 @@ Route::group(['middleware' => 'gopanel'], function () {
             Route::get('/', [LanguageController::class, 'index'])->name('index');
             Route::get('/get/form/{item?}', [LanguageController::class, 'getForm'])->name('get.form');
             Route::post('/save/{item?}', [LanguageController::class, 'save'])->name('save');
+            Route::post('/toggle-default', [LanguageController::class, 'toggleDefault'])->name('toggle.default');
         });
 
         //Translates
@@ -204,6 +206,17 @@ Route::group(['middleware' => 'gopanel'], function () {
             Route::post('/delete/{item}', [FileLogController::class, 'delete'])->name('delete');
             Route::post('/cleanup', [FileLogController::class, 'cleanup'])->name('cleanup');
             Route::get('/users', [FileLogController::class, 'getUsers'])->name('users');
+        });
+    });
+
+    // System
+    Route::prefix('system')->name("system.")->group(function () {
+        Route::prefix('updates')->name("updates.")->group(function () {
+            Route::get('/', [UpdateController::class, 'index'])->name('index');
+            Route::post('/check', [UpdateController::class, 'check'])->name('check');
+            Route::post('/diff', [UpdateController::class, 'diff'])->name('diff');
+            Route::post('/apply', [UpdateController::class, 'apply'])->name('apply');
+            Route::post('/rollback', [UpdateController::class, 'rollback'])->name('rollback');
         });
     });
 });

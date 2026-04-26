@@ -14,83 +14,135 @@ class Language extends BaseModel
 
     protected $logEnabled = false;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'country_id',
         'code',
         'name',
         'sort_order',
         'is_active',
+        'is_show',
+        'default',
     ];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
     protected $casts = [
         'is_active' => 'boolean',
+        'is_show' => 'boolean',
+        'default' => 'boolean',
         'created_at' => 'datetime',
     ];
 
-    /**
-     * Relationship with Country
-     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saved(function () {
+            static::clearLanguageCache();
+        });
+
+        static::deleted(function () {
+            static::clearLanguageCache();
+        });
+    }
+
     public function country()
     {
         return $this->belongsTo(Country::class);
     }
-
 
     public function getUpperCodeAttribute()
     {
         return mb_strtoupper($this->code, 'UTF-8');
     }
 
-
     public static function getCachedAll()
     {
         $instance = new static();
+
         return Cache::remember("site_" . $instance->getTable(), now()->addDays(5), function () use ($instance) {
-            $query = $instance->newQuery();
-            $query->where("is_active", true);
-            $query->orderBy("id", "DESC");
-            return $query->get();
+            return $instance->newQuery()
+                ->where('is_active', true)
+                ->orderByDesc('default')
+                ->orderBy('sort_order')
+                ->orderBy('id')
+                ->get();
         });
     }
 
-    /**
-     * Route regex üçün aktiv dil kodlarını qaytarır (az|en|ru)
-     */
+    public static function clearLanguageCache(): void
+    {
+        $instance = new static();
+        Cache::forget("site_" . $instance->getTable());
+    }
+
+    public static function getDefault(): ?self
+    {
+        return static::query()
+            ->where('is_active', true)
+            ->where('default', true)
+            ->orderBy('id')
+            ->first();
+    }
+
+    public static function getDefaultCode(string $fallback = 'az'): string
+    {
+        return static::getDefault()?->code ?? $fallback;
+    }
+
+    public static function ensureSingleDefault(self $item): void
+    {
+        if (!$item->default) {
+            return;
+        }
+
+        static::query()
+            ->whereKeyNot($item->getKey())
+            ->update(['default' => false]);
+    }
+
+    public static function ensureFallbackDefault(string $fallback = 'az'): void
+    {
+        if (static::query()->where('default', true)->exists()) {
+            return;
+        }
+
+        $language = static::query()
+            ->where('is_active', true)
+            ->where('code', $fallback)
+            ->first();
+
+        if (!$language) {
+            $language = static::query()
+                ->where('is_active', true)
+                ->orderBy('sort_order')
+                ->orderBy('id')
+                ->first();
+        }
+
+        if ($language) {
+            $language->forceFill([
+                'default' => true,
+                'is_active' => true,
+            ])->save();
+        }
+    }
+
     public static function getActiveCodesForRouteRegex(): string
     {
         $codes = self::getCachedAll()->pluck('code')->toArray();
+
         return implode('|', $codes) ?: 'az';
     }
 
-    /**
-     * Dil dəyişdirmə URL-ini qaytarır
-     */
     public function switchLanguage(): string
     {
-        $currentLocale = app()->getLocale();
-        $currentUrl    = url()->current();
-        $baseUrl       = url('/');
-
-        // URL-dən base hissəni çıxar, yalnız path saxla
+        $currentUrl = url()->current();
+        $baseUrl = url('/');
         $path = str_replace($baseUrl, '', $currentUrl);
         $path = ltrim($path, '/');
-
-        // Path-in əvvəlində dil kodu varsa dəyişdir, yoxdursa əlavə et
         $segments = $path ? explode('/', $path) : [];
-
         $activeCodes = self::getCachedAll()->pluck('code')->toArray();
 
-        if (!empty($segments) && in_array($segments[0], $activeCodes)) {
+        if (!empty($segments) && in_array($segments[0], $activeCodes, true)) {
             $segments[0] = $this->code;
         } else {
             array_unshift($segments, $this->code);

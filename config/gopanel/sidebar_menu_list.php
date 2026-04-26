@@ -130,5 +130,11 @@ return [
         'route' => 'gopanel.activity.file-logs.index',
         'can'   => 'gopanel.activity.file-logs.index',
     ],
+    [
+        'icon' => '<i class="bx bx-revision"></i>',
+        'title' => 'Yeniləmələr',
+        'route' => 'gopanel.system.updates.index',
+        'can'   => 'gopanel.system.updates.index',
+    ],
 
 ];

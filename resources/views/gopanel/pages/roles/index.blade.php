@@ -1,46 +1,41 @@
 @extends('gopanel.layouts.main')
-@section('content') 
+@section('content')
 <div class="page-content">
     <div class="container-fluid">
-
-        <!-- start page title -->
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h4 class="mb-sm-0 font-size-18">Vəzifələr</h4>
+                    <div>
+                        <h4 class="mb-sm-0 font-size-18">Vəzifələr</h4>
+                        <p class="text-muted mb-0 mt-1">Admin rollarını və onlara təyin olunmuş icazələri buradan idarə edə bilərsiniz.</p>
+                    </div>
 
                     <div class="page-title-right">
                         @can('gopanel.admins.roles.add')
-                        <a class="btn btn-success" href="{{route("gopanel.admins.roles.store")}}">
+                        <a class="btn btn-success" href="{{ route('gopanel.admins.roles.store') }}">
                             <i class="fas fa-plus"></i> Əlavə et
                         </a>
                         @endcan
                     </div>
-
                 </div>
             </div>
         </div>
-        <!-- end page title -->
 
         <div class="row">
             <div class="col-xl-12">
                 <div class="card">
                     <div class="card-body">
-                        {{-- <h4 class="card-title">Striped columns</h4>
-                        <p class="card-title-desc">Use <code>.table-striped-columns</code> to add zebra-striping to any table column.</p> --}}
                         @include('gopanel.component.datatable',[
                             '__datatableName' => 'gopanel.admins.role',
                             '__datatableId' => 'roles'
                         ])
                     </div>
                 </div>
-            </div><!--end col-->
+            </div>
         </div>
-        
-    </div> <!-- container-fluid -->
+    </div>
 </div>
-<!-- End Page-content -->
 @endsection
 @push('scripts')
-    <script src="{{asset("assets/gopanel/js/modules/admins.js?=" . time())}}"></script>
+    <script src="{{ asset('assets/gopanel/js/modules/admins.js?=' . time()) }}"></script>
 @endpush
