@@ -4,19 +4,11 @@
         {
             "version": "1.0.1",
             "date": "2026-04-26",
-            "description": "Yeniləmə sistemi əlavə edildi, sidebar və permission yeniləndi",
+            "description": "Dashboard-a xoş gəldin kartı əlavə edildi",
             "files": [
                 {
-                    "path": "config/gopanel/sidebar_menu_list.php",
+                    "path": "resources/views/gopanel/dashboard.blade.php",
                     "action": "modified"
-                },
-                {
-                    "path": "config/gopanel/permission_list.php",
-                    "action": "modified"
-                },
-                {
-                    "path": "public/assets/gopanel/js/modules/updater.js",
-                    "action": "added"
                 }
             ]
         }
