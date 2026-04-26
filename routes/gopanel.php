@@ -14,6 +14,8 @@ use App\Http\Controllers\Gopanel\DatatableController;
 use App\Http\Controllers\Gopanel\Common\GeneralController;
 use App\Http\Controllers\Gopanel\Contact\ContactInfoController;
 use App\Http\Controllers\Gopanel\Contact\SocialController;
+use App\Http\Controllers\Gopanel\Seo\AnalyticsController;
+use App\Http\Controllers\Gopanel\Seo\AnalyticsDetailController;
 use App\Http\Controllers\Gopanel\Seo\SeoAnalyticsController;
 use App\Http\Controllers\Gopanel\Seo\SiteRedirectController;
 use App\Http\Controllers\Gopanel\Seo\LlmsTxtController;
@@ -134,6 +136,32 @@ Route::group(['middleware' => 'gopanel'], function () {
         Route::prefix('llms-txt')->name("llms-txt.")->group(function () {
             Route::get('/{item?}', [LlmsTxtController::class, 'index'])->name('index');
             Route::post('/save/{item?}', [LlmsTxtController::class, 'save'])->name('save.form');
+        });
+    });
+
+
+    Route::prefix('analytics')->name("analytics.")->group(function () {
+        Route::get('/', [AnalyticsController::class, 'index'])->name('index');
+        Route::get('/get/top-hits', [AnalyticsController::class, 'getTopHits'])->name('get.top.hits');
+        Route::get('/get/countries-map', [AnalyticsController::class, 'getCountriesMap'])->name('get.countries.map');
+        Route::get('/get/cities-chart', [AnalyticsController::class, 'getCitiesChart'])->name('cities.chart');
+        Route::get('/get/languages-chart', [AnalyticsController::class, 'getLanguagesChart'])->name('get.languages');
+        Route::get('/get/os-chart', [AnalyticsController::class, 'getOperatingSystemsChart'])->name('os.chart');
+        // Select2 AJAX search
+        Route::get('/api/countries', [AnalyticsController::class, 'searchCountries'])->name('api.countries');
+        Route::get('/api/cities', [AnalyticsController::class, 'searchCities'])->name('api.cities');
+        Route::prefix('detail')->name("detail.")->group(function () {
+            Route::get('/devices', [AnalyticsDetailController::class, 'devices'])->name('devices');
+            Route::get('/operating-systems', [AnalyticsDetailController::class, 'operating_systems'])->name('operating.systems');
+            Route::get('/browsers', [AnalyticsDetailController::class, 'browsers'])->name('browsers');
+            Route::get('/countries', [AnalyticsDetailController::class, 'countries'])->name('countries');
+            Route::get('/cities', [AnalyticsDetailController::class, 'cities'])->name('cities');
+            Route::get('/languages', [AnalyticsDetailController::class, 'languages'])->name('languages');
+            Route::get('/clicks', [AnalyticsDetailController::class, 'clicks'])->name('clicks');
+            Route::get('/links', [AnalyticsDetailController::class, 'links'])->name('links');
+            Route::get('/utm/parameters', [AnalyticsDetailController::class, 'utm_parameters'])->name('utm.parameters');
+            Route::get('/ad-platforms', [AnalyticsDetailController::class, 'ad_platforms'])->name('ad.platforms');
+            Route::get('/ad-platform-data', [AnalyticsDetailController::class, 'ad_platform_data'])->name('ad.platform.data');
         });
     });
 

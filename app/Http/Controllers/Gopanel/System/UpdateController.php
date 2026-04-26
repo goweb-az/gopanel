@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Gopanel\System;
 
 use App\Http\Controllers\GoPanelController;
 use App\Services\Gopanel\GitHubUpdateService;
+use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
@@ -26,13 +28,13 @@ class UpdateController extends GoPanelController
         $localVersion = $this->updateService->getLocalVersion();
 
         $localVersion['last_checked_at_formatted'] = !empty($localVersion['last_checked_at'])
-            ? \Carbon\Carbon::parse($localVersion['last_checked_at'])->format('d.m.Y H:i')
+            ? Carbon::parse($localVersion['last_checked_at'])->format('d.m.Y H:i')
             : null;
 
         // Tarixçədəki tarixləri formatla
         if (!empty($localVersion['update_history'])) {
             foreach ($localVersion['update_history'] as &$history) {
-                $history['date_formatted'] = \Carbon\Carbon::parse($history['date'])->format('d.m.Y H:i');
+                $history['date_formatted'] = Carbon::parse($history['date'])->format('d.m.Y H:i');
             }
         }
 
@@ -72,7 +74,7 @@ class UpdateController extends GoPanelController
             $this->updateService->saveLocalVersion($localVersion);
 
             $this->success_response($available, 'Yeniləmələr yoxlandı');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->response['message'] = 'Xəta: ' . $e->getMessage();
         }
 
@@ -93,7 +95,7 @@ class UpdateController extends GoPanelController
 
             $diff = $this->updateService->getFileDiff($path);
             $this->success_response($diff, 'Diff hazırdır');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->response['message'] = 'Xəta: ' . $e->getMessage();
         }
 
@@ -130,12 +132,13 @@ class UpdateController extends GoPanelController
             try {
                 Artisan::call('cache:clear');
                 Artisan::call('view:clear');
-            } catch (\Exception $e) {
+                Artisan::call('optimize:clear');
+            } catch (Exception $e) {
                 // Cache clear uğursuz olsa da, yeniləmə uğurludur
             }
 
             $this->success_response($result, count($result['updated_files']) . ' fayl uğurla yeniləndi');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->response['message'] = 'Xəta: ' . $e->getMessage();
         }
 
@@ -165,12 +168,13 @@ class UpdateController extends GoPanelController
             try {
                 Artisan::call('cache:clear');
                 Artisan::call('view:clear');
-            } catch (\Exception $e) {
+                Artisan::call('optimize:clear');
+            } catch (Exception $e) {
                 // ignore
             }
 
             $this->success_response($result, count($result['restored_files']) . ' fayl geri qaytarıldı');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->response['message'] = 'Xəta: ' . $e->getMessage();
         }
 
@@ -210,7 +214,7 @@ class UpdateController extends GoPanelController
                 'backup_exists' => $backupContent !== null,
                 'current_exists' => $currentContent !== null,
             ], 'Diff hazırdır');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->response['message'] = 'Xəta: ' . $e->getMessage();
         }
 
@@ -244,7 +248,7 @@ class UpdateController extends GoPanelController
             File::copy($backupFilePath, $targetPath);
 
             $this->success_response(['path' => $path], "{$path} uğurla geri qaytarıldı");
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->response['message'] = 'Xəta: ' . $e->getMessage();
         }
 

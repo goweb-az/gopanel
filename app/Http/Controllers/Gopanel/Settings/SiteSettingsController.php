@@ -9,6 +9,7 @@ use App\Http\Controllers\GoPanelController;
 use App\Models\Settings\SiteSetting;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class SiteSettingsController extends GoPanelController
 {
@@ -44,6 +45,11 @@ class SiteSettingsController extends GoPanelController
     {
         $data       = $request->except(['_token']);
 
+        // Checkbox-lar unchecked olduqda request-də olmur, default false
+        $data['site_redirect_status'] = $request->has('site_redirect_status') ? 1 : 0;
+        $data['site_analytics']       = $request->has('site_analytics') ? 1 : 0;
+        $data['block_bad_bots']       = $request->has('block_bad_bots') ? 1 : 0;
+
         if ($request->hasFile("logo_light")) {
             $data['logo_light']     = FileUploader::toPublic($request->file('logo_light'), 'site-logo', 'logo-light');
         }
@@ -62,6 +68,10 @@ class SiteSettingsController extends GoPanelController
             $metaFiles = $request->file('meta', []);
             PageMetaDataHelper::save($item, $metaDataInput, $metaFiles);
         }
+
+        // Site settings cache-ni təmizlə
+        Cache::forget('site_settings' . app()->getLocale());
+
         return $item;
     }
 }

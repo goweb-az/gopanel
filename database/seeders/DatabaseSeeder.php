@@ -16,9 +16,11 @@ class DatabaseSeeder extends Seeder
         $this->call(SiteSettingSeeder::class);
         $this->call(DefaultCountriesAndCitiesSeeder::class);
         $this->call(LanguageSeeder::class);
-        // $this->call(RolesTableSeeder::class);
         $this->call(PermissionSeeder::class);
-        // $this->call(AzCitiesSeeder::class);
-        // $this->call(TranslationSeeder::class);
+        $this->call(MenuSeeder::class);
+        $this->call(SocialsSeeder::class);
+        $this->call(LlmsTxtSeeder::class);
+        $this->call(SeoAnalyticsSeeder::class);
+        $this->call(SeoAnalyticsSeeder::class);
     }
 }

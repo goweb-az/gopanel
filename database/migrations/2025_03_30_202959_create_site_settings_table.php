@@ -17,6 +17,9 @@ return new class extends Migration
             $table->boolean('login_status')->default(true);
             $table->boolean('register_status')->default(true);
             $table->boolean('payment_status')->default(true);
+            $table->boolean('site_redirect_status')->default(true);
+            $table->boolean('site_analytics')->default(false);
+            $table->boolean('block_bad_bots')->default(false);
             $table->string('logo_light')->nullable();
             $table->string('logo_dark')->nullable();
             $table->string('mail_logo')->nullable();

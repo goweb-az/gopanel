@@ -280,3 +280,430 @@
     overflow: hidden;
 }
 /* ─── Updater Diff Modal End ──────────────────────── */
+
+/* ─── Analytics Dashboard ──────────────────────────── */
+
+/* Loader overlay — content area only, not sidebar */
+.analytics-loader-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(255,255,255,0.55);
+    z-index: 100;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(2px);
+    border-radius: 4px;
+}
+.analytics-loader-overlay.active {
+    display: flex;
+}
+.analytics-loader-spinner {
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    border: 4px solid rgba(85,110,230,0.15);
+    border-top-color: #556ee6;
+    animation: spin 0.8s infinite linear;
+}
+
+/* DateRangePicker overrides */
+.daterangepicker .ranges li.active {
+    background-color: #556ee6;
+    color: #fff;
+}
+.daterangepicker .drp-buttons .applyBtn {
+    background-color: #556ee6;
+    border-color: #556ee6;
+}
+.daterangepicker { font-size: 13px; }
+
+/* Leaflet in admin panel */
+#leaflet-map .leaflet-popup-content-wrapper {
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    padding: 0;
+}
+#leaflet-map .leaflet-popup-content {
+    margin: 0;
+    min-width: 200px;
+}
+#leaflet-map { border-radius: 6px; z-index: 1; }
+
+/* Leaflet marker popup custom */
+.analytics-popup { padding: 14px 16px; }
+.analytics-popup h6 { font-size: 15px; font-weight: 600; margin-bottom: 10px; }
+.analytics-popup .popup-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 3px 0; font-size: 13px; color: #495057;
+}
+.analytics-popup .popup-row i { color: #556ee6; width: 16px; text-align: center; }
+.analytics-popup .popup-progress {
+    margin-top: 10px; height: 6px; border-radius: 3px;
+    background: #e9ecef; overflow: hidden;
+}
+.analytics-popup .popup-progress-bar {
+    height: 100%; border-radius: 3px;
+    background: linear-gradient(90deg, #556ee6, #34c38f);
+    transition: width 0.4s ease;
+}
+.analytics-popup .popup-percent {
+    font-size: 11px; color: #74788d; margin-top: 3px; text-align: right;
+}
+
+/* Marker drop animation */
+@keyframes markerDrop {
+    0% { transform: translateY(-80px) scale(0.6); opacity: 0; }
+    60% { transform: translateY(8px) scale(1.05); opacity: 1; }
+    80% { transform: translateY(-3px) scale(0.98); }
+    100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+.analytics-marker-drop {
+    animation: markerDrop 0.5s ease-out forwards;
+    opacity: 0;
+}
+.analytics-marker {
+    background: transparent;
+    border: 0;
+}
+
+/* Analytics filter panel */
+.analytics-filter-panel .form-label {
+    font-size: 12px; font-weight: 500;
+    color: #74788d; text-transform: uppercase;
+    letter-spacing: 0.3px; margin-bottom: 4px;
+}
+
+/* Analytics scoped Select2 — dark theme match */
+.analytics-filter-panel .select2-container--default .select2-selection--single {
+    height: 38px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background: #fff;
+}
+.analytics-filter-panel .select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 36px; color: #495057; padding-left: 12px;
+}
+.analytics-filter-panel .select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 36px;
+}
+.analytics-filter-panel .select2-container--default .select2-selection--single .select2-selection__clear {
+    margin-right: 8px; font-size: 16px;
+}
+
+/* Leaflet marker pin icon */
+.leaflet-marker-pin {
+    display: flex; align-items: center; justify-content: center;
+    background: #556ee6; color: #fff;
+    border-radius: 50% 50% 50% 0;
+    width: 36px; height: 36px;
+    transform: rotate(-45deg);
+    box-shadow: 0 3px 10px rgba(85,110,230,0.45);
+    border: 2px solid #fff;
+}
+.leaflet-marker-pin span {
+    transform: rotate(45deg);
+    font-size: 11px; font-weight: 700;
+}
+
+.analytics-map-fullscreen-toggle {
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    line-height: 1;
+}
+
+/* Map fullscreen mode */
+.analytics-map-is-fullscreen {
+    overflow: hidden;
+}
+.analytics-map-card.is-fullscreen {
+    position: fixed !important;
+    inset: 0;
+    z-index: 1060;
+    border-radius: 0 !important;
+    height: 100vh !important;
+    margin: 0 !important;
+}
+.analytics-map-card.is-fullscreen .card-header {
+    min-height: 58px;
+    flex: 0 0 auto;
+    background: #fff;
+    border-radius: 0;
+    z-index: 2;
+}
+.analytics-map-card.is-fullscreen .card-body {
+    height: calc(100vh - 58px);
+    padding: 0;
+}
+.analytics-map-card.is-fullscreen #leaflet-map {
+    border-radius: 0 !important;
+    height: 100% !important;
+}
+.analytics-map-card.is-fullscreen .analytics-map-detail-link {
+    display: none;
+}
+.analytics-map-card.is-fullscreen .leaflet-top,
+.analytics-map-card.is-fullscreen .leaflet-bottom {
+    z-index: 800;
+}
+.analytics-map-card.is-fullscreen .leaflet-popup-pane {
+    z-index: 700;
+}
+
+.analytics-card-is-fullscreen {
+    overflow: hidden;
+}
+.analytics-fullscreen-toggle {
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    line-height: 1;
+}
+.analytics-chart-card .card-body {
+    min-height: 380px;
+}
+.analytics-chart-surface {
+    min-height: 340px;
+}
+.analytics-chart-canvas-wrap {
+    height: 430px;
+    min-height: 340px;
+    position: relative;
+}
+.analytics-chart-card.is-fullscreen {
+    position: fixed !important;
+    inset: 0;
+    z-index: 1060;
+    border-radius: 0 !important;
+    height: 100vh !important;
+    margin: 0 !important;
+    display: flex;
+    flex-direction: column;
+}
+.analytics-chart-card.is-fullscreen .card-header {
+    min-height: 58px;
+    flex: 0 0 auto;
+    background: #fff;
+    border-radius: 0;
+    z-index: 2;
+}
+.analytics-chart-card.is-fullscreen .card-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 20px 24px;
+    overflow: auto;
+}
+.analytics-chart-card.is-fullscreen .analytics-chart-surface {
+    min-height: calc(100vh - 120px);
+}
+.analytics-chart-card.is-fullscreen .analytics-chart-canvas-wrap {
+    min-height: calc(100vh - 120px);
+}
+.analytics-chart-card.is-fullscreen .analytics-card-detail-link {
+    display: none;
+}
+
+.analytics-utm-item {
+    height: 100%;
+    border: 1px solid #edf1f5;
+    border-radius: 8px;
+    padding: 14px;
+    background: #fff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+.analytics-utm-item:hover {
+    border-color: rgba(85,110,230,0.3);
+    box-shadow: 0 10px 24px rgba(18,38,63,0.07);
+    transform: translateY(-1px);
+}
+.analytics-utm-source {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #eef2ff;
+    color: #556ee6;
+    font-weight: 700;
+}
+.analytics-utm-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    font-size: 12px;
+    color: #74788d;
+}
+.analytics-utm-url {
+    display: block;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px dashed #e9ecef;
+    font-size: 12px;
+    color: #556ee6;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.analytics-utm-open {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    flex: 0 0 auto;
+}
+.analytics-logo-frame img {
+    max-width: 28px;
+    max-height: 28px;
+}
+.analytics-logo-fallback {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.analytics-ad-platform,
+.analytics-link-item,
+.analytics-click-item {
+    border: 1px solid #edf1f5;
+    border-radius: 8px;
+    background: #fff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+.analytics-ad-platform:hover,
+.analytics-link-item:hover,
+.analytics-click-item:hover {
+    border-color: rgba(85,110,230,0.3);
+    box-shadow: 0 10px 24px rgba(18,38,63,0.07);
+    transform: translateY(-1px);
+}
+.analytics-ad-platform {
+    height: 100%;
+    padding: 14px;
+}
+.analytics-ad-logo {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: #f3f6f9;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    color: #74788d;
+    font-size: 20px;
+}
+.analytics-ad-logo img {
+    max-width: 28px;
+    max-height: 28px;
+}
+.analytics-ad-meta {
+    display: grid;
+    gap: 2px;
+    font-size: 11px;
+    color: #74788d;
+}
+.analytics-mini-progress {
+    height: 6px;
+    border-radius: 999px;
+    background: #edf1f5;
+    overflow: hidden;
+}
+.analytics-mini-progress span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #556ee6, #34c38f);
+}
+.analytics-click-feed {
+    display: grid;
+    gap: 10px;
+}
+.analytics-click-item {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 14px;
+    padding: 14px;
+}
+.analytics-click-id {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #eef2ff;
+    color: #556ee6;
+    font-weight: 700;
+}
+.analytics-click-url,
+.analytics-click-ref {
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.analytics-click-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #74788d;
+}
+.analytics-click-meta i,
+.analytics-click-ref i {
+    color: #556ee6;
+}
+.analytics-click-ref {
+    margin-top: 8px;
+    color: #74788d;
+}
+.analytics-link-item {
+    height: 100%;
+    padding: 14px;
+}
+.analytics-link-rank {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #eef2ff;
+    color: #556ee6;
+    font-weight: 700;
+    flex: 0 0 auto;
+}
+.analytics-link-url,
+.analytics-link-meta {
+    font-size: 12px;
+}
+.analytics-link-url {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.analytics-link-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    margin-top: 8px;
+    color: #74788d;
+}
+@media (max-width: 575.98px) {
+    .analytics-click-item {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ─── Analytics Dashboard End ──────────────────────── */

@@ -97,6 +97,11 @@ return [
             ['name' => 'gopanel.seo.llms-txt.edit', 'title' => 'LLMs.txt redaktə'],
         ],
 
+        'Analitika' => [
+            ['name' => 'gopanel.analytics.index', 'title' => 'Analitika paneli'],
+            ['name' => 'gopanel.analytics.detail', 'title' => 'Ətraflı analitika'],
+        ],
+
         'Menyu' => [
             ['name' => 'gopanel.settings.menu.index', 'title' => 'Menyu siyahısı'],
             ['name' => 'gopanel.settings.menu.add', 'title' => 'Menyu əlavə etmə'],
