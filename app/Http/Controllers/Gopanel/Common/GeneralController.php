@@ -349,4 +349,12 @@ class GeneralController extends Controller
     {
         return response()->json($this->service->getSharedRoutes(), 200);
     }
+
+    public function iconPickerList()
+    {
+        $payload = \App\Helpers\Gopanel\IconPickerHelper::all();
+
+        return response()->json($payload)
+            ->header('Cache-Control', 'public, max-age=86400');
+    }
 }

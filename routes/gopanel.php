@@ -7,7 +7,9 @@ use App\Http\Controllers\Gopanel\Admins\AdminController;
 use App\Http\Controllers\Gopanel\Admins\ProfileController;
 use App\Http\Controllers\Gopanel\Admins\RoleController;
 use App\Http\Controllers\Gopanel\AuthController;
+use App\Http\Controllers\Gopanel\AboutUsController;
 use App\Http\Controllers\Gopanel\BlogController;
+use App\Http\Controllers\Gopanel\CategoryController;
 use App\Http\Controllers\Gopanel\Communications\MessageTemplateController;
 use App\Http\Controllers\Gopanel\DashboardController;
 use App\Http\Controllers\Gopanel\DatatableController;
@@ -23,6 +25,7 @@ use App\Http\Controllers\Gopanel\Settings\MailSettingsController;
 use App\Http\Controllers\Gopanel\Settings\MenuController;
 use App\Http\Controllers\Gopanel\Settings\SiteSettingsController;
 use App\Http\Controllers\Gopanel\Settings\SubscriptionDurationController;
+use App\Http\Controllers\Gopanel\ServiceController;
 use App\Http\Controllers\Gopanel\SliderController;
 use App\Http\Controllers\Gopanel\Translations\LanguageController;
 use App\Http\Controllers\Gopanel\Translations\TranslationController;
@@ -62,6 +65,7 @@ Route::group(['middleware' => 'gopanel'], function () {
     Route::prefix('general')->name("general.")->group(function () {
         Route::get('/clear/cache', [GeneralController::class, 'clearCache'])->name('clear.cache');
         Route::get('/get/route', [GeneralController::class, 'route'])->name('get.route');
+        Route::get('/icon-picker/list', [GeneralController::class, 'iconPickerList'])->name('icon-picker.list');
         Route::post('/status/change', [GeneralController::class, 'statusChange'])->name('status.change');
         Route::post('/sortable', [GeneralController::class, 'sortable'])->name('sortable');
         Route::post('/add', [GeneralController::class, 'add'])->name('add');
@@ -187,11 +191,30 @@ Route::group(['middleware' => 'gopanel'], function () {
         Route::post('/change-password', [ProfileController::class, 'changePassword'])->name('change-password');
     });
 
+    //Categories 
+    Route::prefix('categories')->name("categories.")->group(function () {
+        Route::get('/', [CategoryController::class, 'index'])->name('index');
+        Route::get('/get/form/{item?}', [CategoryController::class, 'getForm'])->name('get.form');
+        Route::post('/save/{item?}', [CategoryController::class, 'save'])->name('save');
+        Route::post('/move', [CategoryController::class, 'moveCategory'])->name('move');
+    });
+
     //Blog
     Route::prefix('blog')->name("blog.")->group(function () {
         Route::get('/', [BlogController::class, 'index'])->name('index');
         Route::get('/store/{item?}', [BlogController::class, 'store'])->name('store');
         Route::post('/save/{item?}', [BlogController::class, 'save'])->name('save');
+    });
+
+    Route::prefix('about-us')->name("about-us.")->group(function () {
+        Route::get('/{item?}', [AboutUsController::class, 'index'])->name('index');
+        Route::post('/save/{item?}', [AboutUsController::class, 'save'])->name('save');
+    });
+
+    Route::prefix('services')->name("services.")->group(function () {
+        Route::get('/', [ServiceController::class, 'index'])->name('index');
+        Route::get('/get/form/{item?}', [ServiceController::class, 'getForm'])->name('get.form');
+        Route::post('/save/{item?}', [ServiceController::class, 'save'])->name('save');
     });
 
 

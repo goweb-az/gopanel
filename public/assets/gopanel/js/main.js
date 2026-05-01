@@ -45,23 +45,8 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    if ($(".select2").length) {
-        $(".select2").select2({
-            theme: "bootstrap-5",
-        });
-    }
-
-    if ($(".bigTags").length) {
-        $('.bigTags').tagsinput({
-            tagClass: 'big'
-        });
-    }
-
-    if ($(".tags").length) {
-        $('.tags').tagsInput({
-            width: 'auto'
-        });
-    }
+    initFormUiElements(document);
+    observeDynamicFormUiElements();
 
 });
 
@@ -98,6 +83,92 @@ function removeBeforeunloadPage() {
 
 $('.modal').on('hidden.bs.modal', function () {
     removeBeforeunloadPage();
+});
+
+function setMetaCollapseButtonState($collapse, isOpen) {
+    var target = '#' + $collapse.attr('id');
+    var $button = $('.meta-collapse-toggle[data-bs-target="' + target + '"]');
+    var openText = $button.data('open-text') || 'Meta bilgiləri bağla';
+    var closedText = $button.data('closed-text') || 'Meta bilgiləri aç';
+
+    $button.attr('aria-expanded', isOpen ? 'true' : 'false');
+    $button.find('span').text(isOpen ? openText : closedText);
+    $button.find('i')
+        .toggleClass('fa-chevron-up', isOpen)
+        .toggleClass('fa-chevron-down', !isOpen);
+}
+
+function initMetaCollapse(context) {
+    var $context = $(context || document);
+
+    $context.find('.meta-collapse').addBack('.meta-collapse').each(function () {
+        setMetaCollapseButtonState($(this), $(this).hasClass('show'));
+    });
+}
+
+function initFormUiElements(context) {
+    var $context = $(context || document);
+
+    $context.find('.select2').addBack('.select2').each(function () {
+        if (!$(this).data('select2')) {
+            $(this).select2({
+                theme: 'bootstrap-5',
+            });
+        }
+    });
+
+    $context.find('.bigTags').addBack('.bigTags').not('[data-bigtags-initialized]').each(function () {
+        $(this).attr('data-bigtags-initialized', 'true');
+        $(this).tagsinput({
+            tagClass: 'big'
+        });
+    });
+
+    $context.find('.tags').addBack('.tags').not('[data-tags-initialized]').each(function () {
+        $(this).attr('data-tags-initialized', 'true');
+        $(this).tagsInput({
+            width: 'auto'
+        });
+    });
+
+    initMetaCollapse($context);
+    initDatatableUiElements();
+}
+
+function observeDynamicFormUiElements() {
+    if (!window.MutationObserver) {
+        return;
+    }
+
+    var target = document.getElementById('form-wrap');
+    if (!target || target.dataset.uiObserverInitialized) {
+        return;
+    }
+
+    target.dataset.uiObserverInitialized = 'true';
+
+    var observer = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+            $(mutation.addedNodes).each(function () {
+                if (this.nodeType === 1) {
+                    initFormUiElements(this);
+                }
+            });
+        });
+    });
+
+    observer.observe(target, {
+        childList: true,
+        subtree: true
+    });
+}
+
+$(document).on('shown.bs.collapse', '.meta-collapse', function () {
+    setMetaCollapseButtonState($(this), true);
+});
+
+$(document).on('hidden.bs.collapse', '.meta-collapse', function () {
+    setMetaCollapseButtonState($(this), false);
 });
 
 
