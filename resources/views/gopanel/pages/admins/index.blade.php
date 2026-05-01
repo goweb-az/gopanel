@@ -41,4 +41,7 @@
 </div>
 <!-- End Page-content -->
 @include('gopanel.pages.admins.inc.modal')
+@push('scripts')
+<script src="{{ asset('assets/gopanel/js/modules/admins.js?v=' . time()) }}"></script>
+@endpush
 @endsection

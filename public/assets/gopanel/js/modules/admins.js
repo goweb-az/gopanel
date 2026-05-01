@@ -94,3 +94,58 @@ $(document).ready(function(){
     });
 
 });
+
+$(function () {
+    $('#change-password-form').on('submit', function (e) {
+        e.preventDefault();
+
+        var password = $('#new-password').val();
+        var confirmation = $('#new-password-confirm').val();
+
+        if (password.length < 6) {
+            basicAlert('Şifrə ən az 6 simvol olmalıdır.', 'error');
+            return;
+        }
+
+        if (password !== confirmation) {
+            basicAlert('Şifrə təsdiqi uyğun gəlmir.', 'error');
+            return;
+        }
+
+        var mainFormAction = $('#data-form').attr('action');
+        if (!mainFormAction) {
+            basicAlert('Admin məlumatı tapılmadı.', 'error');
+            return;
+        }
+
+        var $btn = $('#save-password-btn');
+        $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i> Gözləyin...');
+
+        $.ajax({
+            url: mainFormAction,
+            type: 'POST',
+            data: {
+                password: password,
+                password_confirmation: confirmation,
+                _change_password_only: true
+            },
+            success: function (response) {
+                $btn.prop('disabled', false).html('<i class="fas fa-save me-1"></i> Şifrəni yenilə');
+                basicAlert(response.message, response.status);
+
+                if (response.status === 'success') {
+                    $('#changePasswordModal').modal('hide');
+                    $('#change-password-form')[0].reset();
+                }
+            },
+            error: function (xhr) {
+                $btn.prop('disabled', false).html('<i class="fas fa-save me-1"></i> Şifrəni yenilə');
+                showError(xhr);
+            }
+        });
+    });
+
+    $('#changePasswordModal').on('hidden.bs.modal', function () {
+        $('#change-password-form')[0].reset();
+    });
+});

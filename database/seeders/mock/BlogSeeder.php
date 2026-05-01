@@ -6,17 +6,20 @@ use App\Helpers\Gopanel\TranslationHelper;
 use App\Models\Seo\PageMetaData;
 use App\Models\Site\Blog;
 use App\Models\Translations\FieldTranslation;
+use Database\Seeders\mock\Concerns\CreatesPlaceholderImages;
 use Illuminate\Database\Seeder;
 
 class BlogSeeder extends Seeder
 {
+    use CreatesPlaceholderImages;
+
     public string $mockName = 'Blog';
 
     public function run()
     {
         $blogs = [
             [
-                'image'     => '',
+                'image'     => $this->placeholderImage('blogs', 'Website Development', 800, 520),
                 'date_time' => now()->subDays(1)->format('Y-m-d H:i:s'),
                 'is_active' => true,
                 'views'     => rand(10, 500),
@@ -42,7 +45,7 @@ class BlogSeeder extends Seeder
                 ],
             ],
             [
-                'image'     => '',
+                'image'     => $this->placeholderImage('blogs', 'SEO Optimization', 800, 520),
                 'date_time' => now()->subDays(3)->format('Y-m-d H:i:s'),
                 'is_active' => true,
                 'views'     => rand(10, 500),
@@ -68,7 +71,7 @@ class BlogSeeder extends Seeder
                 ],
             ],
             [
-                'image'     => '',
+                'image'     => $this->placeholderImage('blogs', 'Mobile App Development', 800, 520),
                 'date_time' => now()->subDays(5)->format('Y-m-d H:i:s'),
                 'is_active' => true,
                 'views'     => rand(10, 500),
@@ -94,7 +97,7 @@ class BlogSeeder extends Seeder
                 ],
             ],
             [
-                'image'     => '',
+                'image'     => $this->placeholderImage('blogs', 'CRM Systems', 800, 520),
                 'date_time' => now()->subDays(7)->format('Y-m-d H:i:s'),
                 'is_active' => true,
                 'views'     => rand(10, 500),

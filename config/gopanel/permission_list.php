@@ -46,6 +46,28 @@ return [
             ['name' => 'gopanel.blog.delete', 'title' => 'Bloq silmə'],
         ],
 
+        'Kateqoriyalar' => [
+            ['name' => 'gopanel.categories.index', 'title' => 'Kateqoriyalar siyahısı'],
+            ['name' => 'gopanel.categories.add', 'title' => 'Kateqoriya əlavə etmə'],
+            ['name' => 'gopanel.categories.edit', 'title' => 'Kateqoriya redaktə'],
+            ['name' => 'gopanel.categories.delete', 'title' => 'Kateqoriya silmə'],
+            ['name' => 'gopanel.categories.sort', 'title' => 'Kateqoriya sıralama'],
+            ['name' => 'gopanel.categories.move', 'title' => 'Kateqoriya köçürmə'],
+        ],
+
+        'Haqqımızda' => [
+            ['name' => 'gopanel.about-us.index', 'title' => 'Haqqımızda baxış'],
+            ['name' => 'gopanel.about-us.edit', 'title' => 'Haqqımızda redaktə'],
+        ],
+
+        'Xidmətlər' => [
+            ['name' => 'gopanel.services.index', 'title' => 'Xidmətlər siyahısı'],
+            ['name' => 'gopanel.services.add', 'title' => 'Xidmət əlavə etmə'],
+            ['name' => 'gopanel.services.edit', 'title' => 'Xidmət redaktə'],
+            ['name' => 'gopanel.services.delete', 'title' => 'Xidmət silmə'],
+            ['name' => 'gopanel.services.sort', 'title' => 'Xidmət sıralama'],
+        ],
+
         'Slayder' => [
             ['name' => 'gopanel.slider.index', 'title' => 'Slayder siyahısı'],
             ['name' => 'gopanel.slider.add', 'title' => 'Slayder əlavə etmə'],

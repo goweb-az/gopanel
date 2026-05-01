@@ -116,6 +116,24 @@ return [
         'can'   => 'gopanel.blog.index',
     ],
     [
+        'icon' => '<i class="bx bx-info-circle"></i>',
+        'title' => 'Haqqımızda',
+        'route' => 'gopanel.about-us.index',
+        'can'   => 'gopanel.about-us.index',
+    ],
+    [
+        'icon' => '<i class="bx bx-layer"></i>',
+        'title' => 'Kateqoriyalar',
+        'route' => 'gopanel.categories.index',
+        'can'   => 'gopanel.categories.index',
+    ],
+    [
+        'icon' => '<i class="bx bx-briefcase-alt-2"></i>',
+        'title' => 'Xidmətlər',
+        'route' => 'gopanel.services.index',
+        'can'   => 'gopanel.services.index',
+    ],
+    [
         'icon' => '<i class="bx bx-images"></i>',
         'title' => 'Slayder',
         'route' => 'gopanel.slider.index',
