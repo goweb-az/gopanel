@@ -3,8 +3,8 @@
 namespace App\Models\Gopanel;
 
 use App\Helpers\Common\ActivityLogHelper;
-use App\Traits\AddUuid;
-use App\Traits\HasRouteKey;
+use App\Traits\System\AddUuid;
+use App\Traits\System\HasRouteKey;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;

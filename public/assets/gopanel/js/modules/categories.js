@@ -38,6 +38,14 @@ $(function () {
         }
     });
 
+    $(document).on('change', '.category-icon-type', function () {
+        var $form = $(this).closest('form');
+        var isImage = $(this).val() === 'image';
+
+        $form.find('.category-font-icon-wrap').toggle(!isImage);
+        $form.find('.category-image-icon-wrap').toggle(isImage);
+    });
+
     $('.category-sortable').sortable({
         connectWith: '.category-sortable',
         placeholder: 'bg-light',

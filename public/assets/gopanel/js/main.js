@@ -194,7 +194,28 @@ function initDatatableUiElements(){
         this.switchButton();
     });
 
+    initImageLightbox();
     initToltip();
+}
+
+// Magnific Popup lightbox — model->getFieldView() tərəfindən yaradılan
+// .image-lightbox anchor-larını şəkil önizləyiciyə çevirir.
+function initImageLightbox(context) {
+    if (typeof $.fn.magnificPopup === 'undefined') {
+        return;
+    }
+
+    $(context || document)
+        .find('a.image-lightbox')
+        .not('[data-lightbox-initialized]')
+        .each(function () {
+            $(this).attr('data-lightbox-initialized', 'true').magnificPopup({
+                type: 'image',
+                closeOnContentClick: true,
+                mainClass: 'mfp-img-mobile',
+                image: { verticalFit: true }
+            });
+        });
 }
 
 function handleToggleSuccess(response) {

@@ -3,9 +3,12 @@
 namespace App\Models\Site;
 
 use App\Models\BaseModel;
-use App\Traits\MetaData;
-use App\Traits\Translation;
+use App\Traits\Content\MetaData;
+use App\Traits\Content\Translation;
 use Carbon\Carbon;
+use DateInterval;
+use DateTimeInterface;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
@@ -94,11 +97,11 @@ class Blog extends BaseModel
         return url("{$locale}/{$slug}");
     }
 
-    public static function getCachedAll()
+    public static function getCachedAll(DateTimeInterface|DateInterval|int|null $ttl = null): Collection
     {
         $locale = app()->getLocale();
 
-        return Cache::remember("site_blogs_all_{$locale}", now()->addDays(5), function () {
+        return Cache::remember("site_blogs_all_{$locale}", $ttl ?? now()->addDays(5), function () {
             return self::where('is_active', true)->latest()->get();
         });
     }

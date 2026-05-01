@@ -3,7 +3,7 @@
 namespace App\Models\Settings;
 
 use App\Models\BaseModel;
-use App\Traits\MetaData;
+use App\Traits\Content\MetaData;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;

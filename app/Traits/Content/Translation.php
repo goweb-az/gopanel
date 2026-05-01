@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Traits;
+namespace App\Traits\Content;
 
 use App\Models\Geography\Language;
 use App\Models\Translations\FieldTranslation;
@@ -12,6 +12,13 @@ trait Translation
 
     protected static function bootTranslation()
     {
+        static::addGlobalScope('translations', function (Builder $builder) {
+            $model = $builder->getModel();
+            if (property_exists($model, 'translatedAttributes') && !empty($model->translatedAttributes)) {
+                $builder->with('translations');
+            }
+        });
+
         static::deleting(function ($model) {
             $model->translations()->delete();
         });
@@ -62,7 +69,6 @@ trait Translation
         return $translatedModel;
     }
 
-    // Ajxda yeni datatable da gettrlerin avtomatik caqrilmasi ucundur
     public function toArray()
     {
         $array = parent::toArray();
@@ -76,7 +82,6 @@ trait Translation
         return $array;
     }
 
-    // Ajxda yeni datatable da gettrlerin avtomatik caqrilmasi ucundur
     public function getAttribute($key)
     {
         if (property_exists($this, 'translatedAttributes') && in_array($key, $this->translatedAttributes)) {
@@ -85,10 +90,6 @@ trait Translation
         return parent::getAttribute($key);
     }
 
-
-    /**
-     * Magic Method ile dinamik getXAttribute funksiasi yarat her modelde gettr yazmamaq ucun .
-     */
 
     public function __get($key)
     {

@@ -55,7 +55,7 @@ class BlogController extends GoPanelController
             }
             $this->response['redirect'] = isset($item->id) ? route("gopanel.blog.index") : false;
             $this->success_response($item, $message);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->response['message'] .= $e->getMessage();
         }
         return $this->response_json();

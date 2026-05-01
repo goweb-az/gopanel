@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->string('icon')->nullable();
             $table->string('color', 20)->nullable();
+            $table->string('icon_type')->default('font');
             $table->integer('sort_order')->default(0);
             $table->boolean('is_active')->default(true);
             $table->boolean('show_in_home')->default(false);

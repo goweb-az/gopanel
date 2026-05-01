@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Traits;
+namespace App\Traits\Ui;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -9,8 +9,6 @@ trait UiElements
     /**
      * Generates the HTML output for a checkbox input.
      * The checkbox includes the model's ID as the value for identification purposes.
-     *
-     * @return string
      */
     public function getCheckInputsAttribute(): string
     {
@@ -20,8 +18,6 @@ trait UiElements
     /**
      * Generates the HTML output for a clickable star icon element.
      * The star icon includes the model's ID as a data attribute for interaction.
-     *
-     * @return string
      */
     public function getStarIconAttribute(): string
     {
@@ -30,40 +26,16 @@ trait UiElements
         return '<div class="set-star rating-select is_favorite ' . $filled . ' " data-url="' . route("crm.general.is.favorite", $key) . '" data-key="' . $this->getTableHash() . '" data-id="' . $key . '"><i class="fa fa-star"></i></div>';
     }
 
-    /**
-     * Generates the HTML output for an edit button.
-     * Typically used in DataTables or admin panels for inline editing.
-     *
-     * @param Model $item
-     * @return string
-     */
     public function editBtn(Model $item): string
     {
         return '<a href="#" class="avtar avtar-s btn btn-primary edit"><i class="ti ti-pencil f-18"></i></a>';
     }
 
-    /**
-     * Generates the HTML output for a delete button.
-     * This button can be bound to a confirmation modal or direct delete action.
-     *
-     * @param Model $item
-     * @return string
-     */
     public function deleteBtn(Model $item): string
     {
         return '<a href="#" class="avtar avtar-s btn bg-white btn-link-danger"><i class="ti ti-trash f-18"></i></a>';
     }
 
-
-    /**
-     * Generates a combined HTML string for action buttons based on allowed actions.
-     * Typically used in datatable rows to render Edit/Delete controls dynamically.
-     *
-     * @param Model $item The Eloquent model instance the actions relate to.
-     * @param array $allowedActions List of allowed actions (e.g., ['edit', 'delete']).
-     *
-     * @return string HTML output containing the corresponding action buttons.
-     */
     protected function actions(Model $item, array $allowedActions = []): string
     {
         $view = '';
@@ -95,7 +67,7 @@ trait UiElements
     }
 
 
-    public  function double_click_edit($row, $routeName = null)
+    public function double_click_edit($row, $routeName = null)
     {
         $key        = $this->identifier_id;
         $route      = is_null($routeName) ? route("gopanel.general.editable", $key) : route($routeName, $this);
@@ -139,10 +111,6 @@ trait UiElements
         ';
     }
 
-    /**
-     * Bootstrap Switch Button toggle (requires bootstrap-switch-button library)
-     * Used for datatable rows where switch-style toggle is needed.
-     */
     public function toggle_btn($row = 'is_active', $checked = false, $class = [], $url = null, $active_text = 'Aktiv', $deactive_text = 'Deaktiv')
     {
         $class      = count($class) ? implode(" ", $class) : 'is_active';

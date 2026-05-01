@@ -3,7 +3,7 @@
 namespace App\Models\Contact;
 
 use App\Models\BaseModel;
-use App\Traits\Translation;
+use App\Traits\Content\Translation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;

@@ -68,11 +68,19 @@ return [
             ['name' => 'gopanel.services.sort', 'title' => 'Xidmət sıralama'],
         ],
 
+        'Məhsullar' => [
+            ['name' => 'gopanel.products.index', 'title' => 'Məhsullar siyahısı'],
+            ['name' => 'gopanel.products.add', 'title' => 'Məhsul əlavə etmə'],
+            ['name' => 'gopanel.products.edit', 'title' => 'Məhsul redaktə'],
+            ['name' => 'gopanel.products.delete', 'title' => 'Məhsul silmə'],
+        ],
+
         'Slayder' => [
             ['name' => 'gopanel.slider.index', 'title' => 'Slayder siyahısı'],
             ['name' => 'gopanel.slider.add', 'title' => 'Slayder əlavə etmə'],
             ['name' => 'gopanel.slider.edit', 'title' => 'Slayder redaktə'],
             ['name' => 'gopanel.slider.delete', 'title' => 'Slayder silmə'],
+            ['name' => 'gopanel.slider.sort', 'title' => 'Slayder sıralama'],
         ],
 
         'Əlaqə Məlumatları' => [
