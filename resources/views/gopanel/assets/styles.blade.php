@@ -15,6 +15,8 @@
 <link href="/assets/gopanel/css/icons.min.css" rel="stylesheet" type="text/css" />
 {{-- bootstrap-switch-button  --}}
 <link rel="stylesheet" href="{{asset("/assets/gopanel/libs/bootstrap-switch-button/bootstrap-switch-button.min.css")}}" >
+{{-- Magnific Popup (lightbox) --}}
+<link rel="stylesheet" href="{{asset("/assets/gopanel/libs/magnific-popup/magnific-popup.css")}}" >
 <!-- App Css-->
 <link href="/assets/gopanel/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
 <link href="{{asset('/assets/gopanel/css/custom.css?v=' . time())}}" id="app-style" rel="stylesheet" type="text/css" />

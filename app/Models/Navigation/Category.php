@@ -2,10 +2,11 @@
 
 namespace App\Models\Navigation;
 
+use App\Enums\Common\SocialIconTypeEnum;
 use App\Models\BaseModel;
-use App\Traits\AddUuid;
-use App\Traits\MetaData;
-use App\Traits\Translation;
+use App\Traits\Content\MetaData;
+use App\Traits\Content\Translation;
+use App\Traits\System\AddUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -39,6 +40,7 @@ class Category extends BaseModel
         'uid',
         'parent_id',
         'icon',
+        'icon_type',
         'color',
         'sort_order',
         'is_active',
@@ -58,6 +60,7 @@ class Category extends BaseModel
         'show_in_menu' => 'boolean',
         'sort_order'   => 'integer',
         'home_order'   => 'integer',
+        'icon_type'    => SocialIconTypeEnum::class,
         'created_at'   => 'datetime',
     ];
 
@@ -95,5 +98,25 @@ class Category extends BaseModel
     public function news()
     {
         return $this->belongsToMany(News::class, 'news_categories');
+    }
+
+    public function getIconViewAttribute(): string
+    {
+        if (empty($this->icon)) {
+            return '<i class="fas fa-tag text-muted"></i>';
+        }
+
+        if ($this->icon_type === SocialIconTypeEnum::Image) {
+            return '<img src="' . e(asset($this->icon)) . '" alt="category" style="width:20px;height:20px;object-fit:contain;">';
+        }
+
+        return '<i class="' . e($this->icon) . '"></i>';
+    }
+
+    public function getIconValueAttribute(): string
+    {
+        return $this->icon_type === SocialIconTypeEnum::Image
+            ? asset($this->icon)
+            : (string) $this->icon;
     }
 }

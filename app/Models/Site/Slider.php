@@ -3,7 +3,7 @@
 namespace App\Models\Site;
 
 use App\Models\BaseModel;
-use App\Traits\Translation;
+use App\Traits\Content\Translation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 

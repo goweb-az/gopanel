@@ -13,6 +13,7 @@
 <!-- Toastr js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script src="{{asset("/assets/gopanel/libs/bootstrap-switch-button/bootstrap-switch-button.min.js")}}"></script>
+<script src="{{asset("/assets/gopanel/libs/magnific-popup/jquery.magnific-popup.min.js")}}"></script>
 <script src="/assets/gopanel/js/app.js"></script>
 <script src="/assets/gopanel/js/main.js?={{time()}}"></script>
 <script src="/assets/gopanel/js/functions.js?={{time()}}"></script>

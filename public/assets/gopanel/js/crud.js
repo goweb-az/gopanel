@@ -60,6 +60,7 @@ $("body").on("click","#save-form-btn", function(e){
         if (response.status == 'success') {
             toastr.success(response.message);
             if (response.redirect) {
+                removeBeforeunloadPage();
                 pageLoader(1);
                 window.location.href = response.redirect;
             } else {

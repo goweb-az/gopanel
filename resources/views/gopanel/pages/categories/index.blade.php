@@ -40,8 +40,16 @@
                                 <div class="parent-drag-handle me-2" style="cursor: grab;">
                                     <i class="fas fa-grip-vertical text-muted"></i>
                                 </div>
-                                <span class="badge rounded-pill me-2" style="background-color: {{ $parent->color ?? '#6c757d' }}; font-size: 13px; padding: 5px 8px;">
-                                    <i class="{{ $parent->icon ?? 'fas fa-folder' }}"></i>
+                                <span class="badge rounded-pill me-2 d-inline-flex align-items-center justify-content-center" style="background-color: {{ $parent->color ?? '#6c757d' }}; font-size: 13px; padding: 5px 8px; min-width: 26px; min-height: 26px;">
+                                    @if($parent->icon)
+                                        @if($parent->icon_type?->value === 'image')
+                                            <img src="{{ asset($parent->icon) }}" alt="icon" style="width:16px;height:16px;object-fit:contain;">
+                                        @else
+                                            <i class="{{ $parent->icon }}"></i>
+                                        @endif
+                                    @else
+                                        <i class="fas fa-folder"></i>
+                                    @endif
                                 </span>
                                 <h6 class="mb-0 fw-bold">{{ $parent->getTranslation('name', app()->getLocale(), true) ?? '—' }}</h6>
                             </div>
@@ -89,7 +97,11 @@
                                             <td class="text-center">{{$loop->iteration}}</td>
                                             <td class="text-center">
                                                 @if($child->icon)
-                                                    <i class="{{ $child->icon }}" style="color: {{ $child->color ?? '#333' }}; font-size: 16px;"></i>
+                                                    @if($child->icon_type?->value === 'image')
+                                                        <img src="{{ asset($child->icon) }}" alt="icon" style="width:20px;height:20px;object-fit:contain;">
+                                                    @else
+                                                        <i class="{{ $child->icon }}" style="color: {{ $child->color ?? '#333' }}; font-size: 16px;"></i>
+                                                    @endif
                                                 @else
                                                     <i class="fas fa-tag text-muted"></i>
                                                 @endif

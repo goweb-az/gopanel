@@ -25,6 +25,7 @@ use App\Http\Controllers\Gopanel\Settings\MailSettingsController;
 use App\Http\Controllers\Gopanel\Settings\MenuController;
 use App\Http\Controllers\Gopanel\Settings\SiteSettingsController;
 use App\Http\Controllers\Gopanel\Settings\SubscriptionDurationController;
+use App\Http\Controllers\Gopanel\ProductController;
 use App\Http\Controllers\Gopanel\ServiceController;
 use App\Http\Controllers\Gopanel\SliderController;
 use App\Http\Controllers\Gopanel\Translations\LanguageController;
@@ -215,6 +216,13 @@ Route::group(['middleware' => 'gopanel'], function () {
         Route::get('/', [ServiceController::class, 'index'])->name('index');
         Route::get('/get/form/{item?}', [ServiceController::class, 'getForm'])->name('get.form');
         Route::post('/save/{item?}', [ServiceController::class, 'save'])->name('save');
+    });
+
+    //Products
+    Route::prefix('products')->name("products.")->group(function () {
+        Route::get('/', [ProductController::class, 'index'])->name('index');
+        Route::get('/store/{item:uid?}', [ProductController::class, 'store'])->name('store');
+        Route::post('/save/{item:uid?}', [ProductController::class, 'save'])->name('save');
     });
 
 

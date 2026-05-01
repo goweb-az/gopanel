@@ -3,7 +3,10 @@
 namespace App\Models\Geography;
 
 use App\Models\BaseModel;
-use App\Traits\AddUuid;
+use App\Traits\System\AddUuid;
+use DateInterval;
+use DateTimeInterface;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
@@ -54,11 +57,11 @@ class Language extends BaseModel
         return mb_strtoupper($this->code, 'UTF-8');
     }
 
-    public static function getCachedAll()
+    public static function getCachedAll(DateTimeInterface|DateInterval|int|null $ttl = null): Collection
     {
         $instance = new static();
 
-        return Cache::remember("site_" . $instance->getTable(), now()->addDays(5), function () use ($instance) {
+        return Cache::remember("site_" . $instance->getTable(), $ttl ?? now()->addDays(5), function () use ($instance) {
             return $instance->newQuery()
                 ->where('is_active', true)
                 ->orderByDesc('default')

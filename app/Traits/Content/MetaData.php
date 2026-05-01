@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Traits;
+namespace App\Traits\Content;
 
 use App\Models\Seo\PageMetaData;
 
@@ -10,38 +10,34 @@ trait MetaData
     protected static function bootMeta()
     {
         static::deleting(function ($model) {
-            $model->metaAll()->delete(); // Deletes all meta data associated with the model
+            $model->metaAll()->delete();
         });
     }
 
     // Retrieves meta data for a specific locale
     public function meta($locale = null)
     {
-        $locale = $locale ?? app()->getLocale(); // Use the application's default locale if none is provided
-        return $this->morphOne(PageMetaData::class, 'model')->where('locale', $locale); // Retrieve meta data for the specified locale
+        $locale = $locale ?? app()->getLocale();
+        return $this->morphOne(PageMetaData::class, 'model')->where('locale', $locale);
     }
 
     // Retrieves all meta data (including translations)
     public function metaAll()
     {
-        return $this->morphMany(PageMetaData::class, 'model'); // Retrieves all meta data associated with the model
+        return $this->morphMany(PageMetaData::class, 'model');
     }
 
     // Accessor for the 'meta' attribute, which fetches meta data for the model
     public function getMetaAttribute()
     {
-        return $this->meta(); // Returns the meta data for the current model
+        return $this->meta();
     }
 
     // Retrieves a specific meta translation attribute for a given locale
     public function getMeta($attribute, $locale = null)
     {
-        $locale = $locale ?? app()->getLocale(); // Use the application's default locale if none is provided
-
-        // Fetch the meta data for the given locale
+        $locale = $locale ?? app()->getLocale();
         $metaData = $this->meta($locale)->first();
-
-        // Return the specific attribute from the meta translation if it exists
         return $metaData ? $metaData->$attribute : null;
     }
 
@@ -56,5 +52,4 @@ trait MetaData
         }
         return null;
     }
-
 }

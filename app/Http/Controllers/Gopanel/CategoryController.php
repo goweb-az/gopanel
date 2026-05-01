@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Gopanel;
 
+use App\Helpers\Gopanel\FileUploader;
 use App\Helpers\Gopanel\Site\PageMetaDataHelper;
 use App\Helpers\Gopanel\TranslationHelper;
 use App\Http\Controllers\GoPanelController;
@@ -55,8 +56,18 @@ class CategoryController extends GoPanelController
     public function save(Category $item, Request $request)
     {
         try {
-            $data    = $request->except(['_token', 'icon_file', 'meta']);
+            $data    = $request->except(['_token', 'icon_file', 'icon_image', 'meta']);
             $message = !is_null($item->id) ? "Kateqoriya uğurla dəyişdirildi!" : "Kateqoriya uğurla yaradıldı!";
+
+            if ($request->hasFile('icon_image')) {
+                $fileName = FileUploader::nameGenerate($request->all(), 'category-icon');
+                $data['icon'] = FileUploader::toPublic($request->file('icon_image'), $item->getTable(), $fileName);
+                $data['icon_type'] = 'image';
+            }
+
+            if (($data['icon_type'] ?? null) === 'image' && !$request->hasFile('icon_image')) {
+                unset($data['icon']);
+            }
 
             $item = $this->crudHelper->saveInstance($item, $data);
 
@@ -68,6 +79,7 @@ class CategoryController extends GoPanelController
                 PageMetaDataHelper::save($item, $metaDataInput, $metaFiles);
             }
 
+            $this->response['redirect'] = route('gopanel.categories.index');
             $this->success_response($item, $message);
         } catch (\Exception $e) {
             $this->response['message']   .= $e->getMessage();

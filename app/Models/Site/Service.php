@@ -4,8 +4,8 @@ namespace App\Models\Site;
 
 use App\Enums\Common\SocialIconTypeEnum;
 use App\Models\BaseModel;
-use App\Traits\MetaData;
-use App\Traits\Translation;
+use App\Traits\Content\MetaData;
+use App\Traits\Content\Translation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;

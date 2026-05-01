@@ -134,6 +134,12 @@ return [
         'can'   => 'gopanel.services.index',
     ],
     [
+        'icon' => '<i class="bx bx-package"></i>',
+        'title' => 'Məhsullar',
+        'route' => 'gopanel.products.index',
+        'can'   => 'gopanel.products.index',
+    ],
+    [
         'icon' => '<i class="bx bx-images"></i>',
         'title' => 'Slayder',
         'route' => 'gopanel.slider.index',

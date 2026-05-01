@@ -3,7 +3,7 @@
 namespace App\Models\Gopanel;
 
 use App\Helpers\Common\ActivityLogHelper;
-use App\Traits\HasRouteKey;
+use App\Traits\System\HasRouteKey;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Models\Activity;

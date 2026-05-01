@@ -21,7 +21,10 @@ class SliderController extends GoPanelController
 
     public function index(Request $request)
     {
-        return view("gopanel.pages.slider.index");
+        $sliders  = Slider::orderBy('sort_order', 'ASC')->get();
+        $modelKey = Slider::class;
+
+        return view('gopanel.pages.slider.index', compact('sliders', 'modelKey'));
     }
 
     public function getForm(Slider $item, Request $request)

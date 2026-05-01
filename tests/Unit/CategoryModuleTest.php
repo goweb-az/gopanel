@@ -44,7 +44,7 @@ class CategoryModuleTest extends TestCase
 
         $this->assertStringNotContainsString('file_name_genarte', $controller);
         $this->assertStringNotContainsString('gopanelHelper->upload', $controller);
-        $this->assertStringContainsString("except(['_token', 'icon_file', 'meta'])", $controller);
+        $this->assertStringContainsString("except(['_token', 'icon_file', 'icon_image', 'meta'])", $controller);
     }
 
     public function test_category_page_uses_toggle_buttons_for_status(): void
