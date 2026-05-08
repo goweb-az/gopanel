@@ -21,6 +21,5 @@ class DatabaseSeeder extends Seeder
         $this->call(SocialsSeeder::class);
         $this->call(LlmsTxtSeeder::class);
         $this->call(SeoAnalyticsSeeder::class);
-        $this->call(SeoAnalyticsSeeder::class);
     }
 }
