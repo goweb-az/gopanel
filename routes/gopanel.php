@@ -1,37 +1,33 @@
 <?php
 
-use App\Http\Controllers\Gopanel\Activity\FileLogController;
+use App\Http\Controllers\Gopanel\AboutUsController;
 use App\Http\Controllers\Gopanel\Activity\ActivityLogController;
-use App\Http\Controllers\Gopanel\System\UpdateController;
+use App\Http\Controllers\Gopanel\Activity\FileLogController;
 use App\Http\Controllers\Gopanel\Admins\AdminController;
 use App\Http\Controllers\Gopanel\Admins\ProfileController;
 use App\Http\Controllers\Gopanel\Admins\RoleController;
 use App\Http\Controllers\Gopanel\AuthController;
-use App\Http\Controllers\Gopanel\AboutUsController;
 use App\Http\Controllers\Gopanel\BlogController;
 use App\Http\Controllers\Gopanel\CategoryController;
-use App\Http\Controllers\Gopanel\Communications\MessageTemplateController;
-use App\Http\Controllers\Gopanel\DashboardController;
-use App\Http\Controllers\Gopanel\DatatableController;
 use App\Http\Controllers\Gopanel\Common\GeneralController;
 use App\Http\Controllers\Gopanel\Contact\ContactInfoController;
 use App\Http\Controllers\Gopanel\Contact\SocialController;
+use App\Http\Controllers\Gopanel\DashboardController;
+use App\Http\Controllers\Gopanel\DatatableController;
+use App\Http\Controllers\Gopanel\ProductController;
 use App\Http\Controllers\Gopanel\Seo\AnalyticsController;
 use App\Http\Controllers\Gopanel\Seo\AnalyticsDetailController;
+use App\Http\Controllers\Gopanel\Seo\LlmsTxtController;
 use App\Http\Controllers\Gopanel\Seo\SeoAnalyticsController;
 use App\Http\Controllers\Gopanel\Seo\SiteRedirectController;
-use App\Http\Controllers\Gopanel\Seo\LlmsTxtController;
-use App\Http\Controllers\Gopanel\Settings\MailSettingsController;
+use App\Http\Controllers\Gopanel\ServiceController;
 use App\Http\Controllers\Gopanel\Settings\MenuController;
 use App\Http\Controllers\Gopanel\Settings\SiteSettingsController;
-use App\Http\Controllers\Gopanel\Settings\SubscriptionDurationController;
-use App\Http\Controllers\Gopanel\ProductController;
-use App\Http\Controllers\Gopanel\ServiceController;
 use App\Http\Controllers\Gopanel\SliderController;
+use App\Http\Controllers\Gopanel\System\UpdateController;
 use App\Http\Controllers\Gopanel\Translations\LanguageController;
 use App\Http\Controllers\Gopanel\Translations\TranslationController;
 use Illuminate\Support\Facades\Route;
-
 
 /*
 |--------------------------------------------------------------------------
@@ -46,24 +42,23 @@ use Illuminate\Support\Facades\Route;
 
 // Route::get('test', [TestController::class, 'index'])->name('index');
 
-//Auth Proccess
-Route::prefix('auth')->name("auth.")->group(function () {
+// Auth Proccess
+Route::prefix('auth')->name('auth.')->group(function () {
     Route::get('/login', [AuthController::class, 'login'])->name('login');
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::post('login', [AuthController::class, 'attempt'])->name('login.proccess');
 });
 
-
-// Start Gopanel route group 
+// Start Gopanel route group
 Route::group(['middleware' => 'gopanel'], function () {
 
-    //Dashboard
+    // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('index');
-    //Datatable
+    // Datatable
     Route::get('datatable/{table}', [DatatableController::class, 'handle'])->name('datatable.source');
 
-    //General default routes
-    Route::prefix('general')->name("general.")->group(function () {
+    // General default routes
+    Route::prefix('general')->name('general.')->group(function () {
         Route::get('/clear/cache', [GeneralController::class, 'clearCache'])->name('clear.cache');
         Route::get('/get/route', [GeneralController::class, 'route'])->name('get.route');
         Route::get('/icon-picker/list', [GeneralController::class, 'iconPickerList'])->name('icon-picker.list');
@@ -76,10 +71,9 @@ Route::group(['middleware' => 'gopanel'], function () {
         Route::post('/editable/{id?}', [GeneralController::class, 'editable'])->name('editable');
     });
 
-
-    Route::prefix('settings')->name("settings.")->group(function () {
-        // Site Settings 
-        Route::prefix('site-settings')->name("site-settings.")->group(function () {
+    Route::prefix('settings')->name('settings.')->group(function () {
+        // Site Settings
+        Route::prefix('site-settings')->name('site-settings.')->group(function () {
             Route::get('/{item?}', [SiteSettingsController::class, 'index'])->name('index');
             Route::post('/save/{item?}', [SiteSettingsController::class, 'save'])->name('save.form');
         });
@@ -90,62 +84,59 @@ Route::group(['middleware' => 'gopanel'], function () {
         //     Route::delete('/delete/{media}', [MediaController::class, 'delete'])->name('delete');
         // });
 
-
-        Route::prefix('menu')->name("menu.")->group(function () {
+        Route::prefix('menu')->name('menu.')->group(function () {
             Route::get('/', [MenuController::class, 'index'])->name('index');
             Route::get('/store/{item?}', [MenuController::class, 'store'])->name('store');
             Route::post('/save/{item?}', [MenuController::class, 'save'])->name('save');
         });
 
-        Route::prefix('languages')->name("languages.")->group(function () {
+        Route::prefix('languages')->name('languages.')->group(function () {
             Route::get('/', [LanguageController::class, 'index'])->name('index');
             Route::get('/get/form/{item?}', [LanguageController::class, 'getForm'])->name('get.form');
             Route::post('/save/{item?}', [LanguageController::class, 'save'])->name('save');
             Route::post('/toggle-default', [LanguageController::class, 'toggleDefault'])->name('toggle.default');
         });
 
-        //Translates
-        Route::prefix('translations')->name("translations.")->group(function () {
+        // Translates
+        Route::prefix('translations')->name('translations.')->group(function () {
             Route::get('/', [TranslationController::class, 'index'])->name('index');
             Route::get('/get/form/{item?}', [TranslationController::class, 'getForm'])->name('get.form');
             Route::post('/save/form/{item?}', [TranslationController::class, 'save'])->name('save.form');
         });
     });
 
-    Route::prefix('contact')->name("contact.")->group(function () {
-        Route::prefix('contact-info')->name("contact-info.")->group(function () {
+    Route::prefix('contact')->name('contact.')->group(function () {
+        Route::prefix('contact-info')->name('contact-info.')->group(function () {
             Route::get('/{item?}', [ContactInfoController::class, 'index'])->name('index');
             Route::post('/save/{item?}', [ContactInfoController::class, 'save'])->name('save.form');
         });
 
-        Route::prefix('socials')->name("socials.")->group(function () {
+        Route::prefix('socials')->name('socials.')->group(function () {
             Route::get('/', [SocialController::class, 'index'])->name('index');
             Route::get('/get/form/{item?}', [SocialController::class, 'getForm'])->name('get.form');
             Route::post('/save/{item?}', [SocialController::class, 'save'])->name('save');
         });
     });
 
-
-    Route::prefix('seo')->name("seo.")->group(function () {
-        Route::prefix('site-redirects')->name("site-redirects.")->group(function () {
+    Route::prefix('seo')->name('seo.')->group(function () {
+        Route::prefix('site-redirects')->name('site-redirects.')->group(function () {
             Route::get('/', [SiteRedirectController::class, 'index'])->name('index');
             Route::get('/get/form/{item?}', [SiteRedirectController::class, 'getForm'])->name('get.form');
             Route::post('/save/{item?}', [SiteRedirectController::class, 'save'])->name('save');
         });
 
-        Route::prefix('seo-analytics')->name("seo-analytics.")->group(function () {
+        Route::prefix('seo-analytics')->name('seo-analytics.')->group(function () {
             Route::get('/{item?}', [SeoAnalyticsController::class, 'index'])->name('index');
             Route::post('/save/{item?}', [SeoAnalyticsController::class, 'save'])->name('save.form');
         });
 
-        Route::prefix('llms-txt')->name("llms-txt.")->group(function () {
+        Route::prefix('llms-txt')->name('llms-txt.')->group(function () {
             Route::get('/{item?}', [LlmsTxtController::class, 'index'])->name('index');
             Route::post('/save/{item?}', [LlmsTxtController::class, 'save'])->name('save.form');
         });
     });
 
-
-    Route::prefix('analytics')->name("analytics.")->group(function () {
+    Route::prefix('analytics')->name('analytics.')->group(function () {
         Route::get('/', [AnalyticsController::class, 'index'])->name('index');
         Route::get('/get/top-hits', [AnalyticsController::class, 'getTopHits'])->name('get.top.hits');
         Route::get('/get/countries-map', [AnalyticsController::class, 'getCountriesMap'])->name('get.countries.map');
@@ -155,7 +146,7 @@ Route::group(['middleware' => 'gopanel'], function () {
         // Select2 AJAX search
         Route::get('/api/countries', [AnalyticsController::class, 'searchCountries'])->name('api.countries');
         Route::get('/api/cities', [AnalyticsController::class, 'searchCities'])->name('api.cities');
-        Route::prefix('detail')->name("detail.")->group(function () {
+        Route::prefix('detail')->name('detail.')->group(function () {
             Route::get('/devices', [AnalyticsDetailController::class, 'devices'])->name('devices');
             Route::get('/operating-systems', [AnalyticsDetailController::class, 'operating_systems'])->name('operating.systems');
             Route::get('/browsers', [AnalyticsDetailController::class, 'browsers'])->name('browsers');
@@ -170,85 +161,83 @@ Route::group(['middleware' => 'gopanel'], function () {
         });
     });
 
-
-    //Admins
-    Route::prefix('admins')->name("admins.")->group(function () {
+    // Admins
+    Route::prefix('admins')->name('admins.')->group(function () {
         Route::get('/', [AdminController::class, 'index'])->name('index');
         Route::get('/get/form/{item?}', [AdminController::class, 'getForm'])->name('get.form');
         Route::post('/save/{item?}', [AdminController::class, 'save'])->name('save');
 
-        Route::prefix('roles')->name("roles.")->group(function () {
+        Route::prefix('roles')->name('roles.')->group(function () {
             Route::get('/', [RoleController::class, 'index'])->name('index');
             Route::get('/store/{item?}', [RoleController::class, 'store'])->name('store');
             Route::post('/save/{item?}', [RoleController::class, 'save'])->name('save');
         });
     });
 
-    //Profile
-    Route::prefix('profile')->name("profile.")->group(function () {
+    // Profile
+    Route::prefix('profile')->name('profile.')->group(function () {
         Route::get('/', [ProfileController::class, 'index'])->name('index');
         Route::post('/update', [ProfileController::class, 'update'])->name('update');
         Route::get('/change-password', [ProfileController::class, 'changePasswordIndex'])->name('change-password.index');
         Route::post('/change-password', [ProfileController::class, 'changePassword'])->name('change-password');
     });
 
-    //Categories 
-    Route::prefix('categories')->name("categories.")->group(function () {
+    // Categories
+    Route::prefix('categories')->name('categories.')->group(function () {
         Route::get('/', [CategoryController::class, 'index'])->name('index');
         Route::get('/get/form/{item?}', [CategoryController::class, 'getForm'])->name('get.form');
         Route::post('/save/{item?}', [CategoryController::class, 'save'])->name('save');
         Route::post('/move', [CategoryController::class, 'moveCategory'])->name('move');
     });
 
-    //Blog
-    Route::prefix('blog')->name("blog.")->group(function () {
+    // Blog
+    Route::prefix('blog')->name('blog.')->group(function () {
         Route::get('/', [BlogController::class, 'index'])->name('index');
         Route::get('/store/{item?}', [BlogController::class, 'store'])->name('store');
         Route::post('/save/{item?}', [BlogController::class, 'save'])->name('save');
     });
 
-    Route::prefix('about-us')->name("about-us.")->group(function () {
+    Route::prefix('about-us')->name('about-us.')->group(function () {
         Route::get('/{item?}', [AboutUsController::class, 'index'])->name('index');
         Route::post('/save/{item?}', [AboutUsController::class, 'save'])->name('save');
     });
 
-    Route::prefix('services')->name("services.")->group(function () {
+    Route::prefix('services')->name('services.')->group(function () {
         Route::get('/', [ServiceController::class, 'index'])->name('index');
         Route::get('/get/form/{item?}', [ServiceController::class, 'getForm'])->name('get.form');
         Route::post('/save/{item?}', [ServiceController::class, 'save'])->name('save');
     });
 
-    //Products
-    Route::prefix('products')->name("products.")->group(function () {
+    // Products
+    Route::prefix('products')->name('products.')->group(function () {
         Route::get('/', [ProductController::class, 'index'])->name('index');
         Route::get('/store/{item:uid?}', [ProductController::class, 'store'])->name('store');
         Route::post('/save/{item:uid?}', [ProductController::class, 'save'])->name('save');
     });
 
-
-    Route::prefix('slider')->name("slider.")->group(function () {
+    Route::prefix('slider')->name('slider.')->group(function () {
         Route::get('/', [SliderController::class, 'index'])->name('index');
         Route::get('/get/form/{item?}', [SliderController::class, 'getForm'])->name('get.form');
         Route::post('/save/{item?}', [SliderController::class, 'save'])->name('save');
     });
 
-    //Contact
-    Route::prefix('contact')->name("contact.")->group(function () {
-        Route::prefix('contact-info')->name("contact-info.")->group(function () {
+    // Contact
+    Route::prefix('contact')->name('contact.')->group(function () {
+        Route::prefix('contact-info')->name('contact-info.')->group(function () {
             Route::get('/{item?}', [ContactInfoController::class, 'index'])->name('index');
             Route::post('/save/{item?}', [ContactInfoController::class, 'save'])->name('save.form');
         });
 
-        Route::prefix('socials')->name("socials.")->group(function () {
+        Route::prefix('socials')->name('socials.')->group(function () {
             Route::get('/', [SocialController::class, 'index'])->name('index');
             Route::get('/get/form/{item?}', [SocialController::class, 'getForm'])->name('get.form');
             Route::post('/save/{item?}', [SocialController::class, 'save'])->name('save');
         });
     });
 
-    //Activity
-    Route::prefix('activity')->name("activity.")->group(function () {
-        //tarixce
+    // Activity
+    Route::prefix('activity')->name('activity.')->group(function () {
+        // tarixce
         Route::prefix('activity-logs')->name('activity-logs.')->group(function () {
             Route::get('/', [ActivityLogController::class, 'index'])->name('index');
             Route::get('/view/{item}', [ActivityLogController::class, 'view'])->name('view');
@@ -257,9 +246,9 @@ Route::group(['middleware' => 'gopanel'], function () {
             Route::get('/users', [ActivityLogController::class, 'getUsers'])->name('users');
         });
 
-        //Logs
+        // Logs
         // ─── File Logs ────────────────────────────────────────────────
-        Route::prefix('file-logs')->name("file-logs.")->group(function () {
+        Route::prefix('file-logs')->name('file-logs.')->group(function () {
             Route::get('/', [FileLogController::class, 'index'])->name('index');
             Route::get('/view/{item}', [FileLogController::class, 'view'])->name('view');
             Route::post('/delete/{item}', [FileLogController::class, 'delete'])->name('delete');
@@ -269,8 +258,8 @@ Route::group(['middleware' => 'gopanel'], function () {
     });
 
     // System
-    Route::prefix('system')->name("system.")->group(function () {
-        Route::prefix('updates')->name("updates.")->group(function () {
+    Route::prefix('system')->name('system.')->group(function () {
+        Route::prefix('updates')->name('updates.')->group(function () {
             Route::get('/', [UpdateController::class, 'index'])->name('index');
             Route::post('/check', [UpdateController::class, 'check'])->name('check');
             Route::post('/diff', [UpdateController::class, 'diff'])->name('diff');
