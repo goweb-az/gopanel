@@ -7,11 +7,6 @@ use Illuminate\Http\Request;
 class HomeController extends SiteController
 {
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     public function index(Request $request)
     {
         $blogs = \App\Models\Site\Blog::getCachedAll();

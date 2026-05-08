@@ -13,12 +13,6 @@ use Illuminate\Support\Facades\View;
 class TranslationController extends GoPanelController
 {
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-
     public function index(Request $request)
     {
         $items      = Translation::all();

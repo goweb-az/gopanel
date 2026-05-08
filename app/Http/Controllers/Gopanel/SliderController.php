@@ -13,12 +13,6 @@ use Illuminate\Support\Facades\View;
 class SliderController extends GoPanelController
 {
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-
     public function index(Request $request)
     {
         $sliders  = Slider::orderBy('sort_order', 'ASC')->get();

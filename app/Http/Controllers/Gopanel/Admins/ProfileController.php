@@ -14,11 +14,6 @@ use Illuminate\Support\Facades\Storage;
 class ProfileController extends GoPanelController
 {
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     public function index()
     {
         $item = Auth::guard('gopanel')->user();

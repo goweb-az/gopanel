@@ -13,12 +13,6 @@ use Illuminate\Support\Facades\View;
 class SocialController extends GoPanelController
 {
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-
     public function index(Request $request)
     {
         $socials = Social::all();

@@ -9,11 +9,6 @@ use Illuminate\Http\Request;
 class LlmsTxtController extends GoPanelController
 {
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     public function index(Request $request)
     {
         $item = LlmsTxt::latest()->first() ?? new LlmsTxt();

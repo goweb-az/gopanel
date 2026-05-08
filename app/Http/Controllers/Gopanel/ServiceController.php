@@ -13,11 +13,6 @@ use Illuminate\Support\Facades\View;
 
 class ServiceController extends GoPanelController
 {
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     public function index(Request $request)
     {
         $services  = Service::orderBy('sort_order')->get();

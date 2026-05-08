@@ -10,12 +10,6 @@ class BlogController extends SiteController
 {
 
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-
     public function index(Request $request)
     {
         $list = Blog::query()

@@ -15,11 +15,6 @@ use Illuminate\Support\Facades\View;
 
 class AdminController extends GoPanelController
 {
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     public function index(Request $request)
     {
         return view('gopanel.pages.admins.index');

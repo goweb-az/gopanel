@@ -11,12 +11,6 @@ class DynamicContentController extends SiteController
 {
 
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-
     public function index(string $slug)
     {
         $data = FieldTranslation::getBySlug($slug);

@@ -11,11 +11,6 @@ use Illuminate\Http\Request;
 
 class AboutUsController extends GoPanelController
 {
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     public function index(Request $request)
     {
         $item = AboutUs::latest()->first() ?? new AboutUs();

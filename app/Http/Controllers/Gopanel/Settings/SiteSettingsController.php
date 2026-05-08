@@ -14,12 +14,6 @@ use Illuminate\Support\Facades\Cache;
 class SiteSettingsController extends GoPanelController
 {
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-
     public function index(Request $request)
     {
         $item = SiteSetting::latest()->first() ?? new SiteSetting();

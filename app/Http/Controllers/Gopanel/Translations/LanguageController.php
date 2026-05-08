@@ -12,11 +12,6 @@ use Illuminate\Support\Facades\View;
 
 class LanguageController extends GoPanelController
 {
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     public function index(Request $request)
     {
         $languagesList = Language::orderBy('sort_order', 'ASC')

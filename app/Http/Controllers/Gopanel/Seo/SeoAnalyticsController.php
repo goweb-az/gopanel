@@ -11,12 +11,6 @@ use Illuminate\Http\Request;
 class SeoAnalyticsController extends GoPanelController
 {
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-
     public function index(Request $request)
     {
         $item = SeoAnalytics::latest()->first() ?? new SeoAnalytics();

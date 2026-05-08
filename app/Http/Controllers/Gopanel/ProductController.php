@@ -11,11 +11,6 @@ use Illuminate\Http\Request;
 
 class ProductController extends GoPanelController
 {
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     public function index(Request $request)
     {
         return view('gopanel.pages.products.index');

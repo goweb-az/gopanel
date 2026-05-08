@@ -10,12 +10,6 @@ use Illuminate\Support\Facades\Auth;
 class AuthController extends GoPanelController
 {
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-
     public function login(Request $request)
     {
         return view("gopanel.auth.login");

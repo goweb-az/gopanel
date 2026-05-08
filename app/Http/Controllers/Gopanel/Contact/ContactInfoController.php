@@ -13,12 +13,6 @@ use Illuminate\Http\Request;
 class ContactInfoController extends GoPanelController
 {
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-
     public function index(Request $request)
     {
         $item = ContactInfo::latest()->first() ?? new ContactInfo();

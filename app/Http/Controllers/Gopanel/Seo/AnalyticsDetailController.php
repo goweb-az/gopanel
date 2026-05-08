@@ -13,11 +13,6 @@ use Illuminate\Http\Request;
 class AnalyticsDetailController extends GoPanelController
 {
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     public function devices(Request $request)
     {
         return view('gopanel.pages.analytics.detail.devices');

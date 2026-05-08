@@ -10,12 +10,6 @@ use Illuminate\Http\Request;
 class FileLogController extends GoPanelController
 {
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-
     public function index(Request $request)
     {
         $from               = $request->from;

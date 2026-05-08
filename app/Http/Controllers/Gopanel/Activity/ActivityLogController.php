@@ -11,12 +11,6 @@ use Illuminate\Http\Request;
 class ActivityLogController extends GoPanelController
 {
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-
     // public function index(Request $request)
     // {
     //     return view("gopanel.pages.histories.index");
