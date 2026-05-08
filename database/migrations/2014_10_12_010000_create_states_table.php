@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('states', function (Blueprint $table) {
             $table->id(); // id int [pk, increment]
             $table->unsignedBigInteger('country_id'); // country_id int [ref: > countries.id]
-            $table->string('state_name', 255)->notNullable(); // state_name varchar(255) [not null]
-            $table->string('state_code', 100)->notNullable(); // state_code varchar(100) [not null]
+            $table->string('state_name', 255); // state_name varchar(255) [not null]
+            $table->string('state_code', 100); // state_code varchar(100) [not null]
             $table->timestamps(); // created_at ve updated_at için
             $table->softDeletes();
             // Foreign key relationship

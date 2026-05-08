@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('countries', function (Blueprint $table) {
             $table->id(); // id int [pk, increment]
-            $table->char('code', 5)->notNullable(); // code char(2) [not null]
-            $table->string('name', 100)->notNullable(); // name varchar(100) [not null]
+            $table->char('code', 5); // code char(2) [not null]
+            $table->string('name', 100); // name varchar(100) [not null]
             $table->integer('phone')->nullable(); // phone int [not null]
             $table->string('symbol', 10)->nullable(); // symbol varchar(10)
             $table->string('capital', 80)->nullable(); // capital varchar(80)
