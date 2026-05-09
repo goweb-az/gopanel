@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('languages', function (Blueprint $table) {
             $table->id(); // id int [pk, increment]
             $table->unsignedBigInteger('country_id'); // country_id int [ref: > countries.id]
-            $table->string('code', 10); // code varchar(10) [not null]
+            $table->string('code', 10)->unique(); // code varchar(10) [not null]
             $table->string('name', 100); // name varchar(100) [not null]
             $table->boolean('default')->default(false);
             $table->boolean('is_active')->default(true); // is_active bool [default: true]

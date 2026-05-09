@@ -18,6 +18,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('click_id')->references('id')->on('analytics_clicks')->onDelete('cascade');
+            $table->index('event_type');
         });
     }
 

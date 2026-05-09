@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('currency', function (Blueprint $table) {
             $table->id(); // id int [pk, increment]
             $table->unsignedBigInteger('country_id'); // country_id int [ref: > countries.id]
-            $table->string('code', 3)->nullable(); // code varchar(3) [not null]
+            $table->string('code', 3)->nullable()->index(); // code varchar(3) [not null]
             $table->string('name', 50)->nullable(); // name varchar(50) [not null]
             $table->string('symbol', 50)->nullable(); // symbol varchar(50) [not null]
             $table->timestamps(); // created_at ve updated_at için
