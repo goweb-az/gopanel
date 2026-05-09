@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('model_type');
             $table->unsignedBigInteger('model_id');
             $table->string('locale')->index();
-            $table->string('key');
+            $table->string('key')->index();
             $table->text('value')->nullable();
             $table->timestamps();
             $table->softDeletes();
