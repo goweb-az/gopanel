@@ -16,7 +16,11 @@ return new class extends Migration
     {
         Schema::create('admins', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uid')->unique()->default(DB::raw('UUID()'));
+            $table->uuid('uid')->unique()->default(DB::raw(match (DB::getDriverName()) {
+                'pgsql'  => 'gen_random_uuid()',
+                'sqlite' => "'" . \Illuminate\Support\Str::uuid() . "'",
+                default  => 'UUID()',
+            }));
             $table->string('full_name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();

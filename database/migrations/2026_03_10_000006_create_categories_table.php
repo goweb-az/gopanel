@@ -14,7 +14,11 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uid')->unique()->default(DB::raw('UUID()'));
+            $table->uuid('uid')->unique()->default(DB::raw(match (DB::getDriverName()) {
+                'pgsql'  => 'gen_random_uuid()',
+                'sqlite' => "'" . \Illuminate\Support\Str::uuid() . "'",
+                default  => 'UUID()',
+            }));
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->string('icon')->nullable();
             $table->string('color', 20)->nullable();
