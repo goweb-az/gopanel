@@ -22,6 +22,8 @@
                 @yield('content', $slot ?? '')
                 <!-- End Page-content -->
 
+                <x-gopanel.toast-bridge />
+
                 @include('gopanel.blocks.footer')
             </div>
             <!-- end main content-->
