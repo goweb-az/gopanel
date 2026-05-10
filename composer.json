@@ -16,6 +16,7 @@
     "laravel/sanctum": "^3.3",
     "laravel/socialite": "^5.16",
     "laravel/tinker": "^2.8",
+    "livewire/livewire": "^4.0",
     "opcodesio/log-viewer": "^3.17",
     "spatie/laravel-activitylog": "^4.10",
     "spatie/laravel-permission": "^6.20"

@@ -8,4 +8,6 @@
     <!-- App favicon -->
     <link rel="shortcut icon" href="/assets/gopanel/images/favicon.ico">
     @include('gopanel.assets.styles')
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @livewireStyles
 </head>

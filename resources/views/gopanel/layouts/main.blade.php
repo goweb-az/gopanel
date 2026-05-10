@@ -19,7 +19,7 @@
             <!-- ============================================================== -->
             <div class="main-content">
 
-                @yield('content')
+                @yield('content', $slot ?? '')
                 <!-- End Page-content -->
 
                 @include('gopanel.blocks.footer')

@@ -20,3 +20,4 @@
 <script src="/assets/gopanel/js/crud.js?={{time()}}"></script>
 @stack('scripts')
 @stack('js_stack')
+@livewireScripts
