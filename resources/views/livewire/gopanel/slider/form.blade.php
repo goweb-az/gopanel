@@ -1,8 +1,8 @@
 <?php
 
 use App\Livewire\Concerns\AuthorizesGopanel;
-use App\Livewire\Forms\SliderForm;
-use App\Models\Site\Slider;
+use App\Livewire\Forms\SliderForm as RecordForm;
+use App\Models\Site\Slider as RecordModel;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -11,13 +11,18 @@ use Livewire\WithFileUploads;
 new class extends Component {
     use AuthorizesGopanel, WithFileUploads;
 
-    public SliderForm $form;
+    public RecordForm $form;
 
     public bool $modalOpen = false;
 
+    public string $permissionCreate = 'gopanel.slider.add';
+    public string $permissionEdit   = 'gopanel.slider.edit';
+    public string $eventOpen        = 'slider-form-open';
+    public string $eventSaved       = 'slider-saved';
+
     public function mount(): void
     {
-        $this->form->setItem(new Slider());
+        $this->form->setItem(new RecordModel());
     }
 
     #[On('slider-form-open')]
@@ -25,18 +30,16 @@ new class extends Component {
     {
         $this->resetValidation();
 
-        $slider = $id ? Slider::findOrFail($id) : new Slider();
-        $perm = $id ? 'gopanel.slider.edit' : 'gopanel.slider.add';
-        $this->authorize($perm);
+        $record = $id ? RecordModel::findOrFail($id) : new RecordModel();
+        $this->authorize($id ? $this->permissionEdit : $this->permissionCreate);
 
-        $this->form->setItem($slider);
+        $this->form->setItem($record);
         $this->modalOpen = true;
     }
 
     public function save(): void
     {
-        $perm = $this->form->form['id'] ? 'gopanel.slider.edit' : 'gopanel.slider.add';
-        $this->authorize($perm);
+        $this->authorize($this->form->form['id'] ? $this->permissionEdit : $this->permissionCreate);
 
         $this->form->validate();
 
@@ -44,7 +47,7 @@ new class extends Component {
 
         $this->modalOpen = false;
         $this->dispatch('notify', type: 'success', message: __('Yadda saxlanıldı'));
-        $this->dispatch('slider-saved');
+        $this->dispatch($this->eventSaved);
     }
 }; ?>
 

@@ -1,9 +1,9 @@
 <?php
 
 use App\Livewire\Concerns\AuthorizesGopanel;
-use App\Livewire\Forms\LanguageForm;
+use App\Livewire\Forms\LanguageForm as RecordForm;
 use App\Models\Geography\Country;
-use App\Models\Geography\Language;
+use App\Models\Geography\Language as RecordModel;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
@@ -12,13 +12,17 @@ use Livewire\Component;
 new class extends Component {
     use AuthorizesGopanel;
 
-    public LanguageForm $form;
+    public RecordForm $form;
 
     public bool $modalOpen = false;
 
+    public string $permissionCreate = 'gopanel.settings.languages.add';
+    public string $permissionEdit   = 'gopanel.settings.languages.edit';
+    public string $eventSaved       = 'language-saved';
+
     public function mount(): void
     {
-        $this->form->setItem(new Language());
+        $this->form->setItem(new RecordModel());
     }
 
     #[Computed]
@@ -32,20 +36,16 @@ new class extends Component {
     {
         $this->resetValidation();
 
-        $language = $id ? Language::findOrFail($id) : new Language();
-        $perm = $id ? 'gopanel.settings.languages.edit' : 'gopanel.settings.languages.add';
-        $this->authorize($perm);
+        $record = $id ? RecordModel::findOrFail($id) : new RecordModel();
+        $this->authorize($id ? $this->permissionEdit : $this->permissionCreate);
 
-        $this->form->setItem($language);
+        $this->form->setItem($record);
         $this->modalOpen = true;
     }
 
     public function save(): void
     {
-        $perm = $this->form->form['id']
-            ? 'gopanel.settings.languages.edit'
-            : 'gopanel.settings.languages.add';
-        $this->authorize($perm);
+        $this->authorize($this->form->form['id'] ? $this->permissionEdit : $this->permissionCreate);
 
         $this->form->validate();
 
@@ -53,7 +53,7 @@ new class extends Component {
 
         $this->modalOpen = false;
         $this->dispatch('notify', type: 'success', message: __('Yadda saxlanıldı'));
-        $this->dispatch('language-saved');
+        $this->dispatch($this->eventSaved);
     }
 }; ?>
 

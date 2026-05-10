@@ -2,8 +2,8 @@
 
 use App\Enums\Common\SocialIconTypeEnum;
 use App\Livewire\Concerns\AuthorizesGopanel;
-use App\Livewire\Forms\ServiceForm;
-use App\Models\Site\Service;
+use App\Livewire\Forms\ServiceForm as RecordForm;
+use App\Models\Site\Service as RecordModel;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -12,13 +12,17 @@ use Livewire\WithFileUploads;
 new class extends Component {
     use AuthorizesGopanel, WithFileUploads;
 
-    public ServiceForm $form;
+    public RecordForm $form;
 
     public bool $modalOpen = false;
 
+    public string $permissionCreate = 'gopanel.services.add';
+    public string $permissionEdit   = 'gopanel.services.edit';
+    public string $eventSaved       = 'service-saved';
+
     public function mount(): void
     {
-        $this->form->setItem(new Service());
+        $this->form->setItem(new RecordModel());
     }
 
     #[On('service-form-open')]
@@ -26,18 +30,16 @@ new class extends Component {
     {
         $this->resetValidation();
 
-        $service = $id ? Service::findOrFail($id) : new Service();
-        $perm = $id ? 'gopanel.services.edit' : 'gopanel.services.add';
-        $this->authorize($perm);
+        $record = $id ? RecordModel::findOrFail($id) : new RecordModel();
+        $this->authorize($id ? $this->permissionEdit : $this->permissionCreate);
 
-        $this->form->setItem($service);
+        $this->form->setItem($record);
         $this->modalOpen = true;
     }
 
     public function save(): void
     {
-        $perm = $this->form->form['id'] ? 'gopanel.services.edit' : 'gopanel.services.add';
-        $this->authorize($perm);
+        $this->authorize($this->form->form['id'] ? $this->permissionEdit : $this->permissionCreate);
 
         $this->form->validate();
 
@@ -45,7 +47,7 @@ new class extends Component {
 
         $this->modalOpen = false;
         $this->dispatch('notify', type: 'success', message: __('Yadda saxlanıldı'));
-        $this->dispatch('service-saved');
+        $this->dispatch($this->eventSaved);
     }
 }; ?>
 

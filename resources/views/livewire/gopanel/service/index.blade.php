@@ -14,29 +14,32 @@ new
 class extends Component {
     use AuthorizesGopanel;
 
+    public string $permissionEdit   = 'gopanel.services.edit';
+    public string $permissionDelete = 'gopanel.services.delete';
+
     #[On('service-saved')]
     public function refresh(): void
     {
-        unset($this->services);
+        unset($this->records);
     }
 
     #[Computed]
-    public function services(): Collection
+    public function records(): Collection
     {
         return Service::orderBy('sort_order')->get();
     }
 
     public function delete(int $id): void
     {
-        $this->authorize('gopanel.services.delete');
+        $this->authorize($this->permissionDelete);
         Service::findOrFail($id)->delete();
-        unset($this->services);
+        unset($this->records);
         $this->dispatch('notify', type: 'success', message: __('Silindi'));
     }
 
     public function reorder(array $ids): void
     {
-        $this->authorize('gopanel.services.edit');
+        $this->authorize($this->permissionEdit);
         DB::transaction(function () use ($ids) {
             foreach ($ids as $order => $id) {
                 Service::where('id', $id)->update(['sort_order' => $order]);
@@ -80,25 +83,25 @@ class extends Component {
                                     </tr>
                                 </thead>
                                 <x-gopanel.sortable wireMethod="reorder" handle=".drag-handle" tag="tbody">
-                                    @foreach ($this->services as $service)
-                                        <tr data-id="{{ $service->id }}" wire:key="svc-{{ $service->id }}">
+                                    @foreach ($this->records as $record)
+                                        <tr data-id="{{ $record->id }}" wire:key="svc-{{ $record->id }}">
                                             <td class="drag-handle" style="cursor:grab;text-align:center;vertical-align:middle;">
                                                 <i class="fas fa-grip-vertical text-muted"></i>
                                             </td>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{!! $service->image_view !!}</td>
-                                            <td><strong>{{ $service->getTranslation('title', app()->getLocale(), true) ?? '—' }}</strong></td>
-                                            <td>{{ \Illuminate\Support\Str::limit(strip_tags($service->getTranslation('short_description', app()->getLocale(), true) ?? ''), 80) }}</td>
+                                            <td>{!! $record->image_view !!}</td>
+                                            <td><strong>{{ $record->getTranslation('title', app()->getLocale(), true) ?? '—' }}</strong></td>
+                                            <td>{{ \Illuminate\Support\Str::limit(strip_tags($record->getTranslation('short_description', app()->getLocale(), true) ?? ''), 80) }}</td>
                                             <td class="text-center">
                                                 @can('gopanel.services.edit')
                                                     <button type="button" class="btn btn-sm btn-outline-success"
-                                                        x-on:click="$dispatch('service-form-open', { id: {{ $service->id }} })" title="{{ __('Düzəliş') }}">
+                                                        x-on:click="$dispatch('service-form-open', { id: {{ $record->id }} })" title="{{ __('Düzəliş') }}">
                                                         <i class="fas fa-pen"></i>
                                                     </button>
                                                 @endcan
                                                 @can('gopanel.services.delete')
                                                     <button type="button" class="btn btn-sm btn-outline-danger"
-                                                        wire:click="delete({{ $service->id }})"
+                                                        wire:click="delete({{ $record->id }})"
                                                         wire:confirm="{{ __('Silmək istədiyinizə əminsiniz?') }}" title="{{ __('Sil') }}">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
@@ -107,7 +110,7 @@ class extends Component {
                                         </tr>
                                     @endforeach
 
-                                    @if ($this->services->isEmpty())
+                                    @if ($this->records->isEmpty())
                                         <tr><td colspan="6" class="text-center text-muted py-4">{{ __('Heç bir xidmət tapılmadı') }}</td></tr>
                                     @endif
                                 </x-gopanel.sortable>

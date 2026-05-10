@@ -1,9 +1,11 @@
 <?php
 
+use App\Actions\Gopanel\Slider\DeleteSliderAction;
+use App\Actions\Gopanel\Slider\ReorderSlidersAction;
+use App\Actions\Gopanel\Slider\ToggleSliderActiveAction;
 use App\Livewire\Concerns\AuthorizesGopanel;
 use App\Models\Site\Slider;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
@@ -14,43 +16,40 @@ new
 class extends Component {
     use AuthorizesGopanel;
 
+    public string $permissionEdit   = 'gopanel.slider.edit';
+    public string $permissionDelete = 'gopanel.slider.delete';
+
     #[On('slider-saved')]
     public function refresh(): void
     {
-        unset($this->sliders);
+        unset($this->records);
     }
 
     #[Computed]
-    public function sliders(): Collection
+    public function records(): Collection
     {
         return Slider::orderBy('sort_order')->get();
     }
 
     public function delete(int $id): void
     {
-        $this->authorize('gopanel.slider.delete');
-        Slider::findOrFail($id)->delete();
-        unset($this->sliders);
+        $this->authorize($this->permissionDelete);
+        DeleteSliderAction::run($id);
+        unset($this->records);
         $this->dispatch('notify', type: 'success', message: __('Silindi'));
     }
 
     public function toggleActive(int $id): void
     {
-        $this->authorize('gopanel.slider.edit');
-        $slider = Slider::findOrFail($id);
-        $slider->is_active = ! $slider->is_active;
-        $slider->save();
-        unset($this->sliders);
+        $this->authorize($this->permissionEdit);
+        ToggleSliderActiveAction::run($id);
+        unset($this->records);
     }
 
     public function reorder(array $ids): void
     {
-        $this->authorize('gopanel.slider.edit');
-        DB::transaction(function () use ($ids) {
-            foreach ($ids as $order => $id) {
-                Slider::where('id', $id)->update(['sort_order' => $order]);
-            }
-        });
+        $this->authorize($this->permissionEdit);
+        ReorderSlidersAction::run($ids);
         $this->dispatch('notify', type: 'success', message: __('Sıra yeniləndi'));
         $this->skipRender();
     }
@@ -101,31 +100,31 @@ class extends Component {
                                     handle=".drag-handle"
                                     tag="tbody"
                                 >
-                                    @foreach ($this->sliders as $slider)
-                                        <tr data-id="{{ $slider->id }}" wire:key="slider-{{ $slider->id }}">
+                                    @foreach ($this->records as $record)
+                                        <tr data-id="{{ $record->id }}" wire:key="slider-{{ $record->id }}">
                                             <td class="drag-handle" style="cursor:grab;text-align:center;vertical-align:middle;">
                                                 <i class="fas fa-grip-vertical text-muted"></i>
                                             </td>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{!! $slider->image_view !!}</td>
+                                            <td>{!! $record->image_view !!}</td>
                                             <td>
-                                                <strong>{{ $slider->getTranslation('title', app()->getLocale(), true) ?? '—' }}</strong>
+                                                <strong>{{ $record->getTranslation('title', app()->getLocale(), true) ?? '—' }}</strong>
                                             </td>
                                             <td>
-                                                {{ \Illuminate\Support\Str::limit(strip_tags($slider->getTranslation('description', app()->getLocale(), true) ?? ''), 80) }}
+                                                {{ \Illuminate\Support\Str::limit(strip_tags($record->getTranslation('description', app()->getLocale(), true) ?? ''), 80) }}
                                             </td>
                                             <td class="text-center">
                                                 @can('gopanel.slider.edit')
                                                     <button
                                                         type="button"
-                                                        wire:click="toggleActive({{ $slider->id }})"
-                                                        class="btn btn-sm {{ $slider->is_active ? 'btn-success' : 'btn-secondary' }}"
+                                                        wire:click="toggleActive({{ $record->id }})"
+                                                        class="btn btn-sm {{ $record->is_active ? 'btn-success' : 'btn-secondary' }}"
                                                     >
-                                                        {{ $slider->is_active ? __('Aktiv') : __('Deaktiv') }}
+                                                        {{ $record->is_active ? __('Aktiv') : __('Deaktiv') }}
                                                     </button>
                                                 @else
-                                                    <span class="badge {{ $slider->is_active ? 'bg-success' : 'bg-secondary' }}">
-                                                        {{ $slider->is_active ? __('Aktiv') : __('Deaktiv') }}
+                                                    <span class="badge {{ $record->is_active ? 'bg-success' : 'bg-secondary' }}">
+                                                        {{ $record->is_active ? __('Aktiv') : __('Deaktiv') }}
                                                     </span>
                                                 @endcan
                                             </td>
@@ -134,7 +133,7 @@ class extends Component {
                                                     <button
                                                         type="button"
                                                         class="btn btn-sm btn-outline-success"
-                                                        x-on:click="$dispatch('slider-form-open', { id: {{ $slider->id }} })"
+                                                        x-on:click="$dispatch('slider-form-open', { id: {{ $record->id }} })"
                                                         title="{{ __('Düzəliş et') }}"
                                                     >
                                                         <i class="fas fa-pen"></i>
@@ -144,7 +143,7 @@ class extends Component {
                                                     <button
                                                         type="button"
                                                         class="btn btn-sm btn-outline-danger"
-                                                        wire:click="delete({{ $slider->id }})"
+                                                        wire:click="delete({{ $record->id }})"
                                                         wire:confirm="{{ __('Silmək istədiyinizə əminsiniz?') }}"
                                                         title="{{ __('Sil') }}"
                                                     >
@@ -155,7 +154,7 @@ class extends Component {
                                         </tr>
                                     @endforeach
 
-                                    @if ($this->sliders->isEmpty())
+                                    @if ($this->records->isEmpty())
                                         <tr>
                                             <td colspan="7" class="text-center text-muted py-4">
                                                 <i class="fas fa-images fa-2x mb-2 d-block"></i>

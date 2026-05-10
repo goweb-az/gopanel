@@ -2,8 +2,8 @@
 
 use App\Enums\Common\SocialIconTypeEnum;
 use App\Livewire\Concerns\AuthorizesGopanel;
-use App\Livewire\Forms\SocialForm;
-use App\Models\Contact\Social;
+use App\Livewire\Forms\SocialForm as RecordForm;
+use App\Models\Contact\Social as RecordModel;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -12,13 +12,17 @@ use Livewire\WithFileUploads;
 new class extends Component {
     use AuthorizesGopanel, WithFileUploads;
 
-    public SocialForm $form;
+    public RecordForm $form;
 
     public bool $modalOpen = false;
 
+    public string $permissionCreate = 'gopanel.contact.socials.add';
+    public string $permissionEdit   = 'gopanel.contact.socials.edit';
+    public string $eventSaved       = 'social-saved';
+
     public function mount(): void
     {
-        $this->form->setItem(new Social());
+        $this->form->setItem(new RecordModel());
     }
 
     #[On('social-form-open')]
@@ -26,20 +30,16 @@ new class extends Component {
     {
         $this->resetValidation();
 
-        $social = $id ? Social::findOrFail($id) : new Social();
-        $perm = $id ? 'gopanel.contact.socials.edit' : 'gopanel.contact.socials.add';
-        $this->authorize($perm);
+        $record = $id ? RecordModel::findOrFail($id) : new RecordModel();
+        $this->authorize($id ? $this->permissionEdit : $this->permissionCreate);
 
-        $this->form->setItem($social);
+        $this->form->setItem($record);
         $this->modalOpen = true;
     }
 
     public function save(): void
     {
-        $perm = $this->form->form['id']
-            ? 'gopanel.contact.socials.edit'
-            : 'gopanel.contact.socials.add';
-        $this->authorize($perm);
+        $this->authorize($this->form->form['id'] ? $this->permissionEdit : $this->permissionCreate);
 
         $this->form->validate();
 
@@ -47,7 +47,7 @@ new class extends Component {
 
         $this->modalOpen = false;
         $this->dispatch('notify', type: 'success', message: __('Yadda saxlanıldı'));
-        $this->dispatch('social-saved');
+        $this->dispatch($this->eventSaved);
     }
 }; ?>
 

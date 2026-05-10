@@ -14,38 +14,41 @@ new
 class extends Component {
     use AuthorizesGopanel;
 
+    public string $permissionEdit   = 'gopanel.contact.socials.edit';
+    public string $permissionDelete = 'gopanel.contact.socials.delete';
+
     #[On('social-saved')]
     public function refresh(): void
     {
-        unset($this->socials);
+        unset($this->records);
     }
 
     #[Computed]
-    public function socials(): Collection
+    public function records(): Collection
     {
         return Social::orderBy('sort_order')->get();
     }
 
     public function delete(int $id): void
     {
-        $this->authorize('gopanel.contact.socials.delete');
+        $this->authorize($this->permissionDelete);
         Social::findOrFail($id)->delete();
-        unset($this->socials);
+        unset($this->records);
         $this->dispatch('notify', type: 'success', message: __('Silindi'));
     }
 
     public function toggleActive(int $id): void
     {
-        $this->authorize('gopanel.contact.socials.edit');
-        $social = Social::findOrFail($id);
-        $social->is_active = ! $social->is_active;
-        $social->save();
-        unset($this->socials);
+        $this->authorize($this->permissionEdit);
+        $record = Social::findOrFail($id);
+        $record->is_active = ! $record->is_active;
+        $record->save();
+        unset($this->records);
     }
 
     public function reorder(array $ids): void
     {
-        $this->authorize('gopanel.contact.socials.edit');
+        $this->authorize($this->permissionEdit);
         DB::transaction(function () use ($ids) {
             foreach ($ids as $order => $id) {
                 Social::where('id', $id)->update(['sort_order' => $order]);
@@ -90,37 +93,37 @@ class extends Component {
                                     </tr>
                                 </thead>
                                 <x-gopanel.sortable wireMethod="reorder" handle=".drag-handle" tag="tbody">
-                                    @foreach ($this->socials as $social)
-                                        <tr data-id="{{ $social->id }}" wire:key="social-{{ $social->id }}">
+                                    @foreach ($this->records as $record)
+                                        <tr data-id="{{ $record->id }}" wire:key="social-{{ $record->id }}">
                                             <td class="drag-handle" style="cursor:grab;text-align:center;vertical-align:middle;">
                                                 <i class="fas fa-grip-vertical text-muted"></i>
                                             </td>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td class="text-center">{!! $social->icon_html !!}</td>
-                                            <td><strong>{{ $social->name }}</strong></td>
-                                            <td><a href="{{ $social->url }}" target="_blank" class="text-truncate d-inline-block" style="max-width:300px;">{{ $social->url }}</a></td>
+                                            <td class="text-center">{!! $record->icon_html !!}</td>
+                                            <td><strong>{{ $record->name }}</strong></td>
+                                            <td><a href="{{ $record->url }}" target="_blank" class="text-truncate d-inline-block" style="max-width:300px;">{{ $record->url }}</a></td>
                                             <td class="text-center">
                                                 @can('gopanel.contact.socials.edit')
-                                                    <button type="button" wire:click="toggleActive({{ $social->id }})"
-                                                        class="btn btn-sm {{ $social->is_active ? 'btn-success' : 'btn-secondary' }}">
-                                                        {{ $social->is_active ? __('Aktiv') : __('Deaktiv') }}
+                                                    <button type="button" wire:click="toggleActive({{ $record->id }})"
+                                                        class="btn btn-sm {{ $record->is_active ? 'btn-success' : 'btn-secondary' }}">
+                                                        {{ $record->is_active ? __('Aktiv') : __('Deaktiv') }}
                                                     </button>
                                                 @else
-                                                    <span class="badge {{ $social->is_active ? 'bg-success' : 'bg-secondary' }}">
-                                                        {{ $social->is_active ? __('Aktiv') : __('Deaktiv') }}
+                                                    <span class="badge {{ $record->is_active ? 'bg-success' : 'bg-secondary' }}">
+                                                        {{ $record->is_active ? __('Aktiv') : __('Deaktiv') }}
                                                     </span>
                                                 @endcan
                                             </td>
                                             <td class="text-center">
                                                 @can('gopanel.contact.socials.edit')
                                                     <button type="button" class="btn btn-sm btn-outline-success"
-                                                        x-on:click="$dispatch('social-form-open', { id: {{ $social->id }} })" title="{{ __('Düzəliş') }}">
+                                                        x-on:click="$dispatch('social-form-open', { id: {{ $record->id }} })" title="{{ __('Düzəliş') }}">
                                                         <i class="fas fa-pen"></i>
                                                     </button>
                                                 @endcan
                                                 @can('gopanel.contact.socials.delete')
                                                     <button type="button" class="btn btn-sm btn-outline-danger"
-                                                        wire:click="delete({{ $social->id }})"
+                                                        wire:click="delete({{ $record->id }})"
                                                         wire:confirm="{{ __('Silmək istədiyinizə əminsiniz?') }}" title="{{ __('Sil') }}">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
@@ -129,7 +132,7 @@ class extends Component {
                                         </tr>
                                     @endforeach
 
-                                    @if ($this->socials->isEmpty())
+                                    @if ($this->records->isEmpty())
                                         <tr>
                                             <td colspan="7" class="text-center text-muted py-4">{{ __('Heç bir link tapılmadı') }}</td>
                                         </tr>

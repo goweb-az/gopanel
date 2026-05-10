@@ -14,14 +14,17 @@ new
 class extends Component {
     use AuthorizesGopanel;
 
+    public string $permissionEdit   = 'gopanel.settings.languages.edit';
+    public string $permissionDelete = 'gopanel.settings.languages.delete';
+
     #[On('language-saved')]
     public function refresh(): void
     {
-        unset($this->languages);
+        unset($this->records);
     }
 
     #[Computed]
-    public function languages(): Collection
+    public function records(): Collection
     {
         return Language::orderByDesc('default')
             ->orderBy('sort_order')
@@ -32,56 +35,56 @@ class extends Component {
 
     public function delete(int $id): void
     {
-        $this->authorize('gopanel.settings.languages.delete');
+        $this->authorize($this->permissionDelete);
         Language::findOrFail($id)->delete();
         Language::ensureFallbackDefault();
-        unset($this->languages);
+        unset($this->records);
         $this->dispatch('notify', type: 'success', message: __('Silindi'));
     }
 
     public function toggleActive(int $id): void
     {
-        $this->authorize('gopanel.settings.languages.edit');
-        $language = Language::findOrFail($id);
+        $this->authorize($this->permissionEdit);
+        $record = Language::findOrFail($id);
 
-        if ($language->default && $language->is_active) {
+        if ($record->default && $record->is_active) {
             $this->dispatch('notify', type: 'warning', message: __('Default dili deaktiv etmək olmaz'));
             return;
         }
 
-        $language->is_active = ! $language->is_active;
-        $language->save();
-        unset($this->languages);
+        $record->is_active = ! $record->is_active;
+        $record->save();
+        unset($this->records);
     }
 
     public function toggleDefault(int $id): void
     {
-        $this->authorize('gopanel.settings.languages.edit');
-        $language = Language::findOrFail($id);
+        $this->authorize($this->permissionEdit);
+        $record = Language::findOrFail($id);
 
-        DB::transaction(function () use ($language) {
-            if ($language->default) {
-                $language->forceFill(['default' => false])->save();
+        DB::transaction(function () use ($record) {
+            if ($record->default) {
+                $record->forceFill(['default' => false])->save();
                 Language::ensureFallbackDefault();
             } else {
                 Language::query()->update(['default' => false]);
-                $language->forceFill(['default' => true, 'is_active' => true])->save();
+                $record->forceFill(['default' => true, 'is_active' => true])->save();
             }
         });
 
-        unset($this->languages);
+        unset($this->records);
         $this->dispatch('notify', type: 'success', message: __('Default dil yeniləndi'));
     }
 
     public function reorder(array $ids): void
     {
-        $this->authorize('gopanel.settings.languages.edit');
+        $this->authorize($this->permissionEdit);
         DB::transaction(function () use ($ids) {
             foreach ($ids as $order => $id) {
                 Language::where('id', $id)->update(['sort_order' => $order]);
             }
         });
-        // Do not invalidate $this->languages — DOM is already in the correct order
+        // Do not invalidate $this->records — DOM is already in the correct order
         // from SortableJS. A re-render here fights the morph algorithm and can
         // wipe sibling regions (e.g. page-title-box) due to wire:ignore.self.
         $this->skipRender();
@@ -124,27 +127,27 @@ class extends Component {
                                     </tr>
                                 </thead>
                                 <x-gopanel.sortable wireMethod="reorder" handle=".drag-handle" tag="tbody">
-                                    @foreach ($this->languages as $language)
-                                        <tr data-id="{{ $language->id }}" wire:key="lang-{{ $language->id }}">
+                                    @foreach ($this->records as $record)
+                                        <tr data-id="{{ $record->id }}" wire:key="lang-{{ $record->id }}">
                                             <td class="drag-handle" style="cursor:grab;text-align:center;vertical-align:middle;">
                                                 <i class="fas fa-grip-vertical text-muted"></i>
                                             </td>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td><strong>{{ $language->name }}</strong></td>
-                                            <td><code>{{ $language->upper_code }}</code></td>
-                                            <td>{{ $language?->country?->name ?? '—' }}</td>
+                                            <td><strong>{{ $record->name }}</strong></td>
+                                            <td><code>{{ $record->upper_code }}</code></td>
+                                            <td>{{ $record?->country?->name ?? '—' }}</td>
                                             <td class="text-center">
                                                 @can('gopanel.settings.languages.edit')
                                                     <button
                                                         type="button"
-                                                        wire:click="toggleDefault({{ $language->id }})"
-                                                        class="btn btn-sm {{ $language->default ? 'btn-primary' : 'btn-outline-secondary' }}"
+                                                        wire:click="toggleDefault({{ $record->id }})"
+                                                        class="btn btn-sm {{ $record->default ? 'btn-primary' : 'btn-outline-secondary' }}"
                                                     >
-                                                        {{ $language->default ? __('Bəli') : __('Xeyr') }}
+                                                        {{ $record->default ? __('Bəli') : __('Xeyr') }}
                                                     </button>
                                                 @else
-                                                    <span class="badge {{ $language->default ? 'bg-primary' : 'bg-secondary' }}">
-                                                        {{ $language->default ? __('Bəli') : __('Xeyr') }}
+                                                    <span class="badge {{ $record->default ? 'bg-primary' : 'bg-secondary' }}">
+                                                        {{ $record->default ? __('Bəli') : __('Xeyr') }}
                                                     </span>
                                                 @endcan
                                             </td>
@@ -152,14 +155,14 @@ class extends Component {
                                                 @can('gopanel.settings.languages.edit')
                                                     <button
                                                         type="button"
-                                                        wire:click="toggleActive({{ $language->id }})"
-                                                        class="btn btn-sm {{ $language->is_active ? 'btn-success' : 'btn-secondary' }}"
+                                                        wire:click="toggleActive({{ $record->id }})"
+                                                        class="btn btn-sm {{ $record->is_active ? 'btn-success' : 'btn-secondary' }}"
                                                     >
-                                                        {{ $language->is_active ? __('Aktiv') : __('Deaktiv') }}
+                                                        {{ $record->is_active ? __('Aktiv') : __('Deaktiv') }}
                                                     </button>
                                                 @else
-                                                    <span class="badge {{ $language->is_active ? 'bg-success' : 'bg-secondary' }}">
-                                                        {{ $language->is_active ? __('Aktiv') : __('Deaktiv') }}
+                                                    <span class="badge {{ $record->is_active ? 'bg-success' : 'bg-secondary' }}">
+                                                        {{ $record->is_active ? __('Aktiv') : __('Deaktiv') }}
                                                     </span>
                                                 @endcan
                                             </td>
@@ -168,7 +171,7 @@ class extends Component {
                                                     <button
                                                         type="button"
                                                         class="btn btn-sm btn-outline-success"
-                                                        x-on:click="$dispatch('language-form-open', { id: {{ $language->id }} })"
+                                                        x-on:click="$dispatch('language-form-open', { id: {{ $record->id }} })"
                                                         title="{{ __('Düzəliş') }}"
                                                     >
                                                         <i class="fas fa-pen"></i>
@@ -178,10 +181,10 @@ class extends Component {
                                                     <button
                                                         type="button"
                                                         class="btn btn-sm btn-outline-danger"
-                                                        wire:click="delete({{ $language->id }})"
+                                                        wire:click="delete({{ $record->id }})"
                                                         wire:confirm="{{ __('Silmək istədiyinizə əminsiniz?') }}"
                                                         title="{{ __('Sil') }}"
-                                                        @disabled($language->default)
+                                                        @disabled($record->default)
                                                     >
                                                         <i class="fas fa-trash"></i>
                                                     </button>
@@ -190,7 +193,7 @@ class extends Component {
                                         </tr>
                                     @endforeach
 
-                                    @if ($this->languages->isEmpty())
+                                    @if ($this->records->isEmpty())
                                         <tr>
                                             <td colspan="8" class="text-center text-muted py-4">
                                                 {{ __('Heç bir dil tapılmadı') }}
