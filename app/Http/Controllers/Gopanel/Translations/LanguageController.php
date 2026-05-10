@@ -10,6 +10,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
 
+/**
+ * @deprecated Use livewire/gopanel/language/index.blade.php (SFC) instead.
+ *             Legacy AJAX endpoints kept under /settings/languages-legacy until Phase 8 cleanup.
+ */
 class LanguageController extends GoPanelController
 {
     public function index(Request $request)

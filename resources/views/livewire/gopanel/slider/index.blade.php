@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\Concerns\AuthorizesGopanel;
 use App\Models\Site\Slider;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
@@ -11,6 +12,8 @@ use Livewire\Component;
 new
 #[Layout('gopanel.layouts.main')]
 class extends Component {
+    use AuthorizesGopanel;
+
     #[On('slider-saved')]
     public function refresh(): void
     {
@@ -48,8 +51,8 @@ class extends Component {
                 Slider::where('id', $id)->update(['sort_order' => $order]);
             }
         });
-        unset($this->sliders);
         $this->dispatch('notify', type: 'success', message: __('Sıra yeniləndi'));
+        $this->skipRender();
     }
 }; ?>
 

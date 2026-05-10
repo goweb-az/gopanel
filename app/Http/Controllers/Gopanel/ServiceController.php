@@ -11,6 +11,10 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 
+/**
+ * @deprecated Use livewire/gopanel/service/index.blade.php (SFC).
+ *             Legacy AJAX endpoints retain SEO meta flow until Phase 5 rebuild.
+ */
 class ServiceController extends GoPanelController
 {
     public function index(Request $request)

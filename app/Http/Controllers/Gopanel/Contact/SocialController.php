@@ -10,6 +10,10 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 
+/**
+ * @deprecated Use livewire/gopanel/social/index.blade.php (SFC).
+ *             Legacy AJAX endpoints under /contact/socials-legacy until Phase 8 cleanup.
+ */
 class SocialController extends GoPanelController
 {
 

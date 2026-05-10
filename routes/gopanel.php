@@ -76,7 +76,13 @@ Route::group(['middleware' => 'gopanel'], function () {
 
     Route::prefix('settings')->name('settings.')->group(function () {
         // Site Settings
+        // MIGRATED to Livewire SFC — resources/views/livewire/gopanel/site-settings/index.blade.php
         Route::prefix('site-settings')->name('site-settings.')->group(function () {
+            Route::livewire('/', 'gopanel.site-settings.index')->name('index');
+        });
+
+        // @deprecated — legacy AJAX endpoint (also retains SEO meta save flow)
+        Route::prefix('site-settings-legacy')->name('site-settings.legacy.')->group(function () {
             Route::get('/{item?}', [SiteSettingsController::class, 'index'])->name('index');
             Route::post('/save/{item?}', [SiteSettingsController::class, 'save'])->name('save.form');
         });
@@ -93,8 +99,13 @@ Route::group(['middleware' => 'gopanel'], function () {
             Route::post('/save/{item?}', [MenuController::class, 'save'])->name('save');
         });
 
+        // MIGRATED to Livewire SFC — resources/views/livewire/gopanel/language/index.blade.php
         Route::prefix('languages')->name('languages.')->group(function () {
-            Route::get('/', [LanguageController::class, 'index'])->name('index');
+            Route::livewire('/', 'gopanel.language.index')->name('index');
+        });
+
+        // @deprecated — kept for backwards compatibility (old AJAX endpoints only)
+        Route::prefix('languages-legacy')->name('languages.legacy.')->group(function () {
             Route::get('/get/form/{item?}', [LanguageController::class, 'getForm'])->name('get.form');
             Route::post('/save/{item?}', [LanguageController::class, 'save'])->name('save');
             Route::post('/toggle-default', [LanguageController::class, 'toggleDefault'])->name('toggle.default');
@@ -109,13 +120,23 @@ Route::group(['middleware' => 'gopanel'], function () {
     });
 
     Route::prefix('contact')->name('contact.')->group(function () {
+        // MIGRATED to Livewire SFC — resources/views/livewire/gopanel/contact-info/index.blade.php
         Route::prefix('contact-info')->name('contact-info.')->group(function () {
-            Route::get('/{item?}', [ContactInfoController::class, 'index'])->name('index');
+            Route::livewire('/', 'gopanel.contact-info.index')->name('index');
+        });
+
+        // @deprecated — legacy AJAX endpoint
+        Route::prefix('contact-info-legacy')->name('contact-info.legacy.')->group(function () {
             Route::post('/save/{item?}', [ContactInfoController::class, 'save'])->name('save.form');
         });
 
+        // MIGRATED to Livewire SFC — resources/views/livewire/gopanel/social/index.blade.php
         Route::prefix('socials')->name('socials.')->group(function () {
-            Route::get('/', [SocialController::class, 'index'])->name('index');
+            Route::livewire('/', 'gopanel.social.index')->name('index');
+        });
+
+        // @deprecated — legacy AJAX endpoints
+        Route::prefix('socials-legacy')->name('socials.legacy.')->group(function () {
             Route::get('/get/form/{item?}', [SocialController::class, 'getForm'])->name('get.form');
             Route::post('/save/{item?}', [SocialController::class, 'save'])->name('save');
         });
@@ -200,13 +221,23 @@ Route::group(['middleware' => 'gopanel'], function () {
         Route::post('/save/{item?}', [BlogController::class, 'save'])->name('save');
     });
 
+    // MIGRATED to Livewire SFC — resources/views/livewire/gopanel/about-us/index.blade.php
     Route::prefix('about-us')->name('about-us.')->group(function () {
-        Route::get('/{item?}', [AboutUsController::class, 'index'])->name('index');
+        Route::livewire('/', 'gopanel.about-us.index')->name('index');
+    });
+
+    // @deprecated — legacy AJAX endpoint (retains SEO meta save flow)
+    Route::prefix('about-us-legacy')->name('about-us.legacy.')->group(function () {
         Route::post('/save/{item?}', [AboutUsController::class, 'save'])->name('save');
     });
 
+    // MIGRATED to Livewire SFC — resources/views/livewire/gopanel/service/index.blade.php
     Route::prefix('services')->name('services.')->group(function () {
-        Route::get('/', [ServiceController::class, 'index'])->name('index');
+        Route::livewire('/', 'gopanel.service.index')->name('index');
+    });
+
+    // @deprecated — legacy AJAX endpoints (also retains SEO meta save flow)
+    Route::prefix('services-legacy')->name('services.legacy.')->group(function () {
         Route::get('/get/form/{item?}', [ServiceController::class, 'getForm'])->name('get.form');
         Route::post('/save/{item?}', [ServiceController::class, 'save'])->name('save');
     });
@@ -230,8 +261,9 @@ Route::group(['middleware' => 'gopanel'], function () {
         Route::post('/save/{item?}', [SliderController::class, 'save'])->name('save');
     });
 
-    // Contact
-    Route::prefix('contact')->name('contact.')->group(function () {
+    // @deprecated duplicate contact group — remove in Phase 8.
+    // Active routes are at top of file (Livewire SFC). Endpoints below kept as orphans for now.
+    /* Route::prefix('contact')->name('contact.')->group(function () {
         Route::prefix('contact-info')->name('contact-info.')->group(function () {
             Route::get('/{item?}', [ContactInfoController::class, 'index'])->name('index');
             Route::post('/save/{item?}', [ContactInfoController::class, 'save'])->name('save.form');
@@ -242,7 +274,7 @@ Route::group(['middleware' => 'gopanel'], function () {
             Route::get('/get/form/{item?}', [SocialController::class, 'getForm'])->name('get.form');
             Route::post('/save/{item?}', [SocialController::class, 'save'])->name('save');
         });
-    });
+    }); */
 
     // Activity
     Route::prefix('activity')->name('activity.')->group(function () {

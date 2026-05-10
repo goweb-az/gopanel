@@ -10,6 +10,9 @@ use App\Models\Contact\ContactInfo;
 use Exception;
 use Illuminate\Http\Request;
 
+/**
+ * @deprecated Use livewire/gopanel/contact-info/index.blade.php (SFC).
+ */
 class ContactInfoController extends GoPanelController
 {
 

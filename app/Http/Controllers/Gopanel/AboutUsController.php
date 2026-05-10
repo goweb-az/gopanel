@@ -9,6 +9,10 @@ use App\Http\Controllers\GoPanelController;
 use App\Models\Site\AboutUs;
 use Illuminate\Http\Request;
 
+/**
+ * @deprecated Use livewire/gopanel/about-us/index.blade.php (SFC).
+ *             Legacy endpoint retains SEO meta flow until Phase 5 rebuild.
+ */
 class AboutUsController extends GoPanelController
 {
     public function index(Request $request)

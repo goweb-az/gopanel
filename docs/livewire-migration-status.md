@@ -8,16 +8,16 @@ Status legend: `todo` · `in-progress` · `done` · `deprecated` (old code kept 
 
 | # | module | pattern | controller | views (gopanel/pages) | datatable | js module | status | notes |
 |---|--------|---------|-----------|-----------------------|-----------|-----------|--------|-------|
-|  1 | sliders          | modal     | `SliderController`        | `pages/slider/*`        | `SliderDatatable`           | —                       | todo | Pilot — Phase 2 |
-|  2 | services         | modal     | `ServiceController`       | `pages/service/*`       | —                           | `services.js`           | todo | Phase 3.6 |
+|  1 | sliders          | modal     | ~~`SliderController`~~    | `pages/slider/*` (legacy) | `SliderDatatable`         | —                       | done | Pilot — Phase 2 ✓ |
+|  2 | services         | modal     | ~~`ServiceController`~~   | `pages/services/*` (legacy) | —                       | `services.js`           | done | Phase 3.6 ✓ (SEO meta deferred to Phase 5) |
 |  3 | categories       | modal+tree| `CategoryController`      | `pages/category/*`      | —                           | `categories.js`         | todo | Phase 3.7 (nested sortable) |
-|  4 | about_us         | single    | `AboutUsController`       | `pages/about_us/*`      | —                           | —                       | todo | Phase 3.8 (CKEditor) |
-|  5 | site_settings    | single    | `Settings/SiteSettingController` | `pages/site_settings/*` | —                    | `site.js`               | todo | Phase 3.3 |
-|  6 | languages        | modal     | `Settings/LanguageController`    | `pages/languages/*`     | —                    | —                       | todo | Phase 3.1 |
+|  4 | about_us         | single    | ~~`AboutUsController`~~   | `pages/about_us/*` (legacy) | —                       | —                       | done | Phase 3.8 ✓ (CKEditor deferred; using textarea) |
+|  5 | site_settings    | single    | ~~`Settings/SiteSettingsController`~~ | `pages/settings/site_settings/*` (legacy) | — | `site.js`            | done | Phase 3.3 ✓ (SEO meta deferred to Phase 5) |
+|  6 | languages        | modal     | ~~`Translations/LanguageController`~~ | `pages/settings/languages/*` (legacy) | — | — | done | Phase 3.1 ✓ |
 |  7 | translations     | modal+pg  | `Translations/...`        | `pages/translations/*`  | `Translations/...`          | —                       | todo | Phase 3.2 |
 |  8 | menu             | full-page | `Settings/MenuController` | `pages/menu/*`          | —                           | —                       | todo | Phase 5.3 (nested DnD) |
-|  9 | contact_info     | single    | `Contact/ContactInfoController` | `pages/contact/*`     | —                           | —                       | todo | Phase 3.4 |
-| 10 | socials          | modal     | `Contact/SocialController`| `pages/socials/*`       | —                           | —                       | todo | Phase 3.5 |
+|  9 | contact_info     | single    | ~~`Contact/ContactInfoController`~~ | `pages/contact/contact_info/*` (legacy) | —             | —                       | done | Phase 3.4 ✓ |
+| 10 | socials          | modal     | ~~`Contact/SocialController`~~ | `pages/contact/socials/*` (legacy) | —                | —                       | done | Phase 3.5 ✓ |
 | 11 | blog             | full-page | `BlogController`          | `pages/blog/*`          | `BlogDatatable`             | —                       | todo | Phase 5.1 |
 | 12 | products         | full-page | `ProductController`       | `pages/product/*`       | `ProductDatatable`          | `products.js`           | todo | Phase 5.2 |
 | 13 | admins           | full-page | `Admins/AdminController`  | `pages/admins/*`        | `Admins/AdminDatatable`     | `admins.js`             | todo | Phase 5.4 |

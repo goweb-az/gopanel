@@ -11,6 +11,10 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
+/**
+ * @deprecated Use livewire/gopanel/site-settings/index.blade.php (SFC).
+ *             Legacy endpoint retains SEO meta flow until Phase 5 rebuild.
+ */
 class SiteSettingsController extends GoPanelController
 {
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\Concerns\AuthorizesGopanel;
 use App\Livewire\Forms\SliderForm;
 use App\Models\Site\Slider;
 use Illuminate\Support\Facades\DB;
@@ -8,7 +9,7 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 
 new class extends Component {
-    use WithFileUploads;
+    use AuthorizesGopanel, WithFileUploads;
 
     public SliderForm $form;
 
