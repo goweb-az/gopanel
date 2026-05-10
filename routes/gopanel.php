@@ -55,8 +55,9 @@ Route::group(['middleware' => 'gopanel'], function () {
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('index');
 
-    // Livewire smoke test (TEMP — Phase 0; remove after verification)
+    // Livewire smoke test (TEMP — remove before production)
     Route::livewire('/_lw-probe', 'test-probe')->name('_lw.probe');
+    Route::livewire('/_dt-probe', 'dt-probe')->name('_dt.probe');
     // Datatable
     Route::get('datatable/{table}', [DatatableController::class, 'handle'])->name('datatable.source');
 
