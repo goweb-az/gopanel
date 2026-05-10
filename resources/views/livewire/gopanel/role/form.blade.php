@@ -166,9 +166,9 @@ new class extends Component {
             <a href="{{ route($indexRoute) }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left me-1"></i> {{ __('Geri') }}
             </a>
-            <button type="submit" class="btn btn-primary" wire:loading.attr="disabled">
-                <span wire:loading.remove wire:target="save"><i class="fas fa-save me-1"></i> {{ __('Yadda saxla') }}</span>
-                <span wire:loading wire:target="save"><i class="fas fa-spinner fa-spin me-1"></i> {{ __('Saxlanır...') }}</span>
+            <button type="submit" class="btn btn-primary">
+                <span class="lw-not-loading"><i class="fas fa-save me-1"></i> {{ __('Yadda saxla') }}</span>
+                <span class="lw-loading"><i class="fas fa-spinner fa-spin me-1"></i> {{ __('Saxlanır...') }}</span>
             </button>
         </div>
     </form>

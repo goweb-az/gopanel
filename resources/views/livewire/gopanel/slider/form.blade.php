@@ -97,12 +97,12 @@ new class extends Component {
         </form>
 
         <x-slot:footer>
-            <button type="button" class="btn btn-secondary" x-on:click="isOpen = false" wire:loading.attr="disabled">
+            <button type="button" class="btn btn-secondary" x-on:click="isOpen = false">
                 {{ __('Bağla') }}
             </button>
-            <button type="button" class="btn btn-primary" wire:click="save" wire:loading.attr="disabled">
-                <span wire:loading.remove wire:target="save"><i class="fas fa-save me-1"></i> {{ __('Yadda saxla') }}</span>
-                <span wire:loading wire:target="save"><i class="fas fa-spinner fa-spin me-1"></i> {{ __('Saxlanır...') }}</span>
+            <button type="button" class="btn btn-primary" wire:click="save">
+                <span class="lw-not-loading"><i class="fas fa-save me-1"></i> {{ __('Yadda saxla') }}</span>
+                <span class="lw-loading"><i class="fas fa-spinner fa-spin me-1"></i> {{ __('Saxlanır...') }}</span>
             </button>
         </x-slot:footer>
     </x-gopanel.modal>

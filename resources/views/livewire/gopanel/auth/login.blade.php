@@ -109,9 +109,9 @@ class extends Component {
                         </div>
 
                         <div class="mt-3 d-grid">
-                            <button class="btn btn-primary waves-effect waves-light" type="submit" wire:loading.attr="disabled">
-                                <span wire:loading.remove wire:target="authenticate">{{ __('Daxil ol') }}</span>
-                                <span wire:loading wire:target="authenticate">
+                            <button class="btn btn-primary waves-effect waves-light" type="submit">
+                                <span class="lw-not-loading">{{ __('Daxil ol') }}</span>
+                                <span class="lw-loading">
                                     <i class="fas fa-spinner fa-spin me-1"></i> {{ __('Daxil olunur...') }}
                                 </span>
                             </button>

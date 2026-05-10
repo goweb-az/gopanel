@@ -1,0 +1,25 @@
+/*
+ * Livewire v4 loading-state helpers
+ *
+ * Livewire automatically toggles the `data-loading` attribute on the element
+ * that triggered a network request. Pair these utility classes with that
+ * attribute to swap two icons (or two text blocks) without per-button JS:
+ *
+ *   <button wire:click="save">
+ *     <span class="lw-not-loading">Save</span>
+ *     <span class="lw-loading">Saving...</span>
+ *   </button>
+ *
+ * The button itself is also dimmed and pointer-events disabled while loading.
+ */
+
+[data-loading] {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.lw-loading        { display: none; }
+.lw-not-loading    { display: inline; }
+
+[data-loading] .lw-loading      { display: inline; }
+[data-loading] .lw-not-loading  { display: none; }
