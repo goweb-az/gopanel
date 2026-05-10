@@ -64,7 +64,6 @@ if (Schema::hasTable('languages')) {
 }
 
 // Fallback Route
-// Route::fallback([FallBackController::class, 'fallback']);
 Route::fallback(function () {
-    return redirect('404');
+    abort(404);
 });
