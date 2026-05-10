@@ -12,6 +12,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 
+/**
+ * @deprecated Use livewire/gopanel/role/* (SFC).
+ */
 class RoleController extends GoPanelController
 {
 

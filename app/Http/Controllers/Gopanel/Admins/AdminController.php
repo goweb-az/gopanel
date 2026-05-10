@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
 
+/**
+ * @deprecated Use livewire/gopanel/admin/* (SFC).
+ */
 class AdminController extends GoPanelController
 {
     public function index(Request $request)

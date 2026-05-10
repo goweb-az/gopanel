@@ -9,6 +9,10 @@ use App\Http\Controllers\GoPanelController;
 use App\Models\Site\Product;
 use Illuminate\Http\Request;
 
+/**
+ * @deprecated Use livewire/gopanel/product/* (SFC).
+ *             Legacy AJAX endpoints retain SEO meta flow until Phase 5 rebuild.
+ */
 class ProductController extends GoPanelController
 {
     public function index(Request $request)

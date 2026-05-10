@@ -186,14 +186,25 @@ Route::group(['middleware' => 'gopanel'], function () {
         });
     });
 
-    // Admins
+    // MIGRATED to Livewire SFC — Admins + Roles
     Route::prefix('admins')->name('admins.')->group(function () {
-        Route::get('/', [AdminController::class, 'index'])->name('index');
+        Route::livewire('/',                'gopanel.admin.index')->name('index');
+        Route::livewire('/create',          'gopanel.admin.create')->name('create');
+        Route::livewire('/{admin}/edit',    'gopanel.admin.edit')->name('edit');
+
+        Route::prefix('roles')->name('roles.')->group(function () {
+            Route::livewire('/',              'gopanel.role.index')->name('index');
+            Route::livewire('/create',        'gopanel.role.create')->name('create');
+            Route::livewire('/{role}/edit',   'gopanel.role.edit')->name('edit');
+        });
+    });
+
+    // @deprecated — legacy AJAX endpoints
+    Route::prefix('admins-legacy')->name('admins.legacy.')->group(function () {
         Route::get('/get/form/{item?}', [AdminController::class, 'getForm'])->name('get.form');
         Route::post('/save/{item?}', [AdminController::class, 'save'])->name('save');
 
         Route::prefix('roles')->name('roles.')->group(function () {
-            Route::get('/', [RoleController::class, 'index'])->name('index');
             Route::get('/store/{item?}', [RoleController::class, 'store'])->name('store');
             Route::post('/save/{item?}', [RoleController::class, 'save'])->name('save');
         });
@@ -215,9 +226,15 @@ Route::group(['middleware' => 'gopanel'], function () {
         Route::post('/move', [CategoryController::class, 'moveCategory'])->name('move');
     });
 
-    // Blog
+    // MIGRATED to Livewire SFC — resources/views/livewire/gopanel/blog/*
     Route::prefix('blog')->name('blog.')->group(function () {
-        Route::get('/', [BlogController::class, 'index'])->name('index');
+        Route::livewire('/',                'gopanel.blog.index')->name('index');
+        Route::livewire('/create',          'gopanel.blog.create')->name('create');
+        Route::livewire('/{blog}/edit',     'gopanel.blog.edit')->name('edit');
+    });
+
+    // @deprecated — legacy AJAX endpoints (retains SEO meta save flow)
+    Route::prefix('blog-legacy')->name('blog.legacy.')->group(function () {
         Route::get('/store/{item?}', [BlogController::class, 'store'])->name('store');
         Route::post('/save/{item?}', [BlogController::class, 'save'])->name('save');
     });
@@ -243,9 +260,15 @@ Route::group(['middleware' => 'gopanel'], function () {
         Route::post('/save/{item?}', [ServiceController::class, 'save'])->name('save');
     });
 
-    // Products
+    // MIGRATED to Livewire SFC — resources/views/livewire/gopanel/product/*
     Route::prefix('products')->name('products.')->group(function () {
-        Route::get('/', [ProductController::class, 'index'])->name('index');
+        Route::livewire('/',                'gopanel.product.index')->name('index');
+        Route::livewire('/create',          'gopanel.product.create')->name('create');
+        Route::livewire('/{product}/edit',  'gopanel.product.edit')->name('edit');
+    });
+
+    // @deprecated — legacy AJAX endpoints (retains SEO meta save flow)
+    Route::prefix('products-legacy')->name('products.legacy.')->group(function () {
         Route::get('/store/{item:uid?}', [ProductController::class, 'store'])->name('store');
         Route::post('/save/{item:uid?}', [ProductController::class, 'save'])->name('save');
     });
