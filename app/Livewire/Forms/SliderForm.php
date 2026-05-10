@@ -42,9 +42,7 @@ class SliderForm extends BaseForm
 
     public function save(): Slider
     {
-        $slider = $this->form['id']
-            ? Slider::findOrFail($this->form['id'])
-            : new Slider();
+        $slider = Slider::findOrNew($this->form['id']);
 
         if ($this->upload) {
             $fileName = FileUploader::nameGenerate(

@@ -46,9 +46,7 @@ class ServiceForm extends BaseForm
 
     public function save(): Service
     {
-        $service = $this->form['id']
-            ? Service::findOrFail($this->form['id'])
-            : new Service();
+        $service = Service::findOrNew($this->form['id']);
 
         if ($this->iconUpload && $this->form['icon_type'] === SocialIconTypeEnum::Image->value) {
             $fileName = FileUploader::nameGenerate(

@@ -52,9 +52,7 @@ class ContactInfoForm extends BaseForm
 
     public function save(): ContactInfo
     {
-        $item = $this->form['id']
-            ? ContactInfo::findOrFail($this->form['id'])
-            : new ContactInfo();
+        $item = ContactInfo::findOrNew($this->form['id']);
 
         $item->fill(collect($this->form)->except('id')->all());
         $item->save();

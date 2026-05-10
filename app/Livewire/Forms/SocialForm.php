@@ -51,9 +51,7 @@ class SocialForm extends BaseForm
 
     public function save(): Social
     {
-        $social = $this->form['id']
-            ? Social::findOrFail($this->form['id'])
-            : new Social();
+        $social = Social::findOrNew($this->form['id']);
 
         if ($this->upload && $this->form['icon_type'] === SocialIconTypeEnum::Image->value) {
             $fileName = FileUploader::nameGenerate(['name' => $this->form['name']], 'social');

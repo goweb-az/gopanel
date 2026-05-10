@@ -33,9 +33,7 @@ class AboutUsForm extends BaseForm
 
     public function save(): AboutUs
     {
-        $item = $this->form['id']
-            ? AboutUs::findOrFail($this->form['id'])
-            : new AboutUs();
+        $item = AboutUs::findOrNew($this->form['id']);
 
         if ($this->upload) {
             $fileName = FileUploader::nameGenerate(

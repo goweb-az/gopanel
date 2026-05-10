@@ -65,9 +65,7 @@ class SiteSettingForm extends BaseForm
 
     public function save(): SiteSetting
     {
-        $item = $this->form['id']
-            ? SiteSetting::findOrFail($this->form['id'])
-            : new SiteSetting();
+        $item = SiteSetting::findOrNew($this->form['id']);
 
         if ($this->logoLightUpload) {
             $this->form['logo_light'] = FileUploader::toPublic($this->logoLightUpload, 'site-logo', 'logo-light');

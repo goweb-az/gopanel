@@ -48,9 +48,7 @@ class LanguageForm extends BaseForm
 
     public function save(): Language
     {
-        $language = $this->form['id']
-            ? Language::findOrFail($this->form['id'])
-            : new Language();
+        $language = Language::findOrNew($this->form['id']);
 
         $data = collect($this->form)->except('id')->all();
 
