@@ -7,6 +7,10 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * @deprecated login/attempt migrated to livewire/gopanel/auth/login.blade.php (SFC).
+ *             logout() stays as it is a stateless GET that just kills the session.
+ */
 class AuthController extends GoPanelController
 {
 

@@ -44,9 +44,14 @@ use Illuminate\Support\Facades\Route;
 
 // Auth Proccess
 Route::prefix('auth')->name('auth.')->group(function () {
-    Route::get('/login', [AuthController::class, 'login'])->name('login');
+    // MIGRATED to Livewire SFC — handles GET render + POST authenticate inside the component
+    Route::livewire('/login', 'gopanel.auth.login')->name('login');
+
+    // Logout still posts to the controller (stateless, no Livewire needed)
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
-    Route::post('login', [AuthController::class, 'attempt'])->name('login.proccess');
+
+    // @deprecated — legacy AJAX login endpoint
+    Route::post('login-legacy', [AuthController::class, 'attempt'])->name('login.proccess');
 });
 
 // Start Gopanel route group
@@ -210,11 +215,15 @@ Route::group(['middleware' => 'gopanel'], function () {
         });
     });
 
-    // Profile
+    // MIGRATED to Livewire SFC — Profile + Change Password
     Route::prefix('profile')->name('profile.')->group(function () {
-        Route::get('/', [ProfileController::class, 'index'])->name('index');
+        Route::livewire('/',                'gopanel.profile.index')->name('index');
+        Route::livewire('/change-password', 'gopanel.profile.change-password')->name('change-password.index');
+    });
+
+    // @deprecated — legacy AJAX endpoints
+    Route::prefix('profile-legacy')->name('profile.legacy.')->group(function () {
         Route::post('/update', [ProfileController::class, 'update'])->name('update');
-        Route::get('/change-password', [ProfileController::class, 'changePasswordIndex'])->name('change-password.index');
         Route::post('/change-password', [ProfileController::class, 'changePassword'])->name('change-password');
     });
 

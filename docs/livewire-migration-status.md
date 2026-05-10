@@ -32,9 +32,9 @@ Status legend: `todo` · `in-progress` · `done` · `deprecated` (old code kept 
 | 22 | file_logs        | readonly  | ~~`Activity/FileLogController`~~     | `pages/activity/file_logs/*` (legacy) | `Activity/...` (legacy) | —             | done | Phase 5.6 ✓ |
 | 23 | data_updates     | readonly  | `System/...`              | `pages/system/*`        | —                           | `updater.js`            | todo | Phase 5.6 |
 | 24 | analytics        | readonly  | various                   | `pages/analytics/*`     | `Analytics/...`             | `analytics.js`          | todo | Phase 5.6 |
-| 25 | auth/login       | form      | `AuthController`          | `pages/auth/*`          | —                           | —                       | todo | Phase 6.1 |
-| 26 | auth/profile     | form      | `AuthController`          | `pages/profile/*`       | —                           | —                       | todo | Phase 6.2 |
-| 27 | auth/change-password | form  | `AuthController`          | `pages/profile/*`       | —                           | —                       | todo | Phase 6.3 |
+| 25 | auth/login       | form      | ~~`AuthController`~~ (login/attempt) | `auth/login.blade.php` (legacy) | —             | —                       | done | Phase 6.1 ✓ (rate-limited) |
+| 26 | auth/profile     | form      | ~~`Admins/ProfileController`~~       | `pages/profile/*` (legacy)      | —             | —                       | done | Phase 6.2 ✓ |
+| 27 | auth/change-password | form  | ~~`Admins/ProfileController`~~       | `pages/profile/*` (legacy)      | —             | —                       | done | Phase 6.3 ✓ |
 | 28 | dashboard        | page      | `DashboardController`     | `pages/dashboard/*`     | —                           | —                       | todo | Phase 6 (light) |
 
 ## Phase tracker

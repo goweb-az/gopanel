@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * @deprecated Use livewire/gopanel/profile/* (SFC).
+ */
 class ProfileController extends GoPanelController
 {
 
