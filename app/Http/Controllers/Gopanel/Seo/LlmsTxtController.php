@@ -6,6 +6,9 @@ use App\Http\Controllers\GoPanelController;
 use App\Models\Seo\LlmsTxt;
 use Illuminate\Http\Request;
 
+/**
+ * @deprecated Use livewire/gopanel/llms-txt/* (SFC).
+ */
 class LlmsTxtController extends GoPanelController
 {
 

@@ -206,14 +206,14 @@ class extends Component {
             </div>
 
             <x-slot:footer>
-                <button type="button" class="btn btn-secondary" x-on:click="isOpen = false" wire:loading.attr="disabled">
+                <button type="button" class="btn btn-secondary" x-on:click="isOpen = false">
                     {{ __('Bağla') }}
                 </button>
                 <button type="button" class="btn btn-danger" wire:click="runCleanup"
                     wire:confirm="{{ __('Bu əməliyyatın geri qaytarılması yoxdur. Əminsiniz?') }}"
-                    wire:loading.attr="disabled">
-                    <span wire:loading.remove wire:target="runCleanup"><i class="fas fa-broom me-1"></i> {{ __('Təmizlə') }}</span>
-                    <span wire:loading wire:target="runCleanup"><i class="fas fa-spinner fa-spin me-1"></i> {{ __('Silinir...') }}</span>
+>
+                    <span class="lw-not-loading"><i class="fas fa-broom me-1"></i> {{ __('Təmizlə') }}</span>
+                    <span class="lw-loading"><i class="fas fa-spinner fa-spin me-1"></i> {{ __('Silinir...') }}</span>
                 </button>
             </x-slot:footer>
         </x-gopanel.modal>

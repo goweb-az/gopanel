@@ -9,6 +9,9 @@ use Exception;
 use Illuminate\Support\Facades\View;
 use Illuminate\Http\Request;
 
+/**
+ * @deprecated Use livewire/gopanel/site-redirect/* (SFC).
+ */
 class SiteRedirectController extends GoPanelController
 {
 

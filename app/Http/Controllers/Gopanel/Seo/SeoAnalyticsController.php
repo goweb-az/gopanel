@@ -8,6 +8,9 @@ use App\Models\Seo\SeoAnalytics;
 use Exception;
 use Illuminate\Http\Request;
 
+/**
+ * @deprecated Use livewire/gopanel/seo-analytics/* (SFC).
+ */
 class SeoAnalyticsController extends GoPanelController
 {
 
