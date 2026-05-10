@@ -300,24 +300,26 @@ Route::group(['middleware' => 'gopanel'], function () {
         });
     }); */
 
-    // Activity
+    // MIGRATED to Livewire SFC — Activity logs + File logs
     Route::prefix('activity')->name('activity.')->group(function () {
-        // tarixce
         Route::prefix('activity-logs')->name('activity-logs.')->group(function () {
-            Route::get('/', [ActivityLogController::class, 'index'])->name('index');
+            Route::livewire('/', 'gopanel.activity-log.index')->name('index');
+        });
+
+        Route::prefix('file-logs')->name('file-logs.')->group(function () {
+            Route::livewire('/', 'gopanel.file-log.index')->name('index');
+        });
+    });
+
+    // @deprecated — legacy AJAX endpoints (view modal, user select2)
+    Route::prefix('activity-legacy')->name('activity.legacy.')->group(function () {
+        Route::prefix('activity-logs')->name('activity-logs.')->group(function () {
             Route::get('/view/{item}', [ActivityLogController::class, 'view'])->name('view');
-            Route::post('/delete/{item}', [ActivityLogController::class, 'delete'])->name('delete');
-            Route::post('/cleanup', [ActivityLogController::class, 'cleanup'])->name('cleanup');
             Route::get('/users', [ActivityLogController::class, 'getUsers'])->name('users');
         });
 
-        // Logs
-        // ─── File Logs ────────────────────────────────────────────────
         Route::prefix('file-logs')->name('file-logs.')->group(function () {
-            Route::get('/', [FileLogController::class, 'index'])->name('index');
             Route::get('/view/{item}', [FileLogController::class, 'view'])->name('view');
-            Route::post('/delete/{item}', [FileLogController::class, 'delete'])->name('delete');
-            Route::post('/cleanup', [FileLogController::class, 'cleanup'])->name('cleanup');
             Route::get('/users', [FileLogController::class, 'getUsers'])->name('users');
         });
     });

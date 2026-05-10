@@ -8,6 +8,10 @@ use App\Models\User\User;
 use Exception;
 use Illuminate\Http\Request;
 
+/**
+ * @deprecated Use livewire/gopanel/activity-log/* (SFC).
+ *             Legacy endpoints retain view-modal + user select2 until Phase 8 cleanup.
+ */
 class ActivityLogController extends GoPanelController
 {
 

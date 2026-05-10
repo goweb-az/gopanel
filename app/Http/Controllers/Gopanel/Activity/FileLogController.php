@@ -7,6 +7,10 @@ use App\Models\Activity\FileLog;
 use Exception;
 use Illuminate\Http\Request;
 
+/**
+ * @deprecated Use livewire/gopanel/file-log/* (SFC).
+ *             Legacy endpoints retain view-modal + user select2 until Phase 8 cleanup.
+ */
 class FileLogController extends GoPanelController
 {
 

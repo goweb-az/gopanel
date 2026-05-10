@@ -28,8 +28,8 @@ Status legend: `todo` · `in-progress` · `done` · `deprecated` (old code kept 
 | 18 | llms_txt         | single    | `Seo/LlmsTxtController`   | `pages/seo/llms_txt/*`  | —                           | —                       | todo | Phase 5.5 |
 | 19 | schema_markups   | full-page | `Seo/SchemaController`    | `pages/seo/schema/*`    | `Seo/...`                   | —                       | todo | Phase 5.5 |
 | 20 | seo_analytics    | readonly  | `Seo/AnalyticsController` | `pages/seo/analytics/*` | —                           | —                       | todo | Phase 5.5 |
-| 21 | activity_logs    | readonly  | `Activity/...`            | `pages/activity/*`      | `Activity/...`              | `activity/`             | todo | Phase 5.6 |
-| 22 | file_logs        | readonly  | `Activity/...`            | `pages/file_logs/*`     | `Activity/...`              | —                       | todo | Phase 5.6 |
+| 21 | activity_logs    | readonly  | ~~`Activity/ActivityLogController`~~ | `pages/activity/*` (legacy) | `Activity/...` (legacy) | `activity/`             | done | Phase 5.6 ✓ (filters + cleanup) |
+| 22 | file_logs        | readonly  | ~~`Activity/FileLogController`~~     | `pages/activity/file_logs/*` (legacy) | `Activity/...` (legacy) | —             | done | Phase 5.6 ✓ |
 | 23 | data_updates     | readonly  | `System/...`              | `pages/system/*`        | —                           | `updater.js`            | todo | Phase 5.6 |
 | 24 | analytics        | readonly  | various                   | `pages/analytics/*`     | `Analytics/...`             | `analytics.js`          | todo | Phase 5.6 |
 | 25 | auth/login       | form      | `AuthController`          | `pages/auth/*`          | —                           | —                       | todo | Phase 6.1 |
