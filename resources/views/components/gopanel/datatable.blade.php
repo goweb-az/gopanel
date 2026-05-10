@@ -86,15 +86,8 @@
     </div>
 
     @if ($rows->hasPages())
-        <div class="mt-3 d-flex justify-content-between align-items-center">
-            <small class="text-muted">
-                {{ __('Göstərilir') }}
-                <strong>{{ $rows->firstItem() }}</strong>–<strong>{{ $rows->lastItem() }}</strong>
-                / {{ $rows->total() }}
-            </small>
-            <div>
-                {{ $rows->onEachSide(1)->links() }}
-            </div>
+        <div class="mt-3 datatable-paginator">
+            {{ $rows->onEachSide(1)->links('livewire::bootstrap') }}
         </div>
     @endif
 </div>
