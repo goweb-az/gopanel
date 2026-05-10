@@ -99,8 +99,15 @@ Route::group(['middleware' => 'gopanel'], function () {
         //     Route::delete('/delete/{media}', [MediaController::class, 'delete'])->name('delete');
         // });
 
+        // MIGRATED to Livewire SFC — Menu
         Route::prefix('menu')->name('menu.')->group(function () {
-            Route::get('/', [MenuController::class, 'index'])->name('index');
+            Route::livewire('/',                 'gopanel.menu.index')->name('index');
+            Route::livewire('/create',           'gopanel.menu.create')->name('create');
+            Route::livewire('/{menu}/edit',      'gopanel.menu.edit')->name('edit');
+        });
+
+        // @deprecated — legacy AJAX endpoints
+        Route::prefix('menu-legacy')->name('menu.legacy.')->group(function () {
             Route::get('/store/{item?}', [MenuController::class, 'store'])->name('store');
             Route::post('/save/{item?}', [MenuController::class, 'save'])->name('save');
         });
@@ -117,9 +124,13 @@ Route::group(['middleware' => 'gopanel'], function () {
             Route::post('/toggle-default', [LanguageController::class, 'toggleDefault'])->name('toggle.default');
         });
 
-        // Translates
+        // MIGRATED to Livewire SFC — Translations
         Route::prefix('translations')->name('translations.')->group(function () {
-            Route::get('/', [TranslationController::class, 'index'])->name('index');
+            Route::livewire('/', 'gopanel.translation.index')->name('index');
+        });
+
+        // @deprecated — legacy AJAX endpoints
+        Route::prefix('translations-legacy')->name('translations.legacy.')->group(function () {
             Route::get('/get/form/{item?}', [TranslationController::class, 'getForm'])->name('get.form');
             Route::post('/save/form/{item?}', [TranslationController::class, 'save'])->name('save.form');
         });
@@ -148,20 +159,33 @@ Route::group(['middleware' => 'gopanel'], function () {
         });
     });
 
+    // MIGRATED to Livewire SFC — SEO modules
     Route::prefix('seo')->name('seo.')->group(function () {
         Route::prefix('site-redirects')->name('site-redirects.')->group(function () {
-            Route::get('/', [SiteRedirectController::class, 'index'])->name('index');
+            Route::livewire('/', 'gopanel.site-redirect.index')->name('index');
+        });
+
+        Route::prefix('seo-analytics')->name('seo-analytics.')->group(function () {
+            Route::livewire('/', 'gopanel.seo-analytics.index')->name('index');
+        });
+
+        Route::prefix('llms-txt')->name('llms-txt.')->group(function () {
+            Route::livewire('/', 'gopanel.llms-txt.index')->name('index');
+        });
+    });
+
+    // @deprecated — legacy AJAX endpoints
+    Route::prefix('seo-legacy')->name('seo.legacy.')->group(function () {
+        Route::prefix('site-redirects')->name('site-redirects.')->group(function () {
             Route::get('/get/form/{item?}', [SiteRedirectController::class, 'getForm'])->name('get.form');
             Route::post('/save/{item?}', [SiteRedirectController::class, 'save'])->name('save');
         });
 
         Route::prefix('seo-analytics')->name('seo-analytics.')->group(function () {
-            Route::get('/{item?}', [SeoAnalyticsController::class, 'index'])->name('index');
             Route::post('/save/{item?}', [SeoAnalyticsController::class, 'save'])->name('save.form');
         });
 
         Route::prefix('llms-txt')->name('llms-txt.')->group(function () {
-            Route::get('/{item?}', [LlmsTxtController::class, 'index'])->name('index');
             Route::post('/save/{item?}', [LlmsTxtController::class, 'save'])->name('save.form');
         });
     });
@@ -227,9 +251,13 @@ Route::group(['middleware' => 'gopanel'], function () {
         Route::post('/change-password', [ProfileController::class, 'changePassword'])->name('change-password');
     });
 
-    // Categories
+    // MIGRATED to Livewire SFC — Categories
     Route::prefix('categories')->name('categories.')->group(function () {
-        Route::get('/', [CategoryController::class, 'index'])->name('index');
+        Route::livewire('/', 'gopanel.category.index')->name('index');
+    });
+
+    // @deprecated — legacy AJAX endpoints
+    Route::prefix('categories-legacy')->name('categories.legacy.')->group(function () {
         Route::get('/get/form/{item?}', [CategoryController::class, 'getForm'])->name('get.form');
         Route::post('/save/{item?}', [CategoryController::class, 'save'])->name('save');
         Route::post('/move', [CategoryController::class, 'moveCategory'])->name('move');

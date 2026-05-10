@@ -12,6 +12,9 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 
+/**
+ * @deprecated Use livewire/gopanel/menu/* (SFC).
+ */
 class MenuController extends GoPanelController
 {
 
