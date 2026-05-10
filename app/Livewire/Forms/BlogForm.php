@@ -1,0 +1,69 @@
+<?php
+
+namespace App\Livewire\Forms;
+
+use App\Helpers\Gopanel\FileUploader;
+use App\Models\Site\Blog;
+
+class BlogForm extends BaseForm
+{
+    public array $form = [
+        'id'        => null,
+        'image'     => '',
+        'date_time' => '',
+        'is_active' => true,
+        'views'     => 0,
+    ];
+
+    public mixed $upload = null;
+
+    protected function rules(): array
+    {
+        return [
+            'form.date_time' => 'nullable|date',
+            'form.is_active' => 'boolean',
+            'form.views'     => 'integer|min:0',
+            'upload'         => 'nullable|image|max:4096',
+        ];
+    }
+
+    public function setItem(Blog $blog): void
+    {
+        $this->form = [
+            'id'        => $blog->id,
+            'image'     => $blog->image ?? '',
+            'date_time' => $blog->date_time ? $blog->date_time->format('Y-m-d\TH:i') : now()->format('Y-m-d\TH:i'),
+            'is_active' => (bool) ($blog->is_active ?? true),
+            'views'     => (int) ($blog->views ?? 0),
+        ];
+
+        $this->prepareTranslations($blog);
+    }
+
+    public function save(): Blog
+    {
+        $blog = Blog::findOrNew($this->form['id']);
+
+        if ($this->upload) {
+            $fileName = FileUploader::nameGenerate(
+                ['title' => $this->translations['az']['title'] ?? 'blog'],
+                'blog'
+            );
+            $this->form['image'] = FileUploader::toPublic(
+                $this->upload,
+                (new Blog())->getTable(),
+                $fileName
+            );
+        }
+
+        $blog->fill(collect($this->form)->except('id')->all());
+        $blog->save();
+
+        $this->form['id'] = $blog->id;
+        $this->upload = null;
+
+        $this->syncTranslations($blog);
+
+        return $blog;
+    }
+}

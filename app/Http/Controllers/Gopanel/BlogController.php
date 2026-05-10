@@ -11,6 +11,10 @@ use App\Models\Site\Blog;
 use Exception;
 use Illuminate\Http\Request;
 
+/**
+ * @deprecated Use livewire/gopanel/blog/* (SFC).
+ *             Legacy AJAX endpoints retain SEO meta flow until Phase 5 rebuild.
+ */
 class BlogController extends GoPanelController
 {
 

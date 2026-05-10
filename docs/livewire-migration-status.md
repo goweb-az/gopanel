@@ -18,10 +18,10 @@ Status legend: `todo` · `in-progress` · `done` · `deprecated` (old code kept 
 |  8 | menu             | full-page | `Settings/MenuController` | `pages/menu/*`          | —                           | —                       | todo | Phase 5.3 (nested DnD) |
 |  9 | contact_info     | single    | ~~`Contact/ContactInfoController`~~ | `pages/contact/contact_info/*` (legacy) | —             | —                       | done | Phase 3.4 ✓ |
 | 10 | socials          | modal     | ~~`Contact/SocialController`~~ | `pages/contact/socials/*` (legacy) | —                | —                       | done | Phase 3.5 ✓ |
-| 11 | blog             | full-page | `BlogController`          | `pages/blog/*`          | `BlogDatatable`             | —                       | todo | Phase 5.1 |
-| 12 | products         | full-page | `ProductController`       | `pages/product/*`       | `ProductDatatable`          | `products.js`           | todo | Phase 5.2 |
-| 13 | admins           | full-page | `Admins/AdminController`  | `pages/admins/*`        | `Admins/AdminDatatable`     | `admins.js`             | todo | Phase 5.4 |
-| 14 | roles            | full-page | `Admins/RoleController`   | `pages/roles/*`         | `Admins/RoleDatatable`      | —                       | todo | Phase 5.4 |
+| 11 | blog             | full-page | ~~`BlogController`~~      | `pages/blog/*` (legacy) | `BlogDatatable` (legacy)    | —                       | done | Phase 5.1 ✓ (SEO meta deferred) |
+| 12 | products         | full-page | ~~`ProductController`~~   | `pages/products/*` (legacy) | `ProductDatatable` (legacy) | `products.js`         | done | Phase 5.2 ✓ (Action pattern; SEO meta deferred) |
+| 13 | admins           | full-page | ~~`Admins/AdminController`~~ | `pages/admins/*` (legacy) | `Admins/AdminDatatable` (legacy) | `admins.js`         | done | Phase 5.4 ✓ (Action pattern) |
+| 14 | roles            | full-page | ~~`Admins/RoleController`~~  | `pages/roles/*` (legacy)  | `Admins/RoleDatatable` (legacy)  | —                   | done | Phase 5.4 ✓ (permission matrix) |
 | 15 | custom_permissions | modal   | `Admins/PermissionController` | `pages/permissions/*` | —                           | —                       | todo | Phase 5.4 |
 | 16 | page_meta_data   | full-page | `Seo/PageMetaController`  | `pages/seo/page_meta/*` | `Seo/PageMetaDatatable`     | `seo.js`                | todo | Phase 5.5 |
 | 17 | site_redirects   | full-page | `Seo/SiteRedirectController` | `pages/seo/redirects/*` | `Seo/SiteRedirectDatatable` | —                  | todo | Phase 5.5 |
