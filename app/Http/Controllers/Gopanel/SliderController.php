@@ -10,6 +10,10 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 
+/**
+ * @deprecated Use App\Livewire\Gopanel\Slider\SliderIndex / SliderForm instead.
+ *             Routes kept for backwards compatibility only; will be removed in Phase 8.
+ */
 class SliderController extends GoPanelController
 {
 

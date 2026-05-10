@@ -56,7 +56,7 @@ Route::group(['middleware' => 'gopanel'], function () {
     Route::get('/', [DashboardController::class, 'index'])->name('index');
 
     // Livewire smoke test (TEMP — Phase 0; remove after verification)
-    Route::get('/_lw-probe', \App\Livewire\TestProbe::class)->name('_lw.probe');
+    Route::livewire('/_lw-probe', 'test-probe')->name('_lw.probe');
     // Datatable
     Route::get('datatable/{table}', [DatatableController::class, 'handle'])->name('datatable.source');
 
@@ -218,6 +218,12 @@ Route::group(['middleware' => 'gopanel'], function () {
         Route::post('/save/{item:uid?}', [ProductController::class, 'save'])->name('save');
     });
 
+    // MIGRATED to Livewire SFC — resources/views/livewire/gopanel/slider/index.blade.php
+    Route::prefix('sliders')->name('sliders.')->group(function () {
+        Route::livewire('/', 'gopanel.slider.index')->name('index');
+    });
+
+    // @deprecated — kept for backwards compatibility, use gopanel.sliders.* instead
     Route::prefix('slider')->name('slider.')->group(function () {
         Route::get('/', [SliderController::class, 'index'])->name('index');
         Route::get('/get/form/{item?}', [SliderController::class, 'getForm'])->name('get.form');

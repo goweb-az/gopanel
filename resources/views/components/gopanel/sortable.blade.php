@@ -2,9 +2,10 @@
     'wireMethod' => 'reorder',
     'itemSelector' => '[data-id]',
     'handle' => null,
+    'tag' => 'div',
 ])
 
-<div
+<{{ $tag }}
     {{ $attributes }}
     wire:ignore.self
     x-data
@@ -22,4 +23,4 @@
     "
 >
     {{ $slot }}
-</div>
+</{{ $tag }}>
