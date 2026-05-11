@@ -9,6 +9,13 @@
     $id = 'ck_' . md5($name);
 @endphp
 
+@once
+    @push('scripts')
+        <script src="{{ asset('assets/gopanel/libs/ckeditor/ckeditor.js') }}"></script>
+        <script src="{{ asset('assets/gopanel/libs/ckeditor/ckeditor_config.js') }}"></script>
+    @endpush
+@endonce
+
 <div class="mb-3" wire:ignore>
     @if ($label)
         <label for="{{ $id }}" class="form-label">{{ $label }}</label>
@@ -31,8 +38,15 @@
                     $wire.set('{{ $name }}', this.instance.getData());
                 });
             },
+            destroy() {
+                if (this.instance) {
+                    try { this.instance.destroy(true); } catch (e) {}
+                    this.instance = null;
+                }
+            },
         }"
         x-init="init()"
+        x-on:livewire:navigating.window="destroy()"
     >{!! data_get($attributes->getAttributes(), 'value') !!}</textarea>
 
     @error($name)

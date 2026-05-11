@@ -26,7 +26,9 @@
                         {{ $label }} <span class="text-muted small">({{ strtoupper($lang->code) }})</span>
                     </label>
 
-                    @if ($type === 'textarea')
+                    @if ($type === 'editor')
+                        <x-gopanel.editor :name="$key" :rows="$field['rows'] ?? 8" />
+                    @elseif ($type === 'textarea')
                         <textarea id="{{ $id }}" class="form-control" rows="4" wire:model.lazy="{{ $key }}"></textarea>
                     @else
                         <input type="text" id="{{ $id }}" class="form-control" wire:model.lazy="{{ $key }}">
