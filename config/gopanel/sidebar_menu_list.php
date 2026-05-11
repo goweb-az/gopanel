@@ -167,4 +167,32 @@ return [
         'can'   => 'gopanel.system.updates.index',
     ],
 
+    ...(env('APP_ENV') === 'local' ? [
+        [
+            'icon'  => '<i class="bx bx-code-block"></i>',
+            'title' => 'Dev alətləri',
+            'inner' => [
+                [
+                    'icon'  => '<i class="bx bx-loader-circle"></i>',
+                    'title' => 'Horizon',
+                    'route' => 'gopanel.dev.horizon',
+                ],
+                [
+                    'icon'  => '<i class="bx bx-search-alt-2"></i>',
+                    'title' => 'Telescope',
+                    'route' => 'gopanel.dev.telescope',
+                ],
+                [
+                    'icon'  => '<i class="bx bx-pulse"></i>',
+                    'title' => 'Pulse',
+                    'route' => 'gopanel.dev.pulse',
+                ],
+                [
+                    'icon'  => '<i class="bx bx-envelope"></i>',
+                    'title' => 'Mail serveri',
+                    'route' => 'gopanel.dev.mail-server',
+                ],
+            ],
+        ],
+    ] : []),
 ];

@@ -122,4 +122,14 @@ Route::group(['middleware' => 'gopanel'], function () {
     });
 
     Route::livewire('/system/updates', 'gopanel.system.updates.index')->name('system.updates.index');
+
+    // Dev tools — local only (Horizon/Telescope/Pulse/Mailpit)
+    if (app()->environment('local')) {
+        Route::prefix('dev')->name('dev.')->group(function () {
+            Route::livewire('/horizon',     'gopanel.dev.horizon')->name('horizon');
+            Route::livewire('/telescope',   'gopanel.dev.telescope')->name('telescope');
+            Route::livewire('/pulse',       'gopanel.dev.pulse')->name('pulse');
+            Route::livewire('/mail-server', 'gopanel.dev.mail-server')->name('mail-server');
+        });
+    }
 });
