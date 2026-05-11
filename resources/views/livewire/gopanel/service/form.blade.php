@@ -64,7 +64,7 @@ new class extends Component {
                 :fields="[
                     ['name' => 'title', 'label' => __('Başlıq'), 'type' => 'text'],
                     ['name' => 'short_description', 'label' => __('Qısa təsvir'), 'type' => 'textarea'],
-                    ['name' => 'description', 'label' => __('Təsvir'), 'type' => 'textarea'],
+                    ['name' => 'description', 'label' => __('Təsvir'), 'type' => 'editor'],
                 ]"
             />
 
