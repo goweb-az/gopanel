@@ -76,16 +76,16 @@ Route::group(['middleware' => 'gopanel'], function () {
         Route::livewire('/', 'gopanel.analytics.index')->name('index');
         Route::prefix('detail')->name('detail.')->group(function () {
             Route::livewire('/devices',           'gopanel.analytics.detail.devices')->name('devices');
-            Route::livewire('/operating-systems', 'gopanel.analytics.detail.operating_systems')->name('operating.systems');
+            Route::livewire('/operating-systems', 'gopanel.analytics.detail.operating-systems')->name('operating.systems');
             Route::livewire('/browsers',          'gopanel.analytics.detail.browsers')->name('browsers');
             Route::livewire('/countries',         'gopanel.analytics.detail.countries')->name('countries');
             Route::livewire('/cities',            'gopanel.analytics.detail.cities')->name('cities');
             Route::livewire('/languages',         'gopanel.analytics.detail.languages')->name('languages');
             Route::livewire('/clicks',            'gopanel.analytics.detail.clicks')->name('clicks');
             Route::livewire('/links',             'gopanel.analytics.detail.links')->name('links');
-            Route::livewire('/utm/parameters',    'gopanel.analytics.detail.utm_parameters')->name('utm.parameters');
-            Route::livewire('/ad-platforms',      'gopanel.analytics.detail.ad_platforms')->name('ad.platforms');
-            Route::livewire('/ad-platform-data',  'gopanel.analytics.detail.ad_platform_data')->name('ad.platform.data');
+            Route::livewire('/utm/parameters',    'gopanel.analytics.detail.utm-parameters')->name('utm.parameters');
+            Route::livewire('/ad-platforms',      'gopanel.analytics.detail.ad-platforms')->name('ad.platforms');
+            Route::livewire('/ad-platform-data',  'gopanel.analytics.detail.ad-platform-data')->name('ad.platform.data');
         });
     });
 
