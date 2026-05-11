@@ -274,7 +274,6 @@
             var rootEl = document.getElementById('gpAnalyticsRoot');
             if (!rootEl) return;
             var component = Livewire.find(rootEl.getAttribute('wire:id'));
-            console.log(rootEl.getAttribute('wire:id'))
             initDateRangePicker(component, boot);
 
             Livewire.on('analytics-data-updated', function (payload) {
