@@ -30,7 +30,7 @@ class TrackingHelper
 
     public static function clamp(?string $value, int $max): ?string
     {
-        if ($value === null) {
+        if (is_null($value)) {
             return null;
         }
 

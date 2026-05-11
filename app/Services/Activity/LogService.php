@@ -33,7 +33,7 @@ class LogService
     private function setChannel($channel)
     {
         // If the channel is null, use Laravel's default log channel
-        if ($channel === null) {
+        if (is_null($channel)) {
             $this->logging = Log::channel(config('logging.default'));
         } else {
             // If the channel is specified, check if it exists in the available log channels

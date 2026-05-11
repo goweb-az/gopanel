@@ -138,7 +138,7 @@ class AnalyticsService
                 $this->config['ad_logos'][$platformName] ?? null
             );
             foreach ($pairs as $paramKey => $paramValue) {
-                if ($paramKey === null && $paramValue === null) {
+                if (is_null($paramKey) && is_null($paramValue)) {
                     continue;
                 }
 
@@ -146,7 +146,7 @@ class AnalyticsService
                     'click_id' => $click->id,
                     'platform_id' => $platform->id,
                     'param_key' => (string) $paramKey,
-                    'param_value' => ($paramValue !== null) ? (string) $paramValue : null,
+                    'param_value' => (! is_null($paramValue)) ? (string) $paramValue : null,
                 ]);
             }
         }

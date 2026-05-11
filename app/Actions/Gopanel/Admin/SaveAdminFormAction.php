@@ -36,7 +36,7 @@ class SaveAdminFormAction
 
             $data = collect($form)->except(['id', 'role_id'])->all();
 
-            if ($password !== null && $password !== '') {
+            if (! is_null($password) && $password !== '') {
                 $data['password'] = Hash::make($password);
             }
 

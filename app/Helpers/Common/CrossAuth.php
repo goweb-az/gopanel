@@ -151,7 +151,7 @@ class CrossAuth
      */
     public static function check(): bool
     {
-        return self::getToken() !== null && self::user() !== null;
+        return ! is_null(self::getToken()) && ! is_null(self::user());
     }
 
     /**

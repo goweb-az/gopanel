@@ -62,7 +62,7 @@ class extends Component {
             }
 
             $available = $this->updater()->getAvailableUpdates();
-            if ($available === null) {
+            if (is_null($available)) {
                 $this->errorMessage = __('GitHub ilə əlaqə qurmaq mümkün olmadı');
                 return;
             }
@@ -291,9 +291,9 @@ class extends Component {
             $otherLine = $otherLines[$i] ?? null;
             $lineNum = $i + 1;
 
-            if ($line === null) {
+            if (is_null($line)) {
                 $html .= '<span class="diff-line diff-removed"><span class="line-num"></span>&nbsp;</span>';
-            } elseif ($otherLine === null) {
+            } elseif (is_null($otherLine)) {
                 $cls = $side === 'remote' ? 'diff-added' : 'diff-removed';
                 $html .= '<span class="diff-line ' . $cls . '"><span class="line-num">' . $lineNum . '</span>' . e($line) . '</span>';
             } elseif ($line !== $otherLine) {

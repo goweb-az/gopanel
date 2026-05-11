@@ -72,7 +72,7 @@ class extends Component {
                     <td><strong>{{ $record->getTranslation('title', app()->getLocale(), true) ?? '—' }}</strong></td>
                     <td class="text-end">{{ number_format((float) $record->price, 2, '.', ' ') }} ₼</td>
                     <td class="text-end">
-                        @if ($record->discount !== null && (float) $record->discount > 0)
+                        @if (! is_null($record->discount) && (float) $record->discount > 0)
                             <span class="text-danger">{{ number_format((float) $record->discount, 2, '.', ' ') }} ₼</span>
                         @else
                             <span class="text-muted">—</span>

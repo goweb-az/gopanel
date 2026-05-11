@@ -16,7 +16,7 @@ new class extends Component {
             default => null,
         };
 
-        if ($messageKey === null) {
+        if (is_null($messageKey)) {
             return;
         }
 

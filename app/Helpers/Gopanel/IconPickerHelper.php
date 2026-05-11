@@ -45,7 +45,7 @@ class IconPickerHelper
             $out = ['fa' => self::extractFa($css)];
 
             foreach (self::PROVIDERS as $key => $config) {
-                if ($config === null) {
+                if (is_null($config)) {
                     continue;
                 }
                 $out[$key] = self::extractByPattern($css, $config['pattern'], $config['prefix']);

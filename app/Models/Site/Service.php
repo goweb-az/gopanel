@@ -40,7 +40,7 @@ class Service extends BaseModel
         static::creating(function ($service) {
             if (is_null($service->sort_order)) {
                 $max = self::max('sort_order');
-                $service->sort_order = $max !== null ? $max + 1 : 0;
+                $service->sort_order = ! is_null($max) ? $max + 1 : 0;
             }
         });
     }

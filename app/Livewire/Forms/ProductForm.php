@@ -35,7 +35,7 @@ class ProductForm extends BaseForm
         $this->form = [
             'id' => $product->id,
             'price' => (float) ($product->price ?? 0),
-            'discount' => $product->discount !== null ? (float) $product->discount : null,
+            'discount' => ! is_null($product->discount) ? (float) $product->discount : null,
             'image' => $product->image ?? '',
             'is_active' => (bool) ($product->is_active ?? true),
         ];

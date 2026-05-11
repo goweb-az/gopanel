@@ -21,7 +21,7 @@ class CleanupActivityLogsAction
     {
         $query = Activity::query();
 
-        if ($days !== null) {
+        if (! is_null($days)) {
             if ($days > 0) {
                 $query->where('created_at', '<', now()->subDays($days));
             }

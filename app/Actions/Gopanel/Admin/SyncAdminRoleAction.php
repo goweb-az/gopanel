@@ -17,7 +17,7 @@ class SyncAdminRoleAction
 
     public function handle(Admin $admin, ?int $roleId): void
     {
-        if ($roleId === null) {
+        if (is_null($roleId)) {
             $admin->syncRoles([]);
 
             return;

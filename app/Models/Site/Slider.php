@@ -32,7 +32,7 @@ class Slider extends BaseModel
         static::creating(function ($slider) {
             if (is_null($slider->sort_order)) {
                 $max = self::max('sort_order');
-                $slider->sort_order = $max !== null ? $max + 1 : 0;
+                $slider->sort_order = ! is_null($max) ? $max + 1 : 0;
             }
         });
     }

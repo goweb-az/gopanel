@@ -227,7 +227,7 @@ class GitHubUpdateService
                     $baseContent = $this->getFileContent($path, $installedCommit);
                     $localContent = File::get($localPath);
 
-                    if ($baseContent !== null && md5($localContent) !== md5($baseContent)) {
+                    if (! is_null($baseContent) && md5($localContent) !== md5($baseContent)) {
                         // Lokal fayl base-dən fərqlidir — istifadəçi dəyişib
                         $status['status'] = 'conflict';
                         $status['has_conflict'] = true;
@@ -260,8 +260,8 @@ class GitHubUpdateService
             'path' => $path,
             'local_content' => $localContent,
             'remote_content' => $remoteContent,
-            'local_exists' => $localContent !== null,
-            'remote_exists' => $remoteContent !== null,
+            'local_exists' => ! is_null($localContent),
+            'remote_exists' => ! is_null($remoteContent),
         ];
     }
 
@@ -301,7 +301,7 @@ class GitHubUpdateService
                 } else {
                     // added və ya modified — GitHub-dan yüklə
                     $content = $this->getFileContent($path);
-                    if ($content === null) {
+                    if (is_null($content)) {
                         $results['errors'][] = ['path' => $path, 'error' => 'GitHub-dan fayl yüklənə bilmədi'];
 
                         continue;

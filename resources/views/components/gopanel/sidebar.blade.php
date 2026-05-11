@@ -8,7 +8,7 @@
             <ul class="metismenu list-unstyled" id="side-menu">
 
                 @foreach ($items as $item)
-                    @if (!$item->get('route') and $item->get('inner') === null)
+                    @if (!$item->get('route') and is_null($item->get('inner')))
                         <li class="menu-title" key="t-menu">{!! __($item['title']) !!}</li>
                     @elseif($item->get('route') and !is_array($item->get('inner')))
                         <li class="{{ $item->get('is_active_route') ? 'mm-active' : '' }}">
