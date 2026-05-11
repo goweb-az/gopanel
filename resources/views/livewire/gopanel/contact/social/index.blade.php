@@ -130,6 +130,6 @@ class extends Component {
             </div>
         </div>
 
-        <livewire:gopanel.social.form />
+        <livewire:gopanel.contact.social.form />
     </div>
 </div>

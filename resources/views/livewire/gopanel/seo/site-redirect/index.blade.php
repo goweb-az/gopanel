@@ -118,6 +118,6 @@ class extends Component {
             @endforeach
         </x-gopanel.datatable>
 
-        <livewire:gopanel.site-redirect.form />
+        <livewire:gopanel.seo.site-redirect.form />
     </div>
 </div>

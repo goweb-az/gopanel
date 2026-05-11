@@ -185,6 +185,6 @@ class extends Component {
             </div>
         </div>
 
-        <livewire:gopanel.translation.form />
+        <livewire:gopanel.settings.translation.form />
     </div>
 </div>

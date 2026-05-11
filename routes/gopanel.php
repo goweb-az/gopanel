@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Gopanel\AuthController;
 use App\Http\Controllers\Gopanel\Common\GeneralController;
+use App\Http\Controllers\Gopanel\DatatableController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,12 +17,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Auth Proccess
-Route::prefix('auth')->name('auth.')->group(function () {
-    // Login: GET render + POST authenticate handled inside the Livewire SFC
-    Route::livewire('/login', 'gopanel.auth.login')->name('login');
-    // Logout: stateless GET that kills the session — kept on a controller
-    Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
-});
+// Login: GET render + POST authenticate handled inside the Livewire SFC
+Route::livewire('/auth/login', 'gopanel.auth.login')->name('auth.login');
+// Logout: stateless GET that kills the session — kept on a controller
+Route::get('/auth/logout', [AuthController::class, 'logout'])->name('auth.logout');
 
 // Start Gopanel route group
 Route::group(['middleware' => 'gopanel'], function () {
@@ -33,8 +32,12 @@ Route::group(['middleware' => 'gopanel'], function () {
     Route::livewire('/_lw-probe', 'test-probe')->name('_lw.probe');
     Route::livewire('/_dt-probe', 'dt-probe')->name('_dt.probe');
 
-    // General endpoints still consumed by GoPanelHelper status/edit/delete buttons
-    // and the icon picker modal.
+    // Legacy server-side datatable handler (still wired by App\Datatable\Gopanel\*
+    // until those classes are deleted alongside the migrated controllers)
+    Route::get('datatable/{table}', [DatatableController::class, 'handle'])->name('datatable.source');
+
+    // Legacy crud.js endpoints (sortable, status toggle, generic delete/edit/...)
+    // still consumed by the few non-Livewire pages: dashboard, analytics, system.
     Route::prefix('general')->name('general.')->group(function () {
         Route::get('/icon-picker/list', [GeneralController::class, 'iconPickerList'])->name('icon-picker.list');
         Route::post('/status/change', [GeneralController::class, 'statusChange'])->name('status.change');
@@ -47,47 +50,26 @@ Route::group(['middleware' => 'gopanel'], function () {
     });
 
     Route::prefix('settings')->name('settings.')->group(function () {
-        Route::prefix('site-settings')->name('site-settings.')->group(function () {
-            Route::livewire('/', 'gopanel.site-settings.index')->name('index');
-        });
+        Route::livewire('/site-settings',  'gopanel.settings.site-settings.index')->name('site-settings.index');
+        Route::livewire('/languages',      'gopanel.settings.language.index')->name('languages.index');
+        Route::livewire('/translations',   'gopanel.settings.translation.index')->name('translations.index');
 
         Route::prefix('menu')->name('menu.')->group(function () {
-            Route::livewire('/',                 'gopanel.menu.index')->name('index');
-            Route::livewire('/create',           'gopanel.menu.create')->name('create');
-            Route::livewire('/{menu}/edit',      'gopanel.menu.edit')->name('edit');
-        });
-
-        Route::prefix('languages')->name('languages.')->group(function () {
-            Route::livewire('/', 'gopanel.language.index')->name('index');
-        });
-
-        Route::prefix('translations')->name('translations.')->group(function () {
-            Route::livewire('/', 'gopanel.translation.index')->name('index');
+            Route::livewire('/',                 'gopanel.settings.menu.index')->name('index');
+            Route::livewire('/create',           'gopanel.settings.menu.create')->name('create');
+            Route::livewire('/{menu}/edit',      'gopanel.settings.menu.edit')->name('edit');
         });
     });
 
     Route::prefix('contact')->name('contact.')->group(function () {
-        Route::prefix('contact-info')->name('contact-info.')->group(function () {
-            Route::livewire('/', 'gopanel.contact-info.index')->name('index');
-        });
-
-        Route::prefix('socials')->name('socials.')->group(function () {
-            Route::livewire('/', 'gopanel.social.index')->name('index');
-        });
+        Route::livewire('/contact-info', 'gopanel.contact.contact-info.index')->name('contact-info.index');
+        Route::livewire('/socials',      'gopanel.contact.social.index')->name('socials.index');
     });
 
     Route::prefix('seo')->name('seo.')->group(function () {
-        Route::prefix('site-redirects')->name('site-redirects.')->group(function () {
-            Route::livewire('/', 'gopanel.site-redirect.index')->name('index');
-        });
-
-        Route::prefix('seo-analytics')->name('seo-analytics.')->group(function () {
-            Route::livewire('/', 'gopanel.seo-analytics.index')->name('index');
-        });
-
-        Route::prefix('llms-txt')->name('llms-txt.')->group(function () {
-            Route::livewire('/', 'gopanel.llms-txt.index')->name('index');
-        });
+        Route::livewire('/site-redirects', 'gopanel.seo.site-redirect.index')->name('site-redirects.index');
+        Route::livewire('/seo-analytics',  'gopanel.seo.seo-analytics.index')->name('seo-analytics.index');
+        Route::livewire('/llms-txt',       'gopanel.seo.llms-txt.index')->name('llms-txt.index');
     });
 
     Route::prefix('analytics')->name('analytics.')->group(function () {
@@ -107,64 +89,37 @@ Route::group(['middleware' => 'gopanel'], function () {
         });
     });
 
-    Route::prefix('admins')->name('admins.')->group(function () {
-        Route::livewire('/',                'gopanel.admin.index')->name('index');
-        Route::livewire('/create',          'gopanel.admin.create')->name('create');
-        Route::livewire('/{admin}/edit',    'gopanel.admin.edit')->name('edit');
+    Route::livewire('/admins',             'gopanel.admin.index')->name('admins.index');
+    Route::livewire('/admins/create',      'gopanel.admin.create')->name('admins.create');
+    Route::livewire('/admins/{admin}/edit','gopanel.admin.edit')->name('admins.edit');
 
-        Route::prefix('roles')->name('roles.')->group(function () {
-            Route::livewire('/',              'gopanel.role.index')->name('index');
-            Route::livewire('/create',        'gopanel.role.create')->name('create');
-            Route::livewire('/{role}/edit',   'gopanel.role.edit')->name('edit');
-        });
-    });
+    Route::livewire('/admins/roles',            'gopanel.admin.roles.index')->name('admins.roles.index');
+    Route::livewire('/admins/roles/create',     'gopanel.admin.roles.create')->name('admins.roles.create');
+    Route::livewire('/admins/roles/{role}/edit','gopanel.admin.roles.edit')->name('admins.roles.edit');
 
-    Route::prefix('profile')->name('profile.')->group(function () {
-        Route::livewire('/',                'gopanel.profile.index')->name('index');
-        Route::livewire('/change-password', 'gopanel.profile.change-password')->name('change-password.index');
-    });
+    Route::livewire('/profile',                 'gopanel.profile.index')->name('profile.index');
+    Route::livewire('/profile/change-password', 'gopanel.profile.change-password')->name('profile.change-password.index');
 
-    Route::prefix('categories')->name('categories.')->group(function () {
-        Route::livewire('/', 'gopanel.category.index')->name('index');
-    });
+    Route::livewire('/categories', 'gopanel.category.index')->name('categories.index');
 
-    Route::prefix('blog')->name('blog.')->group(function () {
-        Route::livewire('/',                'gopanel.blog.index')->name('index');
-        Route::livewire('/create',          'gopanel.blog.create')->name('create');
-        Route::livewire('/{blog}/edit',     'gopanel.blog.edit')->name('edit');
-    });
+    Route::livewire('/blog',             'gopanel.blog.index')->name('blog.index');
+    Route::livewire('/blog/create',      'gopanel.blog.create')->name('blog.create');
+    Route::livewire('/blog/{blog}/edit', 'gopanel.blog.edit')->name('blog.edit');
 
-    Route::prefix('about-us')->name('about-us.')->group(function () {
-        Route::livewire('/', 'gopanel.about-us.index')->name('index');
-    });
+    Route::livewire('/about-us', 'gopanel.about-us.index')->name('about-us.index');
 
-    Route::prefix('services')->name('services.')->group(function () {
-        Route::livewire('/', 'gopanel.service.index')->name('index');
-    });
+    Route::livewire('/services', 'gopanel.service.index')->name('services.index');
 
-    Route::prefix('products')->name('products.')->group(function () {
-        Route::livewire('/',                'gopanel.product.index')->name('index');
-        Route::livewire('/create',          'gopanel.product.create')->name('create');
-        Route::livewire('/{product}/edit',  'gopanel.product.edit')->name('edit');
-    });
+    Route::livewire('/products',                'gopanel.product.index')->name('products.index');
+    Route::livewire('/products/create',         'gopanel.product.create')->name('products.create');
+    Route::livewire('/products/{product}/edit', 'gopanel.product.edit')->name('products.edit');
 
-    Route::prefix('sliders')->name('sliders.')->group(function () {
-        Route::livewire('/', 'gopanel.slider.index')->name('index');
-    });
+    Route::livewire('/sliders', 'gopanel.slider.index')->name('sliders.index');
 
     Route::prefix('activity')->name('activity.')->group(function () {
-        Route::prefix('activity-logs')->name('activity-logs.')->group(function () {
-            Route::livewire('/', 'gopanel.activity-log.index')->name('index');
-        });
-
-        Route::prefix('file-logs')->name('file-logs.')->group(function () {
-            Route::livewire('/', 'gopanel.file-log.index')->name('index');
-        });
+        Route::livewire('/activity-logs', 'gopanel.activity.activity-log.index')->name('activity-logs.index');
+        Route::livewire('/file-logs',     'gopanel.activity.file-log.index')->name('file-logs.index');
     });
 
-    Route::prefix('system')->name('system.')->group(function () {
-        Route::prefix('updates')->name('updates.')->group(function () {
-            Route::livewire('/', 'gopanel.system-updates.index')->name('index');
-        });
-    });
+    Route::livewire('/system/updates', 'gopanel.system.updates.index')->name('system.updates.index');
 });

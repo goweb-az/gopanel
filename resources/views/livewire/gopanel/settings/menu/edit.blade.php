@@ -25,6 +25,6 @@ class extends Component {
             </x-slot:actions>
         </x-gopanel.page-header>
 
-        <livewire:gopanel.menu.form :record-id="$record->id" :key="'form-' . $record->id" />
+        <livewire:gopanel.settings.menu.form :record-id="$record->id" :key="'form-' . $record->id" />
     </div>
 </div>
