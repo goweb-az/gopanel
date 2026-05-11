@@ -27,6 +27,12 @@ class Blog extends BaseModel
         'views',
     ];
 
+    protected $casts = [
+        'date_time' => 'datetime',
+        'is_active' => 'boolean',
+        'views'     => 'integer',
+    ];
+
     protected $files = ['image'];
 
     public $slug_key = 'title';
