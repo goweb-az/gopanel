@@ -75,7 +75,7 @@ new class extends Component {
                 <label class="form-label">{{ __('İkon növü') }}</label>
                 <select class="form-select" wire:model.live="form.form.icon_type">
                     @foreach (SocialIconTypeEnum::cases() as $case)
-                        <option value="{{ $case->value }}">{{ ucfirst($case->value) }}</option>
+                        <option value="{{ $case->value }}">{{ $case->label() }}</option>
                     @endforeach
                 </select>
             </div>
@@ -87,10 +87,21 @@ new class extends Component {
                     accept="image/*"
                     :existing="$form->form['icon'] ? asset($form->form['icon']) : null"
                 />
+            @elseif ($form->form['icon_type'] === SocialIconTypeEnum::Font->value)
+                <x-gopanel.icon-picker name="form.form.icon" :label="__('İkon')" />
             @else
                 <div class="mb-3">
-                    <label class="form-label">{{ __('İkon dəyəri') }} <small class="text-muted">({{ __('class adı, SVG markup və ya mətn') }})</small></label>
-                    <textarea class="form-control" rows="2" wire:model="form.form.icon" placeholder="fa fa-instagram"></textarea>
+                    <label class="form-label">
+                        {{ __('İkon dəyəri') }}
+                        <small class="text-muted">
+                            @if ($form->form['icon_type'] === SocialIconTypeEnum::Svg->value)
+                                ({{ __('SVG markup') }})
+                            @else
+                                ({{ __('Mətn') }})
+                            @endif
+                        </small>
+                    </label>
+                    <textarea class="form-control" rows="3" wire:model="form.form.icon"></textarea>
                     @error('form.form.icon') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                 </div>
             @endif
