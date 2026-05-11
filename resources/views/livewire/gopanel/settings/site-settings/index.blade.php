@@ -39,8 +39,6 @@ class extends Component {
 
 <div class="page-content">
     <div class="container-fluid">
-        <x-gopanel.page-header :title="__('Sayt parametrləri')" :showCreateButton="false" />
-
         <form wire:submit.prevent="save">
             <x-gopanel.tabs :tabs="[
                 'general' => ['icon' => 'fas fa-sliders-h', 'label' => __('Sayt funksiyaları')],
@@ -50,20 +48,65 @@ class extends Component {
                 <div class="card">
                     <div class="card-body">
                         <x-gopanel.tab name="general">
-                            @foreach ([
-                                'site_status' => __('Sayt aktiv'),
-                                'login_status' => __('Giriş aktiv'),
-                                'register_status' => __('Qeydiyyat aktiv'),
-                                'payment_status' => __('Ödəniş aktiv'),
-                                'site_redirect_status' => __('Yönləndirmələr aktiv'),
-                                'site_analytics' => __('Analitika aktiv'),
-                                'block_bad_bots' => __('Bot bloklama'),
-                            ] as $key => $label)
-                                <div class="form-checkd d-flex align-items-center form-switch mb-3 mt-0">
-                                    <input type="checkbox" class="form-check-input" id="sw_{{ $key }}" wire:model.live="form.form.{{ $key }}" wire:change="saveSwitches">
-                                    <label class="form-check-label" for="sw_{{ $key }}">{{ $label }}</label>
-                                </div>
-                            @endforeach
+                            {{-- Status: 4 ana sahə select dropdown --}}
+                            <div class="d-flex align-items-center gap-2 mb-3 text-muted">
+                                <i class="bx bx-toggle-left font-size-18"></i>
+                                <h6 class="mb-0 fw-semibold">{{ __('Ümumi status tənzimləmələri') }}</h6>
+                            </div>
+
+                            <div class="row g-3 mb-4">
+                                @foreach ([
+                                    'site_status'     => __('Sayt statusu'),
+                                    'login_status'    => __('Giriş statusu'),
+                                    'register_status' => __('Qeydiyyat statusu'),
+                                    'payment_status'  => __('Ödəniş statusu'),
+                                ] as $key => $label)
+                                    <div class="col-md-6">
+                                        <label class="form-label">{{ $label }}</label>
+                                        <select class="form-select" wire:model.live="form.form.{{ $key }}" wire:change="saveSwitches">
+                                            <option value="1">✅ {{ __('Açıq') }}</option>
+                                            <option value="0">⛔ {{ __('Bağlı') }}</option>
+                                        </select>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            {{-- SEO & güvenlik: açıklayıcı card grid --}}
+                            <div class="d-flex align-items-center gap-2 mb-3 text-muted">
+                                <i class="bx bx-shield-quarter font-size-18"></i>
+                                <h6 class="mb-0 fw-semibold">{{ __('SEO və Təhlükəsizlik') }}</h6>
+                            </div>
+
+                            <div class="row g-3">
+                                @foreach ([
+                                    'site_redirect_status' => ['title' => __('Yönləndirmələr'), 'desc' => __('SEO yönləndirmə qaydalarını aktiv/deaktiv edir.'),         'icon' => 'bx bx-link',           'color' => 'primary'],
+                                    'site_analytics'       => ['title' => __('Analitika'),      'desc' => __('Saytda ziyarətçi izləmə (analytics) sistemini aktivləşdirir.'), 'icon' => 'bx bx-bar-chart-alt-2','color' => 'warning'],
+                                    'block_bad_bots'       => ['title' => __('Bot bloklama'),   'desc' => __('Zərərli botları bloklamaq üçün JS cookie yoxlamasını aktivləşdirir.'), 'icon' => 'bx bx-bot',           'color' => 'danger'],
+                                ] as $key => $card)
+                                    <div class="col-md-4">
+                                        <div class="card border h-100 mb-0">
+                                            <div class="card-body">
+                                                <div class="d-flex align-items-center gap-2 mb-2">
+                                                    <span class="d-inline-flex align-items-center justify-content-center rounded"
+                                                          style="width: 32px; height: 32px; background-color: rgba(var(--bs-{{ $card['color'] }}-rgb), 0.12);">
+                                                        <i class="{{ $card['icon'] }} font-size-18 text-{{ $card['color'] }}"></i>
+                                                    </span>
+                                                    <h6 class="mb-0 fw-semibold">{{ $card['title'] }}</h6>
+                                                </div>
+                                                <p class="text-muted small mb-3">{{ $card['desc'] }}</p>
+                                                <div class="form-check form-switch d-flex align-items-center gap-2 mb-0">
+                                                    <input type="checkbox" class="form-check-input" id="sw_{{ $key }}"
+                                                           wire:model.live="form.form.{{ $key }}" wire:change="saveSwitches">
+                                                    <label class="form-check-label fw-medium" for="sw_{{ $key }}"
+                                                           x-data x-text="document.getElementById('sw_{{ $key }}').checked ? @js(__('Aktiv')) : @js(__('Deaktiv'))">
+                                                        {{ $form->form[$key] ? __('Aktiv') : __('Deaktiv') }}
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
                         </x-gopanel.tab>
 
                         <x-gopanel.tab name="logos">
