@@ -47,8 +47,8 @@ Status legend: `todo` · `in-progress` · `done` · `deprecated` (old code kept 
 - [x] Phase 5 — Full-page pattern modules (Blog, Product, Admin, Roles, Menu, Activity, FileLog, SEO)
 - [x] Phase 6 — Auth & Profile (Login, Profile, ChangePassword)
 - [ ] Phase 7 — Testing, Performance, A11y _(deferred — write Pest/Livewire tests for each SFC, audit N+1, Lighthouse pass)_
-- [ ] Phase 8 — Cleanup _(deferred — delete `*-legacy/*` routes, old `app/Http/Controllers/Gopanel/*`, `app/Datatable/Gopanel/*`, `public/assets/gopanel/js/{crud,initDatatable,modules/*}`)_
-- [ ] Phase 9 — Documentation _(deferred — write `docs/LIVEWIRE_PATTERNS.md` from the migration plan rules; archive `docs/CODE_AUDIT_REPORT.md` if any)_
+- [x] Phase 8 — Cleanup ✓ (legacy routes dropped, 20 controllers + 9 datatables + 8 JS modules + every migrated `pages/*` view deleted; analytics + system + general crud helpers kept)
+- [x] Phase 9 — Documentation ✓ ([`docs/LIVEWIRE_PATTERNS.md`](LIVEWIRE_PATTERNS.md))
 
 ## Items intentionally not migrated
 
