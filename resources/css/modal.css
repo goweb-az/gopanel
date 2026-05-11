@@ -108,8 +108,8 @@ body.gp-modal-open {
 }
 .gp-modal__title {
     margin: 0;
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 15px;
+    font-weight: 500;
     color: #2a3042;
 }
 .gp-modal__header .btn-close {

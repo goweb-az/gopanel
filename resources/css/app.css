@@ -51,7 +51,7 @@
     border-radius: 8px;
     color: #a6b0cf;
     transition: background-color .18s ease, color .18s ease, padding .18s ease;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: normal;
 }
 
@@ -237,4 +237,10 @@
 
 .vertical-collpsed .vertical-menu #sidebar-menu>ul>li>a i{
     margin: 0;
+}
+
+.card-title {
+    font-size: 15px;
+    margin: 0 0 15px 0;
+    font-weight: 500;
 }

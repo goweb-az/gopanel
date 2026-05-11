@@ -5,19 +5,19 @@
             <div class="navbar-brand-box">
                 <a wire:navigate href="{{url("gopanel")}}" class="logo logo-dark">
                     <span class="logo-sm">
-                        <img src="/assets/gopanel/images/gopanel-logo-icon.png" alt="" height="70">
+                        <img src="/assets/gopanel/images/gopanel-logo-icon.png" alt="" height="60">
                     </span>
                     <span class="logo-lg">
-                        <img src="/assets/gopanel/images/gopanel-logo.png" alt="" height="50">
+                        <img src="/assets/gopanel/images/gopanel-logo.png" alt="" height="40">
                     </span>
                 </a>
 
                 <a wire:navigate href="{{url("gopanel")}}" class="logo logo-light">
                     <span class="logo-sm">
-                        <img src="/assets/gopanel/images/gopanel-logo-icon.png" alt="" height="70">
+                        <img src="/assets/gopanel/images/gopanel-logo-icon.png" alt="" height="60">
                     </span>
                     <span class="logo-lg">
-                        <img src="{{is_null($settings->gopanel_logo) ? '/assets/gopanel/images/gopanel-logo.png' : url($settings->gopanel_logo)}}" alt="" height="50">
+                        <img src="{{is_null($settings->gopanel_logo) ? '/assets/gopanel/images/gopanel-logo.png' : url($settings->gopanel_logo)}}" alt="" height="40">
                     </span>
                 </a>
             </div>
