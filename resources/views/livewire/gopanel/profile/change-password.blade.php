@@ -63,22 +63,26 @@ class extends Component {
                 <div class="card">
                     <div class="card-body">
                         <form wire:submit.prevent="save">
-                            <div class="mb-3">
-                                <label class="form-label">{{ __('Cari şifrə') }} <span class="text-danger">*</span></label>
-                                <input type="password" class="form-control" wire:model="current_password" autocomplete="current-password">
-                                @error('current_password') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                            </div>
+                            <x-gopanel.password-input
+                                name="current_password"
+                                :label="__('Cari şifrə')"
+                                autocomplete="current-password"
+                                :required="true"
+                            />
 
-                            <div class="mb-3">
-                                <label class="form-label">{{ __('Yeni şifrə') }} <span class="text-danger">*</span></label>
-                                <input type="password" class="form-control" wire:model="password" autocomplete="new-password">
-                                @error('password') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                            </div>
+                            <x-gopanel.password-input
+                                name="password"
+                                :label="__('Yeni şifrə')"
+                                autocomplete="new-password"
+                                :required="true"
+                            />
 
-                            <div class="mb-3">
-                                <label class="form-label">{{ __('Yeni şifrə təsdiq') }} <span class="text-danger">*</span></label>
-                                <input type="password" class="form-control" wire:model="password_confirmation" autocomplete="new-password">
-                            </div>
+                            <x-gopanel.password-input
+                                name="password_confirmation"
+                                :label="__('Yeni şifrə təsdiq')"
+                                autocomplete="new-password"
+                                :required="true"
+                            />
 
                             <div class="text-end">
                                 <button type="submit" class="btn btn-primary">
