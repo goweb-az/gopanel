@@ -5,13 +5,12 @@ namespace App\Models\Translations;
 use App\Enums\Gopanel\TranslationPlatfroms;
 use App\Models\BaseModel;
 use App\Models\Geography\Language;
-use App\Traits\Ui\UiElements;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Translation extends BaseModel
 {
-    use HasFactory, SoftDeletes, UiElements;
+    use HasFactory, SoftDeletes;
 
     private $languages;
 

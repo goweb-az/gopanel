@@ -60,11 +60,6 @@ class Blog extends BaseModel
         return '<img src="'.e($this->image_url).'" alt="'.e($this->title ?? 'Blog').'" style="width:50px;height:50px;object-fit:cover;border-radius:8px;">';
     }
 
-    public function getIsActiveBtnAttribute(): string
-    {
-        return app('gopanel')->toggle_btn($this, 'is_active', $this->is_active == 1);
-    }
-
     public static function getBySlug($slug, $locale = null)
     {
         $locale = $locale ?? app()->getLocale();

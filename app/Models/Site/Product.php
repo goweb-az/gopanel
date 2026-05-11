@@ -89,8 +89,4 @@ class Product extends BaseModel
             .'<strong class="text-danger">'.$final.'</strong>';
     }
 
-    public function getIsActiveBtnAttribute(): string
-    {
-        return app('gopanel')->toggle_btn($this, 'is_active', $this->is_active == 1);
-    }
 }

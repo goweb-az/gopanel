@@ -61,16 +61,6 @@ class Admin extends Authenticatable
         ActivityLogHelper::resolveDescription($this, $activity, $eventName);
     }
 
-    public function getIsActiveBtnAttribute()
-    {
-        return app('gopanel')->toggle_btn($this, 'is_active', $this->is_active == 1);
-    }
-
-    public function getIsSuperBtnAttribute()
-    {
-        return app('gopanel')->toggle_btn($this, 'is_super', $this->is_super == 1, [], null, 'Beli', 'Xeyr');
-    }
-
     public function getRoleSummaryAttribute(): string
     {
         $roles = $this->relationLoaded('roles') ? $this->roles : $this->roles()->get();
