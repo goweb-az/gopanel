@@ -12,7 +12,7 @@ trait UiElements
      */
     public function getCheckInputsAttribute(): string
     {
-        return '<label class="checkboxs"><input type="checkbox" value="' . $this->id . '"><span class="checkmarks"></span></label>';
+        return '<label class="checkboxs"><input type="checkbox" value="'.$this->id.'"><span class="checkmarks"></span></label>';
     }
 
     /**
@@ -23,7 +23,8 @@ trait UiElements
     {
         $key = $this->identifier_id;
         $filled = $this->is_favorite == 1 ? 'filled' : '';
-        return '<div class="set-star rating-select is_favorite ' . $filled . ' " data-url="' . route("crm.general.is.favorite", $key) . '" data-key="' . $this->getTableHash() . '" data-id="' . $key . '"><i class="fa fa-star"></i></div>';
+
+        return '<div class="set-star rating-select is_favorite '.$filled.' " data-url="'.route('crm.general.is.favorite', $key).'" data-key="'.$this->getTableHash().'" data-id="'.$key.'"><i class="fa fa-star"></i></div>';
     }
 
     public function editBtn(Model $item): string
@@ -66,72 +67,74 @@ trait UiElements
         return $this->is_current == 1 ? '<span class="badge badge-pill badge-status bg-success">Bəli</span>' : '<span class="badge badge-pill badge-status bg-danger">Xeyr</span>';
     }
 
-
     public function double_click_edit($row, $routeName = null)
     {
-        $key        = $this->identifier_id;
-        $route      = is_null($routeName) ? route("gopanel.general.editable", $key) : route($routeName, $this);
-        $text_title = !empty($this->{$row}) ? str(html_entity_decode(strip_tags($this->{$row})))->limit(55) : $this->{$row};
+        $key = $this->identifier_id;
+        $route = is_null($routeName) ? route('gopanel.general.editable', $key) : route($routeName, $this);
+        $text_title = ! empty($this->{$row}) ? str(html_entity_decode(strip_tags($this->{$row})))->limit(55) : $this->{$row};
+
         return '
         <span class="editable"
-            data-model="' . addslashes($this->getModelClass()) . '"
-            data-row="' . addslashes($row) . '"
-            data-id="' . addslashes($key) . '"
-            data-url="' . addslashes($route) . '"
-            data-text="' . $this->{$row} . '"
+            data-model="'.addslashes($this->getModelClass()).'"
+            data-row="'.addslashes($row).'"
+            data-id="'.addslashes($key).'"
+            data-url="'.addslashes($route).'"
+            data-text="'.$this->{$row}.'"
         >
-            ' . $text_title . ' <i class="fas fa-pen edit-pen"></i>
+            '.$text_title.' <i class="fas fa-pen edit-pen"></i>
         </span>';
     }
 
     public function is_active_btn($row = 'is_active', $checked = false, $class = [], $url = null, $active_text = 'Aktiv', $deactive_text = 'Deaktiv')
     {
-        $class      = count($class) ? implode(" ", $class) : 'is_active';
-        $model      = get_class($this);
+        $class = count($class) ? implode(' ', $class) : 'is_active';
+        $model = get_class($this);
         $checkedAttr = $checked ? 'checked' : '';
-        $url        = is_null($url) ? route("general.status.change") : $url;
-        $labelText  = $checked ? $active_text : $deactive_text;
+        $url = is_null($url) ? route('general.status.change') : $url;
+        $labelText = $checked ? $active_text : $deactive_text;
         $labelClass = $checked ? 'text-success' : 'text-danger';
+
         return '
             <div class="form-check form-switch">
                 <input
-                      class="form-check-input ' . $class . '"
+                      class="form-check-input '.$class.'"
                       type="checkbox"
                       role="switch"
-                      data-id="' . $this->identifier_id . '"
-                      data-row="' . $row . '"
-                      data-model="' . $model . '"
-                      data-url="' . $url . '"
-                      data-on-text="' . $active_text . '"
-                      data-off-text="' . $deactive_text . '"
-                      ' . $checkedAttr . '
+                      data-id="'.$this->identifier_id.'"
+                      data-row="'.$row.'"
+                      data-model="'.$model.'"
+                      data-url="'.$url.'"
+                      data-on-text="'.$active_text.'"
+                      data-off-text="'.$deactive_text.'"
+                      '.$checkedAttr.'
                 />
-                <label class="form-check-label ' . $labelClass . ' fw-semibold" style="font-size:12px;">' . $labelText . '</label>
+                <label class="form-check-label '.$labelClass.' fw-semibold" style="font-size:12px;">'.$labelText.'</label>
             </div>
         ';
     }
 
     public function toggle_btn($row = 'is_active', $checked = false, $class = [], $url = null, $active_text = 'Aktiv', $deactive_text = 'Deaktiv')
     {
-        $class      = count($class) ? implode(" ", $class) : 'is_active';
-        $model      = get_class($this);
+        $class = count($class) ? implode(' ', $class) : 'is_active';
+        $model = get_class($this);
         $checkedAttr = $checked ? 'checked' : '';
-        $url        = is_null($url) ? route("general.status.change") : $url;
+        $url = is_null($url) ? route('general.status.change') : $url;
+
         return '
             <input
-                  class="' . $class . '"
+                  class="'.$class.'"
                   type="checkbox"
                   data-toggle="switchbutton"
-                  data-onlabel="' . $active_text . '"
-                  data-offlabel="' . $deactive_text . '"
+                  data-onlabel="'.$active_text.'"
+                  data-offlabel="'.$deactive_text.'"
                   data-onstyle="success"
                   data-offstyle="danger"
-                  data-id="' . $this->identifier_id . '"
-                  data-row="' . $row . '"
-                  data-model="' . $model . '"
-                  data-url="' . $url . '"
+                  data-id="'.$this->identifier_id.'"
+                  data-row="'.$row.'"
+                  data-model="'.$model.'"
+                  data-url="'.$url.'"
                   data-size="sm"
-                  ' . $checkedAttr . '
+                  '.$checkedAttr.'
             />
         ';
     }

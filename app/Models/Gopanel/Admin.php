@@ -20,7 +20,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class Admin extends Authenticatable
 {
-    use AddUuid, HasRouteKey, Notifiable, HasFactory, SoftDeletes, HasRoles, LogsActivity;
+    use AddUuid, HasFactory, HasRoles, HasRouteKey, LogsActivity, Notifiable, SoftDeletes;
 
     protected $fillable = [
         'uid',
@@ -87,7 +87,7 @@ class Admin extends Authenticatable
             return "<span class=\"fw-semibold\">{$primaryRole}</span>";
         }
 
-        return "<span class=\"fw-semibold\" title=\"" . e($roleNames->join(', ')) . "\">{$primaryRole}</span> <span class=\"text-muted\">(+{$extraCount})</span>";
+        return '<span class="fw-semibold" title="'.e($roleNames->join(', '))."\">{$primaryRole}</span> <span class=\"text-muted\">(+{$extraCount})</span>";
     }
 
     public function getPermissionSummaryAttribute(): string
@@ -116,12 +116,13 @@ class Admin extends Authenticatable
 
     public function getAvatarUrlAttribute(): string
     {
-        if (!empty($this->image) && Storage::disk(gopanel_disk())->exists($this->image)) {
+        if (! empty($this->image) && Storage::disk(gopanel_disk())->exists($this->image)) {
             return Storage::disk(gopanel_disk())->url($this->image);
         }
 
         return Cache::rememberForever("admin_avatar_{$this->id}", function () {
             $name = urlencode($this->full_name ?? 'Admin');
+
             return "https://ui-avatars.com/api/?name={$name}&background=556ee6&color=fff&size=128&font-size=0.4&rounded=true";
         });
     }

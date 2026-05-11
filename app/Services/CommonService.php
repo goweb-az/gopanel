@@ -4,15 +4,13 @@ namespace App\Services;
 
 use App\Services\Activity\LogService;
 
-
 class CommonService
 {
-
     public $logging;
 
     public function __construct()
     {
-        $this->logging = new LogService();
+        $this->logging = new LogService;
     }
 
     public function share(array $data)

@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Seo\SeoAnalytics;
+use Illuminate\Database\Seeder;
 
 class SeoAnalyticsSeeder extends Seeder
 {
@@ -18,25 +18,25 @@ class SeoAnalyticsSeeder extends Seeder
         }
 
         SeoAnalytics::create([
-            'head' => <<<HTML
+            'head' => <<<'HTML'
 <!-- HEAD Analytics -->
 <!-- Buraya <head> bölməsinə yerləşdiriləcək analytics/pixel kodlarını əlavə edin -->
 HTML,
-            'body' => <<<HTML
+            'body' => <<<'HTML'
 <!-- BODY Analytics -->
 <!-- Lazım gələrsə <body> daxilində (noscript və s.) istifadə olunacaq kodları əlavə edin -->
 HTML,
-            'footer' => <<<HTML
+            'footer' => <<<'HTML'
 <!-- FOOTER Analytics -->
 <!-- Səhifənin sonunda yerləşdiriləcək izləmə/skript kodları -->
 HTML,
             // Bütün axtarış sistemlərinə icazə verən robots.txt məzmunu
-            'robots_txt' => <<<TXT
+            'robots_txt' => <<<'TXT'
 User-agent: *
 Allow:
 TXT,
             // Ən çox istifadə olunan AI botlarına açıq icazə verən qaydalar
-            'ai_txt' => <<<TXT
+            'ai_txt' => <<<'TXT'
 User-agent: *
 Allow: /
 

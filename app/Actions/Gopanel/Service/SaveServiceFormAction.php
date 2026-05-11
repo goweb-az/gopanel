@@ -25,12 +25,12 @@ class SaveServiceFormAction
     ): Service {
         return DB::transaction(function () use ($form, $iconUpload, $imageUpload, $translations, $meta, $metaUploads): Service {
             $service = Service::findOrNew($form['id'] ?? null);
-            $title   = $translations['az']['title'] ?? 'service';
+            $title = $translations['az']['title'] ?? 'service';
 
             if ($iconUpload && ($form['icon_type'] ?? null) === SocialIconTypeEnum::Image->value) {
                 $form['icon'] = FileUploader::toPublic(
                     $iconUpload,
-                    (new Service())->getTable(),
+                    (new Service)->getTable(),
                     FileUploader::nameGenerate(['title' => $title], 'service-icon'),
                 );
             }
@@ -38,7 +38,7 @@ class SaveServiceFormAction
             if ($imageUpload) {
                 $form['image'] = FileUploader::toPublic(
                     $imageUpload,
-                    (new Service())->getTable(),
+                    (new Service)->getTable(),
                     FileUploader::nameGenerate(['title' => $title], 'service'),
                 );
             }

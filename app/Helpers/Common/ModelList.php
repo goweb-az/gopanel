@@ -15,13 +15,13 @@ class ModelList
 
             $rii = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path));
             foreach ($rii as $file) {
-                if (!$file->isFile() || $file->getExtension() !== 'php') {
+                if (! $file->isFile() || $file->getExtension() !== 'php') {
                     continue;
                 }
 
-                $relativePath = str_replace($path . DIRECTORY_SEPARATOR, '', $file->getPathname());
+                $relativePath = str_replace($path.DIRECTORY_SEPARATOR, '', $file->getPathname());
                 $class = str_replace(['/', '.php'], ['\\', ''], $relativePath);
-                $fullClass = 'App\\Models\\' . $class;
+                $fullClass = 'App\\Models\\'.$class;
 
                 if (class_exists($fullClass)) {
                     $models[] = $fullClass;
@@ -32,7 +32,6 @@ class ModelList
         });
     }
 
-
     public static function mapByKey(): array
     {
         return Cache::remember('model_list_map_by_key', Carbon::now()->addDays(30), function () {
@@ -41,7 +40,7 @@ class ModelList
             foreach (self::all() as $class) {
                 $instance = new $class;
 
-                if (property_exists($instance, 'model_key') && !empty($instance->model_key)) {
+                if (property_exists($instance, 'model_key') && ! empty($instance->model_key)) {
                     $key = $instance->model_key;
                 } elseif (method_exists($instance, 'getTable')) {
                     $key = $instance->getTable();
@@ -56,8 +55,7 @@ class ModelList
         });
     }
 
-
-    public static function get(string $key): string|null
+    public static function get(string $key): ?string
     {
         return self::mapByKey()[$key] ?? null;
     }

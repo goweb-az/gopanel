@@ -28,7 +28,7 @@ class ActivityLogHelper
             foreach ($matches[1] as $attr) {
                 if ($attr === 'causer') {
                     $user = auth()->guard('gopanel')->user() ?? auth()->guard('web')->user();
-                    $value = $user ? (($user->full_name ?? $user->name ?? '') . ' ' . ($user->surname ?? '')) : 'Sistem';
+                    $value = $user ? (($user->full_name ?? $user->name ?? '').' '.($user->surname ?? '')) : 'Sistem';
                     $value = trim($value);
                 } else {
                     $value = $model->getAttribute($attr) ?? '';

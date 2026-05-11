@@ -8,13 +8,11 @@ use Illuminate\Database\Eloquent\Builder;
 
 trait Translation
 {
-
-
     protected static function bootTranslation()
     {
         static::addGlobalScope('translations', function (Builder $builder) {
             $model = $builder->getModel();
-            if (property_exists($model, 'translatedAttributes') && !empty($model->translatedAttributes)) {
+            if (property_exists($model, 'translatedAttributes') && ! empty($model->translatedAttributes)) {
                 $builder->with('translations');
             }
         });
@@ -34,6 +32,7 @@ trait Translation
 
         if ($fallback == true) {
             $translation = $this->translations()?->where('key', $attribute)?->where('locale', $locale)?->first();
+
             return $translation ? $translation?->value : null;
         }
 
@@ -42,25 +41,26 @@ trait Translation
             $locale = app()->getLocale();
         }
 
-        $language = Language::where("is_active", 1)->where('code', $locale)->first();
+        $language = Language::where('is_active', 1)->where('code', $locale)->first();
 
         if (is_null($language)) {
-            $locale = Language::where("is_active", 1)->first()?->locale;
+            $locale = Language::where('is_active', 1)->first()?->locale;
         }
 
-        if (is_null($locale))
+        if (is_null($locale)) {
             return null;
+        }
 
         $translation = $this->translations()?->where('key', $attribute)?->where('locale', $locale)?->first();
+
         return $translation ? $translation?->value : null;
     }
-
 
     public function translateOrDefault($locale = null)
     {
         $locale = $locale ?? app()->getLocale();
 
-        $translatedModel = new static();
+        $translatedModel = new static;
 
         foreach ($this->translatedAttributes as $attribute) {
             $translatedModel->$attribute = $this->getTranslation($attribute, $locale, true);
@@ -87,15 +87,16 @@ trait Translation
         if (property_exists($this, 'translatedAttributes') && in_array($key, $this->translatedAttributes)) {
             return $this->getTranslation($key);
         }
+
         return parent::getAttribute($key);
     }
-
 
     public function __get($key)
     {
         if (property_exists($this, 'translatedAttributes') && in_array($key, $this->translatedAttributes)) {
             return $this->getTranslation($key);
         }
+
         return parent::__get($key);
     }
 }

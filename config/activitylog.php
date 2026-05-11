@@ -50,14 +50,13 @@ return [
      */
     'database_connection' => env('ACTIVITY_LOGGER_DB_CONNECTION'),
 
-
     'event_names' => [
-        'created'   => 'Yaradıldı',
-        'updated'   => 'Yeniləndi',
-        'deleted'   => 'Silindi',
-        'restored'  => 'Geri qaytarıldı',
-        'approved'  => 'Təsdiqləndi',
-        'rejected'          => 'Rədd edildi',
-        'status_changed'    => 'Status dəyişdi',
+        'created' => 'Yaradıldı',
+        'updated' => 'Yeniləndi',
+        'deleted' => 'Silindi',
+        'restored' => 'Geri qaytarıldı',
+        'approved' => 'Təsdiqləndi',
+        'rejected' => 'Rədd edildi',
+        'status_changed' => 'Status dəyişdi',
     ],
 ];

@@ -4,7 +4,6 @@ namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
@@ -23,7 +22,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //eger adminin is_super columu 1 dirse o zaman butun role ve permissionlardan uzaq tutur
+        // eger adminin is_super columu 1 dirse o zaman butun role ve permissionlardan uzaq tutur
         Gate::before(function ($user, $ability) {
             if ($user && isset($user->is_super)) {
                 return $user->is_super == 1 ? true : null;

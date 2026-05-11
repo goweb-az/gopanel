@@ -19,16 +19,16 @@ class BlogSeeder extends Seeder
     {
         $blogs = [
             [
-                'image'     => $this->placeholderImage('blogs', 'Website Development', 800, 520),
+                'image' => $this->placeholderImage('blogs', 'Website Development', 800, 520),
                 'date_time' => now()->subDays(1)->format('Y-m-d H:i:s'),
                 'is_active' => true,
-                'views'     => rand(10, 500),
-                'title'     => [
+                'views' => rand(10, 500),
+                'title' => [
                     'az' => 'Veb sayt hazırlanmasının əsas mərhələləri',
                     'en' => 'Key stages of website development',
                     'ru' => 'Основные этапы создания веб-сайта',
                 ],
-                'slug'      => [
+                'slug' => [
                     'az' => 'veb-sayt-hazirlanmasinin-esas-merhelele',
                     'en' => 'key-stages-of-website-development',
                     'ru' => 'osnovnye-etapy-sozdaniya-veb-sajta',
@@ -45,16 +45,16 @@ class BlogSeeder extends Seeder
                 ],
             ],
             [
-                'image'     => $this->placeholderImage('blogs', 'SEO Optimization', 800, 520),
+                'image' => $this->placeholderImage('blogs', 'SEO Optimization', 800, 520),
                 'date_time' => now()->subDays(3)->format('Y-m-d H:i:s'),
                 'is_active' => true,
-                'views'     => rand(10, 500),
-                'title'     => [
+                'views' => rand(10, 500),
+                'title' => [
                     'az' => 'SEO optimizasiya: Google-da üst sıralarda yer almaq',
                     'en' => 'SEO optimization: Ranking at the top of Google',
                     'ru' => 'SEO оптимизация: попасть в топ Google',
                 ],
-                'slug'      => [
+                'slug' => [
                     'az' => 'seo-optimizasiya-googleda-ust-siralarda',
                     'en' => 'seo-optimization-ranking-top-google',
                     'ru' => 'seo-optimizaciya-popast-v-top-google',
@@ -71,16 +71,16 @@ class BlogSeeder extends Seeder
                 ],
             ],
             [
-                'image'     => $this->placeholderImage('blogs', 'Mobile App Development', 800, 520),
+                'image' => $this->placeholderImage('blogs', 'Mobile App Development', 800, 520),
                 'date_time' => now()->subDays(5)->format('Y-m-d H:i:s'),
                 'is_active' => true,
-                'views'     => rand(10, 500),
-                'title'     => [
+                'views' => rand(10, 500),
+                'title' => [
                     'az' => 'Mobil tətbiq inkişafında müasir yanaşmalar',
                     'en' => 'Modern approaches in mobile app development',
                     'ru' => 'Современные подходы в разработке мобильных приложений',
                 ],
-                'slug'      => [
+                'slug' => [
                     'az' => 'mobil-tetbiq-inkishafinda-muasir-yanashmalar',
                     'en' => 'modern-approaches-mobile-app-development',
                     'ru' => 'sovremennye-podhody-razrabotke-mobilnyh',
@@ -97,16 +97,16 @@ class BlogSeeder extends Seeder
                 ],
             ],
             [
-                'image'     => $this->placeholderImage('blogs', 'CRM Systems', 800, 520),
+                'image' => $this->placeholderImage('blogs', 'CRM Systems', 800, 520),
                 'date_time' => now()->subDays(7)->format('Y-m-d H:i:s'),
                 'is_active' => true,
-                'views'     => rand(10, 500),
-                'title'     => [
+                'views' => rand(10, 500),
+                'title' => [
                     'az' => 'CRM sistemləri biznesi necə dəyişir?',
                     'en' => 'How CRM systems transform business?',
                     'ru' => 'Как CRM системы меняют бизнес?',
                 ],
-                'slug'      => [
+                'slug' => [
                     'az' => 'crm-sistemleri-biznesi-nece-deyishir',
                     'en' => 'how-crm-systems-transform-business',
                     'ru' => 'kak-crm-sistemy-menyayut-biznes',
@@ -133,20 +133,20 @@ class BlogSeeder extends Seeder
                 }
 
                 $blog->update([
-                    'image'     => $data['image'],
+                    'image' => $data['image'],
                     'date_time' => $data['date_time'],
                     'is_active' => $data['is_active'],
-                    'views'     => $data['views'],
+                    'views' => $data['views'],
                 ]);
-                $this->command?->line('  - movcuddur, yenilendi: ' . ($data['slug']['az'] ?? '-'));
+                $this->command?->line('  - movcuddur, yenilendi: '.($data['slug']['az'] ?? '-'));
             } else {
                 $blog = Blog::create([
-                    'image'     => $data['image'],
+                    'image' => $data['image'],
                     'date_time' => $data['date_time'],
                     'is_active' => $data['is_active'],
-                    'views'     => $data['views'],
+                    'views' => $data['views'],
                 ]);
-                $this->command?->line('  + elave edildi: ' . ($data['slug']['az'] ?? '-'));
+                $this->command?->line('  + elave edildi: '.($data['slug']['az'] ?? '-'));
             }
 
             TranslationHelper::basic($blog, $data['title'], 'title');
@@ -158,13 +158,13 @@ class BlogSeeder extends Seeder
                 PageMetaData::updateOrCreate(
                     [
                         'model_type' => Blog::class,
-                        'model_id'   => $blog->id,
-                        'locale'     => 'az',
+                        'model_id' => $blog->id,
+                        'locale' => 'az',
                     ],
                     [
-                        'title'       => $data['meta']['title'],
+                        'title' => $data['meta']['title'],
                         'description' => $data['meta']['description'],
-                        'keywords'    => $data['meta']['keywords'],
+                        'keywords' => $data['meta']['keywords'],
                     ]
                 );
             }
@@ -173,7 +173,7 @@ class BlogSeeder extends Seeder
 
     private function findBlogBySlug(?string $slug): ?Blog
     {
-        if (!$slug) {
+        if (! $slug) {
             return null;
         }
 

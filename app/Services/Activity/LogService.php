@@ -2,7 +2,6 @@
 
 namespace App\Services\Activity;
 
-
 use App\Models\Activity\FileLog;
 use BadMethodCallException;
 use Illuminate\Database\Eloquent\Model;
@@ -15,22 +14,21 @@ use Throwable;
 
 class LogService
 {
+    protected ?string $channel;
 
-    protected string|null $channel;
     protected bool $saveDatabaseEnable = true;
+
     public bool $log_detail = true;
 
     public LoggerInterface $logging;
 
-
     public function __construct($channel = null, $saveDatabaseEnable = true, $log_detail = true)
     {
-        $this->channel              = $channel;
-        $this->saveDatabaseEnable   = $saveDatabaseEnable;
-        $this->log_detail           = $log_detail;
+        $this->channel = $channel;
+        $this->saveDatabaseEnable = $saveDatabaseEnable;
+        $this->log_detail = $log_detail;
         $this->setChannel($channel);
     }
-
 
     private function setChannel($channel)
     {
@@ -57,17 +55,16 @@ class LogService
         return new self($channel, $saveDatabaseEnable, $log_detail);
     }
 
-
     private function logMessage(string $level, string $message, $context = [])
     {
         // Bütün tip-ləri safely array-ə çevir
         $context = $this->normalizeContext($context);
 
-        if (!app()->environment('local')) {
+        if (! app()->environment('local')) {
             $context = $this->sanitizeContext($context);
         }
 
-        //Start writing log data
+        // Start writing log data
         $logPayload = ['data' => $context];
         $errorLevels = ['error', 'critical', 'alert', 'emergency'];
         if ($this->log_detail && in_array($level, $errorLevels)) {
@@ -85,10 +82,11 @@ class LogService
     public function __call($method, $arguments)
     {
         try {
-            $logLevels = config("custom.logging.levels");
+            $logLevels = config('custom.logging.levels');
             if (in_array($method, $logLevels)) {
                 $message = $arguments[0] ?? '';
                 $context = $arguments[1] ?? [];
+
                 return $this->logMessage($method, $message, $context);
             }
             throw new BadMethodCallException("Method [$method] does not exist.");
@@ -96,7 +94,7 @@ class LogService
             Log::warning("[LogService] Log yazma xətası: {$th->getMessage()}", [
                 'method' => $method,
                 'original_message' => $arguments[0] ?? '',
-                'exception' => $th->getTraceAsString()
+                'exception' => $th->getTraceAsString(),
             ]);
         }
     }
@@ -108,30 +106,45 @@ class LogService
     private function normalizeContext($context): array
     {
         try {
-            if (is_null($context) || $context === '') return [];
-            if (is_array($context)) return $context;
-            if ($context instanceof Model) return $context->toArray();
-            if ($context instanceof JsonResource) return $context->toArray(request());
-            if ($context instanceof Collection) return $context->toArray();
-            if (is_object($context)) return (array) $context;
-            if (is_string($context)) return ['raw' => $context];
+            if (is_null($context) || $context === '') {
+                return [];
+            }
+            if (is_array($context)) {
+                return $context;
+            }
+            if ($context instanceof Model) {
+                return $context->toArray();
+            }
+            if ($context instanceof JsonResource) {
+                return $context->toArray(request());
+            }
+            if ($context instanceof Collection) {
+                return $context->toArray();
+            }
+            if (is_object($context)) {
+                return (array) $context;
+            }
+            if (is_string($context)) {
+                return ['raw' => $context];
+            }
+
             return ['raw' => $context];
         } catch (Throwable $e) {
             return [
                 '_parse_error' => $e->getMessage(),
-                'exception' => $e->getTraceAsString()
+                'exception' => $e->getTraceAsString(),
             ];
         }
     }
 
     private function sanitizeContext(array $context): array
     {
-        $sensitiveKeys = config("custom.logging.sensitiveKeys");
+        $sensitiveKeys = config('custom.logging.sensitiveKeys');
         foreach ($context as $key => &$value) {
             if (is_array($value)) {
                 $value = $this->sanitizeContext($value); // Recursive cleaning
             } elseif (in_array(strtolower($key), array_map('strtolower', $sensitiveKeys))) {
-                $value = '[' . $key . ']';
+                $value = '['.$key.']';
             }
         }
 
@@ -144,14 +157,14 @@ class LogService
     private function safeLogToDatabase(string $level, string $message, array $context): void
     {
         try {
-            $fileLog = new FileLog();
-            $fileLog->admin_id    = Auth::guard('gopanel')->check() ? Auth::guard('gopanel')->user()->id : null;
-            $fileLog->user_id     = Auth::guard('web')->check() ? Auth::guard('web')->user()->id : null;
+            $fileLog = new FileLog;
+            $fileLog->admin_id = Auth::guard('gopanel')->check() ? Auth::guard('gopanel')->user()->id : null;
+            $fileLog->user_id = Auth::guard('web')->check() ? Auth::guard('web')->user()->id : null;
             // $fileLog->company_id  = Auth::guard('web')->check() ? Auth::guard('web')->user()->current_company_id : null;
-            $fileLog->channel     = $this->channel;
-            $fileLog->level       = $level;
-            $fileLog->message     = $message;
-            $fileLog->context     = $context;
+            $fileLog->channel = $this->channel;
+            $fileLog->level = $level;
+            $fileLog->message = $message;
+            $fileLog->context = $context;
             $errorLevels = ['error', 'critical', 'alert', 'emergency'];
             $fileLog->log_details = in_array($level, $errorLevels) ? $this->safeGetLogDetails() : null;
             $fileLog->save();
@@ -170,8 +183,8 @@ class LogService
             return getLogDetails();
         } catch (Throwable $e) {
             return [
-                '_error' => 'Log details alına bilmədi: ' . $e->getMessage(),
-                'exception' => $e->getTraceAsString()
+                '_error' => 'Log details alına bilmədi: '.$e->getMessage(),
+                'exception' => $e->getTraceAsString(),
             ];
         }
     }

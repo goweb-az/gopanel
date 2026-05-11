@@ -1,6 +1,5 @@
 <?php
 
-
 return [
     [
         'country_code' => 'AZ',
@@ -501,5 +500,5 @@ return [
         'longitude' => 48.273057,
         'population' => 36000,
         'area' => 1800,
-    ]
+    ],
 ];

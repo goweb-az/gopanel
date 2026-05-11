@@ -17,34 +17,34 @@ return new class extends Migration
         Schema::create('admins', function (Blueprint $table) {
             $table->id();
             $table->uuid('uid')->unique()->default(DB::raw(match (DB::getDriverName()) {
-                'pgsql'  => 'gen_random_uuid()',
-                'sqlite' => "'" . \Illuminate\Support\Str::uuid() . "'",
-                default  => 'UUID()',
+                'pgsql' => 'gen_random_uuid()',
+                'sqlite' => "'".\Illuminate\Support\Str::uuid()."'",
+                default => 'UUID()',
             }));
             $table->string('full_name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->boolean("is_active")->default(true);
-            $table->boolean("is_super")->default(false);
-            $table->string("image")->nullable();
+            $table->boolean('is_active')->default(true);
+            $table->boolean('is_super')->default(false);
+            $table->string('image')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
         });
 
         Admin::create([
-            'full_name' => "Super Admin",
-            'email'     => "admin@gmail.com",
-            'password'  => Hash::make('12345'),
-            'is_super'  => 1,
+            'full_name' => 'Super Admin',
+            'email' => 'admin@gmail.com',
+            'password' => Hash::make('12345'),
+            'is_super' => 1,
         ]);
 
         Admin::create([
-            'full_name' => "Admin",
-            'email'     => "test@gmail.com",
-            'password'  => Hash::make('12345'),
-            'is_super'  => 0,
+            'full_name' => 'Admin',
+            'email' => 'test@gmail.com',
+            'password' => Hash::make('12345'),
+            'is_super' => 0,
         ]);
     }
 

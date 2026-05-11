@@ -8,7 +8,7 @@ use App\Models\BaseModel;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 
-/* 
+/*
  * @var SiteRedirect $this
  * Yönlendirme kuralları (dil bazlı, exact/prefix/contains/regex).
  */
@@ -36,18 +36,19 @@ class SiteRedirect extends BaseModel
     ];
 
     protected $casts = [
-        'is_active'  => 'boolean',
-        'priority'   => 'integer',
-        'http_code'  => 'integer',
-        'hits'       => 'integer',
-        'starts_at'  => 'datetime',
-        'ends_at'    => 'datetime',
+        'is_active' => 'boolean',
+        'priority' => 'integer',
+        'http_code' => 'integer',
+        'hits' => 'integer',
+        'starts_at' => 'datetime',
+        'ends_at' => 'datetime',
     ];
 
     /* Aktif ve tarih aralığında olanlar */
     public function scopeActive(Builder $q): Builder
     {
         $now = Carbon::now();
+
         return $q->where('is_active', true)
             ->where(function ($q) use ($now) {
                 $q->whereNull('starts_at')->orWhere('starts_at', '<=', $now);
@@ -86,7 +87,8 @@ class SiteRedirect extends BaseModel
             case 'regex':
                 $flags = $this->regex_flags ?: 'i';
                 // Güvenli regex sınırlandırması
-                $pattern = '/' . str_replace('/', '\/', $source) . '/' . $flags;
+                $pattern = '/'.str_replace('/', '\/', $source).'/'.$flags;
+
                 return @preg_match($pattern, $urlOrPath) === 1;
             default:
                 return false;
@@ -99,7 +101,6 @@ class SiteRedirect extends BaseModel
         $this->forceFill(['last_hit_at' => now()])->saveQuietly();
     }
 
-
     public function getMatchTypeNameAttribute()
     {
         return RedirectMatchTypeEnum::from($this->match_type)->label() ?? $this->match_type;
@@ -107,6 +108,6 @@ class SiteRedirect extends BaseModel
 
     public function getIsActiveButtonAttribute()
     {
-        return (new GoPanelHelper)->is_active_btn($this, "is_active", ($this->is_active == "1" ? true : false));
+        return (new GoPanelHelper)->is_active_btn($this, 'is_active', ($this->is_active == '1' ? true : false));
     }
 }

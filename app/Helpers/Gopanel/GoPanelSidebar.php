@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Helpers\Gopanel;
 
 use App\Helpers\Common\Singleton;
@@ -8,9 +7,7 @@ use Illuminate\Support\Collection;
 
 class GoPanelSidebar extends Singleton
 {
-
     /**
-     *
      * @var Collection
      */
     private $list;
@@ -30,7 +27,6 @@ class GoPanelSidebar extends Singleton
     }
 
     /**
-     * @param array $item
      * @throws \Exception
      */
     public function addItem(array $item): void
@@ -41,7 +37,6 @@ class GoPanelSidebar extends Singleton
     }
 
     /**
-     * @param array $items
      * @throws \Exception
      */
     public function addItems(array $items): void
@@ -52,10 +47,8 @@ class GoPanelSidebar extends Singleton
     }
 
     /**
+     * @param  bool  $isRoot
      *
-     * @param array $item
-     * @param bool $isRoot
-     * @return Collection
      * @throws \Exception
      */
     private function validateInputItems(array $item, $isRoot = true): Collection
@@ -93,22 +86,21 @@ class GoPanelSidebar extends Singleton
                 $menuItem->put('inner', $innerMenu);
                 $menuItem->put('isActiveGroup', request()->routeIs($innerRoutes));
             }
+
             return $menuItem;
         } catch (\Exception $exception) {
             throw $exception;
         }
     }
 
-
     public function clearItems(): void
     {
         $this->list = collect([]);
     }
 
-
-    public function sidebarGuardCheck(string|null $guards): bool
+    public function sidebarGuardCheck(?string $guards): bool
     {
-        if (!is_null($guards)) {
+        if (! is_null($guards)) {
             $isConfirm = false;
             foreach (explode(',', $guards) as $guard) {
                 if (auth()->guard($guard)->check()) {
@@ -116,11 +108,12 @@ class GoPanelSidebar extends Singleton
                     break;
                 }
             }
+
             return $isConfirm;
         }
+
         return true;
     }
-
 
     private function isActiveRoute($item)
     {

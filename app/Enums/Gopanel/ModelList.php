@@ -2,13 +2,13 @@
 
 namespace App\Enums\Gopanel;
 
-use App\Models\User\User;
 use App\Models\Translations\Translation;
+use App\Models\User\User;
 
 enum ModelList: string
 {
-    case users                  = User::class;
-    case translation            = Translation::class;
+    case users = User::class;
+    case translation = Translation::class;
 
     public static function get($const): ModelList|string
     {
@@ -17,6 +17,7 @@ enum ModelList: string
                 return $enum;
             }
         }
+
         return $const;
     }
 }

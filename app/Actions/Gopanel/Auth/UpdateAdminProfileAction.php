@@ -16,14 +16,14 @@ class UpdateAdminProfileAction
     {
         $data = [
             'full_name' => $fullName,
-            'email'     => $email,
+            'email' => $email,
         ];
 
         if ($image) {
             $data['image'] = FileUploader::toStorage(
                 $image,
                 'admins',
-                'admin-' . $admin->id . '-' . time()
+                'admin-'.$admin->id.'-'.time()
             );
         }
 

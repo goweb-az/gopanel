@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
 
 class Product extends BaseModel
 {
-    use HasFactory, SoftDeletes, Translation, MetaData, AddUuid;
+    use AddUuid, HasFactory, MetaData, SoftDeletes, Translation;
 
     protected $table = 'products';
 
@@ -27,9 +27,9 @@ class Product extends BaseModel
     ];
 
     protected $casts = [
-        'price'      => 'decimal:2',
-        'discount'   => 'decimal:2',
-        'is_active'  => 'boolean',
+        'price' => 'decimal:2',
+        'discount' => 'decimal:2',
+        'is_active' => 'boolean',
         'created_at' => 'datetime',
     ];
 
@@ -50,12 +50,12 @@ class Product extends BaseModel
             return '<span class="text-muted">Şəkil yoxdur</span>';
         }
 
-        return '<img src="' . e($this->image_url) . '" alt="' . e($this->title ?? 'Product') . '" style="width:50px;height:50px;object-fit:cover;border-radius:8px;">';
+        return '<img src="'.e($this->image_url).'" alt="'.e($this->title ?? 'Product').'" style="width:50px;height:50px;object-fit:cover;border-radius:8px;">';
     }
 
     public function getPriceViewAttribute(): string
     {
-        return number_format((float) $this->price, 2, '.', ' ') . ' ₼';
+        return number_format((float) $this->price, 2, '.', ' ').' ₼';
     }
 
     public function getDiscountViewAttribute(): string
@@ -64,7 +64,7 @@ class Product extends BaseModel
             return '<span class="text-muted">—</span>';
         }
 
-        return '<span class="text-danger">' . number_format((float) $this->discount, 2, '.', ' ') . ' ₼</span>';
+        return '<span class="text-danger">'.number_format((float) $this->discount, 2, '.', ' ').' ₼</span>';
     }
 
     public function getFinalPriceAttribute(): float
@@ -77,16 +77,16 @@ class Product extends BaseModel
 
     public function getPriceWithDiscountViewAttribute(): string
     {
-        $price = number_format((float) $this->price, 2, '.', ' ') . ' ₼';
+        $price = number_format((float) $this->price, 2, '.', ' ').' ₼';
 
         if (is_null($this->discount) || (float) $this->discount <= 0) {
-            return '<strong>' . $price . '</strong>';
+            return '<strong>'.$price.'</strong>';
         }
 
-        $final = number_format($this->final_price, 2, '.', ' ') . ' ₼';
+        $final = number_format($this->final_price, 2, '.', ' ').' ₼';
 
-        return '<span class="text-decoration-line-through text-muted me-1">' . $price . '</span>'
-            . '<strong class="text-danger">' . $final . '</strong>';
+        return '<span class="text-decoration-line-through text-muted me-1">'.$price.'</span>'
+            .'<strong class="text-danger">'.$final.'</strong>';
     }
 
     public function getIsActiveBtnAttribute(): string

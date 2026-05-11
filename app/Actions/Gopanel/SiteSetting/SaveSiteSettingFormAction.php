@@ -44,7 +44,7 @@ class SaveSiteSettingFormAction
 
             SyncModelMetaAction::run($item, $meta, $metaUploads);
 
-            Cache::forget('site_settings' . app()->getLocale());
+            Cache::forget('site_settings'.app()->getLocale());
 
             return $item;
         });

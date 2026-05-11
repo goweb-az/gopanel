@@ -22,7 +22,6 @@ use Illuminate\Support\Facades\Schema;
 |
 */
 
-
 Route::get('/', [HomeController::class, 'index'])->middleware(['language'])->name('home.index');
 
 Route::withoutMiddleware(['site.redirects', 'track.analytics'])->group(function () {

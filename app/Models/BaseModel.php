@@ -10,10 +10,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class BaseModel extends Model
 {
-    use HasRouteKey;
-    use HasFiles;
-    use LogsAdminActivity;
     use Cacheable;
+    use HasFiles;
+    use HasRouteKey;
+    use LogsAdminActivity;
 
     // Hansi modelde loglanmasi istenmirse false edilmelidir
     protected $logEnabled = false;

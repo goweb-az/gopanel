@@ -12,10 +12,9 @@ class HumanGate
     {
 
         $status = (SiteSetting::getCached())?->block_bad_bots ?? false;
-        if (!$status)
+        if (! $status) {
             return $next($request);
-
-
+        }
 
         // API/aktiv sorğularını keçin
         if ($request->is('api/*') || $request->is('storage/*') || $request->is('assets/*')) {
@@ -36,7 +35,7 @@ class HumanGate
         }
 
         if ($request->isMethod('GET') && $isHtml) {
-            if (!$request->cookies->has('__hs')) {
+            if (! $request->cookies->has('__hs')) {
                 // JS ilə kukiləri quraşdırın və yeniləyin; JS ilə işləməyən surətçıxaranlar burada qalacaq
                 return response()->view('security.verify-cookie')
                     ->header('Cache-Control', 'no-store');

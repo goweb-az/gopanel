@@ -36,39 +36,39 @@ class RssController extends SiteController
     {
         $locale = app()->getLocale();
 
-        $items = Cache::remember("rss_items_{$locale}", now()->addHours(12), function () use ($locale) {
+        $items = Cache::remember("rss_items_{$locale}", now()->addHours(12), function () {
             $blogs = Blog::query()
                 ->where('is_active', true)
                 ->latest()
                 ->take(100)
                 ->get()
-                ->map(function ($blog) use ($locale) {
+                ->map(function ($blog) {
                     $title = $blog->title ?? '[Başlıqsız]';
-                    $desc  = Str::limit(strip_tags($blog->short ?? $blog->description ?? ''), 400);
-                    $link  = $blog->single_url ?? null;
-                    $date  = $blog->updated_at ?? $blog->created_at;
+                    $desc = Str::limit(strip_tags($blog->short ?? $blog->description ?? ''), 400);
+                    $link = $blog->single_url ?? null;
+                    $date = $blog->updated_at ?? $blog->created_at;
 
                     return [
-                        'title'       => $title,
+                        'title' => $title,
                         'description' => $desc,
-                        'link'        => $link,
-                        'guid'        => $link ?: ('blog-' . $blog->getKey()),
-                        'pubDate'     => optional($date)->toRfc2822String(),
+                        'link' => $link,
+                        'guid' => $link ?: ('blog-'.$blog->getKey()),
+                        'pubDate' => optional($date)->toRfc2822String(),
                     ];
                 });
 
             return $blogs
-                ->filter(fn($i) => !empty($i['link']))
+                ->filter(fn ($i) => ! empty($i['link']))
                 ->values();
         });
 
         $channel = [
-            'title'       => config('app.name') . ' — ' . strtoupper($locale),
-            'link'        => url($locale),
+            'title' => config('app.name').' — '.strtoupper($locale),
+            'link' => url($locale),
             'description' => 'Son yazılar',
-            'language'    => $locale,
-            'lastBuild'   => now()->toRfc2822String(),
-            'self'        => route("site.{$locale}.rss.single"),
+            'language' => $locale,
+            'lastBuild' => now()->toRfc2822String(),
+            'self' => route("site.{$locale}.rss.single"),
         ];
 
         return response()

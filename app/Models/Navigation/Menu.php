@@ -2,8 +2,8 @@
 
 namespace App\Models\Navigation;
 
-use App\Enums\Common\Menu\MenuTypeEnum;
 use App\Enums\Common\Menu\MenuPositionEnum;
+use App\Enums\Common\Menu\MenuTypeEnum;
 use App\Helpers\Site\MenuHelper;
 use App\Models\BaseModel;
 use App\Models\Translations\FieldTranslation;
@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Schema;
 
 class Menu extends BaseModel
 {
-    use HasFactory, SoftDeletes, Translation, MetaData;
+    use HasFactory, MetaData, SoftDeletes, Translation;
 
     protected $fillable = [
         'parent_id',
@@ -35,10 +35,9 @@ class Menu extends BaseModel
     public $translatedAttributes = ['title', 'description', 'slug'];
 
     protected $casts = [
-        'is_active'     => 'boolean',
-        'is_dropdown'   => 'boolean',
+        'is_active' => 'boolean',
+        'is_dropdown' => 'boolean',
     ];
-
 
     protected static function booted()
     {
@@ -60,7 +59,7 @@ class Menu extends BaseModel
 
     public function children()
     {
-        return $this->hasMany(self::class, 'parent_id')->where("is_active", true);
+        return $this->hasMany(self::class, 'parent_id')->where('is_active', true);
     }
 
     public function menuable()
@@ -76,6 +75,7 @@ class Menu extends BaseModel
     public static function getBySlug($slug, $locale = null)
     {
         $locale = $locale ?? app()->getLocale();
+
         return Cache::remember("site_menu_by_slug_{$locale}_{$slug}", now()->addDays(30), function () use ($slug, $locale) {
             return self::whereHas('translations', function ($query) use ($slug, $locale) {
                 $query->where('key', 'slug')
@@ -85,15 +85,14 @@ class Menu extends BaseModel
         });
     }
 
-
     public static function getByRouteName($route_name, $locale = null)
     {
         $locale = $locale ?? app()->getLocale();
-        return Cache::rememberForever("site_menu_by_route_name_{$locale}_{$route_name}", function () use ($route_name, $locale) {
-            return self::where("route_name", $route_name)->first();
+
+        return Cache::rememberForever("site_menu_by_route_name_{$locale}_{$route_name}", function () use ($route_name) {
+            return self::where('route_name', $route_name)->first();
         });
     }
-
 
     public function getMenuTypeAttribute()
     {
@@ -107,19 +106,18 @@ class Menu extends BaseModel
 
     public static function getView()
     {
-        return Cache::remember("site_menu_view", now()->addDays(30), function () {
-            return self::whereNull("parent_id")
-                ->where("is_active", true)
-                ->with(['children' => fn($q) => $q->orderBy('sort_order', 'ASC')])
-                ->orderBy("sort_order", "ASC")
+        return Cache::remember('site_menu_view', now()->addDays(30), function () {
+            return self::whereNull('parent_id')
+                ->where('is_active', true)
+                ->with(['children' => fn ($q) => $q->orderBy('sort_order', 'ASC')])
+                ->orderBy('sort_order', 'ASC')
                 ->get();
         });
     }
 
-
     public static function getRoutes($locale)
     {
-        if (!Schema::hasTable('menus')) {
+        if (! Schema::hasTable('menus')) {
             return collect();
         }
 
@@ -131,7 +129,7 @@ class Menu extends BaseModel
                     'ft_title.value as route_title',
                     'ft_description.value as route_description'
                 )
-                ->where("menus.is_active", true)
+                ->where('menus.is_active', true)
                 ->leftJoin('field_translations as ft_slug', function ($join) use ($locale) {
                     $join->on('menus.id', '=', 'ft_slug.model_id')
                         ->where('ft_slug.model_type', '=', self::class)
@@ -154,7 +152,6 @@ class Menu extends BaseModel
         });
     }
 
-
     /**
      * Sayt üçün menyu itemləri (header/footer göstərmək üçün)
      */
@@ -162,11 +159,11 @@ class Menu extends BaseModel
     {
         $locale = $locale ?? app()->getLocale();
 
-        if (!\Illuminate\Support\Facades\Schema::hasTable('menus')) {
+        if (! \Illuminate\Support\Facades\Schema::hasTable('menus')) {
             return collect();
         }
 
-        return Cache::remember("site_menu_view_{$locale}", now()->addDays(30), function () use ($locale) {
+        return Cache::remember("site_menu_view_{$locale}", now()->addDays(30), function () {
             return self::query()
                 ->where('is_active', true)
                 ->whereNull('parent_id')
@@ -178,13 +175,12 @@ class Menu extends BaseModel
         });
     }
 
-
     public function getConfigAttribute(): ?array
     {
-        $routes = config("site.menu_routes");
+        $routes = config('site.menu_routes');
+
         return $routes[$this->route_name] ?? null;
     }
-
 
     public function getRouteAttribute()
     {

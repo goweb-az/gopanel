@@ -22,7 +22,7 @@ class SaveSocialFormAction
                 $fileName = FileUploader::nameGenerate(['name' => $form['name'] ?? 'social'], 'social');
                 $form['icon'] = FileUploader::toPublic(
                     $upload,
-                    (new Social())->getTable(),
+                    (new Social)->getTable(),
                     $fileName
                 );
             }

@@ -18,6 +18,7 @@ trait MetaData
     public function meta($locale = null)
     {
         $locale = $locale ?? app()->getLocale();
+
         return $this->morphOne(PageMetaData::class, 'model')->where('locale', $locale);
     }
 
@@ -38,18 +39,21 @@ trait MetaData
     {
         $locale = $locale ?? app()->getLocale();
         $metaData = $this->meta($locale)->first();
+
         return $metaData ? $metaData->$attribute : null;
     }
 
     public function getMetaImage($locale = null)
     {
         $imagePath = $this->getMeta('image', $locale);
-        if (!empty($imagePath)) {
+        if (! empty($imagePath)) {
             if (file_exists(public_path($imagePath))) {
                 return url($imagePath);
             }
+
             return $imagePath;
         }
+
         return null;
     }
 }

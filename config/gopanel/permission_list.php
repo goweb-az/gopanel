@@ -2,10 +2,10 @@
 
 return [
 
-    //Guard name
+    // Guard name
     'gopanel' => [
 
-        //Group name
+        // Group name
         'Tənzimləmələr' => [
             ['name' => 'gopanel.settings.index', 'title' => 'Tənzimləmələr siyahısı'],
             ['name' => 'gopanel.settings.site-settings.index', 'title' => 'Əsas Tənzimləmələr'],

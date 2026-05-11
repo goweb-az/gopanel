@@ -4,7 +4,6 @@ namespace App\Helpers\Site;
 
 class MenuHelper
 {
-
     // Example
     // public static function services($item, $type = 'desktop')
     // {

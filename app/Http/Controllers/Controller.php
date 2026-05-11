@@ -11,13 +11,13 @@ class Controller extends BaseController
     use AuthorizesRequests, ValidatesRequests;
 
     public array $response = [];
+
     public int $response_code = 500;
 
     public function __construct()
     {
         $this->response = ['status' => 'error', 'message' => '', 'data' => []];
     }
-
 
     protected function isPermission($permission)
     {
@@ -29,22 +29,18 @@ class Controller extends BaseController
         return abort($code);
     }
 
-
     protected function viewShare(array $data)
     {
         return view()->share($data);
     }
 
-
-
     public function success_response($item = [], $message = ' Məlumat uğurla yaradıldı! ')
     {
-        $this->response['status']       = 'success';
-        $this->response['message']      = $message;
-        $this->response['data']         = $item;
-        $this->response_code            = 200;
+        $this->response['status'] = 'success';
+        $this->response['message'] = $message;
+        $this->response['data'] = $item;
+        $this->response_code = 200;
     }
-
 
     public function response_json()
     {

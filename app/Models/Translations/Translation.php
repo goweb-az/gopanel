@@ -62,7 +62,6 @@ class Translation extends BaseModel
         });
     }
 
-
     public function getValue($locale)
     {
         return static::where('key', $this->key)
@@ -77,33 +76,32 @@ class Translation extends BaseModel
         $result = '';
         foreach ($this->languages as $language) {
             $check = $this->checkExists($language->code, $this->key, $this->filename);
-            $icon  = $check ? '<i class="fas fa-check text-success"></i>' : '<i class="fas fa-times text-danger"></i>';
+            $icon = $check ? '<i class="fas fa-check text-success"></i>' : '<i class="fas fa-times text-danger"></i>';
             $result .= "{$language->code} {$icon} ";
         }
+
         return $result;
     }
 
     public function checkExists($code, $key, $filename)
     {
-        return self::where("locale", $code)
+        return self::where('locale', $code)
             ->where('key', $key)
             ->where('filename', $filename)
-            ->whereNotNull("value")
+            ->whereNotNull('value')
             ->exists();
     }
 
-
     public function getEditableValueAttribute()
     {
-        return $this->double_click_edit("value");
+        return $this->double_click_edit('value');
     }
-
 
     private function writeToLangFile()
     {
         $path = resource_path("lang/{$this->locale}/{$this->filename}.php");
         $directory = dirname($path);
-        if (!is_dir($directory)) {
+        if (! is_dir($directory)) {
             mkdir($directory, 0755, true);
         }
 
@@ -123,18 +121,17 @@ class Translation extends BaseModel
             }
         }
 
-        file_put_contents($path, '<?php return ' . var_export($translations, true) . ';');
+        file_put_contents($path, '<?php return '.var_export($translations, true).';');
     }
-
 
     private function removeFromLangFile()
     {
         $path = resource_path("lang/{$this->locale}/{$this->filename}.php");
-        if (!file_exists($path)) {
+        if (! file_exists($path)) {
             return;
         }
 
-        $translations = include($path);
+        $translations = include $path;
 
         if ($this->group && isset($translations[$this->group][$this->key])) {
             unset($translations[$this->group][$this->key]);
@@ -146,16 +143,14 @@ class Translation extends BaseModel
             unset($translations[$this->key]);
         }
 
-        file_put_contents($path, '<?php return ' . var_export($translations, true) . ';');
+        file_put_contents($path, '<?php return '.var_export($translations, true).';');
     }
-
-
 
     private function writeToJsonFile()
     {
         $path = resource_path("lang-json/{$this->locale}/{$this->filename}.json");
         $directory = dirname($path);
-        if (!is_dir($directory)) {
+        if (! is_dir($directory)) {
             mkdir($directory, 0755, true);
         }
 
@@ -169,7 +164,7 @@ class Translation extends BaseModel
 
         foreach ($allTranslations as $translation) {
             if ($translation->group) {
-                $dotKey = $translation->group . '.' . $translation->key;
+                $dotKey = $translation->group.'.'.$translation->key;
             } else {
                 $dotKey = $translation->key;
             }
@@ -183,19 +178,18 @@ class Translation extends BaseModel
         );
     }
 
-
     private function removeFromJsonFile()
     {
         $path = resource_path("lang-json/{$this->locale}/{$this->filename}.json");
 
-        if (!file_exists($path)) {
+        if (! file_exists($path)) {
             return;
         }
 
         $translations = json_decode(file_get_contents($path), true);
 
         if ($this->group) {
-            $dotKey = $this->group . '.' . $this->key;
+            $dotKey = $this->group.'.'.$this->key;
         } else {
             $dotKey = $this->key;
         }

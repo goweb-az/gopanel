@@ -30,7 +30,7 @@ class SaveSliderFormAction
                 );
                 $form['image'] = FileUploader::toPublic(
                     $upload,
-                    (new Slider())->getTable(),
+                    (new Slider)->getTable(),
                     $fileName
                 );
             }

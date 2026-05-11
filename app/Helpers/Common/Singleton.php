@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Helpers\Common;
-
 
 class Singleton
 {
@@ -26,7 +24,7 @@ class Singleton
 
     public function __wakeup()
     {
-        throw new \Exception("Cannot unserialize singleton");
+        throw new \Exception('Cannot unserialize singleton');
     }
 
     /**
@@ -35,7 +33,7 @@ class Singleton
     public static function getInstance()
     {
         $subclass = static::class;
-        if (!isset(self::$instances[$subclass])) {
+        if (! isset(self::$instances[$subclass])) {
             // Обратите внимание, что здесь мы используем ключевое слово
             // "static"  вместо фактического имени класса. В этом контексте
             // ключевое слово "static" означает «имя текущего класса». Эта
@@ -43,8 +41,9 @@ class Singleton
             // подклассе, мы хотим, чтобы экземпляр этого подкласса был создан
             // здесь.
 
-            self::$instances[$subclass] = new static();
+            self::$instances[$subclass] = new static;
         }
+
         return self::$instances[$subclass];
     }
 }

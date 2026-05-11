@@ -14,8 +14,6 @@ class TestController extends Controller
         dd($settings->gopanel_logo_url);
     }
 
-
-
     private function tesguadr()
     {
         foreach (config('auth.guards') as $key => $guard) {
@@ -32,7 +30,7 @@ class TestController extends Controller
                 $exists = CustomPermission::where('name', $permission['name'])
                     ->where('group', $group)
                     ->exists();
-                if (!$exists) {
+                if (! $exists) {
                     CustomPermission::updateOrCreate($permission);
                 }
             }

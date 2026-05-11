@@ -4,8 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Geography\Country;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
 
 class DefaultCountriesAndCitiesSeeder extends Seeder
 {
@@ -14,7 +12,7 @@ class DefaultCountriesAndCitiesSeeder extends Seeder
         $countries = $this->list();
 
         foreach ($countries as $country) {
-            if (!Country::where("code", $country['code'])->where("alpha_3", $country['alpha_3'])->exists()) {
+            if (! Country::where('code', $country['code'])->where('alpha_3', $country['alpha_3'])->exists()) {
                 Country::create([
                     'code' => $country['code'],
                     'name' => $country['name'],
@@ -30,7 +28,6 @@ class DefaultCountriesAndCitiesSeeder extends Seeder
             }
         }
     }
-
 
     private function list(): array
     {

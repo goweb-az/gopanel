@@ -38,7 +38,6 @@ class ContactInfo extends BaseModel
         });
     }
 
-
     public function getMapEmbedUrlAttribute(): ?string
     {
         if (empty($this->map)) {
@@ -57,6 +56,7 @@ class ContactInfo extends BaseModel
 
             return "https://www.google.com/maps?q={$lat},{$lng}&hl=az&z=16&output=embed";
         }
+
         return null;
     }
 }

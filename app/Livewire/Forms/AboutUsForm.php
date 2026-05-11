@@ -8,7 +8,7 @@ use App\Models\Site\AboutUs;
 class AboutUsForm extends BaseForm
 {
     public array $form = [
-        'id'    => null,
+        'id' => null,
         'image' => '',
     ];
 
@@ -27,7 +27,7 @@ class AboutUsForm extends BaseForm
     public function setItem(AboutUs $item): void
     {
         $this->form = [
-            'id'    => $item->id,
+            'id' => $item->id,
             'image' => $item->image ?? '',
         ];
 
@@ -46,7 +46,7 @@ class AboutUsForm extends BaseForm
         );
 
         $this->form['id'] = $item->id;
-        $this->upload     = null;
+        $this->upload = null;
         foreach ($this->metaUploads as $code => $_) {
             $this->metaUploads[$code] = null;
         }

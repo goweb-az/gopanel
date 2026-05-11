@@ -8,14 +8,14 @@ use App\Models\Geography\Language;
 class LanguageForm extends BaseForm
 {
     public array $form = [
-        'id'         => null,
+        'id' => null,
         'country_id' => null,
-        'code'       => '',
-        'name'       => '',
+        'code' => '',
+        'name' => '',
         'sort_order' => 0,
-        'is_active'  => true,
-        'is_show'    => true,
-        'default'    => false,
+        'is_active' => true,
+        'is_show' => true,
+        'default' => false,
     ];
 
     protected function rules(): array
@@ -24,26 +24,26 @@ class LanguageForm extends BaseForm
 
         return [
             'form.country_id' => ['nullable', 'integer', 'exists:countries,id'],
-            'form.code'       => ['required', 'string', 'max:5', "unique:languages,code,{$id}"],
-            'form.name'       => ['required', 'string', 'max:100'],
+            'form.code' => ['required', 'string', 'max:5', "unique:languages,code,{$id}"],
+            'form.name' => ['required', 'string', 'max:100'],
             'form.sort_order' => ['integer', 'min:0'],
-            'form.is_active'  => 'boolean',
-            'form.is_show'    => 'boolean',
-            'form.default'    => 'boolean',
+            'form.is_active' => 'boolean',
+            'form.is_show' => 'boolean',
+            'form.default' => 'boolean',
         ];
     }
 
     public function setItem(Language $language): void
     {
         $this->form = [
-            'id'         => $language->id,
+            'id' => $language->id,
             'country_id' => $language->country_id,
-            'code'       => $language->code ?? '',
-            'name'       => $language->name ?? '',
+            'code' => $language->code ?? '',
+            'name' => $language->name ?? '',
             'sort_order' => (int) ($language->sort_order ?? 0),
-            'is_active'  => (bool) ($language->is_active ?? true),
-            'is_show'    => (bool) ($language->is_show ?? true),
-            'default'    => (bool) ($language->default ?? false),
+            'is_active' => (bool) ($language->is_active ?? true),
+            'is_show' => (bool) ($language->is_show ?? true),
+            'default' => (bool) ($language->default ?? false),
         ];
     }
 

@@ -20,10 +20,9 @@ class SeoAnalytics extends BaseModel
 
     public $logEnabled = false;
 
-
     public static function getCached()
     {
-        return Cache::rememberForever("seo_analytics", function () {
+        return Cache::rememberForever('seo_analytics', function () {
             return self::latest()->first();
         });
     }

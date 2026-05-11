@@ -4,7 +4,6 @@ namespace App\Actions\Gopanel\Language;
 
 use App\Models\Geography\Language;
 use Lorisleiva\Actions\Concerns\AsAction;
-use RuntimeException;
 
 class ToggleLanguageActiveAction
 {
@@ -13,7 +12,7 @@ class ToggleLanguageActiveAction
     /**
      * Toggle the is_active flag. Refuses to deactivate the default language.
      *
-     * @return Language|null  Returns null if the toggle was rejected (default + active).
+     * @return Language|null Returns null if the toggle was rejected (default + active).
      */
     public function handle(int $id): ?Language
     {

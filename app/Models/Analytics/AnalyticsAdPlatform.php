@@ -36,18 +36,19 @@ class AnalyticsAdPlatform extends BaseModel
         $this->increment('hit_count');
         $this->last_visited_at = now();
 
-        if (!$this->first_visited_at) {
+        if (! $this->first_visited_at) {
             $this->first_visited_at = now();
         }
 
         $this->save();
     }
 
-
     public function getLogoImgAttribute()
     {
-        if (is_null($this->logo))
+        if (is_null($this->logo)) {
             return null;
-        return '<img src="' . $this->logo . '" width="25" alt="">';
+        }
+
+        return '<img src="'.$this->logo.'" width="25" alt="">';
     }
 }

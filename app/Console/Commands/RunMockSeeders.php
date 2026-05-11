@@ -18,6 +18,7 @@ class RunMockSeeders extends Command
 
         if (empty($seeders)) {
             $this->warn('database/seeders/mock altinda mock seeder tapilmadi.');
+
             return self::SUCCESS;
         }
 
@@ -31,6 +32,7 @@ class RunMockSeeders extends Command
 
         if ($choice === (string) (count($seeders) + 1)) {
             $this->info('Hech biri secilmedi. Cixilir.');
+
             return self::SUCCESS;
         }
 
@@ -38,12 +40,13 @@ class RunMockSeeders extends Command
 
         if (empty($selected)) {
             $this->error('Secim duzgun deyil.');
+
             return self::FAILURE;
         }
 
         foreach ($selected as $seeder) {
             $this->newLine();
-            $this->info('Seed edilir: ' . $seeder['name']);
+            $this->info('Seed edilir: '.$seeder['name']);
             $this->call('db:seed', [
                 '--class' => $seeder['class'],
             ]);
@@ -59,7 +62,7 @@ class RunMockSeeders extends Command
     {
         $path = database_path('seeders/mock');
 
-        if (!File::isDirectory($path)) {
+        if (! File::isDirectory($path)) {
             return [];
         }
 
@@ -70,15 +73,15 @@ class RunMockSeeders extends Command
                 continue;
             }
 
-            $class = 'Database\\Seeders\\mock\\' . $file->getFilenameWithoutExtension();
+            $class = 'Database\\Seeders\\mock\\'.$file->getFilenameWithoutExtension();
 
-            if (!class_exists($class)) {
+            if (! class_exists($class)) {
                 continue;
             }
 
             $seeders[] = [
                 'class' => $class,
-                'name'  => $this->displayName($class),
+                'name' => $this->displayName($class),
             ];
         }
 
@@ -111,10 +114,10 @@ class RunMockSeeders extends Command
         $this->line('0 Hamisi');
 
         foreach ($seeders as $index => $seeder) {
-            $this->line(($index + 1) . ' ' . $seeder['name']);
+            $this->line(($index + 1).' '.$seeder['name']);
         }
 
-        $this->line((count($seeders) + 1) . ' Hecbiri / cix');
+        $this->line((count($seeders) + 1).' Hecbiri / cix');
         $this->line('Bir nece seeder ucun vergulle yazmaq olar: 1,3');
     }
 

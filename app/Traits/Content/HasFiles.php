@@ -50,9 +50,9 @@ trait HasFiles
         $path = $this->getFileUrl($field);
 
         if (in_array($ext, ['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg'])) {
-            return '<a href="' . $path . '" class="image-lightbox" title="' . class_basename($this) . '"><img src="' . $path . '" width="50"></a>';
+            return '<a href="'.$path.'" class="image-lightbox" title="'.class_basename($this).'"><img src="'.$path.'" width="50"></a>';
         }
 
-        return '<a href="' . $path . '" target="_blank">Fayla bax</a>';
+        return '<a href="'.$path.'" target="_blank">Fayla bax</a>';
     }
 }

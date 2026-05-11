@@ -17,7 +17,7 @@ class LlmsTxt extends BaseModel
 
     public static function getCached(): ?self
     {
-        return Cache::rememberForever("llms_txt", function () {
+        return Cache::rememberForever('llms_txt', function () {
             return self::latest()->first();
         });
     }

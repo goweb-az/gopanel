@@ -6,11 +6,13 @@ use App\Models\Geography\Language;
 
 class TrackingHelper
 {
-
     public static function normalizeLanguageFull(?string $acceptLang): string
     {
-        if (!$acceptLang) return 'en';
+        if (! $acceptLang) {
+            return 'en';
+        }
         $first = explode(',', $acceptLang)[0];
+
         return trim(explode(';', $first)[0]) ?: 'en';
     }
 
@@ -22,12 +24,16 @@ class TrackingHelper
     public static function languageNameFromCode(string $code): string
     {
         $language = Language::where('code', $code)->first();
+
         return $language?->name ?? ucfirst($code);
     }
 
     public static function clamp(?string $value, int $max): ?string
     {
-        if ($value === null) return null;
+        if ($value === null) {
+            return null;
+        }
+
         return mb_substr($value, 0, $max);
     }
 
@@ -36,6 +42,7 @@ class TrackingHelper
         // full: IETF etiketi, code: 2 harf
         $full = self::normalizeLanguageFull($acceptLang);
         $code = self::parseLanguageCode($full);
+
         return ['full' => $full, 'code' => $code];
     }
 
@@ -46,14 +53,15 @@ class TrackingHelper
     public static function resolveAdPlatform(array $query, array $platformMap, array $logoMap): ?array
     {
         foreach ($platformMap as $param => $platformName) {
-            if (!empty($query[$param])) {
+            if (! empty($query[$param])) {
                 return [
-                    'ad_platform'   => $platformName,
+                    'ad_platform' => $platformName,
                     'platform_logo' => $logoMap[$platformName] ?? null,
                     'platform_data' => [$param => $query[$param]],
                 ];
             }
         }
+
         return null;
     }
 }

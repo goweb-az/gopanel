@@ -18,7 +18,7 @@ class FileLog extends BaseModel
         'level',
         'message',
         'context',
-        'log_details'
+        'log_details',
     ];
 
     protected $casts = [
@@ -26,12 +26,10 @@ class FileLog extends BaseModel
         'log_details' => 'array',
     ];
 
-
     public function admin()
     {
         return $this->belongsTo(Admin::class, 'admin_id');
     }
-
 
     public function user()
     {
@@ -45,7 +43,7 @@ class FileLog extends BaseModel
 
     public function getAdminNameAttribute()
     {
-        return $this?->admin?->full_name ?? NULL;
+        return $this?->admin?->full_name ?? null;
     }
 
     public function getLevelColorAttribute()
@@ -53,10 +51,10 @@ class FileLog extends BaseModel
         return match ($this->level) {
             'error', 'critical', 'alert', 'emergency' => 'danger',
             'warning' => 'warning',
-            'notice'  => 'info',
-            'info'    => 'primary',
-            'debug'   => 'secondary',
-            default   => 'secondary',
+            'notice' => 'info',
+            'info' => 'primary',
+            'debug' => 'secondary',
+            default => 'secondary',
         };
     }
 
@@ -73,7 +71,7 @@ class FileLog extends BaseModel
 
     public function getLevelBadgeAttribute(): string
     {
-        return '<span class="badge bg-' . $this->level_color . '">' . strtoupper($this->level ?? '-') . '</span>';
+        return '<span class="badge bg-'.$this->level_color.'">'.strtoupper($this->level ?? '-').'</span>';
     }
 
     public function getMessageShortAttribute(): string
@@ -81,7 +79,8 @@ class FileLog extends BaseModel
         $msg = $this->message ?? '-';
         $short = mb_substr($msg, 0, 60);
         $dots = mb_strlen($msg) > 60 ? '...' : '';
-        return '<span title="' . e($msg) . '">' . e($short) . $dots . '</span>';
+
+        return '<span title="'.e($msg).'">'.e($short).$dots.'</span>';
     }
 
     public function getCreatedAtFormattedAttribute(): string

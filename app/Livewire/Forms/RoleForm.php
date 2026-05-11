@@ -9,8 +9,8 @@ use Livewire\Form;
 class RoleForm extends Form
 {
     public array $form = [
-        'id'         => null,
-        'name'       => '',
+        'id' => null,
+        'name' => '',
         'guard_name' => 'gopanel',
     ];
 
@@ -22,18 +22,18 @@ class RoleForm extends Form
         $id = $this->form['id'] ?? 'NULL';
 
         return [
-            'form.name'       => ['required', 'string', 'max:120', "unique:roles,name,{$id}"],
+            'form.name' => ['required', 'string', 'max:120', "unique:roles,name,{$id}"],
             'form.guard_name' => ['required', 'string', 'in:gopanel,web,api'],
-            'permissions'     => 'array',
-            'permissions.*'   => ['string', 'exists:permissions,name'],
+            'permissions' => 'array',
+            'permissions.*' => ['string', 'exists:permissions,name'],
         ];
     }
 
     public function setItem(CustomRole $role): void
     {
         $this->form = [
-            'id'         => $role->id,
-            'name'       => $role->name ?? '',
+            'id' => $role->id,
+            'name' => $role->name ?? '',
             'guard_name' => $role->guard_name ?? 'gopanel',
         ];
 

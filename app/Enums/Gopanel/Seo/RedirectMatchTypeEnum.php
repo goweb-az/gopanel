@@ -9,10 +9,10 @@ namespace App\Enums\Gopanel\Seo;
 
 enum RedirectMatchTypeEnum: string
 {
-    case EXACT    = 'exact';
-    case PREFIX   = 'prefix';
+    case EXACT = 'exact';
+    case PREFIX = 'prefix';
     case CONTAINS = 'contains';
-    case REGEX    = 'regex';
+    case REGEX = 'regex';
 
     /**
      * Ekranda göstəriləcək etiket
@@ -20,10 +20,10 @@ enum RedirectMatchTypeEnum: string
     public function label(): string
     {
         return match ($this) {
-            self::EXACT    => 'Tam uyğunluq',
-            self::PREFIX   => 'Başlanğıcla uyğunluq',
+            self::EXACT => 'Tam uyğunluq',
+            self::PREFIX => 'Başlanğıcla uyğunluq',
             self::CONTAINS => 'Mətnin içində',
-            self::REGEX    => 'Regex nümunəsi',
+            self::REGEX => 'Regex nümunəsi',
         };
     }
 
@@ -33,10 +33,10 @@ enum RedirectMatchTypeEnum: string
     public function className(): string
     {
         return match ($this) {
-            self::EXACT    => 'primary',
-            self::PREFIX   => 'info',
+            self::EXACT => 'primary',
+            self::PREFIX => 'info',
             self::CONTAINS => 'warning',
-            self::REGEX    => 'danger',
+            self::REGEX => 'danger',
         };
     }
 

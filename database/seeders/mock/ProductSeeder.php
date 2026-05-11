@@ -19,9 +19,9 @@ class ProductSeeder extends Seeder
     {
         $products = [
             [
-                'price'    => 199.99,
+                'price' => 199.99,
                 'discount' => 49.99,
-                'image'    => $this->placeholderImage('products', 'Premium Headphones', 800, 800),
+                'image' => $this->placeholderImage('products', 'Premium Headphones', 800, 800),
                 'title' => [
                     'az' => 'Premium Qulaqlıq',
                     'en' => 'Premium Headphones',
@@ -39,9 +39,9 @@ class ProductSeeder extends Seeder
                 ],
             ],
             [
-                'price'    => 79.50,
+                'price' => 79.50,
                 'discount' => null,
-                'image'    => $this->placeholderImage('products', 'Smart Watch', 800, 800),
+                'image' => $this->placeholderImage('products', 'Smart Watch', 800, 800),
                 'title' => [
                     'az' => 'Smart saat',
                     'en' => 'Smart watch',
@@ -59,9 +59,9 @@ class ProductSeeder extends Seeder
                 ],
             ],
             [
-                'price'    => 1299.00,
+                'price' => 1299.00,
                 'discount' => 199.00,
-                'image'    => $this->placeholderImage('products', 'Laptop Pro', 800, 800),
+                'image' => $this->placeholderImage('products', 'Laptop Pro', 800, 800),
                 'title' => [
                     'az' => 'Laptop Pro 15"',
                     'en' => 'Laptop Pro 15"',
@@ -79,9 +79,9 @@ class ProductSeeder extends Seeder
                 ],
             ],
             [
-                'price'    => 24.99,
+                'price' => 24.99,
                 'discount' => 4.99,
-                'image'    => $this->placeholderImage('products', 'Wireless Mouse', 800, 800),
+                'image' => $this->placeholderImage('products', 'Wireless Mouse', 800, 800),
                 'title' => [
                     'az' => 'Kabel-siz Mouse',
                     'en' => 'Wireless Mouse',
@@ -99,9 +99,9 @@ class ProductSeeder extends Seeder
                 ],
             ],
             [
-                'price'    => 149.00,
+                'price' => 149.00,
                 'discount' => null,
-                'image'    => $this->placeholderImage('products', 'Bluetooth Speaker', 800, 800),
+                'image' => $this->placeholderImage('products', 'Bluetooth Speaker', 800, 800),
                 'title' => [
                     'az' => 'Bluetooth Səsucaldan',
                     'en' => 'Bluetooth Speaker',
@@ -123,9 +123,9 @@ class ProductSeeder extends Seeder
         foreach ($products as $data) {
             $product = $this->findProductByTitle($data['title']['az']);
             $payload = [
-                'price'     => $data['price'],
-                'discount'  => $data['discount'],
-                'image'     => $data['image'],
+                'price' => $data['price'],
+                'discount' => $data['discount'],
+                'image' => $data['image'],
                 'is_active' => true,
             ];
 
@@ -134,10 +134,10 @@ class ProductSeeder extends Seeder
                     $product->restore();
                 }
                 $product->update($payload);
-                $this->command?->line('  - movcuddur, yenilendi: ' . $data['title']['az']);
+                $this->command?->line('  - movcuddur, yenilendi: '.$data['title']['az']);
             } else {
                 $product = Product::create($payload);
-                $this->command?->line('  + elave edildi: ' . $data['title']['az']);
+                $this->command?->line('  + elave edildi: '.$data['title']['az']);
             }
 
             TranslationHelper::basic($product, $data['title'], 'title');
@@ -153,14 +153,14 @@ class ProductSeeder extends Seeder
             PageMetaData::updateOrCreate(
                 [
                     'model_type' => Product::class,
-                    'model_id'   => $product->id,
-                    'locale'     => $locale,
+                    'model_id' => $product->id,
+                    'locale' => $locale,
                 ],
                 [
-                    'source'      => $product->getTable(),
-                    'title'       => "{$title} | Məhsul",
+                    'source' => $product->getTable(),
+                    'title' => "{$title} | Məhsul",
                     'description' => $data['short_description'][$locale] ?? null,
-                    'keywords'    => implode(', ', array_filter([$title, 'məhsul', 'product'])),
+                    'keywords' => implode(', ', array_filter([$title, 'məhsul', 'product'])),
                 ]
             );
         }

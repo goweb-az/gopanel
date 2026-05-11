@@ -17,11 +17,11 @@ class ChangePasswordRequest extends FormRequest
     {
         return [
             'current_password' => ['required', 'string', function ($attribute, $value, $fail) {
-                if (!Hash::check($value, Auth::guard('gopanel')->user()->password)) {
+                if (! Hash::check($value, Auth::guard('gopanel')->user()->password)) {
                     $fail('Mövcud şifrə yanlışdır.');
                 }
             }],
-            'password'         => ['required', 'string', 'min:6', 'confirmed'],
+            'password' => ['required', 'string', 'min:6', 'confirmed'],
         ];
     }
 
@@ -29,7 +29,7 @@ class ChangePasswordRequest extends FormRequest
     {
         return [
             'current_password' => 'Mövcud şifrə',
-            'password'         => 'Yeni şifrə',
+            'password' => 'Yeni şifrə',
         ];
     }
 
@@ -37,9 +37,9 @@ class ChangePasswordRequest extends FormRequest
     {
         return [
             'current_password.required' => 'Mövcud şifrəni daxil edin.',
-            'password.required'         => 'Yeni şifrəni daxil edin.',
-            'password.min'              => 'Yeni şifrə ən az 6 simvol olmalıdır.',
-            'password.confirmed'        => 'Şifrə təsdiqi uyğun gəlmir.',
+            'password.required' => 'Yeni şifrəni daxil edin.',
+            'password.min' => 'Yeni şifrə ən az 6 simvol olmalıdır.',
+            'password.confirmed' => 'Şifrə təsdiqi uyğun gəlmir.',
         ];
     }
 }

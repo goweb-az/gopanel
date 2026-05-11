@@ -15,15 +15,15 @@ class MetaService
      */
     public function compose($menus, Request $request): array
     {
-        $site_settings  = SiteSetting::getCached();
-        $defaultMeta    = $site_settings?->meta()?->first();
+        $site_settings = SiteSetting::getCached();
+        $defaultMeta = $site_settings?->meta()?->first();
 
         // URL segmentindən menu slug-ını tap
         $segment = $request->segment(2) ?? $request->segment(3);
 
         $meta = null;
 
-        if (!is_null($segment)) {
+        if (! is_null($segment)) {
             // Slug ilə menu tap, onun meta-sını al
             $menu = Menu::getBySlug($segment);
             if ($menu) {
@@ -32,19 +32,18 @@ class MetaService
         }
 
         // Meta tapılmadısa → SiteSetting default meta
-        if (!$meta) {
+        if (! $meta) {
             $meta = $defaultMeta;
         }
 
         return [
-            'site_title'  => $meta->title        ?? $defaultMeta->title        ?? config('seo.defaults.site_title', 'Proweb Creative Agency'),
-            'title'       => $meta->title        ?? $defaultMeta->title        ?? config('seo.defaults.title', 'Proweb.az'),
-            'description' => $meta->description  ?? $defaultMeta->description  ?? config('seo.defaults.description', 'Proweb - Veb saytların yaradılması'),
-            'keywords'    => $meta->keywords     ?? $defaultMeta->keywords     ?? config('seo.defaults.keywords', 'veb-sayt,mobil-tətbiq,CRM,ERP'),
-            'image'       => $this->resolveImage($meta, $menu ?? null, $defaultMeta, $site_settings),
+            'site_title' => $meta->title ?? $defaultMeta->title ?? config('seo.defaults.site_title', 'Proweb Creative Agency'),
+            'title' => $meta->title ?? $defaultMeta->title ?? config('seo.defaults.title', 'Proweb.az'),
+            'description' => $meta->description ?? $defaultMeta->description ?? config('seo.defaults.description', 'Proweb - Veb saytların yaradılması'),
+            'keywords' => $meta->keywords ?? $defaultMeta->keywords ?? config('seo.defaults.keywords', 'veb-sayt,mobil-tətbiq,CRM,ERP'),
+            'image' => $this->resolveImage($meta, $menu ?? null, $defaultMeta, $site_settings),
         ];
     }
-
 
     /**
      * Meta şəkili həll edir
@@ -57,7 +56,7 @@ class MetaService
         }
 
         // 2. Default meta image
-        if ($defaultMeta && !empty($defaultMeta->image)) {
+        if ($defaultMeta && ! empty($defaultMeta->image)) {
             return $defaultMeta->image_url ?? null;
         }
 
@@ -65,19 +64,17 @@ class MetaService
         return $siteSettings->logo_light_url ?? null;
     }
 
-
     /**
      * Derlenen meta'yı Blade için paylaşır.
      */
     public static function share(array $meta): void
     {
-        view()->share('site_title',       Arr::get($meta, 'site_title'));
-        view()->share('meta_title',       Arr::get($meta, 'title'));
+        view()->share('site_title', Arr::get($meta, 'site_title'));
+        view()->share('meta_title', Arr::get($meta, 'title'));
         view()->share('meta_description', Arr::get($meta, 'description'));
-        view()->share('meta_keywords',    Arr::get($meta, 'keywords'));
-        view()->share('meta_image',       Arr::get($meta, 'image'));
+        view()->share('meta_keywords', Arr::get($meta, 'keywords'));
+        view()->share('meta_image', Arr::get($meta, 'image'));
     }
-
 
     /**
      * Controller-dən single item meta paylaşmaq üçün
@@ -85,13 +82,12 @@ class MetaService
      */
     public static function sharePageMeta(array $meta): void
     {
-        view()->share('site_title',       Arr::get($meta, 'title'));
-        view()->share('meta_title',       Arr::get($meta, 'title'));
+        view()->share('site_title', Arr::get($meta, 'title'));
+        view()->share('meta_title', Arr::get($meta, 'title'));
         view()->share('meta_description', Arr::get($meta, 'description'));
-        view()->share('meta_keywords',    Arr::get($meta, 'keywords'));
-        view()->share('meta_image',       Arr::get($meta, 'image'));
+        view()->share('meta_keywords', Arr::get($meta, 'keywords'));
+        view()->share('meta_image', Arr::get($meta, 'image'));
     }
-
 
     /**
      * Kısa yol: menülerden meta üret + paylaş.
@@ -100,6 +96,7 @@ class MetaService
     {
         $meta = $this->compose($menus, $request);
         $this->share($meta);
+
         return $meta;
     }
 }

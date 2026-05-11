@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends BaseModel
 {
-    use AddUuid, HasFactory, SoftDeletes, Translation, MetaData;
+    use AddUuid, HasFactory, MetaData, SoftDeletes, Translation;
 
     protected $logEnabled = false;
 
@@ -55,13 +55,13 @@ class Category extends BaseModel
      * @var array
      */
     protected $casts = [
-        'is_active'    => 'boolean',
+        'is_active' => 'boolean',
         'show_in_home' => 'boolean',
         'show_in_menu' => 'boolean',
-        'sort_order'   => 'integer',
-        'home_order'   => 'integer',
-        'icon_type'    => SocialIconTypeEnum::class,
-        'created_at'   => 'datetime',
+        'sort_order' => 'integer',
+        'home_order' => 'integer',
+        'icon_type' => SocialIconTypeEnum::class,
+        'created_at' => 'datetime',
     ];
 
     // ──────────────────────────────────────
@@ -107,10 +107,10 @@ class Category extends BaseModel
         }
 
         if ($this->icon_type === SocialIconTypeEnum::Image) {
-            return '<img src="' . e(asset($this->icon)) . '" alt="category" style="width:20px;height:20px;object-fit:contain;">';
+            return '<img src="'.e(asset($this->icon)).'" alt="category" style="width:20px;height:20px;object-fit:contain;">';
         }
 
-        return '<i class="' . e($this->icon) . '"></i>';
+        return '<i class="'.e($this->icon).'"></i>';
     }
 
     public function getIconValueAttribute(): string

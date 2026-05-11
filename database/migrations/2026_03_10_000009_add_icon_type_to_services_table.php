@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('services', function (Blueprint $table) {
-            if (!Schema::hasColumn('services', 'icon_type')) {
+            if (! Schema::hasColumn('services', 'icon_type')) {
                 $table->string('icon_type')->default('font')->after('sort_order');
             }
         });

@@ -9,16 +9,17 @@ use Livewire\Form;
 class AdminForm extends Form
 {
     public array $form = [
-        'id'        => null,
+        'id' => null,
         'full_name' => '',
-        'email'     => '',
-        'image'     => '',
+        'email' => '',
+        'image' => '',
         'is_active' => true,
-        'is_super'  => false,
-        'role_id'   => null,
+        'is_super' => false,
+        'role_id' => null,
     ];
 
     public string $password = '';
+
     public string $password_confirmation = '';
 
     public mixed $upload = null;
@@ -29,14 +30,14 @@ class AdminForm extends Form
 
         return [
             'form.full_name' => ['required', 'string', 'max:120'],
-            'form.email'     => ['required', 'email', 'max:160', "unique:admins,email,{$id}"],
+            'form.email' => ['required', 'email', 'max:160', "unique:admins,email,{$id}"],
             'form.is_active' => 'boolean',
-            'form.is_super'  => 'boolean',
-            'form.role_id'   => ['nullable', 'integer', 'exists:roles,id'],
-            'password'       => $this->form['id']
+            'form.is_super' => 'boolean',
+            'form.role_id' => ['nullable', 'integer', 'exists:roles,id'],
+            'password' => $this->form['id']
                 ? ['nullable', 'string', 'min:6', 'confirmed']
                 : ['required', 'string', 'min:6', 'confirmed'],
-            'upload'         => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'upload' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ];
     }
 
@@ -45,13 +46,13 @@ class AdminForm extends Form
         $roleId = $admin->roles->first()?->id;
 
         $this->form = [
-            'id'        => $admin->id,
+            'id' => $admin->id,
             'full_name' => $admin->full_name ?? '',
-            'email'     => $admin->email ?? '',
-            'image'     => $admin->image ?? '',
+            'email' => $admin->email ?? '',
+            'image' => $admin->image ?? '',
             'is_active' => (bool) ($admin->is_active ?? true),
-            'is_super'  => (bool) ($admin->is_super ?? false),
-            'role_id'   => $roleId,
+            'is_super' => (bool) ($admin->is_super ?? false),
+            'role_id' => $roleId,
         ];
 
         $this->password = '';
@@ -66,10 +67,10 @@ class AdminForm extends Form
             upload: $this->upload,
         );
 
-        $this->form['id']            = $admin->id;
-        $this->password              = '';
+        $this->form['id'] = $admin->id;
+        $this->password = '';
         $this->password_confirmation = '';
-        $this->upload                = null;
+        $this->upload = null;
 
         return $admin;
     }

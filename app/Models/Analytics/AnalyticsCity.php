@@ -44,7 +44,7 @@ class AnalyticsCity extends BaseModel
         $this->increment('hit_count');
         $this->last_visited_at = now();
 
-        if (!$this->first_visited_at) {
+        if (! $this->first_visited_at) {
             $this->first_visited_at = now();
         }
 

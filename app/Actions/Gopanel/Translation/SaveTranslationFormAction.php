@@ -17,8 +17,6 @@ class SaveTranslationFormAction
      *
      * @param  array{key:string,platform:string,group:string,filename:string}  $form
      * @param  array<string,string>  $values  locale => translated value
-     * @param  string|null  $originalKey
-     * @param  string|null  $originalPlatform
      */
     public function handle(
         array $form,
@@ -39,13 +37,13 @@ class SaveTranslationFormAction
             foreach ($values as $locale => $value) {
                 Translation::updateOrCreate(
                     [
-                        'key'      => $form['key'],
+                        'key' => $form['key'],
                         'platform' => $form['platform'],
-                        'locale'   => $locale,
+                        'locale' => $locale,
                     ],
                     [
-                        'value'    => $value,
-                        'group'    => $form['group'],
+                        'value' => $value,
+                        'group' => $form['group'],
                         'filename' => $form['filename'] ?: null,
                     ]
                 );

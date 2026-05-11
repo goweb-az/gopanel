@@ -23,11 +23,11 @@ trait HasArchive
 
     public function scopeArchived($query)
     {
-        return $query->whereNotNull($query->getTable() . 'archived_at');
+        return $query->whereNotNull($query->getTable().'archived_at');
     }
 
     public function scopeNotArchived($query)
     {
-        return $query->whereNull($query->getTable() . 'archived_at');
+        return $query->whereNull($query->getTable().'archived_at');
     }
 }

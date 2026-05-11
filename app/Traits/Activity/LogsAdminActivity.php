@@ -22,7 +22,7 @@ trait LogsAdminActivity
 
         $modelName = class_basename($this);
 
-        if (!config("custom.activity_messages.{$modelName}")) {
+        if (! config("custom.activity_messages.{$modelName}")) {
             return false;
         }
 

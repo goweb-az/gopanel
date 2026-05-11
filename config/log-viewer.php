@@ -77,7 +77,6 @@ return [
         \App\Http\Middleware\AuthLogViewer::class,
     ],
 
-
     /*
     |--------------------------------------------------------------------------
     | Log Viewer API middleware.

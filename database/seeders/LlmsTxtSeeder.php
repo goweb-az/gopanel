@@ -21,7 +21,7 @@ class LlmsTxtSeeder extends Seeder
     private function defaultContent(): string
     {
         $appName = config('app.name', 'Gopanel');
-        $appUrl  = config('app.url', 'https://example.com');
+        $appUrl = config('app.url', 'https://example.com');
 
         return <<<TXT
 # {$appName}

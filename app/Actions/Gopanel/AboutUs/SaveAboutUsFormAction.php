@@ -27,7 +27,7 @@ class SaveAboutUsFormAction
             if ($upload) {
                 $form['image'] = FileUploader::toPublic(
                     $upload,
-                    (new AboutUs())->getTable(),
+                    (new AboutUs)->getTable(),
                     FileUploader::nameGenerate(['title' => $translations['az']['title'] ?? 'about-us'], 'about-us'),
                 );
             }

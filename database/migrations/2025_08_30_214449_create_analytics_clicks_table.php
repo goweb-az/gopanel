@@ -22,7 +22,7 @@ return new class extends Migration
             $table->decimal('latitude', 10, 7)->nullable();
             $table->decimal('longitude', 10, 7)->nullable();
             $table->string('isp', 255)->nullable();
-            $table->string("url")->nullable();
+            $table->string('url')->nullable();
             $table->text('referer')->nullable();
 
             $table->timestamps();

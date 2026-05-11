@@ -28,7 +28,7 @@ class GeneralController extends Controller
     public function add(Request $request)
     {
         try {
-            if (!$request->has('key')) {
+            if (! $request->has('key')) {
                 throw new Exception('Melumatlar duzgun gonderilmeyib');
             }
 
@@ -38,12 +38,12 @@ class GeneralController extends Controller
             $this->response['request'] = $request->all();
             $attributes = $request->except(['key', 'hash']);
 
-            if (!class_exists($class)) {
+            if (! class_exists($class)) {
                 throw new Exception("Bele bir key movcud deyil ({$morph})");
             }
 
             $modelInstance = app($class);
-            $item = new $modelInstance();
+            $item = new $modelInstance;
 
             foreach ($attributes as $key => $value) {
                 $item->$key = $value;
@@ -65,7 +65,7 @@ class GeneralController extends Controller
     public function edit(Request $request)
     {
         try {
-            if (!$request->has('id') || !$request->has('key')) {
+            if (! $request->has('id') || ! $request->has('key')) {
                 throw new Exception('Melumatlar duzgun gonderilmeyib');
             }
 
@@ -76,16 +76,17 @@ class GeneralController extends Controller
             $this->response['request'] = $request->all();
             $attributes = $request->except(['id', 'key']);
 
-            if (!class_exists($class)) {
+            if (! class_exists($class)) {
                 throw new Exception("Bele bir model movcud deyil ({$class})");
             }
 
             $modelInstance = app($class);
             $item = $this->resolveItem($modelInstance, $id);
 
-            if (!isset($item->id)) {
+            if (! isset($item->id)) {
                 $this->response['data'] = $item;
                 $this->response['message'] = 'Gonderilen id-e uygun hec bir melumat tapilmadi';
+
                 return $this->response_json();
             }
 
@@ -118,7 +119,7 @@ class GeneralController extends Controller
             $class = ModelList::get($request->key) ?? $request->key;
             $hard = $request->has('hard') && $request->hard == 'true';
 
-            if (!class_exists($class)) {
+            if (! class_exists($class)) {
                 throw new Exception("Bele bir model movcud deyil ({$class})");
             }
 
@@ -126,9 +127,10 @@ class GeneralController extends Controller
             $column = is_numeric($id) && (int) $id == $id ? 'id' : 'uid';
             $item = $modelInstance->where($column, $id)->first();
 
-            if (!isset($item->id)) {
+            if (! isset($item->id)) {
                 $this->response['data'] = $item;
                 $this->response['message'] = 'Gonderilen id-e uygun hec bir melumat tapilmadi';
+
                 return $this->response_json();
             }
 
@@ -158,15 +160,15 @@ class GeneralController extends Controller
         $this->response['request'] = $request->all();
 
         try {
-            if (!$request->has('id') || !$request->has('model')) {
+            if (! $request->has('id') || ! $request->has('model')) {
                 throw new Exception('Melumatlar duzgun gonderilmeyib');
             }
 
-            $class = '\\' . str_replace('\\\\', '\\', $request->model);
+            $class = '\\'.str_replace('\\\\', '\\', $request->model);
             $id = $request->id;
             $row = $request->row;
 
-            if (!class_exists($class)) {
+            if (! class_exists($class)) {
                 throw new Exception("Bele bir model movcud deyil ({$class})");
             }
 
@@ -174,7 +176,7 @@ class GeneralController extends Controller
             $item = $this->resolveItem($modelInstance, $id);
             $item->$row = $request->value;
 
-            if (!$item->save()) {
+            if (! $item->save()) {
                 throw new Exception('Xeta bash verdi');
             }
 
@@ -189,7 +191,7 @@ class GeneralController extends Controller
     public function statusChange(Request $request)
     {
         try {
-            if (!$request->has('status') || !$request->has('id')) {
+            if (! $request->has('status') || ! $request->has('id')) {
                 throw new Exception('Melumatlar duzgun gonderilmeyib');
             }
 
@@ -198,16 +200,17 @@ class GeneralController extends Controller
             $id = $request->id;
             $row = $request->row;
 
-            if (!$this->service->class_exists($class)) {
+            if (! $this->service->class_exists($class)) {
                 throw new Exception("Bele bir model movcud deyil ({$class})");
             }
 
             $modelInstance = $this->service->modelInstance($class);
             $item = $this->resolveItem($modelInstance, $id);
 
-            if (!isset($item->id) || !isset($item->$row)) {
+            if (! isset($item->id) || ! isset($item->$row)) {
                 $this->response['data'] = $item;
                 $this->response['message'] = 'Gonderilen id-e uygun hec bir melumat tapilmadi';
+
                 return $this->response_json();
             }
 
@@ -232,14 +235,14 @@ class GeneralController extends Controller
             $counter = 0;
             $updatedData = [];
 
-            if (!class_exists($requestModel)) {
+            if (! class_exists($requestModel)) {
                 throw new Exception("Bele bir model movcud deyil ({$requestModel})");
             }
 
             $modelInstance = app($requestModel);
             parse_str(urldecode($rows), $rows);
 
-            if (!isset($rows['item']) || !count($rows['item'])) {
+            if (! isset($rows['item']) || ! count($rows['item'])) {
                 throw new Exception('Gonderilen melumat tapilmadi');
             }
 
@@ -272,7 +275,7 @@ class GeneralController extends Controller
     public function archive(Request $request)
     {
         try {
-            if (!$request->has('id')) {
+            if (! $request->has('id')) {
                 throw new Exception('Melumatlar duzgun gonderilmeyib');
             }
 
@@ -281,16 +284,17 @@ class GeneralController extends Controller
             $hash = $request->hash;
             $class = $this->service->getMorphClass($class, $hash);
 
-            if (!class_exists($class)) {
+            if (! class_exists($class)) {
                 throw new Exception("Bele bir model movcud deyil ({$class})");
             }
 
             $modelInstance = app($class);
             $item = $this->resolveItem($modelInstance, $id);
 
-            if (!isset($item->id)) {
+            if (! isset($item->id)) {
                 $this->response['data'] = $item;
                 $this->response['message'] = 'Gonderilen id-e uygun hec bir melumat tapilmadi';
+
                 return $this->response_json();
             }
 

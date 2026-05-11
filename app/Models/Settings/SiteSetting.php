@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Cache;
 
 class SiteSetting extends BaseModel
 {
-    use HasFactory, SoftDeletes, MetaData;
+    use HasFactory, MetaData, SoftDeletes;
 
     protected $logEnabled = true;
 
@@ -29,21 +29,21 @@ class SiteSetting extends BaseModel
     ];
 
     protected $casts = [
-        'site_status'          => 'boolean',
-        'login_status'         => 'boolean',
-        'register_status'      => 'boolean',
-        'payment_status'       => 'boolean',
+        'site_status' => 'boolean',
+        'login_status' => 'boolean',
+        'register_status' => 'boolean',
+        'payment_status' => 'boolean',
         'site_redirect_status' => 'boolean',
-        'site_analytics'       => 'boolean',
-        'block_bad_bots'       => 'boolean',
+        'site_analytics' => 'boolean',
+        'block_bad_bots' => 'boolean',
     ];
 
     protected $files = ['logo_light', 'logo_dark', 'mail_logo', 'gopanel_logo'];
 
-
     public static function getCached($locale = null)
     {
         $locale = $locale ?? app()->getLocale();
+
         return Cache::rememberForever("site_settings{$locale}", function () {
             return self::latest()->first();
         });

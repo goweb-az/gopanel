@@ -19,6 +19,7 @@ class SyncAdminRoleAction
     {
         if ($roleId === null) {
             $admin->syncRoles([]);
+
             return;
         }
 

@@ -11,7 +11,7 @@ class BlogModuleTest extends TestCase
 {
     public function test_blog_model_configuration_is_ready(): void
     {
-        $blog = new Blog();
+        $blog = new Blog;
 
         $this->assertSame('blogs', $blog->getTable());
         $this->assertSame(['title', 'description', 'slug'], $blog->translatedAttributes);
@@ -29,7 +29,7 @@ class BlogModuleTest extends TestCase
     public function test_blog_uses_datatable_and_form_includes_metadata(): void
     {
         $index = file_get_contents(base_path('resources/views/gopanel/pages/blog/index.blade.php'));
-        $form  = file_get_contents(base_path('resources/views/gopanel/pages/blog/partials/form.blade.php'));
+        $form = file_get_contents(base_path('resources/views/gopanel/pages/blog/partials/form.blade.php'));
 
         $this->assertStringContainsString("'__datatableName' => 'gopanel.blog'", $index);
         $this->assertStringContainsString('id="static-form"', $form);

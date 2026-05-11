@@ -14,10 +14,10 @@ class SyncModelMetaAction
     public function handle(Model $model, array $meta, array $uploads = []): void
     {
         foreach ($meta as $locale => $fields) {
-            $title       = $fields['title'] ?? '';
+            $title = $fields['title'] ?? '';
             $description = $fields['description'] ?? '';
-            $keywords    = $fields['keywords'] ?? '';
-            $image       = $fields['image'] ?? '';
+            $keywords = $fields['keywords'] ?? '';
+            $image = $fields['image'] ?? '';
 
             $upload = $uploads[$locale] ?? null;
             if ($upload instanceof UploadedFile) {
@@ -33,20 +33,21 @@ class SyncModelMetaAction
                     ->where('model_id', $model->getKey())
                     ->where('locale', $locale)
                     ->delete();
+
                 continue;
             }
 
             PageMetaData::updateOrCreate(
                 [
                     'model_type' => $model->getMorphClass(),
-                    'model_id'   => $model->getKey(),
-                    'locale'     => $locale,
+                    'model_id' => $model->getKey(),
+                    'locale' => $locale,
                 ],
                 [
-                    'title'       => $title,
+                    'title' => $title,
                     'description' => $description,
-                    'keywords'    => $keywords,
-                    'image'       => $image,
+                    'keywords' => $keywords,
+                    'image' => $image,
                 ]
             );
         }

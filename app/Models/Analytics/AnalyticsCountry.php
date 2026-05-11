@@ -45,18 +45,19 @@ class AnalyticsCountry extends BaseModel
         $this->increment('hit_count');
         $this->last_visited_at = now();
 
-        if (!$this->first_visited_at) {
+        if (! $this->first_visited_at) {
             $this->first_visited_at = now();
         }
 
         $this->save();
     }
 
-
     public function getFlagImgAttribute()
     {
-        if (is_null($this->flag))
+        if (is_null($this->flag)) {
             return null;
-        return '<img src="' . $this->flag . '" width="25" alt="">';
+        }
+
+        return '<img src="'.$this->flag.'" width="25" alt="">';
     }
 }

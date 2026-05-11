@@ -17,7 +17,7 @@ class LocaleManager
 
     public function all(): Collection
     {
-        if (!$this->hasTable()) {
+        if (! $this->hasTable()) {
             return collect();
         }
 
@@ -26,7 +26,7 @@ class LocaleManager
 
     public function default(): ?Language
     {
-        if (!$this->hasTable()) {
+        if (! $this->hasTable()) {
             return null;
         }
 
@@ -35,7 +35,7 @@ class LocaleManager
 
     public function defaultCode(string $fallback = 'az'): string
     {
-        if (!$this->hasTable()) {
+        if (! $this->hasTable()) {
             return $fallback;
         }
 

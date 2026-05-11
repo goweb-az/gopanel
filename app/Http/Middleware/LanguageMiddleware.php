@@ -26,18 +26,20 @@ class LanguageMiddleware
 
     private function language(Request $request): ?Response
     {
-        if (!Schema::hasTable('languages')) {
+        if (! Schema::hasTable('languages')) {
             App::setLocale(config('app.locale', 'az'));
+
             return null;
         }
 
         $defaultLanguage = Language::getDefaultCode(config('app.locale', 'az'));
         $languages = Language::where('is_active', 1)->pluck('code')->toArray();
 
-        if (!count($languages)) {
+        if (! count($languages)) {
             Log::channel('site')->warning('Diller yaradilmayib [log LanguageMiddleware faylindan yazilib]');
             App::setLocale($defaultLanguage);
             Session::put('locale', $defaultLanguage);
+
             return null;
         }
 
@@ -49,14 +51,14 @@ class LanguageMiddleware
 
         $language = $routeLanguage;
 
-        if (!$language || !in_array($language, $languages, true)) {
+        if (! $language || ! in_array($language, $languages, true)) {
             $sessionLanguage = Session::get('locale');
             $language = in_array($sessionLanguage, $languages, true)
                 ? $sessionLanguage
                 : $defaultLanguage;
         }
 
-        if (!$request->segment(1) && $request->path() === '/') {
+        if (! $request->segment(1) && $request->path() === '/') {
             App::setLocale($language);
             Session::put('locale', $language);
 
@@ -66,6 +68,7 @@ class LanguageMiddleware
         if (in_array($language, $languages, true)) {
             App::setLocale($language);
             Session::put('locale', $language);
+
             return null;
         }
 

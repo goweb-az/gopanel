@@ -21,8 +21,9 @@ class CitiesSeeder extends Seeder
                 $countryData
             );
 
-            if (!$hasCitiesTable) {
-                $this->command?->warn('  - cities cedveli yoxdur, yalniz olke yenilendi: ' . $country->name);
+            if (! $hasCitiesTable) {
+                $this->command?->warn('  - cities cedveli yoxdur, yalniz olke yenilendi: '.$country->name);
+
                 continue;
             }
 
@@ -30,16 +31,16 @@ class CitiesSeeder extends Seeder
                 City::updateOrCreate(
                     [
                         'country_id' => $country->id,
-                        'name'       => $cityData['name'],
+                        'name' => $cityData['name'],
                     ],
                     array_merge($cityData, [
                         'country_id' => $country->id,
-                        'is_active'  => $cityData['is_active'] ?? true,
+                        'is_active' => $cityData['is_active'] ?? true,
                     ])
                 );
             }
 
-            $this->command?->line('  - ' . $country->name . ': ' . count($this->cities()[$countryData['code']] ?? []) . ' seher');
+            $this->command?->line('  - '.$country->name.': '.count($this->cities()[$countryData['code']] ?? []).' seher');
         }
     }
 

@@ -288,10 +288,10 @@ class CategorySeeder extends Seeder
             }
 
             $category->update($payload);
-            $this->command?->line('  - movcuddur, yenilendi: ' . ($data['slug']['az'] ?? '-'));
+            $this->command?->line('  - movcuddur, yenilendi: '.($data['slug']['az'] ?? '-'));
         } else {
             $category = Category::create($payload);
-            $this->command?->line('  + elave edildi: ' . ($data['slug']['az'] ?? '-'));
+            $this->command?->line('  + elave edildi: '.($data['slug']['az'] ?? '-'));
         }
 
         TranslationHelper::basic($category, $data['name'], 'name');
@@ -327,7 +327,7 @@ class CategorySeeder extends Seeder
 
     private function findCategoryBySlug(?string $slug): ?Category
     {
-        if (!$slug) {
+        if (! $slug) {
             return null;
         }
 

@@ -31,7 +31,7 @@ class Activity extends BaseActivity
             'created' => 'success',
             'updated' => 'warning',
             'deleted' => 'danger',
-            default   => 'secondary',
+            default => 'secondary',
         };
     }
 
@@ -41,34 +41,36 @@ class Activity extends BaseActivity
             'created' => 'Yaradıldı',
             'updated' => 'Yeniləndi',
             'deleted' => 'Silindi',
-            default   => $this->event ?? '-',
+            default => $this->event ?? '-',
         };
     }
 
     public function getEventBadgeAttribute(): string
     {
-        return '<span class="badge bg-' . $this->event_color . '" style="font-size:13px;padding:5px 10px;">' . $this->event_label . '</span>';
+        return '<span class="badge bg-'.$this->event_color.'" style="font-size:13px;padding:5px 10px;">'.$this->event_label.'</span>';
     }
 
     public function getLogNameTitleAttribute(): string
     {
         $allMessages = config('custom.activity_messages', []);
+
         return $allMessages[$this->log_name]['title'] ?? $this->log_name ?: '-';
     }
 
     public function getLogNameBadgeAttribute(): string
     {
-        return '<span class="badge bg-primary bg-opacity-10 text-primary" style="font-size:13px;padding:5px 10px;">' . e($this->log_name_title) . '</span>';
+        return '<span class="badge bg-primary bg-opacity-10 text-primary" style="font-size:13px;padding:5px 10px;">'.e($this->log_name_title).'</span>';
     }
 
     public function getCauserNameAttribute(): string
     {
-        if (!$this->causer) {
+        if (! $this->causer) {
             return '-';
         }
 
         $causer = $this->causer;
-        $name = $causer->full_name ?? (($causer->name ?? '') . ' ' . ($causer->surname ?? ''));
+        $name = $causer->full_name ?? (($causer->name ?? '').' '.($causer->surname ?? ''));
+
         return trim($name) ?: '-';
     }
 
@@ -77,7 +79,8 @@ class Activity extends BaseActivity
         $msg = $this->description ?? '-';
         $short = mb_substr($msg, 0, 60);
         $dots = mb_strlen($msg) > 60 ? '...' : '';
-        return '<span title="' . e($msg) . '">' . e($short) . $dots . '</span>';
+
+        return '<span title="'.e($msg).'">'.e($short).$dots.'</span>';
     }
 
     public function getCreatedAtFormattedAttribute(): string

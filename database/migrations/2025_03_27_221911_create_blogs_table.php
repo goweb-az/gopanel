@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('blogs', function (Blueprint $table) {
             $table->id();
-            $table->integer("views")->default(0);
+            $table->integer('views')->default(0);
             $table->boolean('is_active')->default(true);
             $table->string('image')->nullable();
             $table->timestamp('date_time');

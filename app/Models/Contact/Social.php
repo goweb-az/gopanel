@@ -24,9 +24,9 @@ class Social extends BaseModel
     ];
 
     protected $casts = [
-        'is_active'     => 'boolean',
-        'target_blank'  => 'boolean',
-        'icon_type'     => SocialIconTypeEnum::class,
+        'is_active' => 'boolean',
+        'target_blank' => 'boolean',
+        'icon_type' => SocialIconTypeEnum::class,
     ];
 
     protected static function booted()
@@ -36,12 +36,12 @@ class Social extends BaseModel
         });
     }
 
-
     public function getIconHtmlAttribute(): string
     {
         if ($this->icon_type === SocialIconTypeEnum::Image) {
             $url = asset($this->icon);
-            return '<img src="' . e($url) . '" alt="' . e($this->name) . '">';
+
+            return '<img src="'.e($url).'" alt="'.e($this->name).'">';
         }
 
         if (in_array($this->icon_type->value, SocialIconTypeEnum::values())) {
@@ -61,7 +61,7 @@ class Social extends BaseModel
     public static function getCached(): ?Collection
     {
         return Cache::rememberForever('social_links', function () {
-            return self::where("is_active", true)->get();
+            return self::where('is_active', true)->get();
         });
     }
 }

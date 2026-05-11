@@ -50,18 +50,18 @@ return [
 
     // GitHub repo konfiqurasiyası
     'github' => [
-        'owner'  => env('GOPANEL_GITHUB_OWNER', 'goweb-az'),   // GitHub istifadəçi/təşkilat adı
-        'repo'   => env('GOPANEL_GITHUB_REPO', 'gopanel'),      // Repo adı
+        'owner' => env('GOPANEL_GITHUB_OWNER', 'goweb-az'),   // GitHub istifadəçi/təşkilat adı
+        'repo' => env('GOPANEL_GITHUB_REPO', 'gopanel'),      // Repo adı
         'branch' => env('GOPANEL_GITHUB_BRANCH', 'master'),     // Yeniləmə branch-ı (master = stabil)
-        'token'  => env('GOPANEL_GITHUB_TOKEN', null),           // GitHub Personal Access Token (rate limit artırmaq üçün)
+        'token' => env('GOPANEL_GITHUB_TOKEN', null),           // GitHub Personal Access Token (rate limit artırmaq üçün)
     ],
 
     // Backup qovluğu — yeniləmədən əvvəl köhnə fayllar burada saxlanılır
-    'backup_path'  => storage_path('app/gopanel-backups'),
+    'backup_path' => storage_path('app/gopanel-backups'),
 
     // Lokal versiya faylı — cari qurulmuş versiya və tarixçə burada saxlanılır
     'version_file' => base_path('gopanel_version.json'),
 
     // Manifest fayl adı — GitHub repo-da bu adla axtarılır
-    'manifest'     => 'gopanel_updates.json',
+    'manifest' => 'gopanel_updates.json',
 ];

@@ -11,7 +11,7 @@ class ArchivedScope implements Scope
     public function apply(Builder $builder, Model $model)
     {
         // $builder->whereNull('archived_at');
-        $builder->whereNull($model->getTable() . '.archived_at');
+        $builder->whereNull($model->getTable().'.archived_at');
     }
 
     public function extend(Builder $builder)
@@ -22,7 +22,8 @@ class ArchivedScope implements Scope
 
         $builder->macro('onlyArchived', function (Builder $builder) {
             $model = $builder->getModel();
-            return $builder->withoutGlobalScope($this)->whereNotNull($model->getTable() . '.archived_at');
+
+            return $builder->withoutGlobalScope($this)->whereNotNull($model->getTable().'.archived_at');
         });
     }
 }

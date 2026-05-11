@@ -2,25 +2,25 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
+use App\Models\Geography\Language;
+use App\Models\Translations\Translation;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\ServiceProvider;
 use Illuminate\Translation\Translator;
-use App\Models\Translations\Translation;
-use App\Models\Geography\Language;
 
 class TranslationServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        // 
+        //
     }
 
     public function boot()
     {
         try {
-            if (!Schema::hasTable('languages') || !Schema::hasTable('translations')) {
+            if (! Schema::hasTable('languages') || ! Schema::hasTable('translations')) {
                 return;
             }
 
@@ -43,12 +43,9 @@ class TranslationServiceProvider extends ServiceProvider
                 $this->siteTranslations($locale, app('translator'));
             }
         } catch (\Exception $e) {
-            Log::warning('TranslationServiceProvider: ' . $e->getMessage());
+            Log::warning('TranslationServiceProvider: '.$e->getMessage());
         }
     }
-
-
-
 
     public function siteTranslations($locale, $translator)
     {
@@ -62,18 +59,20 @@ class TranslationServiceProvider extends ServiceProvider
                 ->mapWithKeys(function ($item) {
                     // group varsa: group.key, yoxdursa sadəcə key
                     $key = $item->group ? "{$item->group}.{$item->key}" : $item->key;
+
                     return [$key => $item->value];
                 })
                 ->toArray();
         });
 
         // Əlavə et translator-a
-        if (!empty($translations)) {
+        if (! empty($translations)) {
             $translator->addLines($translations, $locale);
             // Log::info("Translations added for locale: {$locale}"); // ['keys' => array_keys($translations)]
         } else {
             Log::warning("No translations found for locale: {$locale}");
         }
+
         return $translator;
     }
 }

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Slider extends BaseModel
 {
-    use SoftDeletes, HasFactory, Translation;
+    use HasFactory, SoftDeletes, Translation;
 
     protected $table = 'sliders';
 
@@ -23,11 +23,9 @@ class Slider extends BaseModel
 
     protected $logEnabled = false;
 
-
     protected $files = ['image'];
 
     public $translatedAttributes = ['title', 'description', 'link_title'];
-
 
     protected static function booted()
     {

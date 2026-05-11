@@ -16,12 +16,13 @@ trait AddUuid
         });
     }
 
-
     public static function findByUid($uid)
     {
-        $item = self::where("uid", $uid)->first();
-        if (!$item)
-            throw new NotFoundHttpException("Məlumat tapılmadı");
+        $item = self::where('uid', $uid)->first();
+        if (! $item) {
+            throw new NotFoundHttpException('Məlumat tapılmadı');
+        }
+
         return $item;
     }
 }

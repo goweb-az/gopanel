@@ -4,9 +4,8 @@ namespace App\Services\Site\Seo;
 
 use App\Helpers\Analytics\GeoIpHelper;
 use App\Helpers\Analytics\TrackingHelper;
-use App\Repositories\AnalyticsRepository;
 use App\Models\Analytics\AnalyticsClick;
-use App\Models\Geography\Language;
+use App\Repositories\AnalyticsRepository;
 
 class AnalyticsService
 {
@@ -17,53 +16,53 @@ class AnalyticsService
     public function __construct(AnalyticsRepository $repository)
     {
         $this->repository = $repository;
-        $this->config = config("seo.analytics");
+        $this->config = config('seo.analytics');
     }
 
     public function register(array $data): AnalyticsClick
     {
-        $ip         = $data['ip_address']      ?? request()->ip();
-        $userAgent  = $data['user_agent']      ?? request()->userAgent();
+        $ip = $data['ip_address'] ?? request()->ip();
+        $userAgent = $data['user_agent'] ?? request()->userAgent();
         $acceptLang = $data['accept_language'] ?? request()->header('Accept-Language');
-        $referer    = TrackingHelper::clamp($data['referer'] ?? request()->headers->get('referer'), 2048);
-        $url        = TrackingHelper::clamp($data['url']     ?? request()->fullUrl(), 2048);
-        $rawUrl     = TrackingHelper::clamp($data['url'] ?? request()->fullUrl(), 2048);
+        $referer = TrackingHelper::clamp($data['referer'] ?? request()->headers->get('referer'), 2048);
+        $url = TrackingHelper::clamp($data['url'] ?? request()->fullUrl(), 2048);
+        $rawUrl = TrackingHelper::clamp($data['url'] ?? request()->fullUrl(), 2048);
 
         [$cleanUrl, $cleanPath] = $this->sanitizeUrlAndPath($rawUrl);
-        $languageFull           = TrackingHelper::normalizeLanguageFull($acceptLang);
-        $languageCode           = TrackingHelper::parseLanguageCode($languageFull);
+        $languageFull = TrackingHelper::normalizeLanguageFull($acceptLang);
+        $languageCode = TrackingHelper::parseLanguageCode($languageFull);
 
         $countryName = $this->geoipCountry($ip);
         $countryFlag = $this->geoipCountryFlag($ip);
-        $countryIso  = $this->geoipCountryCode($ip);
-        $cityName    = $this->geoipCity($ip);
+        $countryIso = $this->geoipCountryCode($ip);
+        $cityName = $this->geoipCity($ip);
 
         $deviceData = $this->uaDeviceType($userAgent);
-        $osData      = $this->uaOs($userAgent);
+        $osData = $this->uaOs($userAgent);
         $browserData = $this->uaBrowser($userAgent);
 
-        $link    = $this->repository->registerLink(['locale' => $languageCode, 'slug' => $cleanPath, 'url' => $cleanUrl]);
-        $device  = $this->repository->registerDevice($deviceData['type'], $deviceData['icon']);
-        $os      = $this->repository->registerOperatingSystem($osData['name'] ?? null, $osData['logo'] ?? null);
+        $link = $this->repository->registerLink(['locale' => $languageCode, 'slug' => $cleanPath, 'url' => $cleanUrl]);
+        $device = $this->repository->registerDevice($deviceData['type'], $deviceData['icon']);
+        $os = $this->repository->registerOperatingSystem($osData['name'] ?? null, $osData['logo'] ?? null);
         $browser = $this->repository->registerBrowser($browserData['name'], $browserData['logo'] ?? null);
         $country = $this->repository->registerCountry($countryName, $countryIso, $countryFlag);
-        $city    = $this->repository->registerCity($cityName, $country?->id);
-        $lang    = $this->repository->registerLanguage($languageCode, TrackingHelper::languageNameFromCode($languageCode));
+        $city = $this->repository->registerCity($cityName, $country?->id);
+        $lang = $this->repository->registerLanguage($languageCode, TrackingHelper::languageNameFromCode($languageCode));
 
         $click = $this->repository->registerClick([
-            'link_id'     => $link?->id,
-            'device_id'   => $device?->id,
-            'os_id'       => $os?->id,
-            'browser_id'  => $browser?->id,
-            'country_id'  => $country?->id,
-            'city_id'     => $city?->id,
+            'link_id' => $link?->id,
+            'device_id' => $device?->id,
+            'os_id' => $os?->id,
+            'browser_id' => $browser?->id,
+            'country_id' => $country?->id,
+            'city_id' => $city?->id,
             'language_id' => $lang?->id,
-            'ip_address'  => $ip,
-            'latitude'    => $data['latitude'] ?? null,
-            'longitude'   => $data['longitude'] ?? null,
-            'isp'         => $data['isp'] ?? null,
-            'url'         => $url,
-            'referer'     => $referer,
+            'ip_address' => $ip,
+            'latitude' => $data['latitude'] ?? null,
+            'longitude' => $data['longitude'] ?? null,
+            'isp' => $data['isp'] ?? null,
+            'url' => $url,
+            'referer' => $referer,
         ]);
 
         $this->persistUtm($click, $data);
@@ -78,8 +77,8 @@ class AnalyticsService
         $cleanUrl = strtok($url, '#');
         $cleanUrl = strtok($cleanUrl, '?') ?: $cleanUrl;
 
-        $parsed   = parse_url($url);
-        $path     = $parsed['path'] ?? '/';
+        $parsed = parse_url($url);
+        $path = $parsed['path'] ?? '/';
 
         $path = preg_replace('#/{2,}#', '/', $path) ?: '/';
 
@@ -89,7 +88,6 @@ class AnalyticsService
 
         return [$cleanUrl, $path];
     }
-
 
     protected function persistUtm(AnalyticsClick $click, array $data): void
     {
@@ -101,12 +99,12 @@ class AnalyticsService
             ($data['utm_content'] ?? null)
         ) {
             $this->repository->registerUtmParameters([
-                'click_id'     => $click->id,
-                'utm_source'   => $data['utm_source']   ?? null,
-                'utm_medium'   => $data['utm_medium']   ?? null,
+                'click_id' => $click->id,
+                'utm_source' => $data['utm_source'] ?? null,
+                'utm_medium' => $data['utm_medium'] ?? null,
                 'utm_campaign' => $data['utm_campaign'] ?? null,
-                'utm_term'     => $data['utm_term']     ?? null,
-                'utm_content'  => $data['utm_content']  ?? null,
+                'utm_term' => $data['utm_term'] ?? null,
+                'utm_content' => $data['utm_content'] ?? null,
             ]);
         }
     }
@@ -118,20 +116,21 @@ class AnalyticsService
         $grouped = [];
 
         foreach ($map as $param => $platformName) {
-            if (!empty($data[$param])) {
+            if (! empty($data[$param])) {
                 $grouped[$platformName][$param] = $data[$param];
             }
         }
 
-        if (!empty($data['ad_platform']) && !empty($data['platform_data']) && is_array($data['platform_data'])) {
+        if (! empty($data['ad_platform']) && ! empty($data['platform_data']) && is_array($data['platform_data'])) {
             $pName = $data['ad_platform'];
             $grouped[$pName] = array_merge($grouped[$pName] ?? [], $data['platform_data']);
         }
-        if (empty($grouped))
+        if (empty($grouped)) {
             return;
+        }
 
         foreach ($grouped as $platformName => $pairs) {
-            if (empty($pairs) || !is_array($pairs)) {
+            if (empty($pairs) || ! is_array($pairs)) {
                 continue;
             }
             $platform = $this->repository->registerAdPlatform(
@@ -144,9 +143,9 @@ class AnalyticsService
                 }
 
                 $this->repository->registerAdPlatformData([
-                    'click_id'    => $click->id,
+                    'click_id' => $click->id,
                     'platform_id' => $platform->id,
-                    'param_key'   => (string) $paramKey,
+                    'param_key' => (string) $paramKey,
                     'param_value' => ($paramValue !== null) ? (string) $paramValue : null,
                 ]);
             }
@@ -155,11 +154,11 @@ class AnalyticsService
 
     protected function persistEvents(AnalyticsClick $click, array $data): void
     {
-        if (!empty($data['events']) && is_array($data['events'])) {
+        if (! empty($data['events']) && is_array($data['events'])) {
             foreach ($data['events'] as $event) {
                 $this->repository->registerEventLog([
-                    'click_id'    => $click->id,
-                    'event_type'  => $event['type']  ?? null,
+                    'click_id' => $click->id,
+                    'event_type' => $event['type'] ?? null,
                     'event_value' => $event['value'] ?? null,
                 ]);
             }
@@ -169,30 +168,34 @@ class AnalyticsService
     protected function geoipCountry(?string $ip): string
     {
         $geo = GeoIpHelper::geoipCountry($ip);
+
         return $geo['country'] ?? 'Unknown';
     }
 
     protected function geoipCountryCode(?string $ip): string
     {
         $geo = GeoIpHelper::geoipCountry($ip);
+
         return $geo['code'] ?? 'Unknown';
     }
 
     protected function geoipCountryFlag(?string $ip): ?string
     {
         $geo = GeoIpHelper::geoipCountry($ip);
+
         return $geo['flag_url'] ?? null;
     }
 
     protected function geoipCity(?string $ip): string
     {
         $geo = GeoIpHelper::geoipCity($ip);
+
         return $geo['city'] ?? 'Unknown';
     }
 
     protected function uaDeviceType(?string $ua): array
     {
-        if (!$ua) {
+        if (! $ua) {
             return ['type' => 'Desktop', 'icon' => $this->config['devices']['Desktop']['icon'] ?? null];
         }
 
@@ -210,11 +213,9 @@ class AnalyticsService
         return ['type' => 'Unknown', 'icon' => null];
     }
 
-
-
     protected function uaOs(?string $ua): array
     {
-        if (!$ua) {
+        if (! $ua) {
             return ['name' => 'Unknown', 'logo' => null];
         }
 
@@ -229,10 +230,9 @@ class AnalyticsService
         return ['name' => 'Other', 'logo' => null];
     }
 
-
     protected function uaBrowser(?string $ua): array
     {
-        if (!$ua) {
+        if (! $ua) {
             return ['name' => 'Unknown', 'logo' => null];
         }
 

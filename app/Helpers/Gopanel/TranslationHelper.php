@@ -10,8 +10,6 @@ class TranslationHelper
     /**
      * Create translations for the given item.
      *
-     * @param $item
-     * @param $request
      * @return void
      */
     public static function create($item, $request)
@@ -28,9 +26,6 @@ class TranslationHelper
     /**
      * Process the translations for a specific language.
      *
-     * @param $item
-     * @param $request
-     * @param $lang
      * @return void
      */
     private static function process($item, $request, $lang)
@@ -48,10 +43,6 @@ class TranslationHelper
     /**
      * Get the translated value for a given attribute and language.
      *
-     * @param $item
-     * @param $transAttribute
-     * @param $lang
-     * @param $request
      * @return string|null
      */
     private static function getTranslatedValue($item, $transAttribute, $lang, $request)
@@ -67,23 +58,22 @@ class TranslationHelper
             if (empty($request?->$transAttribute[$lang->code])) {
                 $newValue = null;
                 if ($titleValue) {
-                    $newValue = Str::slug($titleValue, "-", $lang->code);
+                    $newValue = Str::slug($titleValue, '-', $lang->code);
                 }
             } else {
                 $newValue = $request?->$transAttribute[$lang->code];
             }
 
-            if (!empty($item->slug_prefix[$lang->code]) && !empty($newValue)) {
+            if (! empty($item->slug_prefix[$lang->code]) && ! empty($newValue)) {
                 $prefix = Str::slug($item->slug_prefix[$lang->code], '-', $lang->code);
-                if (!Str::startsWith($newValue, $prefix)) {
-                    $newValue = $prefix . '-' . Str::slug($newValue, '-', $lang->code);
+                if (! Str::startsWith($newValue, $prefix)) {
+                    $newValue = $prefix.'-'.Str::slug($newValue, '-', $lang->code);
                 }
             }
         }
 
         return $newValue;
     }
-
 
     public static function basic($item, $data, $transAttribute)
     {

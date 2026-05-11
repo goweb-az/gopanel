@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Cache;
 class IconPickerHelper
 {
     private const CACHE_KEY = 'gopanel.icon_picker.list.v2';
+
     private const CACHE_TTL = 60 * 60 * 24 * 7;
 
     /**
@@ -19,8 +20,8 @@ class IconPickerHelper
      * Order is preserved in the response.
      */
     private const PROVIDERS = [
-        'fa'  => null, // FA needs special handling (brand vs regular vs solid)
-        'bx'  => ['pattern' => '/\.(bx-[a-z0-9-]+|bxs-[a-z0-9-]+|bxl-[a-z0-9-]+)::?before\{content:/', 'prefix' => 'bx '],
+        'fa' => null, // FA needs special handling (brand vs regular vs solid)
+        'bx' => ['pattern' => '/\.(bx-[a-z0-9-]+|bxs-[a-z0-9-]+|bxl-[a-z0-9-]+)::?before\{content:/', 'prefix' => 'bx '],
         'mdi' => ['pattern' => '/\.(mdi-[a-z0-9-]+)::?before\{content:/',                              'prefix' => 'mdi '],
         'drp' => ['pattern' => '/\.(dripicons-[a-z0-9-]+)::?before\{content:/',                        'prefix' => ''],
     ];
@@ -75,9 +76,10 @@ class IconPickerHelper
         preg_match_all($pattern, $css, $m);
 
         $unique = array_values(array_unique($m[1]));
-        $out    = array_map(fn ($cls) => $prefix . $cls, $unique);
+        $out = array_map(fn ($cls) => $prefix.$cls, $unique);
 
         sort($out);
+
         return $out;
     }
 
@@ -90,7 +92,7 @@ class IconPickerHelper
     {
         preg_match_all('/\.(fa-[a-z0-9-]+)::?before\{content:/', $css, $m);
 
-        $brands  = array_flip(config('gopanel.font_awesome_icons.brands', []));
+        $brands = array_flip(config('gopanel.font_awesome_icons.brands', []));
         $regular = array_flip(config('gopanel.font_awesome_icons.regular', []));
 
         $out = [];
@@ -98,16 +100,17 @@ class IconPickerHelper
             $name = substr($cls, 3); // strip "fa-" prefix
 
             if (isset($brands[$name])) {
-                $out[] = 'fab ' . $cls;
+                $out[] = 'fab '.$cls;
             } elseif (isset($regular[$name])) {
-                $out[] = 'fas ' . $cls;
-                $out[] = 'far ' . $cls;
+                $out[] = 'fas '.$cls;
+                $out[] = 'far '.$cls;
             } else {
-                $out[] = 'fas ' . $cls;
+                $out[] = 'fas '.$cls;
             }
         }
 
         sort($out);
+
         return array_values(array_unique($out));
     }
 }

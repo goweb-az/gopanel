@@ -8,13 +8,13 @@ class ContentResolver
     {
         $controller = $model->controller;
 
-        if (!class_exists($controller)) {
+        if (! class_exists($controller)) {
             abort(500, "Controller sinfi tapılmadı: {$controller}");
         }
 
         $controllerInstance = app($controller);
 
-        if (!method_exists($controllerInstance, 'single')) {
+        if (! method_exists($controllerInstance, 'single')) {
             abort(500, "{$controller} sinifində single() metodu tapılmadı.");
         }
 

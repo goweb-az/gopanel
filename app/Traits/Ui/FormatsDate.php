@@ -8,11 +8,12 @@ trait FormatsDate
 {
     public function formatDate(string $key, string $format = 'd F Y'): ?string
     {
-        if (!isset($this->$key) || empty($this->$key)) {
+        if (! isset($this->$key) || empty($this->$key)) {
             return null;
         }
 
         Carbon::setLocale('az');
+
         return Carbon::parse($this->$key)->translatedFormat($format);
     }
 

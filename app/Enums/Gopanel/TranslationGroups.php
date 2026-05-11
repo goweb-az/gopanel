@@ -4,9 +4,8 @@ namespace App\Enums\Gopanel;
 
 enum TranslationGroups: string
 {
-    case TITLE    = 'title';
-    case CONTENT  = 'content';
-
+    case TITLE = 'title';
+    case CONTENT = 'content';
 
     public function getLabel(): string
     {

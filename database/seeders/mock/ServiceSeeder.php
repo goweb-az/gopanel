@@ -70,10 +70,10 @@ class ServiceSeeder extends Seeder
                     $service->restore();
                 }
                 $service->update($payload);
-                $this->command?->line('  - movcuddur, yenilendi: ' . $data['title']['az']);
+                $this->command?->line('  - movcuddur, yenilendi: '.$data['title']['az']);
             } else {
                 $service = Service::create($payload);
-                $this->command?->line('  + elave edildi: ' . $data['title']['az']);
+                $this->command?->line('  + elave edildi: '.$data['title']['az']);
             }
 
             TranslationHelper::basic($service, $data['title'], 'title');

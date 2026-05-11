@@ -23,7 +23,7 @@ class SyncRolePermissionsAction
         $role->syncPermissions($permissions);
         $newPermissions = $role->fresh()->permissions->pluck('name')->toArray();
 
-        $added   = array_values(array_diff($newPermissions, $oldPermissions));
+        $added = array_values(array_diff($newPermissions, $oldPermissions));
         $removed = array_values(array_diff($oldPermissions, $newPermissions));
 
         if (empty($added) && empty($removed)) {
@@ -35,12 +35,12 @@ class SyncRolePermissionsAction
             ->causedBy(Auth::guard('gopanel')->user())
             ->event('updated')
             ->withProperties([
-                'old'        => ['permissions' => $oldPermissions],
+                'old' => ['permissions' => $oldPermissions],
                 'attributes' => ['permissions' => $newPermissions],
-                'added'      => $added,
-                'removed'    => $removed,
+                'added' => $added,
+                'removed' => $removed,
             ])
             ->useLog('CustomRole')
-            ->log(":causer «{$role->name}» vəzifəsinin icazələrini yenilədi (" . count($newPermissions) . ' icazə)');
+            ->log(":causer «{$role->name}» vəzifəsinin icazələrini yenilədi (".count($newPermissions).' icazə)');
     }
 }

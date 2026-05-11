@@ -13,9 +13,9 @@ use Livewire\Form;
 class TranslationForm extends Form
 {
     public array $form = [
-        'key'      => '',
+        'key' => '',
         'platform' => 'website',
-        'group'    => 'title',
+        'group' => 'title',
         'filename' => '',
     ];
 
@@ -30,12 +30,12 @@ class TranslationForm extends Form
     protected function rules(): array
     {
         return [
-            'form.key'      => ['required', 'string', 'max:255'],
+            'form.key' => ['required', 'string', 'max:255'],
             'form.platform' => ['required', Rule::enum(TranslationPlatfroms::class)],
-            'form.group'    => ['required', Rule::enum(TranslationGroups::class)],
+            'form.group' => ['required', Rule::enum(TranslationGroups::class)],
             'form.filename' => ['nullable', 'string', 'max:255'],
-            'values'        => 'array',
-            'values.*'      => ['nullable', 'string'],
+            'values' => 'array',
+            'values.*' => ['nullable', 'string'],
         ];
     }
 
@@ -48,13 +48,13 @@ class TranslationForm extends Form
         $first = $rows->first();
 
         $this->form = [
-            'key'      => $first?->key ?? '',
+            'key' => $first?->key ?? '',
             'platform' => $first?->platform ?? 'website',
-            'group'    => $first?->group ?? 'title',
+            'group' => $first?->group ?? 'title',
             'filename' => $first?->filename ?? '',
         ];
 
-        $this->originalKey      = $first?->key;
+        $this->originalKey = $first?->key;
         $this->originalPlatform = $first?->platform;
 
         $this->values = [];
@@ -72,7 +72,7 @@ class TranslationForm extends Form
             originalPlatform: $this->originalPlatform,
         );
 
-        $this->originalKey      = $this->form['key'];
+        $this->originalKey = $this->form['key'];
         $this->originalPlatform = $this->form['platform'];
     }
 }

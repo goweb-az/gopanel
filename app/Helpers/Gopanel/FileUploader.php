@@ -2,11 +2,11 @@
 
 namespace App\Helpers\Gopanel;
 
+use App\Services\Activity\LogService;
 use Exception;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use App\Services\Activity\LogService;
 
 /**
  * ============================================================
@@ -181,7 +181,6 @@ class FileUploader
     /** @var string VirusTotal API scanner (online, API key lazımdır) */
     public const SCAN_VIRUSTOTAL = 'virustotal';
 
-
     /*
     |==========================================================================
     |  STATIC METODLAR — Tez istifadə
@@ -191,16 +190,16 @@ class FileUploader
     /**
      * Public-ə fayl yüklə (public/site/{folder}/{fileName})
      *
-     * @param  UploadedFile  $file      Yüklənən fayl
-     * @param  string        $folder    Folder adı (məs: 'blogs', 'sliders')
-     * @param  string|null   $fileName  Xüsusi fayl adı (extensiyasız)
+     * @param  UploadedFile  $file  Yüklənən fayl
+     * @param  string  $folder  Folder adı (məs: 'blogs', 'sliders')
+     * @param  string|null  $fileName  Xüsusi fayl adı (extensiyasız)
      * @return string Yüklənmiş faylın relative path-i (məs: site/blogs/my-post.png)
      *
      * @throws Exception Fayl yüklənə bilmədikdə
      */
     public static function toPublic(UploadedFile $file, string $folder = 'other', ?string $fileName = null): string
     {
-        return (new static())
+        return (new static)
             ->folder($folder)
             ->fileName($fileName)
             ->putPublic($file);
@@ -209,16 +208,16 @@ class FileUploader
     /**
      * Storage-a fayl yüklə (storage/app/public/{folder}/{fileName})
      *
-     * @param  UploadedFile  $file      Yüklənən fayl
-     * @param  string        $folder    Folder adı (məs: 'admins', 'documents')
-     * @param  string|null   $fileName  Xüsusi fayl adı (extensiyasız)
+     * @param  UploadedFile  $file  Yüklənən fayl
+     * @param  string  $folder  Folder adı (məs: 'admins', 'documents')
+     * @param  string|null  $fileName  Xüsusi fayl adı (extensiyasız)
      * @return string Yüklənmiş faylın relative path-i (məs: admins/admin-5.png)
      *
      * @throws Exception Fayl yüklənə bilmədikdə
      */
     public static function toStorage(UploadedFile $file, string $folder = 'other', ?string $fileName = null): string
     {
-        return (new static())
+        return (new static)
             ->folder($folder)
             ->fileName($fileName)
             ->putStorage($file);
@@ -227,8 +226,8 @@ class FileUploader
     /**
      * Base64 string-dən public-ə yüklə
      *
-     * @param  string       $base64    Base64 encoded string (data:image/png;base64,... və ya raw)
-     * @param  string       $folder    Folder adı
+     * @param  string  $base64  Base64 encoded string (data:image/png;base64,... və ya raw)
+     * @param  string  $folder  Folder adı
      * @param  string|null  $fileName  Xüsusi fayl adı (extensiyasız)
      * @return string Faylın relative path-i
      *
@@ -236,7 +235,7 @@ class FileUploader
      */
     public static function fromBase64ToPublic(string $base64, string $folder = 'other', ?string $fileName = null): string
     {
-        return (new static())
+        return (new static)
             ->folder($folder)
             ->fileName($fileName)
             ->putPublicBase64($base64);
@@ -245,8 +244,8 @@ class FileUploader
     /**
      * Base64 string-dən storage-a yüklə
      *
-     * @param  string       $base64    Base64 encoded string
-     * @param  string       $folder    Folder adı
+     * @param  string  $base64  Base64 encoded string
+     * @param  string  $folder  Folder adı
      * @param  string|null  $fileName  Xüsusi fayl adı (extensiyasız)
      * @return string Faylın relative path-i
      *
@@ -254,7 +253,7 @@ class FileUploader
      */
     public static function fromBase64ToStorage(string $base64, string $folder = 'other', ?string $fileName = null): string
     {
-        return (new static())
+        return (new static)
             ->folder($folder)
             ->fileName($fileName)
             ->putStorageBase64($base64);
@@ -264,8 +263,8 @@ class FileUploader
      * Faylın tam URL-ni qaytarır
      *
      * @param  string|null  $path  Faylın relative path-i (məs: 'site/blogs/post.png' və ya 'admins/a.png')
-     * @param  string       $disk  'public' (default) — public_path, 'storage' — storage URL
-     * @return string|null  Tam URL və ya null (fayl yoxdursa)
+     * @param  string  $disk  'public' (default) — public_path, 'storage' — storage URL
+     * @return string|null Tam URL və ya null (fayl yoxdursa)
      *
      * İstifadə:
      *   FileUploader::url('site/blogs/post.png');              // → https://domain.com/site/blogs/post.png
@@ -280,8 +279,9 @@ class FileUploader
         if ($disk === 'storage') {
             // Storage disk — symlink ilə əlçatan
             if (Storage::disk(gopanel_disk())->exists($path)) {
-                return asset('storage/' . $path);
+                return asset('storage/'.$path);
             }
+
             return null;
         }
 
@@ -297,7 +297,7 @@ class FileUploader
      * Faylı silir
      *
      * @param  string|null  $path  Faylın relative path-i
-     * @param  string       $disk  'public' (default) — public_path, 'storage' — storage disk
+     * @param  string  $disk  'public' (default) — public_path, 'storage' — storage disk
      * @return bool Uğurlu olub-olmadığı
      *
      * İstifadə:
@@ -321,7 +321,7 @@ class FileUploader
             }
         } catch (Exception $e) {
             LogService::channel('upload')->warning("Fayl silinə bilmədi: {$path}", [
-                'disk'      => $disk,
+                'disk' => $disk,
                 'exception' => $e->getMessage(),
             ]);
         }
@@ -336,10 +336,10 @@ class FileUploader
      * Həm çoxdilli (title.az, name.az) həm tək dilli (title, name) strukturları dəstəkləyir.
      * Tapılmadıqda uniqid() qaytarır.
      *
-     * @param  array        $data    Request data array-i
+     * @param  array  $data  Request data array-i
      * @param  string|null  $prefix  Ad-ın əvvəlinə əlavə olunan prefix (məs: 'blog', 'slider')
-     * @param  string       $locale  Çoxdilli data üçün dil kodu (default: 'az')
-     * @return string  Slug formatında fayl adı (extensiyasız)
+     * @param  string  $locale  Çoxdilli data üçün dil kodu (default: 'az')
+     * @return string Slug formatında fayl adı (extensiyasız)
      *
      * İstifadə:
      *   // Çoxdilli data: ['title' => ['az' => 'Mənim Bloqom', 'en' => 'My Blog']]
@@ -362,12 +362,12 @@ class FileUploader
 
         foreach ($keys as $key) {
             // Çoxdilli: $data['title']['az']
-            if (isset($data[$key][$locale]) && !empty($data[$key][$locale])) {
+            if (isset($data[$key][$locale]) && ! empty($data[$key][$locale])) {
                 $name = $data[$key][$locale];
                 break;
             }
             // Tək dilli: $data['title']
-            if (isset($data[$key]) && is_string($data[$key]) && !empty($data[$key])) {
+            if (isset($data[$key]) && is_string($data[$key]) && ! empty($data[$key])) {
                 $name = $data[$key];
                 break;
             }
@@ -381,7 +381,6 @@ class FileUploader
 
         return implode('-', $parts);
     }
-
 
     /*
     |==========================================================================
@@ -407,6 +406,7 @@ class FileUploader
     public function folder(string $name): static
     {
         $this->folder = $name;
+
         return $this;
     }
 
@@ -420,6 +420,7 @@ class FileUploader
     public function fileName(?string $name): static
     {
         $this->fileName = $name;
+
         return $this;
     }
 
@@ -432,6 +433,7 @@ class FileUploader
     public function allowImages(): static
     {
         $this->allowedExtensions = array_merge($this->allowedExtensions, self::EXT_IMAGES);
+
         return $this;
     }
 
@@ -444,6 +446,7 @@ class FileUploader
     public function allowDocuments(): static
     {
         $this->allowedExtensions = array_merge($this->allowedExtensions, self::EXT_DOCUMENTS);
+
         return $this;
     }
 
@@ -456,6 +459,7 @@ class FileUploader
     public function allowMedia(): static
     {
         $this->allowedExtensions = array_merge($this->allowedExtensions, self::EXT_MEDIA);
+
         return $this;
     }
 
@@ -468,6 +472,7 @@ class FileUploader
     public function allowArchives(): static
     {
         $this->allowedExtensions = array_merge($this->allowedExtensions, self::EXT_ARCHIVES);
+
         return $this;
     }
 
@@ -480,6 +485,7 @@ class FileUploader
     public function allow(array $extensions): static
     {
         $this->allowedExtensions = array_merge($this->allowedExtensions, $extensions);
+
         return $this;
     }
 
@@ -492,6 +498,7 @@ class FileUploader
     public function maxSize(int $bytes): static
     {
         $this->maxFileSize = $bytes;
+
         return $this;
     }
 
@@ -513,15 +520,16 @@ class FileUploader
      *   ->scanVirus('clamav', ['socket' => '...'])       // ClamAV + opsiya
      *   ->scanVirus(FileUploader::SCAN_VIRUSTOTAL)       // konstant ilə
      *
-     * @param  string  $driver   Driver adı: 'clamav' və ya 'virustotal'
-     * @param  array   $options  Driver-ə xas opsiyalar
+     * @param  string  $driver  Driver adı: 'clamav' və ya 'virustotal'
+     * @param  array  $options  Driver-ə xas opsiyalar
      * @return $this
      */
     public function scanVirus(string $driver = self::SCAN_CLAMAV, array $options = []): static
     {
         $this->virusScanEnabled = true;
-        $this->virusScanDriver  = $driver;
+        $this->virusScanDriver = $driver;
         $this->virusScanOptions = $options;
+
         return $this;
     }
 
@@ -529,7 +537,7 @@ class FileUploader
      * Köhnə faylı silməyi planlaşdır (yükləmə uğurlu olduqda silinəcək)
      *
      * @param  string|null  $path  Köhnə faylın relative path-i
-     * @param  string       $disk  'public' və ya 'storage'
+     * @param  string  $disk  'public' və ya 'storage'
      * @return $this
      *
      * Nümunə:
@@ -539,9 +547,9 @@ class FileUploader
     {
         $this->oldFilePath = $path;
         $this->oldFileDisk = $disk;
+
         return $this;
     }
-
 
     /*
     |==========================================================================
@@ -552,8 +560,7 @@ class FileUploader
     /**
      * Faylı public-ə yüklə (public/site/{folder}/{file})
      *
-     * @param  UploadedFile  $file
-     * @return string  Relative path (məs: site/blogs/my-post.png)
+     * @return string Relative path (məs: site/blogs/my-post.png)
      *
      * @throws Exception Validasiya uğursuz olduqda
      */
@@ -566,7 +573,7 @@ class FileUploader
         $targetDir = public_path("site/{$this->folder}");
 
         // Folder yoxdursa yarat
-        if (!is_dir($targetDir)) {
+        if (! is_dir($targetDir)) {
             mkdir($targetDir, 0755, true);
         }
 
@@ -581,8 +588,7 @@ class FileUploader
     /**
      * Faylı storage-a yüklə (storage/app/public/{folder}/{file})
      *
-     * @param  UploadedFile  $file
-     * @return string  Relative path (məs: admins/admin-5.png)
+     * @return string Relative path (məs: admins/admin-5.png)
      *
      * @throws Exception Validasiya uğursuz olduqda
      */
@@ -605,7 +611,7 @@ class FileUploader
      * Base64 string-dən public-ə yüklə
      *
      * @param  string  $base64  Base64 encoded data (data:image/png;base64,... və ya raw base64)
-     * @return string  Relative path
+     * @return string Relative path
      *
      * @throws Exception Decode uğursuz olduqda
      */
@@ -618,7 +624,7 @@ class FileUploader
         $finalName = $this->resolveFileName($extension);
         $targetDir = public_path("site/{$this->folder}");
 
-        if (!is_dir($targetDir)) {
+        if (! is_dir($targetDir)) {
             mkdir($targetDir, 0755, true);
         }
 
@@ -633,7 +639,7 @@ class FileUploader
      * Base64 string-dən storage-a yüklə
      *
      * @param  string  $base64  Base64 encoded data
-     * @return string  Relative path
+     * @return string Relative path
      *
      * @throws Exception Decode uğursuz olduqda
      */
@@ -652,7 +658,6 @@ class FileUploader
         return "{$this->folder}/{$finalName}";
     }
 
-
     /*
     |==========================================================================
     |  DAXİLİ (PRIVATE) METODLAR
@@ -666,7 +671,7 @@ class FileUploader
      */
     protected function validateFile(UploadedFile $file): void
     {
-        if (!$file->isValid()) {
+        if (! $file->isValid()) {
             throw new Exception('Fayl düzgün yüklənməyib və ya zədələnib.');
         }
 
@@ -693,7 +698,7 @@ class FileUploader
         }
 
         $extension = strtolower($extension);
-        if (!in_array($extension, array_map('strtolower', $this->allowedExtensions))) {
+        if (! in_array($extension, array_map('strtolower', $this->allowedExtensions))) {
             $allowed = implode(', ', $this->allowedExtensions);
             throw new Exception("'{$extension}' formatına icazə verilmir. İcazəli formatlar: {$allowed}");
         }
@@ -704,7 +709,7 @@ class FileUploader
      * fileName təyin edilibsə slug-a çevrilir, yoxsa uniqid istifadə olunur.
      *
      * @param  string  $extension  Fayl extensiyası
-     * @return string  Tam fayl adı (ad + extensiya)
+     * @return string Tam fayl adı (ad + extensiya)
      */
     protected function resolveFileName(string $extension): string
     {
@@ -723,8 +728,7 @@ class FileUploader
      * Base64 string-i decode et
      * Həm "data:image/png;base64,..." həm "raw base64" formatını dəstəkləyir.
      *
-     * @param  string  $base64
-     * @return array   [extension, decodedBinaryData]
+     * @return array [extension, decodedBinaryData]
      *
      * @throws Exception Decode uğursuz olduqda
      */
@@ -761,14 +765,14 @@ class FileUploader
      */
     protected function performVirusScan(UploadedFile $file): void
     {
-        if (!$this->virusScanEnabled) {
+        if (! $this->virusScanEnabled) {
             return;
         }
 
         match ($this->virusScanDriver) {
-            self::SCAN_CLAMAV     => $this->scanWithClamAV($file),
+            self::SCAN_CLAMAV => $this->scanWithClamAV($file),
             self::SCAN_VIRUSTOTAL => $this->scanWithVirusTotal($file),
-            default               => LogService::channel('upload')->warning("Naməlum virus scan driver: {$this->virusScanDriver}"),
+            default => LogService::channel('upload')->warning("Naməlum virus scan driver: {$this->virusScanDriver}"),
         };
     }
 
@@ -791,7 +795,7 @@ class FileUploader
         $filePath = $file->getRealPath();
 
         // Socket ilə daemon scan (sürətli)
-        if (!empty($this->virusScanOptions['socket'])) {
+        if (! empty($this->virusScanOptions['socket'])) {
             $socket = $this->virusScanOptions['socket'];
             $sock = @fsockopen("unix://{$socket}", -1, $errno, $errstr, 5);
 
@@ -802,7 +806,7 @@ class FileUploader
 
                 if ($response && str_contains($response, 'FOUND')) {
                     LogService::channel('upload')->error('ClamAV: Virus aşkarlandı!', [
-                        'file'     => $file->getClientOriginalName(),
+                        'file' => $file->getClientOriginalName(),
                         'response' => trim($response),
                     ]);
                     throw new Exception('Təhlükəsizlik xəbərdarlığı: Faylda virus aşkarlandı!');
@@ -811,12 +815,13 @@ class FileUploader
                 LogService::channel('upload')->info('ClamAV scan: təmiz', [
                     'file' => $file->getClientOriginalName(),
                 ]);
+
                 return;
             }
 
             LogService::channel('upload')->warning('ClamAV daemon-a qoşulmaq mümkün olmadı, clamscan-a keçilir.', [
                 'socket' => $socket,
-                'error'  => $errstr,
+                'error' => $errstr,
             ]);
         }
 
@@ -831,7 +836,7 @@ class FileUploader
         // ClamAV return codes: 0 = clean, 1 = virus found, 2 = error
         if ($returnCode === 1) {
             LogService::channel('upload')->error('ClamAV: Virus aşkarlandı!', [
-                'file'   => $file->getClientOriginalName(),
+                'file' => $file->getClientOriginalName(),
                 'output' => implode("\n", $output),
             ]);
             throw new Exception('Təhlükəsizlik xəbərdarlığı: Faylda virus aşkarlandı!');
@@ -839,9 +844,10 @@ class FileUploader
 
         if ($returnCode === 2) {
             LogService::channel('upload')->warning('ClamAV scan xətası (quraşdırılmamış ola bilər)', [
-                'file'   => $file->getClientOriginalName(),
+                'file' => $file->getClientOriginalName(),
                 'output' => implode("\n", $output),
             ]);
+
             // Xəta olsa belə yükləməni dayandırmırıq — yalnız log yazırıq
             return;
         }
@@ -879,6 +885,7 @@ class FileUploader
             LogService::channel('upload')->warning('VirusTotal API key konfiqurasiya edilməyib. Scan atlandı.', [
                 'file' => $file->getClientOriginalName(),
             ]);
+
             return;
         }
 
@@ -888,12 +895,12 @@ class FileUploader
             // 1. Faylı VirusTotal-a yüklə
             $ch = curl_init();
             curl_setopt_array($ch, [
-                CURLOPT_URL            => 'https://www.virustotal.com/api/v3/files',
-                CURLOPT_POST           => true,
+                CURLOPT_URL => 'https://www.virustotal.com/api/v3/files',
+                CURLOPT_POST => true,
                 CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_HTTPHEADER     => ["x-apikey: {$apiKey}"],
-                CURLOPT_POSTFIELDS     => ['file' => new \CURLFile($filePath)],
-                CURLOPT_TIMEOUT        => 60,
+                CURLOPT_HTTPHEADER => ["x-apikey: {$apiKey}"],
+                CURLOPT_POSTFIELDS => ['file' => new \CURLFile($filePath)],
+                CURLOPT_TIMEOUT => 60,
             ]);
 
             $response = curl_exec($ch);
@@ -902,20 +909,22 @@ class FileUploader
 
             if ($httpCode !== 200) {
                 LogService::channel('upload')->warning('VirusTotal API cavab xətası', [
-                    'file'      => $file->getClientOriginalName(),
+                    'file' => $file->getClientOriginalName(),
                     'http_code' => $httpCode,
-                    'response'  => substr($response, 0, 500),
+                    'response' => substr($response, 0, 500),
                 ]);
+
                 return;
             }
 
             $result = json_decode($response, true);
             $analysisId = $result['data']['id'] ?? null;
 
-            if (!$analysisId) {
+            if (! $analysisId) {
                 LogService::channel('upload')->warning('VirusTotal analiz ID alına bilmədi', [
                     'file' => $file->getClientOriginalName(),
                 ]);
+
                 return;
             }
 
@@ -926,10 +935,10 @@ class FileUploader
 
                 $ch = curl_init();
                 curl_setopt_array($ch, [
-                    CURLOPT_URL            => "https://www.virustotal.com/api/v3/analyses/{$analysisId}",
+                    CURLOPT_URL => "https://www.virustotal.com/api/v3/analyses/{$analysisId}",
                     CURLOPT_RETURNTRANSFER => true,
-                    CURLOPT_HTTPHEADER     => ["x-apikey: {$apiKey}"],
-                    CURLOPT_TIMEOUT        => 15,
+                    CURLOPT_HTTPHEADER => ["x-apikey: {$apiKey}"],
+                    CURLOPT_TIMEOUT => 15,
                 ]);
 
                 $analysisResponse = curl_exec($ch);
@@ -944,24 +953,25 @@ class FileUploader
 
                     if ($malicious > 0) {
                         LogService::channel('upload')->error('VirusTotal: Təhlükəli fayl aşkarlandı!', [
-                            'file'      => $file->getClientOriginalName(),
-                            'stats'     => $stats,
+                            'file' => $file->getClientOriginalName(),
+                            'stats' => $stats,
                             'malicious' => $malicious,
                         ]);
                         throw new Exception('Təhlükəsizlik xəbərdarlığı: Faylda virus/malware aşkarlandı!');
                     }
 
                     LogService::channel('upload')->info('VirusTotal scan: təmiz', [
-                        'file'  => $file->getClientOriginalName(),
+                        'file' => $file->getClientOriginalName(),
                         'stats' => $stats,
                     ]);
+
                     return;
                 }
             }
 
             // Timeout — analiz tamamlanmadı, yükləməyə icazə ver
             LogService::channel('upload')->info('VirusTotal analiz vaxtında tamamlanmadı. Yükləmə davam edir.', [
-                'file'        => $file->getClientOriginalName(),
+                'file' => $file->getClientOriginalName(),
                 'analysis_id' => $analysisId,
             ]);
 
@@ -971,7 +981,7 @@ class FileUploader
             }
 
             LogService::channel('upload')->warning('VirusTotal scan xətası', [
-                'file'      => $file->getClientOriginalName(),
+                'file' => $file->getClientOriginalName(),
                 'exception' => $e->getMessage(),
             ]);
         }
@@ -982,7 +992,7 @@ class FileUploader
      */
     protected function cleanOldFile(): void
     {
-        if (!empty($this->oldFilePath)) {
+        if (! empty($this->oldFilePath)) {
             static::deleteFile($this->oldFilePath, $this->oldFileDisk);
         }
     }

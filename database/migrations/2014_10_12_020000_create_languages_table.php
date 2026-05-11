@@ -19,7 +19,7 @@ return new class extends Migration
             $table->boolean('default')->default(false);
             $table->boolean('is_active')->default(true); // is_active bool [default: true]
             $table->boolean('is_show')->default(true); // is_active bool [default: true]
-            $table->integer("sort_order")->default(0);
+            $table->integer('sort_order')->default(0);
             $table->timestamps(); // created_at ve updated_at için
             $table->softDeletes();
             // Foreign key relationship

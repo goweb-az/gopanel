@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 
 class SitemapController extends SiteController
 {
-
     public function __construct()
     {
         parent::__construct();

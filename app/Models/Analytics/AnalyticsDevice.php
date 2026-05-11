@@ -35,19 +35,20 @@ class AnalyticsDevice extends BaseModel
         $this->increment('hit_count');
         $this->last_visited_at = now();
 
-        if (!$this->first_visited_at) {
+        if (! $this->first_visited_at) {
             $this->first_visited_at = now();
         }
 
         $this->save();
     }
 
-
     public function getIconFontAttribute()
     {
-        if (is_null($this->icon))
+        if (is_null($this->icon)) {
             return null;
+        }
         $icon = str_replace('fa-solid', 'fas', $this->icon);
-        return '<i class="' . $icon . '"></i>';
+
+        return '<i class="'.$icon.'"></i>';
     }
 }

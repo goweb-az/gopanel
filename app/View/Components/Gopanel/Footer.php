@@ -7,6 +7,7 @@ use Illuminate\View\Component;
 class Footer extends Component
 {
     public string $appName;
+
     public int $year;
 
     public function __construct()

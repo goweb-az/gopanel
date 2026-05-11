@@ -12,16 +12,16 @@ trait CreatesPlaceholderImages
         $directory = public_path("site/mock/{$folder}");
         File::ensureDirectoryExists($directory);
 
-        $fileName = Str::slug($label) . "-{$width}x{$height}.png";
+        $fileName = Str::slug($label)."-{$width}x{$height}.png";
         $path = "{$directory}/{$fileName}";
 
-        if (!File::exists($path)) {
-            $url = 'https://placehold.co/' . $width . 'x' . $height . '/556ee6/ffffff.png?text=' . rawurlencode($label);
+        if (! File::exists($path)) {
+            $url = 'https://placehold.co/'.$width.'x'.$height.'/556ee6/ffffff.png?text='.rawurlencode($label);
             $contents = @file_get_contents($url);
 
             if ($contents === false) {
                 $contents = $this->fallbackPlaceholderSvg($label, $width, $height);
-                $fileName = Str::slug($label) . "-{$width}x{$height}.svg";
+                $fileName = Str::slug($label)."-{$width}x{$height}.svg";
                 $path = "{$directory}/{$fileName}";
             }
 

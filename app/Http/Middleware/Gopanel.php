@@ -13,7 +13,7 @@ class Gopanel extends Middleware
 {
     public function handle($request, Closure $next, ...$guards)
     {
-        if (!Auth::guard("gopanel")->check()) {
+        if (! Auth::guard('gopanel')->check()) {
             return redirect()->route('gopanel.auth.login');
         }
 

@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('continent', 30)->nullable(); // continent varchar(30)
             $table->char('continent_code', 50)->nullable(); // continent_code varchar(2)
             $table->char('alpha_3', 3)->nullable(); // alpha_3 char(3)
-            $table->boolean("is_active")->default(true);
+            $table->boolean('is_active')->default(true);
             $table->timestamps(); // created_at timestamp
             $table->softDeletes();
         });

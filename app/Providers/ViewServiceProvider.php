@@ -1,6 +1,7 @@
 <?php
 
 // app/Providers/ViewServiceProvider.php
+
 namespace App\Providers;
 
 use App\Enums\Common\SocialIconTypeEnum;
@@ -11,13 +12,12 @@ use App\Models\Seo\SeoAnalytics;
 use App\Models\Settings\SiteSetting;
 use App\Services\Site\Seo\AlternatesService;
 use App\Services\Site\Seo\MetaService;
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\View;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\ServiceProvider;
 
 class ViewServiceProvider extends ServiceProvider
 {
-
     public function register()
     {
         //
@@ -41,9 +41,9 @@ class ViewServiceProvider extends ServiceProvider
     private function shareSiteContent()
     {
         View::composer('site.*', function ($view) {
-            $siteSettings   = SiteSetting::getCached();
-            $seoAnalytics   = SeoAnalytics::getCached();
-            $locale         = app(\App\Services\Locale\LocaleManager::class);
+            $siteSettings = SiteSetting::getCached();
+            $seoAnalytics = SeoAnalytics::getCached();
+            $locale = app(\App\Services\Locale\LocaleManager::class);
 
             $view->with('siteSettings', $siteSettings);
             $view->with('seoAnalytics', $seoAnalytics);
@@ -62,7 +62,7 @@ class ViewServiceProvider extends ServiceProvider
         View::composer('site.layouts.head', function ($view) {
             // Artıq controller-dən share olunubsa (Blog single, Service single vs.), override etmə
             $shared = View::getShared();
-            if (!empty($shared['meta_title'])) {
+            if (! empty($shared['meta_title'])) {
                 return;
             }
 
@@ -73,7 +73,7 @@ class ViewServiceProvider extends ServiceProvider
             $metaService = app(MetaService::class);
 
             $menus = Menu::getSiteMenu();
-            $meta  = $metaService->compose($menus, $request);
+            $meta = $metaService->compose($menus, $request);
             MetaService::share($meta);
         });
     }
@@ -90,5 +90,4 @@ class ViewServiceProvider extends ServiceProvider
             $view->with($data);
         });
     }
-
 }

@@ -9,7 +9,7 @@ return [
         'alert',
         'critical',
         'debug',
-        'emergency'
+        'emergency',
     ],
     'sensitiveKeys' => [
         'password',

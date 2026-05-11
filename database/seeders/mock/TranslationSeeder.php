@@ -3,13 +3,11 @@
 namespace Database\Seeders\mock;
 
 use App\Models\Translations\Translation;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
 
 class TranslationSeeder extends Seeder
 {
-
     public string $mockName = 'Tercumeler';
 
     /**
@@ -19,13 +17,14 @@ class TranslationSeeder extends Seeder
     {
         $path = database_path('seeders/json-data/translations.json');
 
-        if (!File::exists($path)) {
+        if (! File::exists($path)) {
             $this->command->error("JSON faylı tapılmadı: {$path}");
+
             return;
         }
 
-        $json           = File::get($path);
-        $translations   = json_decode($json, true);
+        $json = File::get($path);
+        $translations = json_decode($json, true);
         foreach ($translations as $data) {
             Translation::updateOrCreate(
                 [
@@ -43,6 +42,6 @@ class TranslationSeeder extends Seeder
             // $this->command->info("{$data['key']} [{$data['locale']}] dilində əlavə edildi ");
         }
 
-        $this->command->info("Bütün təecümələr əlavə edildi!");
+        $this->command->info('Bütün təecümələr əlavə edildi!');
     }
 }

@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Gopanel\Admin;
 use App\Models\Gopanel\CustomPermission;
 use App\Models\Gopanel\CustomRole;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
 use Spatie\Permission\PermissionRegistrar;
 
@@ -42,7 +42,7 @@ class PermissionSeeder extends Seeder
 
         // İlk admini Super Admin roluna əlavə et
         $admin = Admin::query()->orderBy('id')->first();
-        if ($admin && !$admin->hasRole('Super Admin')) {
+        if ($admin && ! $admin->hasRole('Super Admin')) {
             $admin->assignRole($superRole);
         }
 

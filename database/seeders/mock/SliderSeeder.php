@@ -19,9 +19,9 @@ class SliderSeeder extends Seeder
         $sliders = [
             [
                 'sort_order' => 1,
-                'is_active'  => true,
-                'link'       => '/services',
-                'image'      => $this->placeholderImage('sliders', 'Modern Web Solutions', 1600, 700),
+                'is_active' => true,
+                'link' => '/services',
+                'image' => $this->placeholderImage('sliders', 'Modern Web Solutions', 1600, 700),
                 'title' => [
                     'az' => 'Müasir veb həllər',
                     'en' => 'Modern web solutions',
@@ -40,9 +40,9 @@ class SliderSeeder extends Seeder
             ],
             [
                 'sort_order' => 2,
-                'is_active'  => true,
-                'link'       => '/about-us',
-                'image'      => $this->placeholderImage('sliders', 'Our Mission', 1600, 700),
+                'is_active' => true,
+                'link' => '/about-us',
+                'image' => $this->placeholderImage('sliders', 'Our Mission', 1600, 700),
                 'title' => [
                     'az' => 'Bizim missiyamız',
                     'en' => 'Our mission',
@@ -61,9 +61,9 @@ class SliderSeeder extends Seeder
             ],
             [
                 'sort_order' => 3,
-                'is_active'  => true,
-                'link'       => '/contact',
-                'image'      => $this->placeholderImage('sliders', 'Get In Touch', 1600, 700),
+                'is_active' => true,
+                'link' => '/contact',
+                'image' => $this->placeholderImage('sliders', 'Get In Touch', 1600, 700),
                 'title' => [
                     'az' => 'Bizimlə əlaqə saxlayın',
                     'en' => 'Get in touch',
@@ -86,9 +86,9 @@ class SliderSeeder extends Seeder
             $slider = $this->findSliderByTitle($data['title']['az']);
             $payload = [
                 'sort_order' => $data['sort_order'],
-                'is_active'  => $data['is_active'],
-                'link'       => $data['link'],
-                'image'      => $data['image'],
+                'is_active' => $data['is_active'],
+                'link' => $data['link'],
+                'image' => $data['image'],
             ];
 
             if ($slider) {
@@ -96,10 +96,10 @@ class SliderSeeder extends Seeder
                     $slider->restore();
                 }
                 $slider->update($payload);
-                $this->command?->line('  - movcuddur, yenilendi: ' . $data['title']['az']);
+                $this->command?->line('  - movcuddur, yenilendi: '.$data['title']['az']);
             } else {
                 $slider = Slider::create($payload);
-                $this->command?->line('  + elave edildi: ' . $data['title']['az']);
+                $this->command?->line('  + elave edildi: '.$data['title']['az']);
             }
 
             TranslationHelper::basic($slider, $data['title'], 'title');

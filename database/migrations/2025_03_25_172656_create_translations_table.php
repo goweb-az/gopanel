@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('locale');
             $table->string('key');
             $table->text('value')->nullable();
-            $table->char('platform', 15)->default("website");
+            $table->char('platform', 15)->default('website');
             $table->string('filename')->nullable();
             $table->string('group')->nullable();
             $table->unique(['key', 'locale', 'platform']);

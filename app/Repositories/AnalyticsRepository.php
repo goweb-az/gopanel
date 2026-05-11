@@ -34,7 +34,7 @@ class AnalyticsRepository
 
     public function registerDevice(?string $type, ?string $icon): ?AnalyticsDevice
     {
-        if (!$type) {
+        if (! $type) {
             return null;
         }
 
@@ -49,7 +49,7 @@ class AnalyticsRepository
 
     public function registerOperatingSystem(?string $name, ?string $icon): ?AnalyticsOperatingSystem
     {
-        if (!$name) {
+        if (! $name) {
             return null;
         }
 
@@ -67,7 +67,7 @@ class AnalyticsRepository
 
     public function registerBrowser(?string $name, ?string $icon): ?AnalyticsBrowser
     {
-        if (!$name) {
+        if (! $name) {
             return null;
         }
 
@@ -85,7 +85,7 @@ class AnalyticsRepository
 
     public function registerCountry(?string $name, ?string $isoCode, ?string $flagUrl): ?AnalyticsCountry
     {
-        if (!$name || $name === 'Unknown') {
+        if (! $name || $name === 'Unknown') {
             return null;
         }
 
@@ -100,7 +100,7 @@ class AnalyticsRepository
 
     public function registerCity(?string $name, ?int $countryId): ?AnalyticsCity
     {
-        if (!$name || $name === 'Unknown') {
+        if (! $name || $name === 'Unknown') {
             return null;
         }
 
@@ -114,7 +114,7 @@ class AnalyticsRepository
 
     public function registerLanguage(?string $code, ?string $name): ?AnalyticsLanguage
     {
-        if (!$code) {
+        if (! $code) {
             return null;
         }
 

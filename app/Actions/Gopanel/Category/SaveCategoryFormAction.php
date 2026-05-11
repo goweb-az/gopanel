@@ -28,7 +28,7 @@ class SaveCategoryFormAction
             if ($iconUpload && ($form['icon_type'] ?? null) === SocialIconTypeEnum::Image->value) {
                 $form['icon'] = FileUploader::toPublic(
                     $iconUpload,
-                    (new Category())->getTable(),
+                    (new Category)->getTable(),
                     FileUploader::nameGenerate(['name' => $translations['az']['name'] ?? 'category'], 'category-icon'),
                 );
             }

@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Geography\Language;
 use App\Models\Geography\Country;
+use App\Models\Geography\Language;
 use Illuminate\Database\Seeder;
 
 class LanguageSeeder extends Seeder
@@ -16,11 +16,11 @@ class LanguageSeeder extends Seeder
         $languages = $this->list();
 
         foreach ($languages as $lang) {
-            $code       = ucwords($lang['country_code']);
-            $country    = Country::where('code', $code)->first();
+            $code = ucwords($lang['country_code']);
+            $country = Country::where('code', $code)->first();
 
             if ($country) {
-                if (!Language::where('country_id', $country->id)->where('code', $lang['code'])->exists()) {
+                if (! Language::where('country_id', $country->id)->where('code', $lang['code'])->exists()) {
                     Language::create([
                         'country_id' => $country->id,
                         'code' => $lang['code'],
@@ -35,8 +35,6 @@ class LanguageSeeder extends Seeder
             }
         }
     }
-
-
 
     private function list(): array
     {

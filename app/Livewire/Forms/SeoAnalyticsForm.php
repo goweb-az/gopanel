@@ -9,37 +9,37 @@ use Livewire\Form;
 class SeoAnalyticsForm extends Form
 {
     public array $form = [
-        'id'         => null,
-        'head'       => '',
-        'body'       => '',
-        'footer'     => '',
+        'id' => null,
+        'head' => '',
+        'body' => '',
+        'footer' => '',
         'robots_txt' => '',
-        'ai_txt'     => '',
-        'other'      => '',
+        'ai_txt' => '',
+        'other' => '',
     ];
 
     protected function rules(): array
     {
         return [
-            'form.head'       => ['nullable', 'string'],
-            'form.body'       => ['nullable', 'string'],
-            'form.footer'     => ['nullable', 'string'],
+            'form.head' => ['nullable', 'string'],
+            'form.body' => ['nullable', 'string'],
+            'form.footer' => ['nullable', 'string'],
             'form.robots_txt' => ['nullable', 'string'],
-            'form.ai_txt'     => ['nullable', 'string'],
-            'form.other'      => ['nullable', 'string'],
+            'form.ai_txt' => ['nullable', 'string'],
+            'form.other' => ['nullable', 'string'],
         ];
     }
 
     public function setItem(SeoAnalytics $item): void
     {
         $this->form = [
-            'id'         => $item->id,
-            'head'       => $item->head ?? '',
-            'body'       => $item->body ?? '',
-            'footer'     => $item->footer ?? '',
+            'id' => $item->id,
+            'head' => $item->head ?? '',
+            'body' => $item->body ?? '',
+            'footer' => $item->footer ?? '',
             'robots_txt' => $item->robots_txt ?? '',
-            'ai_txt'     => $item->ai_txt ?? '',
-            'other'      => $item->other ?? '',
+            'ai_txt' => $item->ai_txt ?? '',
+            'other' => $item->other ?? '',
         ];
     }
 

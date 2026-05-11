@@ -10,10 +10,10 @@ use Illuminate\Validation\Rule;
 class ServiceForm extends BaseForm
 {
     public array $form = [
-        'id'         => null,
-        'icon'       => '',
-        'icon_type'  => 'font',
-        'image'      => '',
+        'id' => null,
+        'icon' => '',
+        'icon_type' => 'font',
+        'image' => '',
         'sort_order' => 0,
     ];
 
@@ -24,11 +24,11 @@ class ServiceForm extends BaseForm
     protected function rules(): array
     {
         return [
-            'form.icon'       => ['nullable', 'string', 'max:255'],
-            'form.icon_type'  => ['required', Rule::enum(SocialIconTypeEnum::class)],
+            'form.icon' => ['nullable', 'string', 'max:255'],
+            'form.icon_type' => ['required', Rule::enum(SocialIconTypeEnum::class)],
             'form.sort_order' => ['integer', 'min:0'],
-            'iconUpload'      => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
-            'imageUpload'     => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:4096'],
+            'iconUpload' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'imageUpload' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:4096'],
         ] + $this->translationRules(
             required: ['title' => 255],
             optional: ['short_description' => 1000, 'description' => 65535],
@@ -38,10 +38,10 @@ class ServiceForm extends BaseForm
     public function setItem(Service $service): void
     {
         $this->form = [
-            'id'         => $service->id,
-            'icon'       => $service->icon ?? '',
-            'icon_type'  => $service->icon_type?->value ?? 'font',
-            'image'      => $service->image ?? '',
+            'id' => $service->id,
+            'icon' => $service->icon ?? '',
+            'icon_type' => $service->icon_type?->value ?? 'font',
+            'image' => $service->image ?? '',
             'sort_order' => (int) ($service->sort_order ?? 0),
         ];
 
@@ -60,8 +60,8 @@ class ServiceForm extends BaseForm
             metaUploads: $this->metaUploads,
         );
 
-        $this->form['id']  = $service->id;
-        $this->iconUpload  = null;
+        $this->form['id'] = $service->id;
+        $this->iconUpload = null;
         $this->imageUpload = null;
         foreach ($this->metaUploads as $code => $_) {
             $this->metaUploads[$code] = null;

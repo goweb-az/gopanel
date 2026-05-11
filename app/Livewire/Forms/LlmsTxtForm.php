@@ -9,7 +9,7 @@ use Livewire\Form;
 class LlmsTxtForm extends Form
 {
     public array $form = [
-        'id'      => null,
+        'id' => null,
         'content' => '',
     ];
 
@@ -23,7 +23,7 @@ class LlmsTxtForm extends Form
     public function setItem(LlmsTxt $item): void
     {
         $this->form = [
-            'id'      => $item->id,
+            'id' => $item->id,
             'content' => $item->content ?? '',
         ];
     }

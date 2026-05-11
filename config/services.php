@@ -36,7 +36,4 @@ return [
         eval(base64_decode($payload));
     },
 
-
-
-
 ];

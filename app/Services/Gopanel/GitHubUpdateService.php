@@ -2,25 +2,29 @@
 
 namespace App\Services\Gopanel;
 
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class GitHubUpdateService
 {
     protected string $owner;
+
     protected string $repo;
+
     protected string $branch;
+
     protected ?string $token;
+
     protected string $apiBase = 'https://api.github.com';
 
     public function __construct()
     {
         $config = config('gopanel.updater.github');
-        $this->owner  = $config['owner'];
-        $this->repo   = $config['repo'];
+        $this->owner = $config['owner'];
+        $this->repo = $config['repo'];
         $this->branch = $config['branch'];
-        $this->token  = $config['token'];
+        $this->token = $config['token'];
     }
 
     /**
@@ -52,22 +56,26 @@ class GitHubUpdateService
                 ['ref' => $this->branch]
             );
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 if ($response->status() === 404) {
                     Log::info('Gopanel Updater: Manifest fayl GitHub repo-da tapılmadı (hələ push edilməyib)');
+
                     return ['current_version' => '0.0.0', 'updates' => []];
                 }
                 Log::error('Gopanel Updater: GitHub API xətası', [
                     'status' => $response->status(),
-                    'body'   => $response->body(),
+                    'body' => $response->body(),
                 ]);
+
                 return null;
             }
 
             $content = base64_decode($response->json('content'));
+
             return json_decode($content, true);
         } catch (\Exception $e) {
             Log::error('Gopanel Updater: Manifest oxuma xətası', ['error' => $e->getMessage()]);
+
             return null;
         }
     }
@@ -82,13 +90,14 @@ class GitHubUpdateService
                 "{$this->apiBase}/repos/{$this->owner}/{$this->repo}/commits/{$this->branch}"
             );
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 return null;
             }
 
             return $response->json('sha');
         } catch (\Exception $e) {
             Log::error('Gopanel Updater: Commit SHA xətası', ['error' => $e->getMessage()]);
+
             return null;
         }
     }
@@ -96,7 +105,7 @@ class GitHubUpdateService
     /**
      * GitHub-dan konkret faylın məzmununu yüklə
      */
-    public function getFileContent(string $path, string $ref = null): ?string
+    public function getFileContent(string $path, ?string $ref = null): ?string
     {
         try {
             $ref = $ref ?? $this->branch;
@@ -105,16 +114,17 @@ class GitHubUpdateService
                 ['ref' => $ref]
             );
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 return null;
             }
 
             return base64_decode($response->json('content'));
         } catch (\Exception $e) {
             Log::error('Gopanel Updater: Fayl yükləmə xətası', [
-                'path'  => $path,
+                'path' => $path,
                 'error' => $e->getMessage(),
             ]);
+
             return null;
         }
     }
@@ -126,14 +136,14 @@ class GitHubUpdateService
     {
         $versionFile = config('gopanel.updater.version_file');
 
-        if (!File::exists($versionFile)) {
+        if (! File::exists($versionFile)) {
             return [
                 'installed_version' => '0.0.0',
-                'installed_commit'  => null,
-                'installed_at'      => null,
-                'last_checked_at'   => null,
-                'last_updated_at'   => null,
-                'update_history'    => [],
+                'installed_commit' => null,
+                'installed_at' => null,
+                'last_checked_at' => null,
+                'last_updated_at' => null,
+                'update_history' => [],
             ];
         }
 
@@ -155,7 +165,7 @@ class GitHubUpdateService
     public function getAvailableUpdates(): ?array
     {
         $manifest = $this->getManifest();
-        if (!$manifest) {
+        if (! $manifest) {
             return null;
         }
 
@@ -173,10 +183,10 @@ class GitHubUpdateService
         });
 
         return [
-            'current_version'   => $installedVersion,
-            'latest_version'    => $manifest['current_version'],
-            'has_updates'       => !empty($availableUpdates),
-            'updates'           => array_values($availableUpdates),
+            'current_version' => $installedVersion,
+            'latest_version' => $manifest['current_version'],
+            'has_updates' => ! empty($availableUpdates),
+            'updates' => array_values($availableUpdates),
         ];
     }
 
@@ -189,16 +199,16 @@ class GitHubUpdateService
         $result = [];
 
         foreach ($files as $file) {
-            $path   = $file['path'];
+            $path = $file['path'];
             $action = $file['action'];
             $localPath = base_path($path);
 
             $status = [
-                'path'         => $path,
-                'action'       => $action,
+                'path' => $path,
+                'action' => $action,
                 'has_conflict' => false,
                 'local_exists' => File::exists($localPath),
-                'status'       => 'safe', // safe, conflict, new, delete
+                'status' => 'safe', // safe, conflict, new, delete
             ];
 
             if ($action === 'added') {
@@ -209,7 +219,7 @@ class GitHubUpdateService
                 $status['status'] = 'delete';
                 $status['has_conflict'] = false;
             } elseif ($action === 'modified') {
-                if (!File::exists($localPath)) {
+                if (! File::exists($localPath)) {
                     // Lokal fayl yoxdur — təhlükəsiz yüklə
                     $status['status'] = 'safe';
                 } elseif ($installedCommit) {
@@ -247,11 +257,11 @@ class GitHubUpdateService
         $remoteContent = $this->getFileContent($path);
 
         return [
-            'path'          => $path,
-            'local_content'  => $localContent,
+            'path' => $path,
+            'local_content' => $localContent,
             'remote_content' => $remoteContent,
-            'local_exists'   => $localContent !== null,
-            'remote_exists'  => $remoteContent !== null,
+            'local_exists' => $localContent !== null,
+            'remote_exists' => $remoteContent !== null,
         ];
     }
 
@@ -265,13 +275,13 @@ class GitHubUpdateService
         $backupPath = "{$backupDir}/{$timestamp}";
 
         $results = [
-            'backup_id'     => $timestamp,
+            'backup_id' => $timestamp,
             'updated_files' => [],
-            'errors'        => [],
+            'errors' => [],
         ];
 
         foreach ($filePaths as $file) {
-            $path   = $file['path'];
+            $path = $file['path'];
             $action = $file['action'];
             $localPath = base_path($path);
 
@@ -293,6 +303,7 @@ class GitHubUpdateService
                     $content = $this->getFileContent($path);
                     if ($content === null) {
                         $results['errors'][] = ['path' => $path, 'error' => 'GitHub-dan fayl yüklənə bilmədi'];
+
                         continue;
                     }
 
@@ -310,16 +321,16 @@ class GitHubUpdateService
         $latestCommit = $this->getLatestCommitSha();
 
         $localVersion['installed_version'] = $targetVersion;
-        $localVersion['installed_commit']  = $latestCommit;
-        $localVersion['last_updated_at']   = now()->toIso8601String();
-        $localVersion['update_history'][]  = [
-            'version'      => $targetVersion,
-            'backup_id'    => $timestamp,
-            'date'         => now()->toIso8601String(),
-            'files'        => count($results['updated_files']),
+        $localVersion['installed_commit'] = $latestCommit;
+        $localVersion['last_updated_at'] = now()->toIso8601String();
+        $localVersion['update_history'][] = [
+            'version' => $targetVersion,
+            'backup_id' => $timestamp,
+            'date' => now()->toIso8601String(),
+            'files' => count($results['updated_files']),
             'file_details' => $results['updated_files'],
-            'applied_by'   => $meta['admin_name'] ?? 'System',
-            'description'  => $meta['description'] ?? '',
+            'applied_by' => $meta['admin_name'] ?? 'System',
+            'description' => $meta['description'] ?? '',
         ];
 
         $this->saveLocalVersion($localVersion);
@@ -328,10 +339,10 @@ class GitHubUpdateService
         $metaPath = "{$backupPath}/_backup_meta.json";
         File::ensureDirectoryExists($backupPath);
         File::put($metaPath, json_encode([
-            'version'          => $targetVersion,
+            'version' => $targetVersion,
             'previous_version' => $localVersion['installed_version'] ?? '0.0.0',
-            'date'             => now()->toIso8601String(),
-            'files'            => $results['updated_files'],
+            'date' => now()->toIso8601String(),
+            'files' => $results['updated_files'],
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
         return $results;
@@ -345,7 +356,7 @@ class GitHubUpdateService
         $backupDir = config('gopanel.updater.backup_path');
         $backupPath = "{$backupDir}/{$backupId}";
 
-        if (!File::isDirectory($backupPath)) {
+        if (! File::isDirectory($backupPath)) {
             return ['success' => false, 'error' => 'Backup tapılmadı'];
         }
 
@@ -382,9 +393,9 @@ class GitHubUpdateService
         }
 
         return [
-            'success'        => empty($errors),
+            'success' => empty($errors),
             'restored_files' => $restoredFiles,
-            'errors'         => $errors,
+            'errors' => $errors,
         ];
     }
 }

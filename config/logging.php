@@ -89,7 +89,7 @@ return [
             'handler_with' => [
                 'host' => env('PAPERTRAIL_URL'),
                 'port' => env('PAPERTRAIL_PORT'),
-                'connectionString' => 'tls://' . env('PAPERTRAIL_URL') . ':' . env('PAPERTRAIL_PORT'),
+                'connectionString' => 'tls://'.env('PAPERTRAIL_URL').':'.env('PAPERTRAIL_PORT'),
             ],
             'processors' => [PsrLogMessageProcessor::class],
         ],
@@ -127,57 +127,53 @@ return [
             'path' => storage_path('logs/laravel.log'),
         ],
 
-        //Start custom logs
-
+        // Start custom logs
 
         'system-errors' => [
-            'driver'    => 'daily',
-            'path'      => storage_path('logs/system-errors/system-errors-day.log'),
-            'level'     => env('LOG_LEVEL', 'debug'),
-            'days'      => 30,
-            'manual'    => true,
-            'name'      => 'Sistem Xətaları'
+            'driver' => 'daily',
+            'path' => storage_path('logs/system-errors/system-errors-day.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 30,
+            'manual' => true,
+            'name' => 'Sistem Xətaları',
         ],
 
         'gopanel-auth' => [
-            'driver'    => 'daily',
-            'path'      => storage_path('logs/gopanel-auth/gopanel-auth-day.log'),
-            'level'     => env('LOG_LEVEL', 'debug'),
-            'days'      => 30,
-            'manual'    => true,
-            'name'      => 'Giriş Və Qeydiyyat'
+            'driver' => 'daily',
+            'path' => storage_path('logs/gopanel-auth/gopanel-auth-day.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 30,
+            'manual' => true,
+            'name' => 'Giriş Və Qeydiyyat',
         ],
 
         'gopanel' => [
-            'driver'    => 'daily',
-            'path'      => storage_path('logs/gopanel/gopanel-day.log'),
-            'level'     => env('LOG_LEVEL', 'debug'),
-            'days'      => 30,
-            'manual'    => true,
-            'name'      => 'Giriş Və Qeydiyyat'
+            'driver' => 'daily',
+            'path' => storage_path('logs/gopanel/gopanel-day.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 30,
+            'manual' => true,
+            'name' => 'Giriş Və Qeydiyyat',
         ],
 
-
-
-        //Elave numuneler
+        // Elave numuneler
 
         'transactions' => [
-            'driver'    => 'daily',
-            'path'      => storage_path('logs/payment/transactions/transactions-day.log'),
-            'level'     => env('LOG_LEVEL', 'debug'),
-            'days'      => 30,
-            'manual'    => true,
-            'name'      => 'Tranzaksialar'
+            'driver' => 'daily',
+            'path' => storage_path('logs/payment/transactions/transactions-day.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 30,
+            'manual' => true,
+            'name' => 'Tranzaksialar',
         ],
 
-
         'mail' => [
-            'driver'    => 'daily',
-            'path'      => storage_path('logs/mail/mail-day.log'),
-            'level'     => env('LOG_LEVEL', 'debug'),
-            'days'      => 30,
-            'manual'    => true,
-            'name'      => 'Email logları'
+            'driver' => 'daily',
+            'path' => storage_path('logs/mail/mail-day.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 30,
+            'manual' => true,
+            'name' => 'Email logları',
         ],
     ],
 

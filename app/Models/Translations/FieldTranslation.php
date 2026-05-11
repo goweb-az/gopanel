@@ -10,7 +10,6 @@ use Illuminate\Support\Str;
 
 class FieldTranslation extends BaseModel
 {
-
     use HasFactory, SoftDeletes;
 
     protected $logEnabled = false;
@@ -20,16 +19,16 @@ class FieldTranslation extends BaseModel
         'model_id',
         'locale',
         'key',
-        'value'
+        'value',
     ];
 
     protected static function booted()
     {
         static::creating(function ($model) {
-            if ($model->key == 'slug' && !empty($model->value)) {
-                $baseSlug   = Str::slug($model->value, "-", $model->locale);
-                $slug       = $baseSlug;
-                $i          = 1;
+            if ($model->key == 'slug' && ! empty($model->value)) {
+                $baseSlug = Str::slug($model->value, '-', $model->locale);
+                $slug = $baseSlug;
+                $i = 1;
 
                 while (self::where('key', 'slug')
                     ->where('value', $slug)
@@ -37,7 +36,7 @@ class FieldTranslation extends BaseModel
                     ->where('model_type', $model->model_type)
                     ->exists()
                 ) {
-                    $slug = $baseSlug . '-' . $i;
+                    $slug = $baseSlug.'-'.$i;
                     $i++;
                 }
 
@@ -45,7 +44,6 @@ class FieldTranslation extends BaseModel
             }
         });
     }
-
 
     public function model()
     {
@@ -58,10 +56,10 @@ class FieldTranslation extends BaseModel
         $locale = $locale ?? app()->currentLocale();
 
         return Cache::remember("slug_{$slug}_{$locale}", now()->addDays(30), function () use ($slug, $locale) {
-            return self::with("model")
-                ->where("key", "slug")
-                ->where("locale", $locale)
-                ->where("value", $slug)
+            return self::with('model')
+                ->where('key', 'slug')
+                ->where('locale', $locale)
+                ->where('value', $slug)
                 ->first();
         });
     }

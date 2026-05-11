@@ -2,10 +2,9 @@
 
 namespace App\Translations;
 
-use Illuminate\Translation\FileLoader;
-use Illuminate\Translation\Translator as BaseTranslator;
 use Illuminate\Contracts\Translation\Loader;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Translation\Translator as BaseTranslator;
 
 class CustomTranslator extends BaseTranslator
 {
@@ -18,14 +17,13 @@ class CustomTranslator extends BaseTranslator
      * Get the translation for a given key.
      *
      * @param  string  $key
-     * @param  array  $replace
      * @param  string  $locale
      * @return string
      */
     public function get($key, array $replace = [], $locale = null, $fallback = true)
     {
         // Try fetching from database first
-        $translations = Cache::get('translations_' . $locale);
+        $translations = Cache::get('translations_'.$locale);
 
         if ($translations && isset($translations[$key])) {
             return $translations[$key];

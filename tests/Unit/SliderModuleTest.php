@@ -9,7 +9,7 @@ class SliderModuleTest extends TestCase
 {
     public function test_slider_model_configuration_is_ready(): void
     {
-        $slider = new Slider();
+        $slider = new Slider;
 
         $this->assertSame('sliders', $slider->getTable());
         $this->assertSame(['title', 'description', 'link_title'], $slider->translatedAttributes);

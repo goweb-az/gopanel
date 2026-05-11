@@ -35,7 +35,7 @@ trait Cacheable
      */
     public static function cacheKeyPrefix(): string
     {
-        return 'cache.' . (new static())->getTable();
+        return 'cache.'.(new static)->getTable();
     }
 
     /**
@@ -75,7 +75,7 @@ trait Cacheable
     public static function getCachedFirst($id, DateTimeInterface|DateInterval|int|null $ttl = null): ?Model
     {
         return Cache::remember(
-            static::cacheKey('first.' . $id),
+            static::cacheKey('first.'.$id),
             $ttl ?? static::cacheTtl(),
             fn () => static::find($id)
         );
@@ -87,7 +87,7 @@ trait Cacheable
     public static function getCachedBy(string $column, $value, DateTimeInterface|DateInterval|int|null $ttl = null): ?Model
     {
         return Cache::remember(
-            static::cacheKey('by.' . $column . '.' . $value),
+            static::cacheKey('by.'.$column.'.'.$value),
             $ttl ?? static::cacheTtl(),
             fn () => static::where($column, $value)->first()
         );
@@ -113,7 +113,7 @@ trait Cacheable
     {
         Cache::forget(static::cacheKey('all'));
         Cache::forget(static::cacheKey('forever'));
-        Cache::forget("site_" . (new static())->getTable()); // backward compat
+        Cache::forget('site_'.(new static)->getTable()); // backward compat
     }
 
     /**
@@ -130,7 +130,7 @@ trait Cacheable
      */
     protected static function cacheKey(string $suffix): string
     {
-        return static::cacheKeyPrefix() . '.' . $suffix;
+        return static::cacheKeyPrefix().'.'.$suffix;
     }
 
     /**
@@ -138,7 +138,7 @@ trait Cacheable
      */
     protected static function buildCacheableQuery(): Builder
     {
-        $instance = new static();
+        $instance = new static;
         $query = $instance->newQuery();
 
         if (in_array('is_active', $instance->getFillable())) {

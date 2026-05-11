@@ -1,6 +1,7 @@
-<?php return array (
-  'title' => 
-  array (
-    'hfg' => 'fghfgh',
-  ),
-);
+<?php
+
+return [
+    'title' => [
+        'hfg' => 'fghfgh',
+    ],
+];

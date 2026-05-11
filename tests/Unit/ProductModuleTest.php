@@ -11,7 +11,7 @@ class ProductModuleTest extends TestCase
 {
     public function test_product_model_configuration_is_ready(): void
     {
-        $product = new Product();
+        $product = new Product;
 
         $this->assertSame('products', $product->getTable());
         $this->assertSame(['title', 'short_description', 'description', 'slug'], $product->translatedAttributes);
@@ -53,7 +53,7 @@ class ProductModuleTest extends TestCase
     public function test_product_index_uses_datatable_and_form_uses_static_pattern(): void
     {
         $index = file_get_contents(base_path('resources/views/gopanel/pages/products/index.blade.php'));
-        $form  = file_get_contents(base_path('resources/views/gopanel/pages/products/partials/form.blade.php'));
+        $form = file_get_contents(base_path('resources/views/gopanel/pages/products/partials/form.blade.php'));
 
         $this->assertStringContainsString("'__datatableName' => 'gopanel.product'", $index);
         $this->assertStringContainsString('id="static-form"', $form);

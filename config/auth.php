@@ -37,22 +37,22 @@ return [
 
     'guards' => [
         'web' => [
-            'driver'    => 'session',
-            'provider'  => 'users',
-            'name'      => 'İstifadəçilər'
+            'driver' => 'session',
+            'provider' => 'users',
+            'name' => 'İstifadəçilər',
         ],
 
         'gopanel' => [
-            'driver'    => 'session',
-            'provider'  => 'gopanel',
-            'name'      => 'Adminlər'
+            'driver' => 'session',
+            'provider' => 'gopanel',
+            'name' => 'Adminlər',
         ],
 
         'api' => [
-            'driver'    => 'jwt',
-            'provider'  => 'users',
-            'name'      => 'İstifadəçilər',
-            'hash'      => false,
+            'driver' => 'jwt',
+            'provider' => 'users',
+            'name' => 'İstifadəçilər',
+            'hash' => false,
         ],
     ],
 

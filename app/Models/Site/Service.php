@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
 
 class Service extends BaseModel
 {
-    use HasFactory, SoftDeletes, Translation, MetaData;
+    use HasFactory, MetaData, SoftDeletes, Translation;
 
     protected $table = 'services';
 
@@ -56,7 +56,7 @@ class Service extends BaseModel
             return '<span class="text-muted">Şəkil yoxdur</span>';
         }
 
-        return '<img src="' . e($this->image_url) . '" alt="' . e($this->title ?? 'Service') . '" style="width:50px;height:50px;object-fit:cover;border-radius:8px;">';
+        return '<img src="'.e($this->image_url).'" alt="'.e($this->title ?? 'Service').'" style="width:50px;height:50px;object-fit:cover;border-radius:8px;">';
     }
 
     public function getIconViewAttribute(): string
@@ -66,14 +66,14 @@ class Service extends BaseModel
         }
 
         if ($this->icon_type === SocialIconTypeEnum::Image) {
-            return '<img src="' . e(asset($this->icon)) . '" alt="' . e($this->title ?? 'Service') . '" style="width:34px;height:34px;object-fit:contain;">';
+            return '<img src="'.e(asset($this->icon)).'" alt="'.e($this->title ?? 'Service').'" style="width:34px;height:34px;object-fit:contain;">';
         }
 
         if (str_starts_with(trim($this->icon), '<')) {
-            return '<span style="font-size:20px;">' . $this->icon . '</span>';
+            return '<span style="font-size:20px;">'.$this->icon.'</span>';
         }
 
-        return '<i class="' . e($this->icon) . '" style="font-size:20px;"></i>';
+        return '<i class="'.e($this->icon).'" style="font-size:20px;"></i>';
     }
 
     public function getIconValueAttribute(): string

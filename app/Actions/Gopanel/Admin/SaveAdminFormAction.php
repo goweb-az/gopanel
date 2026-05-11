@@ -28,10 +28,10 @@ class SaveAdminFormAction
     ): Admin {
         return DB::transaction(function () use ($form, $password, $upload): Admin {
             $isCreate = empty($form['id']);
-            $admin    = Admin::findOrNew($form['id'] ?? null);
+            $admin = Admin::findOrNew($form['id'] ?? null);
 
             if ($upload) {
-                $form['image'] = FileUploader::toStorage($upload, 'admins', 'admin-' . time());
+                $form['image'] = FileUploader::toStorage($upload, 'admins', 'admin-'.time());
             }
 
             $data = collect($form)->except(['id', 'role_id'])->all();

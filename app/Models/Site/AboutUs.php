@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class AboutUs extends BaseModel
 {
-    use HasFactory, Translation, MetaData;
+    use HasFactory, MetaData, Translation;
 
     protected $table = 'about_us';
 

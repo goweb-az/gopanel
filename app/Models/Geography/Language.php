@@ -59,9 +59,9 @@ class Language extends BaseModel
 
     public static function getCachedAll(DateTimeInterface|DateInterval|int|null $ttl = null): Collection
     {
-        $instance = new static();
+        $instance = new static;
 
-        return Cache::remember("site_" . $instance->getTable(), $ttl ?? now()->addDays(5), function () use ($instance) {
+        return Cache::remember('site_'.$instance->getTable(), $ttl ?? now()->addDays(5), function () use ($instance) {
             return $instance->newQuery()
                 ->where('is_active', true)
                 ->orderByDesc('default')
@@ -73,8 +73,8 @@ class Language extends BaseModel
 
     public static function clearLanguageCache(): void
     {
-        $instance = new static();
-        Cache::forget("site_" . $instance->getTable());
+        $instance = new static;
+        Cache::forget('site_'.$instance->getTable());
     }
 
     public static function getDefault(): ?self
@@ -93,7 +93,7 @@ class Language extends BaseModel
 
     public static function ensureSingleDefault(self $item): void
     {
-        if (!$item->default) {
+        if (! $item->default) {
             return;
         }
 
@@ -113,7 +113,7 @@ class Language extends BaseModel
             ->where('code', $fallback)
             ->first();
 
-        if (!$language) {
+        if (! $language) {
             $language = static::query()
                 ->where('is_active', true)
                 ->orderBy('sort_order')
@@ -145,12 +145,12 @@ class Language extends BaseModel
         $segments = $path ? explode('/', $path) : [];
         $activeCodes = self::getCachedAll()->pluck('code')->toArray();
 
-        if (!empty($segments) && in_array($segments[0], $activeCodes, true)) {
+        if (! empty($segments) && in_array($segments[0], $activeCodes, true)) {
             $segments[0] = $this->code;
         } else {
             array_unshift($segments, $this->code);
         }
 
-        return $baseUrl . '/' . implode('/', $segments);
+        return $baseUrl.'/'.implode('/', $segments);
     }
 }

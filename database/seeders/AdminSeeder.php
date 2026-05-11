@@ -15,12 +15,12 @@ class AdminSeeder extends Seeder
     {
         $exists = Admin::where('email', 'admin@gmail.com')->exists();
         if (! $exists) {
-            $admin = new Admin();
-            $admin->full_name = "Super Admin";
-            $admin->email     = "admin@gmail.com";
-            $admin->password  = Hash::make('12345');
+            $admin = new Admin;
+            $admin->full_name = 'Super Admin';
+            $admin->email = 'admin@gmail.com';
+            $admin->password = Hash::make('12345');
             $admin->is_active = true;
-            $admin->is_super  = true;
+            $admin->is_super = true;
             $admin->save();
         }
     }

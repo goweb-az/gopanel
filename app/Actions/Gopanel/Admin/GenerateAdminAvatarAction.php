@@ -18,15 +18,15 @@ class GenerateAdminAvatarAction
     public function handle(Admin $admin): ?string
     {
         try {
-            $name     = urlencode($admin->full_name ?? 'Admin');
-            $url      = "https://ui-avatars.com/api/?name={$name}&background=556ee6&color=fff&size=256&font-size=0.4&format=png";
+            $name = urlencode($admin->full_name ?? 'Admin');
+            $url = "https://ui-avatars.com/api/?name={$name}&background=556ee6&color=fff&size=256&font-size=0.4&format=png";
             $contents = @file_get_contents($url);
 
             if (! $contents) {
                 return null;
             }
 
-            $path = 'admins/admin-' . $admin->id . '.png';
+            $path = 'admins/admin-'.$admin->id.'.png';
             Storage::disk(gopanel_disk())->put($path, $contents);
 
             return $path;

@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\Response;
 
-/* 
+/*
  * @var SiteRedirectMiddleware $this
  * İstek geldiğinde tabloya göre yönlendirme yapar.
  */
@@ -19,26 +19,28 @@ class SiteRedirectMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         $response = $this->maybeRedirect($request);
+
         return $response ?: $next($request);
     }
 
     protected function maybeRedirect(Request $request): ?Response
     {
         $site_redirect_status = SiteSetting::getCached()?->site_redirect_status ?? true;
-        if (!$site_redirect_status)
+        if (! $site_redirect_status) {
             return null;
+        }
 
         if ($request->is('/') || $request->path() === '' || $request->path() === '/') {
             return null;
         }
 
-        $locale     = app()->getLocale();
-        $fullUrl    = rtrim($request->fullUrl(), '/');
-        $pathWithLocale = '/' . trim($request->path(), '/'); // /az/... olabiler
+        $locale = app()->getLocale();
+        $fullUrl = rtrim($request->fullUrl(), '/');
+        $pathWithLocale = '/'.trim($request->path(), '/'); // /az/... olabiler
         $candidates = Cache::remember("site_redirect_rules_{$locale}", now()->addMinutes(5), function () use ($locale) {
             return SiteRedirect::active()
                 ->forLocale($locale)
-                ->where("is_active", true)
+                ->where('is_active', true)
                 ->orderByDesc('priority')
                 ->orderBy('id')
                 ->get();
@@ -49,16 +51,17 @@ class SiteRedirectMiddleware
             if ($rule->matches($fullUrl, $locale) || $rule->matches($pathWithLocale, $locale)) {
                 $rule->registerHit();
                 $target = $rule->target ?: url('/');
+
                 return redirect()->to($target, $rule->http_code);
             }
         }
 
         // dildən asılı olmayan qaydaları ehtiyat nüsxə kimi sınayaq:
-        $fallbackKey = "site_redirect_rules_all";
+        $fallbackKey = 'site_redirect_rules_all';
         $fallback = Cache::remember($fallbackKey, now()->addMinutes(5), function () {
             return SiteRedirect::active()
                 ->whereNull('locale')
-                ->where("is_active", true)
+                ->where('is_active', true)
                 ->orderByDesc('priority')
                 ->orderBy('id')
                 ->get();
@@ -68,14 +71,13 @@ class SiteRedirectMiddleware
             if ($rule->matches($fullUrl, $locale) || $rule->matches($pathWithLocale, $locale)) {
                 $rule->registerHit();
                 $target = $rule->target ?: url('/');
+
                 return redirect()->to($target, $rule->http_code);
             }
         }
 
         return null;
     }
-
-
 
     private function fallback() {}
 }

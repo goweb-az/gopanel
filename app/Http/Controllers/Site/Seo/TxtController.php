@@ -31,6 +31,7 @@ class TxtController extends SiteController
     public function llms(Request $request)
     {
         $llms = \App\Models\Seo\LlmsTxt::getCached();
+
         return response($llms->content ?? '', 200)
             ->header('Content-Type', 'text/plain');
     }

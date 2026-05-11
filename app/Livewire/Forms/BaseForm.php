@@ -39,10 +39,10 @@ abstract class BaseForm extends Form
         foreach (Language::getCachedAll() as $lang) {
             $row = $rows->get($lang->code);
             $this->meta[$lang->code] = [
-                'title'       => $row?->title ?? '',
+                'title' => $row?->title ?? '',
                 'description' => $row?->description ?? '',
-                'keywords'    => $row?->keywords ?? '',
-                'image'       => $row?->image ?? '',
+                'keywords' => $row?->keywords ?? '',
+                'image' => $row?->image ?? '',
             ];
             $this->metaUploads[$lang->code] = null;
         }
@@ -52,12 +52,13 @@ abstract class BaseForm extends Form
     {
         $rules = [];
         foreach (Language::getCachedAll() as $lang) {
-            $rules["meta.{$lang->code}.title"]       = ['nullable', 'string', 'max:255'];
+            $rules["meta.{$lang->code}.title"] = ['nullable', 'string', 'max:255'];
             $rules["meta.{$lang->code}.description"] = ['nullable', 'string', 'max:1000'];
-            $rules["meta.{$lang->code}.keywords"]    = ['nullable', 'string', 'max:500'];
-            $rules["meta.{$lang->code}.image"]       = ['nullable', 'string', 'max:500'];
-            $rules["metaUploads.{$lang->code}"]      = ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'];
+            $rules["meta.{$lang->code}.keywords"] = ['nullable', 'string', 'max:500'];
+            $rules["meta.{$lang->code}.image"] = ['nullable', 'string', 'max:500'];
+            $rules["metaUploads.{$lang->code}"] = ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'];
         }
+
         return $rules;
     }
 
@@ -65,7 +66,7 @@ abstract class BaseForm extends Form
     {
         $this->translations = [];
 
-        if (!method_exists($model, 'translations')) {
+        if (! method_exists($model, 'translations')) {
             return;
         }
 
@@ -115,5 +116,4 @@ abstract class BaseForm extends Form
 
         return $rules;
     }
-
 }

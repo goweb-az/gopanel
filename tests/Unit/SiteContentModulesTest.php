@@ -12,7 +12,7 @@ class SiteContentModulesTest extends TestCase
 {
     public function test_about_us_model_is_translation_and_metadata_ready(): void
     {
-        $aboutUs = new AboutUs();
+        $aboutUs = new AboutUs;
 
         $this->assertSame('about_us', $aboutUs->getTable());
         $this->assertSame(['title', 'description'], $aboutUs->translatedAttributes);
@@ -23,7 +23,7 @@ class SiteContentModulesTest extends TestCase
 
     public function test_service_model_is_crud_ready(): void
     {
-        $service = new Service();
+        $service = new Service;
 
         $this->assertSame('services', $service->getTable());
         $this->assertSame(['title', 'short_description', 'description'], $service->translatedAttributes);

@@ -20,7 +20,7 @@ class RegisterClickListener
         try {
             $this->analytics->register($event->data);
         } catch (\Throwable $e) {
-            Log::error('RegisterClickListener error: ' . $e->getMessage(), [
+            Log::error('RegisterClickListener error: '.$e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
             ]);
         }

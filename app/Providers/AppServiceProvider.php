@@ -15,7 +15,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton('gopanel', function ($app) {
-            return new GoPanelHelper();
+            return new GoPanelHelper;
         });
 
         $this->app->singleton(LocaleManager::class);

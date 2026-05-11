@@ -11,7 +11,7 @@ class CategoryModuleTest extends TestCase
 {
     public function test_category_model_configuration_is_ready_for_gopanel(): void
     {
-        $category = new Category();
+        $category = new Category;
 
         $this->assertSame(['name', 'description', 'slug'], $category->translatedAttributes);
         $this->assertSame('name', $category->slug_key);
@@ -35,7 +35,7 @@ class CategoryModuleTest extends TestCase
         $this->assertStringNotContainsString('$.ajax({', $blade);
 
         $this->assertStringContainsString("$('#parent-sortable').sortable", $script);
-        $this->assertStringContainsString("data-move-url", $script);
+        $this->assertStringContainsString('data-move-url', $script);
     }
 
     public function test_category_controller_no_longer_uses_legacy_upload_helper(): void

@@ -16,7 +16,7 @@ use Illuminate\Support\Str;
 
 class Blog extends BaseModel
 {
-    use HasFactory, SoftDeletes, Translation, MetaData;
+    use HasFactory, MetaData, SoftDeletes, Translation;
 
     protected $logEnabled = false;
 
@@ -30,13 +30,15 @@ class Blog extends BaseModel
     protected $casts = [
         'date_time' => 'datetime',
         'is_active' => 'boolean',
-        'views'     => 'integer',
+        'views' => 'integer',
     ];
 
     protected $files = ['image'];
 
     public $slug_key = 'title';
+
     public $translatedAttributes = ['title', 'description', 'slug'];
+
     public $controller = \App\Http\Controllers\Site\BlogController::class;
 
     public function getShortDescriptionAttribute()
@@ -55,7 +57,7 @@ class Blog extends BaseModel
             return '<span class="text-muted">Şəkil yoxdur</span>';
         }
 
-        return '<img src="' . e($this->image_url) . '" alt="' . e($this->title ?? 'Blog') . '" style="width:50px;height:50px;object-fit:cover;border-radius:8px;">';
+        return '<img src="'.e($this->image_url).'" alt="'.e($this->title ?? 'Blog').'" style="width:50px;height:50px;object-fit:cover;border-radius:8px;">';
     }
 
     public function getIsActiveBtnAttribute(): string
@@ -96,7 +98,7 @@ class Blog extends BaseModel
         $locale = app()->getLocale();
         $slug = $this->getTranslation('slug', $locale, true);
 
-        if (!$slug) {
+        if (! $slug) {
             return null;
         }
 

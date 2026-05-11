@@ -8,10 +8,10 @@ use App\Models\Site\Slider;
 class SliderForm extends BaseForm
 {
     public array $form = [
-        'id'         => null,
-        'link'       => '',
-        'image'      => '',
-        'is_active'  => true,
+        'id' => null,
+        'link' => '',
+        'image' => '',
+        'is_active' => true,
         'sort_order' => 0,
     ];
 
@@ -20,10 +20,10 @@ class SliderForm extends BaseForm
     protected function rules(): array
     {
         return [
-            'form.link'       => ['nullable', 'string', 'max:255'],
-            'form.is_active'  => 'boolean',
+            'form.link' => ['nullable', 'string', 'max:255'],
+            'form.is_active' => 'boolean',
             'form.sort_order' => ['integer', 'min:0'],
-            'upload'          => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:4096'],
+            'upload' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:4096'],
         ] + $this->translationRules(
             required: ['title' => 255],
             optional: ['description' => 1000, 'link_title' => 255],
@@ -33,10 +33,10 @@ class SliderForm extends BaseForm
     public function setItem(Slider $slider): void
     {
         $this->form = [
-            'id'         => $slider->id,
-            'link'       => $slider->link ?? '',
-            'image'      => $slider->image ?? '',
-            'is_active'  => (bool) ($slider->is_active ?? true),
+            'id' => $slider->id,
+            'link' => $slider->link ?? '',
+            'image' => $slider->image ?? '',
+            'is_active' => (bool) ($slider->is_active ?? true),
             'sort_order' => (int) ($slider->sort_order ?? 0),
         ];
 
@@ -52,7 +52,7 @@ class SliderForm extends BaseForm
         );
 
         $this->form['id'] = $slider->id;
-        $this->upload     = null;
+        $this->upload = null;
 
         return $slider;
     }

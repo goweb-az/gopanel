@@ -6,11 +6,11 @@ use Illuminate\Http\Request;
 
 class StaticPageController extends SiteController
 {
-
     public function contact(Request $request)
     {
-        $this->setSchema("site.schema-markups.contact");
-        return view("site.pages.static.contact");
+        $this->setSchema('site.schema-markups.contact');
+
+        return view('site.pages.static.contact');
     }
 
     public function fallback()

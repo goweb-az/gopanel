@@ -27,7 +27,7 @@ class SaveProductFormAction
             if ($upload) {
                 $form['image'] = FileUploader::toPublic(
                     $upload,
-                    (new Product())->getTable(),
+                    (new Product)->getTable(),
                     FileUploader::nameGenerate(['title' => $translations['az']['title'] ?? 'product'], 'product'),
                 );
             }

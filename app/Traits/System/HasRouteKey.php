@@ -10,9 +10,10 @@ trait HasRouteKey
      */
     public function getIdentifierIdAttribute()
     {
-        if (in_array('uid', $this->getFillable()) && !empty($this->uid)) {
+        if (in_array('uid', $this->getFillable()) && ! empty($this->uid)) {
             return $this->uid;
         }
+
         return $this->id;
     }
 
@@ -21,8 +22,9 @@ trait HasRouteKey
      */
     public static function resolveByKey($value)
     {
-        $instance = new static();
-        $column = (in_array('uid', $instance->getFillable()) && !is_numeric($value)) ? 'uid' : 'id';
+        $instance = new static;
+        $column = (in_array('uid', $instance->getFillable()) && ! is_numeric($value)) ? 'uid' : 'id';
+
         return static::where($column, $value)->first();
     }
 }

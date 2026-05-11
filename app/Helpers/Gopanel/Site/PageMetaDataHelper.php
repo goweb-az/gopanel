@@ -17,7 +17,7 @@ class PageMetaDataHelper
     {
         foreach (self::prepareLocales() as $locale) {
             // Check if there is any data to save for the current locale
-            if (!self::shouldSave($metaDataInput, $metaFiles, $locale)) {
+            if (! self::shouldSave($metaDataInput, $metaFiles, $locale)) {
                 continue;
             }
 
@@ -45,10 +45,10 @@ class PageMetaDataHelper
     protected static function shouldSave(array $metaInput, array $metaFiles, string $locale): bool
     {
         return
-            !empty($metaInput['title'][$locale] ?? null) ||
-            !empty($metaInput['description'][$locale] ?? null) ||
-            !empty($metaInput['keywords'][$locale] ?? null) ||
-            !empty($metaFiles['image'][$locale] ?? null);
+            ! empty($metaInput['title'][$locale] ?? null) ||
+            ! empty($metaInput['description'][$locale] ?? null) ||
+            ! empty($metaInput['keywords'][$locale] ?? null) ||
+            ! empty($metaFiles['image'][$locale] ?? null);
     }
 
     /**
@@ -60,15 +60,14 @@ class PageMetaDataHelper
         $image = $metaFiles['image'][$locale] ?? null;
 
         if ($image instanceof UploadedFile) {
-            $table      = $item->getTable();
-            $imageName  = !empty($title) ? ("{$table}-") . Str::slug($title, '-', $locale) : uniqid($table . "-");
+            $table = $item->getTable();
+            $imageName = ! empty($title) ? ("{$table}-").Str::slug($title, '-', $locale) : uniqid($table.'-');
 
             return FileUploader::toPublic($image, "meta/{$table}", "qrgate-{$imageName}");
         }
 
         return null;
     }
-
 
     /**
      * Saves a PageMetaData record for the given locale.
@@ -77,26 +76,26 @@ class PageMetaDataHelper
     {
         // Prepare data to save, only including fields that are provided
         $data = [
-            'model_type'  => get_class($item),
-            'model_id'    => $item->id,
-            'source'      => $item->getTable(),
-            'locale'      => $locale,
+            'model_type' => get_class($item),
+            'model_id' => $item->id,
+            'source' => $item->getTable(),
+            'locale' => $locale,
         ];
 
         // Add fields if present in the input
-        if (!empty($metaInput['title'][$locale] ?? null)) {
+        if (! empty($metaInput['title'][$locale] ?? null)) {
             $data['title'] = $metaInput['title'][$locale];
         }
 
-        if (!empty($metaInput['description'][$locale] ?? null)) {
+        if (! empty($metaInput['description'][$locale] ?? null)) {
             $data['description'] = $metaInput['description'][$locale];
         }
 
-        if (!empty($metaInput['keywords'][$locale] ?? null)) {
+        if (! empty($metaInput['keywords'][$locale] ?? null)) {
             $data['keywords'] = $metaInput['keywords'][$locale];
         }
 
-        if (!empty($imagePath)) {
+        if (! empty($imagePath)) {
             $data['image'] = $imagePath;
         }
 
@@ -105,8 +104,8 @@ class PageMetaDataHelper
             PageMetaData::updateOrCreate(
                 [
                     'model_type' => $data['model_type'],
-                    'model_id'   => $data['model_id'],
-                    'locale'     => $data['locale'],
+                    'model_id' => $data['model_id'],
+                    'locale' => $data['locale'],
                 ],
                 $data
             );
