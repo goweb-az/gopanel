@@ -19,9 +19,6 @@
     --gp-dt-text: #2a3042;
     --gp-dt-muted: #74788d;
     --gp-dt-accent: #556ee6;
-
-    box-shadow: 0 2px 3px #8d8d8d1c;
-    border-radius: 13px;
 }
 
 /* Toolbar -------------------------------------------------- */
@@ -132,6 +129,8 @@
     border-radius: 12px;
     overflow: hidden;
     background: #fff;
+    box-shadow: 0 2px 3px #8d8d8d1c;
+    border-radius: 13px;
 }
 
 .gp-datatable__table {

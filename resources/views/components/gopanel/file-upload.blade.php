@@ -22,7 +22,7 @@
     };
 @endphp
 
-<div class="mb-3"
+<div
      x-data="{
         progress: 0,
         uploading: false,
