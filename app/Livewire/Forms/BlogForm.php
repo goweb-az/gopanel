@@ -23,7 +23,7 @@ class BlogForm extends BaseForm
             'form.date_time' => ['nullable', 'date'],
             'form.is_active' => 'boolean',
             'form.views'     => ['integer', 'min:0'],
-            'upload'         => ['nullable', 'image', 'max:4096'],
+            'upload'         => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:4096'],
         ] + $this->translationRules(
             required: ['title' => 255],
             optional: ['description' => 65535, 'slug' => 255],

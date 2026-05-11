@@ -37,10 +37,10 @@ class SiteSettingForm extends BaseForm
             'form.site_redirect_status' => 'boolean',
             'form.site_analytics'       => 'boolean',
             'form.block_bad_bots'       => 'boolean',
-            'logoLightUpload'           => ['nullable', 'image', 'max:2048'],
-            'logoDarkUpload'            => ['nullable', 'image', 'max:2048'],
-            'mailLogoUpload'            => ['nullable', 'image', 'max:2048'],
-            'gopanelLogoUpload'         => ['nullable', 'image', 'max:2048'],
+            'logoLightUpload'           => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'logoDarkUpload'            => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'mailLogoUpload'            => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'gopanelLogoUpload'         => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ];
     }
 

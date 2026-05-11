@@ -31,7 +31,7 @@ class SocialForm extends BaseForm
             'form.target_blank' => 'boolean',
             'form.is_active'    => 'boolean',
             'form.sort_order'   => ['integer', 'min:0'],
-            'upload'            => ['nullable', 'image', 'max:2048'],
+            'upload'            => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ];
     }
 

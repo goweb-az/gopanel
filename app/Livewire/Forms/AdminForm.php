@@ -36,7 +36,7 @@ class AdminForm extends Form
             'password'       => $this->form['id']
                 ? ['nullable', 'string', 'min:6', 'confirmed']
                 : ['required', 'string', 'min:6', 'confirmed'],
-            'upload'         => ['nullable', 'image', 'max:2048'],
+            'upload'         => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ];
     }
 

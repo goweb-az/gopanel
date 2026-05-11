@@ -23,7 +23,7 @@ class ProductForm extends BaseForm
             'form.price'     => ['required', 'numeric', 'min:0'],
             'form.discount'  => ['nullable', 'numeric', 'min:0'],
             'form.is_active' => 'boolean',
-            'upload'         => ['nullable', 'image', 'max:4096'],
+            'upload'         => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:4096'],
         ] + $this->translationRules(
             required: ['title' => 255],
             optional: ['short_description' => 1000, 'description' => 65535, 'slug' => 255],

@@ -26,8 +26,8 @@ class ServiceForm extends BaseForm
             'form.icon'       => ['nullable', 'string', 'max:255'],
             'form.icon_type'  => ['required', 'string', 'in:' . implode(',', SocialIconTypeEnum::values())],
             'form.sort_order' => ['integer', 'min:0'],
-            'iconUpload'      => ['nullable', 'image', 'max:2048'],
-            'imageUpload'     => ['nullable', 'image', 'max:4096'],
+            'iconUpload'      => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'imageUpload'     => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:4096'],
         ] + $this->translationRules(
             required: ['title' => 255],
             optional: ['short_description' => 1000, 'description' => 65535],

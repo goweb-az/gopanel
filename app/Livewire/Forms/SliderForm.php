@@ -23,7 +23,7 @@ class SliderForm extends BaseForm
             'form.link'       => ['nullable', 'string', 'max:255'],
             'form.is_active'  => 'boolean',
             'form.sort_order' => ['integer', 'min:0'],
-            'upload'          => ['nullable', 'image', 'max:4096'],
+            'upload'          => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:4096'],
         ] + $this->translationRules(
             required: ['title' => 255],
             optional: ['description' => 1000, 'link_title' => 255],

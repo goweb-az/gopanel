@@ -17,7 +17,7 @@ class AboutUsForm extends BaseForm
     protected function rules(): array
     {
         return [
-            'upload' => ['nullable', 'image', 'max:4096'],
+            'upload' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:4096'],
         ] + $this->translationRules(
             required: ['title' => 255],
             optional: ['description' => 65535],
