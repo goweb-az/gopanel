@@ -1,0 +1,64 @@
+/* ============================================================
+ * Modern segmented tabs (.gp-tabs)
+ *
+ * Pill-style segmented control: gray track with a single white pill
+ * sliding under the active item. Drop-in replacement for Bootstrap
+ * .nav-tabs — keep the .nav and .nav-link classes, just add .gp-tabs.
+ * ============================================================ */
+
+.gp-tabs {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    background: #f1f3f5;
+    border-radius: 999px;
+    border: 0;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.gp-tabs .nav-item {
+    margin: 0;
+}
+
+.gp-tabs .nav-link {
+    background: transparent;
+    border: 0;
+    border-radius: 999px;
+    padding: 8px 18px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: #74788d;
+    transition: color .18s ease, background-color .18s ease, box-shadow .18s ease;
+    cursor: pointer;
+    line-height: 1.4;
+}
+
+.gp-tabs .nav-link i {
+    opacity: .7;
+    transition: opacity .18s ease;
+}
+
+.gp-tabs .nav-link:hover:not(.active) {
+    color: #2a3042;
+}
+.gp-tabs .nav-link:hover:not(.active) i {
+    opacity: 1;
+}
+
+.gp-tabs .nav-link.active {
+    background: #ffffff;
+    color: #2a3042;
+    box-shadow:
+        0 1px 2px rgba(15, 23, 42, .06),
+        0 4px 10px -2px rgba(15, 23, 42, .08);
+}
+.gp-tabs .nav-link.active i {
+    opacity: 1;
+}
+
+.gp-tabs .nav-link:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(85, 110, 230, .25);
+}
