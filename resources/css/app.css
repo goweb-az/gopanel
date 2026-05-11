@@ -163,6 +163,16 @@
     padding: 12px 0;
     justify-content: center;
 }
+
+/* Collapsed mode: inline submenus stay hidden; only the hover popout
+   beside the icon rail (rule below) is allowed. The mm-active /
+   mm-show classes that drive the expanded sidebar must not apply. */
+.vertical-collpsed[data-sidebar="dark"] #sidebar-menu > ul > li > ul.sub-menu {
+    display: none;
+}
+.vertical-collpsed[data-sidebar="dark"] #sidebar-menu > ul > li:hover > ul.sub-menu {
+    display: block;
+}
 .vertical-collpsed[data-sidebar="dark"] #sidebar-menu > ul > li > a > i,
 .vertical-collpsed[data-sidebar="dark"] #sidebar-menu > ul > li > a > .bx {
     font-size: 20px;
