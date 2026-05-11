@@ -49,7 +49,7 @@ class CustomRole extends Role
             return '<span class="text-muted">İcazə verilməyib</span>';
         }
 
-        $groupText = $groups ? " <span class=\"text-muted\">{$groups} qrup</span>" : '';
+        $groupText = $groups ? "<span class=\"text-muted ms-2\">· {$groups} qrup</span>" : '';
 
         return "<span class=\"fw-semibold\">{$count} icazə</span>{$groupText}";
     }
