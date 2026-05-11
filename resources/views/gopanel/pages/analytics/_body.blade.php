@@ -1,5 +1,3 @@
-@extends('gopanel.layouts.main')
-@section('content')
 <div class="page-content" id="analyticsWrapperDahboard" style="position:relative;">
     <!-- Loader Overlay (inside content only) -->
     <div class="analytics-loader-overlay" id="analyticsLoader">
@@ -106,41 +104,36 @@
 
     </div>
 </div>
-@endsection
 
-@push('styles')
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-    <link rel="stylesheet" href="{{asset('/assets/gopanel/libs/select2/css/select2.min.css')}}">
-@endpush
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<link rel="stylesheet" href="{{ asset('/assets/gopanel/libs/select2/css/select2.min.css') }}">
 
-@push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/moment@2.30.1/moment.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="{{asset("/assets/gopanel/libs/apexcharts/apexcharts.min.js")}}"></script>
-    <script src="{{asset("/assets/gopanel/libs/chart.js/Chart.bundle.min.js")}}"></script>
-    <script src="{{asset('/assets/gopanel/libs/select2/js/select2.min.js')}}"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.30.1/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{{ asset('/assets/gopanel/libs/apexcharts/apexcharts.min.js') }}"></script>
+<script src="{{ asset('/assets/gopanel/libs/chart.js/Chart.bundle.min.js') }}"></script>
+<script src="{{ asset('/assets/gopanel/libs/select2/js/select2.min.js') }}"></script>
 
-    <script>
-        var analyticsConfig = {
-            dateFrom: '{{ $dateFrom }}',
-            dateTo: '{{ $dateTo }}',
-            routes: {
-                topHits: '/gopanel/analytics/get/top-hits',
-                countriesMap: '/gopanel/analytics/get/countries-map',
-                citiesChart: '/gopanel/analytics/get/cities-chart',
-                languagesChart: '/gopanel/analytics/get/languages-chart',
-                osChart: '/gopanel/analytics/get/os-chart',
-                searchCountries: '/gopanel/analytics/api/countries',
-                searchCities: '/gopanel/analytics/api/cities',
-            }
-        };
-        var deviceLabels = {!! json_encode($deviceLabels) !!};
-        var deviceHits   = {!! json_encode($deviceHits) !!};
-        var browserLabels = {!! json_encode($browserLabels) !!};
-        var browserHits   = {!! json_encode($browserHits) !!};
-    </script>
+<script>
+    var analyticsConfig = {
+        dateFrom: '{{ $dateFrom }}',
+        dateTo: '{{ $dateTo }}',
+        routes: {
+            topHits: '/gopanel/analytics/get/top-hits',
+            countriesMap: '/gopanel/analytics/get/countries-map',
+            citiesChart: '/gopanel/analytics/get/cities-chart',
+            languagesChart: '/gopanel/analytics/get/languages-chart',
+            osChart: '/gopanel/analytics/get/os-chart',
+            searchCountries: '/gopanel/analytics/api/countries',
+            searchCities: '/gopanel/analytics/api/cities',
+        }
+    };
+    var deviceLabels = {!! json_encode($deviceLabels) !!};
+    var deviceHits   = {!! json_encode($deviceHits) !!};
+    var browserLabels = {!! json_encode($browserLabels) !!};
+    var browserHits   = {!! json_encode($browserHits) !!};
+</script>
 
-    <script src="{{asset("/assets/gopanel/js/modules/analytics.js?v=" . time())}}"></script>
-@endpush
+<script src="{{ asset('/assets/gopanel/js/modules/analytics.js?v=' . time()) }}"></script>

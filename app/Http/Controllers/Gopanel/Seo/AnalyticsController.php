@@ -34,55 +34,6 @@ class AnalyticsController extends GoPanelController
             : Carbon::now()->subDays(6)->startOfDay();
     }
 
-    public function index(Request $request)
-    {
-        $clicksQuery = AnalyticsClick::whereBetween('created_at', [$this->from, $this->to]);
-
-        $countriesCount  = (clone $clicksQuery)->distinct('country_id')->count('country_id');
-        $citiesCount     = (clone $clicksQuery)->distinct('city_id')->count('city_id');
-        $languagesCount  = AnalyticsLanguage::count();
-        $operatingsCount = AnalyticsOperatingSystem::count();
-
-        $devices     = AnalyticsDevice::orderByDesc('hit_count')->limit(10)->get();
-        $browsers    = AnalyticsBrowser::orderByDesc('hit_count')->limit(10)->get();
-        $adPlatforms = AnalyticsAdPlatform::orderByDesc('hit_count')->limit(10)->get();
-        $utms        = AnalyticsUtmParameter::with('click.link')->latest()->limit(10)->get();
-        $utmsCount   = AnalyticsUtmParameter::count();
-        $anayticsLanguages = AnalyticsLanguage::orderByDesc('hit_count')->limit(10)->get();
-
-        $deviceLabels  = $devices->pluck('device_type');
-        $deviceHits    = $devices->pluck('hit_count');
-        $browserLabels = $browsers->pluck('name');
-        $browserHits   = $browsers->pluck('hit_count');
-
-        $latestClicks = AnalyticsClick::with(['country', 'city', 'device', 'browser', 'operatingSystem', 'language'])
-            ->whereBetween('created_at', [$this->from, $this->to])
-            ->latest()->limit(10)->get();
-        $clicksCount = (clone $clicksQuery)->count();
-
-        $latestLinks = AnalyticsLink::orderByDesc('hit_count')->limit(10)->get();
-        $linksCount  = AnalyticsLink::count();
-
-        $dateFrom = $this->from->format('Y-m-d');
-        $dateTo   = $this->to->format('Y-m-d');
-
-        // Filter data for selects
-        $allCountries = AnalyticsCountry::orderBy('name')->get(['id', 'name']);
-        $allBrowsers  = AnalyticsBrowser::orderBy('name')->get(['id', 'name']);
-        $allDevices   = AnalyticsDevice::orderBy('device_type')->get(['id', 'device_type']);
-
-        return view('gopanel.pages.analytics.index', compact(
-            'countriesCount', 'citiesCount', 'languagesCount', 'operatingsCount',
-            'devices', 'deviceLabels', 'deviceHits',
-            'browsers', 'browserLabels', 'browserHits',
-            'anayticsLanguages', 'adPlatforms',
-            'utms', 'utmsCount',
-            'latestClicks', 'clicksCount',
-            'latestLinks', 'linksCount',
-            'dateFrom', 'dateTo',
-            'allCountries', 'allBrowsers', 'allDevices'
-        ));
-    }
 
 
     public function getTopHits(Request $request)

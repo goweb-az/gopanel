@@ -1,5 +1,3 @@
-@extends('gopanel.layouts.main')
-@section('content') 
 <div class="page-content">
     <div class="container-fluid">
 
@@ -109,7 +107,4 @@
     </div> <!-- container-fluid -->
 </div>
 <!-- End Page-content -->
-@endsection
-@push('scripts')
-    <script src="{{asset("/assets/gopanel/js/modules/analytics.js?=" . time())}}"></script>
-@endpush
+<script src="{{asset("/assets/gopanel/js/modules/analytics.js?=" . time())}}"></script>

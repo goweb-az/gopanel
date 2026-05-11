@@ -4,7 +4,6 @@ use App\Http\Controllers\Gopanel\AuthController;
 use App\Http\Controllers\Gopanel\Common\GeneralController;
 use App\Http\Controllers\Gopanel\DatatableController;
 use App\Http\Controllers\Gopanel\Seo\AnalyticsController;
-use App\Http\Controllers\Gopanel\Seo\AnalyticsDetailController;
 use App\Http\Controllers\Gopanel\System\UpdateController;
 use Illuminate\Support\Facades\Route;
 
@@ -99,10 +98,10 @@ Route::group(['middleware' => 'gopanel'], function () {
         });
     });
 
-    // Analytics: out of scope for the Livewire migration — chart-heavy dashboards
-    // that still rely on the old controller + JS chart libraries.
+    // Analytics: pages are Livewire SFCs; the chart/search AJAX endpoints
+    // remain on the controllers because analytics.js drives them directly.
     Route::prefix('analytics')->name('analytics.')->group(function () {
-        Route::get('/', [AnalyticsController::class, 'index'])->name('index');
+        Route::livewire('/', 'gopanel.analytics.index')->name('index');
         Route::get('/get/top-hits', [AnalyticsController::class, 'getTopHits'])->name('get.top.hits');
         Route::get('/get/countries-map', [AnalyticsController::class, 'getCountriesMap'])->name('get.countries.map');
         Route::get('/get/cities-chart', [AnalyticsController::class, 'getCitiesChart'])->name('cities.chart');
@@ -111,17 +110,17 @@ Route::group(['middleware' => 'gopanel'], function () {
         Route::get('/api/countries', [AnalyticsController::class, 'searchCountries'])->name('api.countries');
         Route::get('/api/cities', [AnalyticsController::class, 'searchCities'])->name('api.cities');
         Route::prefix('detail')->name('detail.')->group(function () {
-            Route::get('/devices', [AnalyticsDetailController::class, 'devices'])->name('devices');
-            Route::get('/operating-systems', [AnalyticsDetailController::class, 'operating_systems'])->name('operating.systems');
-            Route::get('/browsers', [AnalyticsDetailController::class, 'browsers'])->name('browsers');
-            Route::get('/countries', [AnalyticsDetailController::class, 'countries'])->name('countries');
-            Route::get('/cities', [AnalyticsDetailController::class, 'cities'])->name('cities');
-            Route::get('/languages', [AnalyticsDetailController::class, 'languages'])->name('languages');
-            Route::get('/clicks', [AnalyticsDetailController::class, 'clicks'])->name('clicks');
-            Route::get('/links', [AnalyticsDetailController::class, 'links'])->name('links');
-            Route::get('/utm/parameters', [AnalyticsDetailController::class, 'utm_parameters'])->name('utm.parameters');
-            Route::get('/ad-platforms', [AnalyticsDetailController::class, 'ad_platforms'])->name('ad.platforms');
-            Route::get('/ad-platform-data', [AnalyticsDetailController::class, 'ad_platform_data'])->name('ad.platform.data');
+            Route::livewire('/devices',           'gopanel.analytics.detail.devices')->name('devices');
+            Route::livewire('/operating-systems', 'gopanel.analytics.detail.operating_systems')->name('operating.systems');
+            Route::livewire('/browsers',          'gopanel.analytics.detail.browsers')->name('browsers');
+            Route::livewire('/countries',         'gopanel.analytics.detail.countries')->name('countries');
+            Route::livewire('/cities',            'gopanel.analytics.detail.cities')->name('cities');
+            Route::livewire('/languages',         'gopanel.analytics.detail.languages')->name('languages');
+            Route::livewire('/clicks',            'gopanel.analytics.detail.clicks')->name('clicks');
+            Route::livewire('/links',             'gopanel.analytics.detail.links')->name('links');
+            Route::livewire('/utm/parameters',    'gopanel.analytics.detail.utm_parameters')->name('utm.parameters');
+            Route::livewire('/ad-platforms',      'gopanel.analytics.detail.ad_platforms')->name('ad.platforms');
+            Route::livewire('/ad-platform-data',  'gopanel.analytics.detail.ad_platform_data')->name('ad.platform.data');
         });
     });
 
