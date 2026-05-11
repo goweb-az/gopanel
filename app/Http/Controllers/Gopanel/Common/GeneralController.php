@@ -7,8 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Services\GeneralService;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Cache;
 
 class GeneralController extends Controller
 {
@@ -304,42 +302,6 @@ class GeneralController extends Controller
             }
         } catch (Exception $e) {
             $this->response['message'] .= $e->getMessage();
-        }
-
-        return $this->response_json();
-    }
-
-    public function clearCache(Request $request)
-    {
-        try {
-            $type = $request->input('type', 'basic');
-
-            switch ($type) {
-                case 'basic':
-                    Cache::clear();
-                    Cache::flush();
-                    Artisan::call('cache:clear');
-                    break;
-                case 'route':
-                    Artisan::call('route:clear');
-                    break;
-                case 'config':
-                    Artisan::call('config:clear');
-                    break;
-                case 'view':
-                    Artisan::call('view:clear');
-                    break;
-                case 'all':
-                    Cache::flush();
-                    Artisan::call('optimize:clear');
-                    break;
-                default:
-                    throw new Exception('Namelum cache temizleme tipi');
-            }
-
-            $this->success_response([], "Cache temizlendi: <strong>{$type}</strong><br>" . (Artisan::output() ?? ''));
-        } catch (Exception $e) {
-            $this->response['message'] = $e->getMessage();
         }
 
         return $this->response_json();

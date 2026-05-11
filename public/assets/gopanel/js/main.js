@@ -356,40 +356,6 @@ $("body").on("change",".is_active", function(e){
 
 
 
-$("body").on("click",".clear-cache-btn", function(e){
-    let route   = $(this).attr("data-url");
-    if(route){
-        Swal.fire({
-            title: 'Silmək istədiyinizə əminsiniz?',
-            text: 'Bu biraz təhülükəli əmr ola bilər',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Bəli, sil',
-            cancelButtonText: 'Xeyr, silmə',
-        }).then((result) => {
-            if (result.isConfirmed) {
-                pageLoader(true);
-                $.ajax({
-                    url: route,
-                    data: {clear:true},
-                    type: 'GET',
-                    success: function (response) {
-                        pageLoader(false);
-                        basicAlert(response.message, response.status);
-                    },
-                    error: function (e) {
-                        console.error(e);
-                        pageLoader(false);
-                    }
-                });
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
-                Swal.fire('Ləğv olundu', 'Silinmə funksiyası ləğv edildi', 'info');
-            }
-        });
-    }
-});
-
-
 $("body").on("sortupdate",".sortable", function(event,ui){
   let data      = $(this).sortable("serialize");
   let key       = $(this).attr("data-key");
