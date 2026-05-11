@@ -19,6 +19,9 @@
     --gp-dt-text: #2a3042;
     --gp-dt-muted: #74788d;
     --gp-dt-accent: #556ee6;
+
+    box-shadow: 0 2px 3px #8d8d8d1c;
+    border-radius: 13px;
 }
 
 /* Toolbar -------------------------------------------------- */
@@ -154,7 +157,6 @@
 }
 .gp-datatable__table thead th[data-sorted] {
     color: var(--gp-dt-accent);
-    background: rgba(85, 110, 230, .06);
 }
 
 .gp-datatable__sort {
@@ -197,6 +199,15 @@
 }
 .gp-datatable__table tbody tr:hover {
     background: var(--gp-dt-row-hover);
+}
+
+/* Calm down <strong> + .fw-semibold inside body cells — default 700 looks
+   shouty next to the rest of the row. 500 is enough emphasis for the
+   primary identifier column. */
+.gp-datatable__table tbody td strong,
+.gp-datatable__table tbody td .fw-semibold,
+.gp-datatable__table tbody td b {
+    font-weight: 500;
 }
 
 /* Action buttons inside cells: pill-shaped, smaller, hover lift */

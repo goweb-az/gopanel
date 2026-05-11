@@ -50,7 +50,7 @@
     border-radius: 8px;
     color: #a6b0cf;
     transition: background-color .18s ease, color .18s ease, padding .18s ease;
-    font-size: 13.5px;
+    font-size: 12px;
     font-weight: normal;
 }
 
@@ -155,4 +155,85 @@
     width: auto;
 }
 
+/* Collapsed-mode hover popout —
+   - parent <li> hover: icon-rail label tile stays at left:0 width:200px
+     (icon + label).
+   - submenu sits flush to the right of the parent tile at left:200px
+     width:240px, top:0 — so it attaches to the RIGHT side, not below.
+   - parent tile right edge and submenu left edge touch (no gap), so the
+     cursor can travel parent → submenu without breaking hover. */
 
+.vertical-collpsed[data-sidebar="dark"] .vertical-menu #sidebar-menu > ul > li {
+    position: relative;
+}
+
+.vertical-collpsed[data-sidebar="dark"] .vertical-menu #sidebar-menu > ul > li:hover > a {
+    background: #2a3042;
+    color: #ffffff;
+    border-radius: 8px 8px 0 0;
+    box-shadow: 4px 0 16px -4px rgba(0, 0, 0, .35);
+    justify-content: flex-start;
+    padding-left: 20px;
+    width: 250px;
+    position: relative;
+    z-index: 6;
+}
+.vertical-collpsed[data-sidebar="dark"] .vertical-menu #sidebar-menu > ul > li:hover > a > i,
+.vertical-collpsed[data-sidebar="dark"] .vertical-menu #sidebar-menu > ul > li:hover > a > .bx {
+    color: #ffffff;
+    margin-right: 12px;
+}
+.vertical-collpsed[data-sidebar="dark"] .vertical-menu #sidebar-menu > ul > li:hover > a > span {
+    font-weight: 500;
+}
+
+/* Submenu: attached BELOW the parent label tile (sandwich layout).
+   Parent tile is 240px wide starting at left:0; submenu sits flush under
+   it at top:100% left:0 width:240px. Skote's JS sets left:70px inline —
+   override with !important. */
+.vertical-collpsed[data-sidebar="dark"] .vertical-menu #sidebar-menu > ul > li:hover > ul {
+    background: #2a3042;
+    border-radius: 0 0 8px 8px;
+    padding: 6px 0;
+    box-shadow: 4px 8px 24px -6px rgba(0, 0, 0, .4);
+    width: 188px !important;
+    top: 100% !important;
+    right: 0 !important;
+    margin: 0;
+}
+/*
+ Bridge across any sub-pixel seam between parent tile bottom edge and
+   submenu top edge. Extends submenu hover hit-area 4px upward so the
+   cursor never traverses a gap.
+.vertical-collpsed[data-sidebar="dark"] .vertical-menu #sidebar-menu > ul > li:hover > ul::before {
+    content: "";
+    position: absolute;
+    top: -4px;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: transparent;
+    display: block;
+}
+*/
+.vertical-collpsed[data-sidebar="dark"] .vertical-menu #sidebar-menu > ul > li:hover > ul a {
+    color: #a6b0cf;
+    padding: 9px 12px;
+    margin: 0;
+    border-radius: 0;
+    font-weight: normal;
+    background: transparent;
+}
+.vertical-collpsed[data-sidebar="dark"] .vertical-menu #sidebar-menu > ul > li:hover > ul a:hover,
+.vertical-collpsed[data-sidebar="dark"] .vertical-menu #sidebar-menu > ul > li:hover > ul a.active {
+    color: #ffffff;
+    background: rgba(255, 255, 255, .04);
+}
+
+.vertical-collpsed .vertical-menu #sidebar-menu>ul>li>a span{
+    padding-left: 12px;
+}
+
+.vertical-collpsed .vertical-menu #sidebar-menu>ul>li>a i{
+    margin: 0;
+}
