@@ -4,10 +4,22 @@
     'accept' => 'image/*',
     'existing' => null,
     'preview' => true,
+    'design' => 'dropzone',
 ])
 
 @php
     $id = 'fu_' . md5($name);
+
+    $acceptHint = match (true) {
+        $accept === 'image/*' => 'PNG, JPG, GIF, WEBP',
+        $accept === 'video/*' => 'MP4, MOV, WEBM',
+        $accept === 'audio/*' => 'MP3, WAV, OGG',
+        $accept === '*/*' || $accept === '*' => __('Hər növ fayl'),
+        default => strtoupper(implode(', ', array_map(
+            fn ($t) => ltrim(trim($t), '.'),
+            explode(',', $accept)
+        ))),
+    };
 @endphp
 
 <div class="mb-3"
@@ -15,16 +27,43 @@
         progress: 0,
         uploading: false,
         localPreview: null,
+        dragging: false,
+        hovering: false,
      }">
     @if ($label)
         <label for="{{ $id }}" class="form-label">{{ $label }}</label>
+    @endif
+
+    @if ($design === 'dropzone')
+        <label for="{{ $id }}"
+               class="d-flex flex-column align-items-center justify-content-center text-center p-4 rounded"
+               style="cursor: pointer; border: 2px dashed #ced4da; background-color: #f8f9fa; min-height: 160px; transition: border-color .15s;"
+               :style="{ borderColor: (dragging || hovering) ? '#556ee6' : '#ced4da' }"
+               x-on:mouseenter="hovering = true"
+               x-on:mouseleave="hovering = false"
+               x-on:dragover.prevent="dragging = true"
+               x-on:dragleave.prevent="dragging = false"
+               x-on:drop.prevent="
+                    dragging = false;
+                    if ($event.dataTransfer.files.length) {
+                        $refs.input.files = $event.dataTransfer.files;
+                        $refs.input.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+               ">
+            <div class="d-flex align-items-center justify-content-center mb-2"
+                 style="width: 48px; height: 48px; border-radius: 50%; background-color: #e9ecef;">
+                <i class="fas fa-plus text-secondary" style="font-size: 20px;"></i>
+            </div>
+            <div class="fw-semibold text-dark">{{ __('Fayl seçin və ya bura sürükləyin') }}</div>
+            <div class="text-muted small mt-1">{{ $acceptHint }}</div>
+        </label>
     @endif
 
     <input
         type="file"
         id="{{ $id }}"
         x-ref="input"
-        class="form-control"
+        class="{{ $design === 'dropzone' ? 'd-none' : 'form-control' }}"
         accept="{{ $accept }}"
         wire:model="{{ $name }}"
         x-on:change="
