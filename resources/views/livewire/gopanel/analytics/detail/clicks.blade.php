@@ -80,10 +80,7 @@ class extends Component {
                         <i class="fas fa-times-circle"></i> {{ __('Filteri sil') }}
                     </button>
                 @endif
-                <button type="button" class="btn btn-outline-primary" x-on:click="filterOpen = !filterOpen">
-                    <template x-if="filterOpen"><span><i class="fas fa-times"></i> {{ __('Filteri bağla') }}</span></template>
-                    <template x-if="!filterOpen"><span><i class="fas fa-filter"></i> {{ __('Filteri aç') }}</span></template>
-                </button>
+                <x-gopanel.filter-toggle-button />
                 <a wire:navigate href="{{ route('gopanel.analytics.index') }}" class="btn btn-outline-secondary">
                     <i class="fas fa-arrow-left"></i> {{ __('Analitikə dön') }}
                 </a>

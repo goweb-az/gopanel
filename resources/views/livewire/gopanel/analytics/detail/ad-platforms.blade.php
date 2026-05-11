@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\Concerns\WithAnalyticsDateFilter;
 use App\Livewire\Concerns\WithDatatable;
 use App\Models\Analytics\AnalyticsAdPlatform;
 use Illuminate\Database\Eloquent\Builder;
@@ -9,7 +10,7 @@ use Livewire\Component;
 new
 #[Layout('gopanel.layouts.main')]
 class extends Component {
-    use WithDatatable;
+    use WithDatatable, WithAnalyticsDateFilter;
 
     protected function datatableDefaultSort(): array
     {
@@ -18,7 +19,7 @@ class extends Component {
 
     protected function datatableQuery(): Builder
     {
-        return AnalyticsAdPlatform::query();
+        return $this->applyDateFilter(AnalyticsAdPlatform::query(), 'last_visited_at');
     }
 
     protected function datatableColumns(): array
@@ -35,15 +36,18 @@ class extends Component {
     }
 }; ?>
 
-<div class="page-content">
+<div class="page-content" x-data="{ filterOpen: {{ ($filterDateFrom || $filterDateTo) ? 'true' : 'false' }} }">
     <div class="container-fluid">
         <x-gopanel.page-header :title="__('Reklam platformaları')" :showCreateButton="false">
             <x-slot:actions>
+                <x-gopanel.filter-toggle-button />
                 <a wire:navigate href="{{ route('gopanel.analytics.index') }}" class="btn btn-outline-secondary">
                     <i class="fas fa-arrow-left"></i> {{ __('Analitikə dön') }}
                 </a>
             </x-slot:actions>
         </x-gopanel.page-header>
+
+        <x-gopanel.analytics-detail-filter />
 
         <x-gopanel.datatable
             :rows="$this->rows"
