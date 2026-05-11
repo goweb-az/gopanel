@@ -51,7 +51,7 @@
     color: #a6b0cf;
     transition: background-color .18s ease, color .18s ease, padding .18s ease;
     font-size: 13.5px;
-    font-weight: 500;
+    font-weight: normal;
 }
 
 [data-sidebar="dark"] #sidebar-menu ul li a > i,
@@ -79,7 +79,7 @@
 [data-sidebar="dark"] #sidebar-menu ul li a.active {
     background-color: rgba(85, 110, 230, .15);
     color: #ffffff;
-    font-weight: 600;
+    font-weight: normal;
 }
 
 /* Section titles ("Tənzimləmələr" header) */

@@ -143,7 +143,7 @@
 .gp-datatable__table thead th {
     background: var(--gp-dt-header-bg);
     color: var(--gp-dt-header-color);
-    font-weight: 600;
+    font-weight: 400;
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: .4px;
