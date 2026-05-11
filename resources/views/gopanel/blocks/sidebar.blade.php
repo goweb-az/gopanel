@@ -12,8 +12,8 @@
                         <li class="menu-title" key="t-menu">{!! $item['title'] !!}</li>
                     @elseif($item->get('route') and !is_array($item->get('inner')))
                         <li class="{{ $item->get('is_active_route') ? 'mm-active' : '' }}">
-                            <a  @if ($item->get('target') == '_blank') target="_blank" @endif href="{{ route($item->get('route'), $item->get('params') ?? []) }}">
-                                <span class="pc-micon">{!! $item->get('icon') !!}</span>
+                            <a @if ($item->get('target') == '_blank') target="_blank" @else wire:navigate @endif href="{{ route($item->get('route'), $item->get('params') ?? []) }}">
+                                {!! $item->get('icon') !!}
                                 <span>{{ $item->get('title') }}</span>
                                 @if (!is_null($item->get("badge")))
                                     <span class="pc-badge">{!!$item->get("badge")!!}</span>
@@ -24,12 +24,9 @@
                         <li class="{{ $item->get('is_active_route') ? 'mm-active' : '' }}">
                             <a href="javascript: void(0);" class="has-arrow waves-effect">
                                 @if (!is_null($item->get('icon')))
-                                <span class="pc-micon">
                                     {!! $item->get('icon') !!}
-                                </span>
                                 @endif
-                                <span class="pc-mtext">{!! $item->get('title') !!}</span>
-                                <span class="pc-arrow"><i data-feather="chevron-right"></i></span>
+                                <span>{!! $item->get('title') !!}</span>
                                 @if (!is_null($item->get("badge")))
                                     {!!$item->get("badge")!!}
                                 @endif
@@ -40,7 +37,7 @@
                                         @continue
                                     @endif --}}
                                     <li>
-                                        <a href="{{ route($inner->get('route')) }}" class="pc-link {{ $inner->get('isActiveGroup') ? 'active' : '' }}">
+                                        <a wire:navigate href="{{ route($inner->get('route')) }}" class="pc-link {{ $inner->get('isActiveGroup') ? 'active' : '' }}">
                                             @if ($inner->has("icon"))
                                             <span class="mm-inner-icon">
                                                 {!! $inner->get('icon') !!}
