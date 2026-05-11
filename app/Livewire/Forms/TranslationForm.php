@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Forms;
 
+use App\Actions\Gopanel\Translation\SaveTranslationFormAction;
 use App\Enums\Gopanel\TranslationGroups;
 use App\Enums\Gopanel\TranslationPlatfroms;
 use App\Models\Geography\Language;
@@ -61,35 +62,14 @@ class TranslationForm extends Form
         }
     }
 
-    /**
-     * Persist one row per locale. Renames are handled by deleting the old
-     * (key, platform) bundle first when the user changed either field.
-     */
     public function save(): void
     {
-        $renamed = ($this->originalKey && $this->originalKey !== $this->form['key'])
-            || ($this->originalPlatform && $this->originalPlatform !== $this->form['platform']);
-
-        if ($renamed) {
-            Translation::where('key', $this->originalKey)
-                ->where('platform', $this->originalPlatform)
-                ->delete();
-        }
-
-        foreach ($this->values as $locale => $value) {
-            Translation::updateOrCreate(
-                [
-                    'key'      => $this->form['key'],
-                    'platform' => $this->form['platform'],
-                    'locale'   => $locale,
-                ],
-                [
-                    'value'    => $value,
-                    'group'    => $this->form['group'],
-                    'filename' => $this->form['filename'] ?: null,
-                ]
-            );
-        }
+        SaveTranslationFormAction::run(
+            form: $this->form,
+            values: $this->values,
+            originalKey: $this->originalKey,
+            originalPlatform: $this->originalPlatform,
+        );
 
         $this->originalKey      = $this->form['key'];
         $this->originalPlatform = $this->form['platform'];

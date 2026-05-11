@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Forms;
 
-use App\Helpers\Gopanel\FileUploader;
+use App\Actions\Gopanel\Product\SaveProductFormAction;
 use App\Models\Site\Product;
 
 class ProductForm extends BaseForm
@@ -42,27 +42,14 @@ class ProductForm extends BaseForm
 
     public function save(): Product
     {
-        $product = Product::findOrNew($this->form['id']);
-
-        if ($this->upload) {
-            $fileName = FileUploader::nameGenerate(
-                ['title' => $this->translations['az']['title'] ?? 'product'],
-                'product'
-            );
-            $this->form['image'] = FileUploader::toPublic(
-                $this->upload,
-                (new Product())->getTable(),
-                $fileName
-            );
-        }
-
-        $product->fill(collect($this->form)->except('id')->all());
-        $product->save();
+        $product = SaveProductFormAction::run(
+            form: $this->form,
+            upload: $this->upload,
+            translations: $this->translations,
+        );
 
         $this->form['id'] = $product->id;
-        $this->upload = null;
-
-        $this->syncTranslations($product);
+        $this->upload     = null;
 
         return $product;
     }

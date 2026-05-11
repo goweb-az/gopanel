@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Forms;
 
+use App\Actions\Gopanel\ContactInfo\SaveContactInfoFormAction;
 use App\Models\Contact\ContactInfo;
-use Illuminate\Support\Facades\Cache;
 
 class ContactInfoForm extends BaseForm
 {
@@ -52,16 +52,12 @@ class ContactInfoForm extends BaseForm
 
     public function save(): ContactInfo
     {
-        $item = ContactInfo::findOrNew($this->form['id']);
-
-        $item->fill(collect($this->form)->except('id')->all());
-        $item->save();
+        $item = SaveContactInfoFormAction::run(
+            form: $this->form,
+            translations: $this->translations,
+        );
 
         $this->form['id'] = $item->id;
-
-        $this->syncTranslations($item);
-
-        Cache::forget('contact_info');
 
         return $item;
     }

@@ -14,11 +14,13 @@ new
 class extends Component {
     use AuthorizesGopanel, WithDatatable;
 
-    public string $sortField = 'id';
-    public string $sortDirection = 'asc';
-
     public string $permissionEdit   = 'gopanel.admins.edit';
     public string $permissionDelete = 'gopanel.admins.delete';
+
+    protected function datatableDefaultSort(): array
+    {
+        return ['id', 'asc'];
+    }
 
     protected function datatableQuery(): Builder
     {

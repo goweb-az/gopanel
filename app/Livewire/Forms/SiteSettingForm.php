@@ -2,9 +2,8 @@
 
 namespace App\Livewire\Forms;
 
-use App\Helpers\Gopanel\FileUploader;
+use App\Actions\Gopanel\SiteSetting\SaveSiteSettingFormAction;
 use App\Models\Settings\SiteSetting;
-use Illuminate\Support\Facades\Cache;
 
 class SiteSettingForm extends BaseForm
 {
@@ -65,31 +64,19 @@ class SiteSettingForm extends BaseForm
 
     public function save(): SiteSetting
     {
-        $item = SiteSetting::findOrNew($this->form['id']);
+        $item = SaveSiteSettingFormAction::run(
+            form: $this->form,
+            logoLightUpload: $this->logoLightUpload,
+            logoDarkUpload: $this->logoDarkUpload,
+            mailLogoUpload: $this->mailLogoUpload,
+            gopanelLogoUpload: $this->gopanelLogoUpload,
+        );
 
-        if ($this->logoLightUpload) {
-            $this->form['logo_light'] = FileUploader::toPublic($this->logoLightUpload, 'site-logo', 'logo-light');
-        }
-        if ($this->logoDarkUpload) {
-            $this->form['logo_dark'] = FileUploader::toPublic($this->logoDarkUpload, 'site-logo', 'logo-dark');
-        }
-        if ($this->mailLogoUpload) {
-            $this->form['mail_logo'] = FileUploader::toPublic($this->mailLogoUpload, 'site-logo', 'mail-logo');
-        }
-        if ($this->gopanelLogoUpload) {
-            $this->form['gopanel_logo'] = FileUploader::toPublic($this->gopanelLogoUpload, 'site-logo', 'gopanel-logo');
-        }
-
-        $item->fill(collect($this->form)->except('id')->all());
-        $item->save();
-
-        $this->form['id'] = $item->id;
-        $this->logoLightUpload = null;
-        $this->logoDarkUpload = null;
-        $this->mailLogoUpload = null;
+        $this->form['id']        = $item->id;
+        $this->logoLightUpload   = null;
+        $this->logoDarkUpload    = null;
+        $this->mailLogoUpload    = null;
         $this->gopanelLogoUpload = null;
-
-        Cache::forget('site_settings' . app()->getLocale());
 
         return $item;
     }

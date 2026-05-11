@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Forms;
 
+use App\Actions\Gopanel\Menu\SaveMenuFormAction;
 use App\Enums\Common\Menu\MenuPositionEnum;
 use App\Enums\Common\Menu\MenuTypeEnum;
 use App\Models\Navigation\Menu;
@@ -57,13 +58,12 @@ class MenuForm extends BaseForm
 
     public function save(): Menu
     {
-        $menu = Menu::findOrNew($this->form['id']);
-        $menu->fill(collect($this->form)->except('id')->all());
-        $menu->save();
+        $menu = SaveMenuFormAction::run(
+            form: $this->form,
+            translations: $this->translations,
+        );
 
         $this->form['id'] = $menu->id;
-
-        $this->syncTranslations($menu);
 
         return $menu;
     }

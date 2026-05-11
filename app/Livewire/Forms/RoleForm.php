@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Forms;
 
+use App\Actions\Gopanel\Role\SaveRoleFormAction;
 use App\Models\Gopanel\CustomRole;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Form;
 
 class RoleForm extends Form
@@ -44,32 +44,10 @@ class RoleForm extends Form
 
     public function save(): CustomRole
     {
-        $role = CustomRole::findOrNew($this->form['id']);
-
-        $role->fill(collect($this->form)->except('id')->all());
-        $role->save();
-
-        $oldPermissions = $role->permissions->pluck('name')->toArray();
-        $role->syncPermissions($this->permissions);
-        $newPermissions = $role->fresh()->permissions->pluck('name')->toArray();
-
-        $added   = array_values(array_diff($newPermissions, $oldPermissions));
-        $removed = array_values(array_diff($oldPermissions, $newPermissions));
-
-        if (! empty($added) || ! empty($removed)) {
-            activity()
-                ->performedOn($role)
-                ->causedBy(Auth::guard('gopanel')->user())
-                ->event('updated')
-                ->withProperties([
-                    'old'        => ['permissions' => $oldPermissions],
-                    'attributes' => ['permissions' => $newPermissions],
-                    'added'      => $added,
-                    'removed'    => $removed,
-                ])
-                ->useLog('CustomRole')
-                ->log(":causer «{$role->name}» vəzifəsinin icazələrini yenilədi (" . count($newPermissions) . ' icazə)');
-        }
+        $role = SaveRoleFormAction::run(
+            form: $this->form,
+            permissions: $this->permissions,
+        );
 
         $this->form['id'] = $role->id;
 

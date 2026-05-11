@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Forms;
 
-use App\Helpers\Gopanel\FileUploader;
+use App\Actions\Gopanel\AboutUs\SaveAboutUsFormAction;
 use App\Models\Site\AboutUs;
 
 class AboutUsForm extends BaseForm
@@ -33,27 +33,14 @@ class AboutUsForm extends BaseForm
 
     public function save(): AboutUs
     {
-        $item = AboutUs::findOrNew($this->form['id']);
-
-        if ($this->upload) {
-            $fileName = FileUploader::nameGenerate(
-                ['title' => $this->translations['az']['title'] ?? 'about-us'],
-                'about-us'
-            );
-            $this->form['image'] = FileUploader::toPublic(
-                $this->upload,
-                (new AboutUs())->getTable(),
-                $fileName
-            );
-        }
-
-        $item->fill(collect($this->form)->except('id')->all());
-        $item->save();
+        $item = SaveAboutUsFormAction::run(
+            form: $this->form,
+            upload: $this->upload,
+            translations: $this->translations,
+        );
 
         $this->form['id'] = $item->id;
-        $this->upload = null;
-
-        $this->syncTranslations($item);
+        $this->upload     = null;
 
         return $item;
     }

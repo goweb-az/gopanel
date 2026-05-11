@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Forms;
 
-use App\Helpers\Gopanel\FileUploader;
+use App\Actions\Gopanel\Blog\SaveBlogFormAction;
 use App\Models\Site\Blog;
 
 class BlogForm extends BaseForm
@@ -42,27 +42,14 @@ class BlogForm extends BaseForm
 
     public function save(): Blog
     {
-        $blog = Blog::findOrNew($this->form['id']);
-
-        if ($this->upload) {
-            $fileName = FileUploader::nameGenerate(
-                ['title' => $this->translations['az']['title'] ?? 'blog'],
-                'blog'
-            );
-            $this->form['image'] = FileUploader::toPublic(
-                $this->upload,
-                (new Blog())->getTable(),
-                $fileName
-            );
-        }
-
-        $blog->fill(collect($this->form)->except('id')->all());
-        $blog->save();
+        $blog = SaveBlogFormAction::run(
+            form: $this->form,
+            upload: $this->upload,
+            translations: $this->translations,
+        );
 
         $this->form['id'] = $blog->id;
-        $this->upload = null;
-
-        $this->syncTranslations($blog);
+        $this->upload     = null;
 
         return $blog;
     }

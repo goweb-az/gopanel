@@ -2,11 +2,8 @@
 
 namespace App\Livewire\Forms;
 
-use App\Helpers\Gopanel\FileUploader;
+use App\Actions\Gopanel\Admin\SaveAdminFormAction;
 use App\Models\Gopanel\Admin;
-use App\Models\Gopanel\CustomRole;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use Livewire\Form;
 
 class AdminForm extends Form
@@ -61,67 +58,17 @@ class AdminForm extends Form
 
     public function save(): Admin
     {
-        $admin = Admin::findOrNew($this->form['id']);
+        $admin = SaveAdminFormAction::run(
+            form: $this->form,
+            password: $this->password,
+            upload: $this->upload,
+        );
 
-        if ($this->upload) {
-            $this->form['image'] = FileUploader::toStorage(
-                $this->upload,
-                'admins',
-                'admin-' . time()
-            );
-        }
-
-        $data = collect($this->form)->except(['id', 'role_id'])->all();
-
-        if ($this->password !== '') {
-            $data['password'] = Hash::make($this->password);
-        }
-
-        $admin->fill($data);
-        $admin->save();
-
-        if (! $this->form['id'] && empty($admin->image)) {
-            $generated = $this->generateAvatar($admin);
-            if ($generated) {
-                $admin->image = $generated;
-                $admin->save();
-            }
-        }
-
-        if ($this->form['role_id']) {
-            $role = CustomRole::find($this->form['role_id']);
-            if ($role) {
-                $admin->syncRoles($role->name);
-            }
-        } else {
-            $admin->syncRoles([]);
-        }
-
-        $this->form['id'] = $admin->id;
-        $this->password = '';
+        $this->form['id']            = $admin->id;
+        $this->password              = '';
         $this->password_confirmation = '';
-        $this->upload = null;
+        $this->upload                = null;
 
         return $admin;
-    }
-
-    private function generateAvatar(Admin $admin): ?string
-    {
-        try {
-            $name = urlencode($admin->full_name ?? 'Admin');
-            $url = "https://ui-avatars.com/api/?name={$name}&background=556ee6&color=fff&size=256&font-size=0.4&format=png";
-            $contents = @file_get_contents($url);
-
-            if ($contents) {
-                $folder = 'admins';
-                $filename = 'admin-' . $admin->id . '.png';
-                Storage::disk('public')->put($folder . '/' . $filename, $contents);
-                return "{$folder}/{$filename}";
-            }
-        } catch (\Exception $e) {
-            //
-        }
-
-        return null;
     }
 }

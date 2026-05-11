@@ -142,7 +142,7 @@ return [
     [
         'icon' => '<i class="bx bx-images"></i>',
         'title' => 'Slayder',
-        'route' => 'gopanel.slider.index',
+        'route' => 'gopanel.sliders.index',
         'can'   => 'gopanel.slider.index',
     ],
     [

@@ -33,6 +33,29 @@ trait WithDatatable
     #[Url(as: 'pp', except: 15)]
     public int $perPage = 15;
 
+    /**
+     * Subclass override entry point for the initial sort. Called from
+     * mountWithDatatable() so the host SFC does NOT redeclare $sortField /
+     * $sortDirection (PHP forbids redeclaring trait properties even with
+     * matching types).
+     *
+     * @return array{0: string, 1: 'asc'|'desc'}
+     */
+    protected function datatableDefaultSort(): array
+    {
+        return ['id', 'desc'];
+    }
+
+    public function mountWithDatatable(): void
+    {
+        // Only apply the default sort when the URL did not bring its own.
+        // Livewire #[Url] hydrates before this hook fires; if the user is
+        // arriving via a paginator link, the URL value wins.
+        if (! request()->hasAny(['sortField', 'sortDirection'])) {
+            [$this->sortField, $this->sortDirection] = $this->datatableDefaultSort();
+        }
+    }
+
     public function updatedSearch(): void
     {
         $this->resetPage();

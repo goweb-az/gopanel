@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Forms;
 
-use App\Helpers\Gopanel\FileUploader;
+use App\Actions\Gopanel\Slider\SaveSliderFormAction;
 use App\Models\Site\Slider;
 
 class SliderForm extends BaseForm
@@ -42,27 +42,14 @@ class SliderForm extends BaseForm
 
     public function save(): Slider
     {
-        $slider = Slider::findOrNew($this->form['id']);
-
-        if ($this->upload) {
-            $fileName = FileUploader::nameGenerate(
-                ['title' => $this->translations['az']['title'] ?? 'slider'],
-                'slider'
-            );
-            $this->form['image'] = FileUploader::toPublic(
-                $this->upload,
-                (new Slider())->getTable(),
-                $fileName
-            );
-        }
-
-        $slider->fill(collect($this->form)->except('id')->all());
-        $slider->save();
+        $slider = SaveSliderFormAction::run(
+            form: $this->form,
+            upload: $this->upload,
+            translations: $this->translations,
+        );
 
         $this->form['id'] = $slider->id;
-        $this->upload = null;
-
-        $this->syncTranslations($slider);
+        $this->upload     = null;
 
         return $slider;
     }

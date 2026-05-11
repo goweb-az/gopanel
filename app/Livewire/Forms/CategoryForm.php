@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Forms;
 
+use App\Actions\Gopanel\Category\SaveCategoryFormAction;
 use App\Enums\Common\SocialIconTypeEnum;
-use App\Helpers\Gopanel\FileUploader;
 use App\Models\Navigation\Category;
 
 class CategoryForm extends BaseForm
@@ -59,27 +59,14 @@ class CategoryForm extends BaseForm
 
     public function save(): Category
     {
-        $category = Category::findOrNew($this->form['id']);
-
-        if ($this->iconUpload && $this->form['icon_type'] === SocialIconTypeEnum::Image->value) {
-            $fileName = FileUploader::nameGenerate(
-                ['name' => $this->translations['az']['name'] ?? 'category'],
-                'category-icon'
-            );
-            $this->form['icon'] = FileUploader::toPublic(
-                $this->iconUpload,
-                (new Category())->getTable(),
-                $fileName
-            );
-        }
-
-        $category->fill(collect($this->form)->except('id')->all());
-        $category->save();
+        $category = SaveCategoryFormAction::run(
+            form: $this->form,
+            iconUpload: $this->iconUpload,
+            translations: $this->translations,
+        );
 
         $this->form['id'] = $category->id;
         $this->iconUpload = null;
-
-        $this->syncTranslations($category);
 
         return $category;
     }

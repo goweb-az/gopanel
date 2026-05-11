@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Forms;
 
+use App\Actions\Gopanel\SeoAnalytics\SaveSeoAnalyticsFormAction;
 use App\Models\Seo\SeoAnalytics;
-use Illuminate\Support\Facades\Cache;
 use Livewire\Form;
 
 class SeoAnalyticsForm extends Form
@@ -45,13 +45,9 @@ class SeoAnalyticsForm extends Form
 
     public function save(): SeoAnalytics
     {
-        $item = SeoAnalytics::findOrNew($this->form['id']);
-        $item->fill(collect($this->form)->except('id')->all());
-        $item->save();
+        $item = SaveSeoAnalyticsFormAction::run(form: $this->form);
 
         $this->form['id'] = $item->id;
-
-        Cache::forget('seo_analytics');
 
         return $item;
     }

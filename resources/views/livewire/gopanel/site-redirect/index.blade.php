@@ -15,11 +15,13 @@ new
 class extends Component {
     use AuthorizesGopanel, WithDatatable;
 
-    public string $sortField     = 'priority';
-    public string $sortDirection = 'desc';
-
     public string $permissionEdit   = 'gopanel.seo.site-redirects.edit';
     public string $permissionDelete = 'gopanel.seo.site-redirects.delete';
+
+    protected function datatableDefaultSort(): array
+    {
+        return ['priority', 'desc'];
+    }
 
     #[On('site-redirect-saved')]
     public function refresh(): void

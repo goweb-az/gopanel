@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Forms;
 
+use App\Actions\Gopanel\Social\SaveSocialFormAction;
 use App\Enums\Common\SocialIconTypeEnum;
-use App\Helpers\Gopanel\FileUploader;
 use App\Models\Contact\Social;
 
 class SocialForm extends BaseForm
@@ -51,22 +51,13 @@ class SocialForm extends BaseForm
 
     public function save(): Social
     {
-        $social = Social::findOrNew($this->form['id']);
-
-        if ($this->upload && $this->form['icon_type'] === SocialIconTypeEnum::Image->value) {
-            $fileName = FileUploader::nameGenerate(['name' => $this->form['name']], 'social');
-            $this->form['icon'] = FileUploader::toPublic(
-                $this->upload,
-                (new Social())->getTable(),
-                $fileName
-            );
-        }
-
-        $social->fill(collect($this->form)->except('id')->all());
-        $social->save();
+        $social = SaveSocialFormAction::run(
+            form: $this->form,
+            upload: $this->upload,
+        );
 
         $this->form['id'] = $social->id;
-        $this->upload = null;
+        $this->upload     = null;
 
         return $social;
     }

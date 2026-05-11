@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Forms;
 
+use App\Actions\Gopanel\SiteRedirect\SaveSiteRedirectFormAction;
 use App\Enums\Gopanel\Seo\RedirectMatchTypeEnum;
 use App\Models\Seo\SiteRedirect;
 use Livewire\Form;
@@ -60,10 +61,7 @@ class SiteRedirectForm extends Form
 
     public function save(): SiteRedirect
     {
-        $redirect = SiteRedirect::findOrNew($this->form['id']);
-
-        $redirect->fill(collect($this->form)->except('id')->all());
-        $redirect->save();
+        $redirect = SaveSiteRedirectFormAction::run(form: $this->form);
 
         $this->form['id'] = $redirect->id;
 

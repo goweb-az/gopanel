@@ -15,9 +15,6 @@ new
 class extends Component {
     use AuthorizesGopanel, WithDatatable;
 
-    public string $sortField     = 'id';
-    public string $sortDirection = 'desc';
-
     public string $permissionDelete = 'gopanel.activity.file-logs.delete';
 
     #[Url(as: 'level', except: '')]

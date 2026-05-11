@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Forms;
 
+use App\Actions\Gopanel\Service\SaveServiceFormAction;
 use App\Enums\Common\SocialIconTypeEnum;
-use App\Helpers\Gopanel\FileUploader;
 use App\Models\Site\Service;
 
 class ServiceForm extends BaseForm
@@ -46,40 +46,16 @@ class ServiceForm extends BaseForm
 
     public function save(): Service
     {
-        $service = Service::findOrNew($this->form['id']);
+        $service = SaveServiceFormAction::run(
+            form: $this->form,
+            iconUpload: $this->iconUpload,
+            imageUpload: $this->imageUpload,
+            translations: $this->translations,
+        );
 
-        if ($this->iconUpload && $this->form['icon_type'] === SocialIconTypeEnum::Image->value) {
-            $fileName = FileUploader::nameGenerate(
-                ['title' => $this->translations['az']['title'] ?? 'service'],
-                'service-icon'
-            );
-            $this->form['icon'] = FileUploader::toPublic(
-                $this->iconUpload,
-                (new Service())->getTable(),
-                $fileName
-            );
-        }
-
-        if ($this->imageUpload) {
-            $fileName = FileUploader::nameGenerate(
-                ['title' => $this->translations['az']['title'] ?? 'service'],
-                'service'
-            );
-            $this->form['image'] = FileUploader::toPublic(
-                $this->imageUpload,
-                (new Service())->getTable(),
-                $fileName
-            );
-        }
-
-        $service->fill(collect($this->form)->except('id')->all());
-        $service->save();
-
-        $this->form['id'] = $service->id;
-        $this->iconUpload = null;
+        $this->form['id']  = $service->id;
+        $this->iconUpload  = null;
         $this->imageUpload = null;
-
-        $this->syncTranslations($service);
 
         return $service;
     }

@@ -44,30 +44,6 @@ abstract class BaseForm extends Form
         }
     }
 
-    /**
-     * Persist translations[locale][field] back to the model.
-     * Uses updateOrCreate per (locale, key).
-     */
-    protected function syncTranslations(Model $model): void
-    {
-        if (!method_exists($model, 'translations')) {
-            return;
-        }
-
-        $attributes = property_exists($model, 'translatedAttributes')
-            ? $model->translatedAttributes
-            : [];
-
-        foreach ($this->translations as $locale => $fields) {
-            foreach ($fields as $key => $value) {
-                if (!in_array($key, $attributes, true)) {
-                    continue;
-                }
-                $model->translations()->updateOrCreate(
-                    ['locale' => $locale, 'key' => $key],
-                    ['value' => $value]
-                );
-            }
-        }
-    }
+    // syncTranslations() moved to App\Actions\Gopanel\Support\SyncModelTranslationsAction.
+    // Form Objects must not write to the database directly — see migration plan §14.
 }

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Forms;
 
+use App\Actions\Gopanel\Language\SaveLanguageFormAction;
 use App\Models\Geography\Language;
 
 class LanguageForm extends BaseForm
@@ -48,22 +49,10 @@ class LanguageForm extends BaseForm
 
     public function save(): Language
     {
-        $language = Language::findOrNew($this->form['id']);
-
-        $data = collect($this->form)->except('id')->all();
-
-        if ($data['default']) {
-            $data['is_active'] = true;
-        }
-
-        $language->fill($data);
-        $language->save();
-
-        Language::ensureSingleDefault($language);
-        Language::ensureFallbackDefault();
+        $language = SaveLanguageFormAction::run(form: $this->form);
 
         $this->form['id'] = $language->id;
 
-        return $language->fresh();
+        return $language;
     }
 }
