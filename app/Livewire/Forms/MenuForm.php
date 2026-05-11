@@ -6,6 +6,7 @@ use App\Actions\Gopanel\Menu\SaveMenuFormAction;
 use App\Enums\Common\Menu\MenuPositionEnum;
 use App\Enums\Common\Menu\MenuTypeEnum;
 use App\Models\Navigation\Menu;
+use Illuminate\Validation\Rule;
 
 class MenuForm extends BaseForm
 {
@@ -27,8 +28,8 @@ class MenuForm extends BaseForm
     {
         return [
             'form.parent_id'     => ['nullable', 'integer', 'exists:menus,id'],
-            'form.type'          => ['required', 'string', 'in:' . implode(',', array_column(MenuTypeEnum::cases(), 'value'))],
-            'form.position'      => ['required', 'string', 'in:' . implode(',', array_column(MenuPositionEnum::cases(), 'value'))],
+            'form.type'          => ['required', Rule::enum(MenuTypeEnum::class)],
+            'form.position'      => ['required', Rule::enum(MenuPositionEnum::class)],
             'form.route_name'    => ['nullable', 'string', 'max:255'],
             'form.function_name' => ['nullable', 'string', 'max:255'],
             'form.is_active'     => 'boolean',

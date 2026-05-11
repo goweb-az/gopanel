@@ -5,6 +5,7 @@ namespace App\Livewire\Forms;
 use App\Actions\Gopanel\SiteRedirect\SaveSiteRedirectFormAction;
 use App\Enums\Gopanel\Seo\RedirectMatchTypeEnum;
 use App\Models\Seo\SiteRedirect;
+use Illuminate\Validation\Rule;
 use Livewire\Form;
 
 class SiteRedirectForm extends Form
@@ -29,7 +30,7 @@ class SiteRedirectForm extends Form
         return [
             'form.locale'     => ['nullable', 'string', 'max:5'],
             'form.source'     => ['required', 'string', 'max:1000'],
-            'form.match_type' => ['required', 'string', 'in:' . implode(',', array_column(RedirectMatchTypeEnum::cases(), 'value'))],
+            'form.match_type' => ['required', Rule::enum(RedirectMatchTypeEnum::class)],
             'form.regex_flags'=> ['nullable', 'string', 'max:20'],
             'form.target'     => ['required', 'string', 'max:1000'],
             'form.http_code'  => ['required', 'integer', 'in:301,302,303,307,308'],

@@ -5,6 +5,7 @@ namespace App\Livewire\Forms;
 use App\Actions\Gopanel\Category\SaveCategoryFormAction;
 use App\Enums\Common\SocialIconTypeEnum;
 use App\Models\Navigation\Category;
+use Illuminate\Validation\Rule;
 
 class CategoryForm extends BaseForm
 {
@@ -28,7 +29,7 @@ class CategoryForm extends BaseForm
         return [
             'form.parent_id'    => ['nullable', 'integer', 'exists:categories,id'],
             'form.icon'         => ['nullable', 'string', 'max:255'],
-            'form.icon_type'    => ['required', 'string', 'in:' . implode(',', SocialIconTypeEnum::values())],
+            'form.icon_type'    => ['required', Rule::enum(SocialIconTypeEnum::class)],
             'form.color'        => ['nullable', 'string', 'max:20'],
             'form.sort_order'   => ['integer', 'min:0'],
             'form.home_order'   => ['integer', 'min:0'],

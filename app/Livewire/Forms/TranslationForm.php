@@ -7,6 +7,7 @@ use App\Enums\Gopanel\TranslationGroups;
 use App\Enums\Gopanel\TranslationPlatfroms;
 use App\Models\Geography\Language;
 use App\Models\Translations\Translation;
+use Illuminate\Validation\Rule;
 use Livewire\Form;
 
 class TranslationForm extends Form
@@ -30,8 +31,8 @@ class TranslationForm extends Form
     {
         return [
             'form.key'      => ['required', 'string', 'max:255'],
-            'form.platform' => ['required', 'string', 'in:' . implode(',', array_column(TranslationPlatfroms::cases(), 'value'))],
-            'form.group'    => ['required', 'string', 'in:' . implode(',', array_column(TranslationGroups::cases(), 'value'))],
+            'form.platform' => ['required', Rule::enum(TranslationPlatfroms::class)],
+            'form.group'    => ['required', Rule::enum(TranslationGroups::class)],
             'form.filename' => ['nullable', 'string', 'max:255'],
             'values'        => 'array',
             'values.*'      => ['nullable', 'string'],

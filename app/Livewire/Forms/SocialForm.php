@@ -5,6 +5,7 @@ namespace App\Livewire\Forms;
 use App\Actions\Gopanel\Social\SaveSocialFormAction;
 use App\Enums\Common\SocialIconTypeEnum;
 use App\Models\Contact\Social;
+use Illuminate\Validation\Rule;
 
 class SocialForm extends BaseForm
 {
@@ -27,7 +28,7 @@ class SocialForm extends BaseForm
             'form.name'         => ['required', 'string', 'max:100'],
             'form.url'          => ['required', 'string', 'max:255'],
             'form.icon'         => ['nullable', 'string', 'max:255'],
-            'form.icon_type'    => ['required', 'string', 'in:' . implode(',', SocialIconTypeEnum::values())],
+            'form.icon_type'    => ['required', Rule::enum(SocialIconTypeEnum::class)],
             'form.target_blank' => 'boolean',
             'form.is_active'    => 'boolean',
             'form.sort_order'   => ['integer', 'min:0'],
