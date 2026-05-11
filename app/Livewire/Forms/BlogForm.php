@@ -20,10 +20,10 @@ class BlogForm extends BaseForm
     protected function rules(): array
     {
         return [
-            'form.date_time' => 'nullable|date',
+            'form.date_time' => ['nullable', 'date'],
             'form.is_active' => 'boolean',
-            'form.views'     => 'integer|min:0',
-            'upload'         => 'nullable|image|max:4096',
+            'form.views'     => ['integer', 'min:0'],
+            'upload'         => ['nullable', 'image', 'max:4096'],
         ];
     }
 

@@ -16,7 +16,7 @@ class LlmsTxtForm extends Form
     protected function rules(): array
     {
         return [
-            'form.content' => 'nullable|string',
+            'form.content' => ['nullable', 'string'],
         ];
     }
 

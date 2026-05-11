@@ -22,10 +22,10 @@ class RoleForm extends Form
         $id = $this->form['id'] ?? 'NULL';
 
         return [
-            'form.name'       => "required|string|max:120|unique:roles,name,{$id}",
-            'form.guard_name' => 'required|string|in:gopanel,web,api',
+            'form.name'       => ['required', 'string', 'max:120', "unique:roles,name,{$id}"],
+            'form.guard_name' => ['required', 'string', 'in:gopanel,web,api'],
             'permissions'     => 'array',
-            'permissions.*'   => 'string|exists:permissions,name',
+            'permissions.*'   => ['string', 'exists:permissions,name'],
         ];
     }
 

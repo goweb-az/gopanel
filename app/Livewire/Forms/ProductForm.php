@@ -20,10 +20,10 @@ class ProductForm extends BaseForm
     protected function rules(): array
     {
         return [
-            'form.price'     => 'required|numeric|min:0',
-            'form.discount'  => 'nullable|numeric|min:0',
+            'form.price'     => ['required', 'numeric', 'min:0'],
+            'form.discount'  => ['nullable', 'numeric', 'min:0'],
             'form.is_active' => 'boolean',
-            'upload'         => 'nullable|image|max:4096',
+            'upload'         => ['nullable', 'image', 'max:4096'],
         ];
     }
 

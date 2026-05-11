@@ -17,7 +17,7 @@ class AboutUsForm extends BaseForm
     protected function rules(): array
     {
         return [
-            'upload' => 'nullable|image|max:4096',
+            'upload' => ['nullable', 'image', 'max:4096'],
         ];
     }
 

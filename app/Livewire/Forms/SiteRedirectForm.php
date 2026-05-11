@@ -27,17 +27,17 @@ class SiteRedirectForm extends Form
     protected function rules(): array
     {
         return [
-            'form.locale'     => 'nullable|string|max:5',
-            'form.source'     => 'required|string|max:1000',
-            'form.match_type' => 'required|string|in:' . implode(',', array_column(RedirectMatchTypeEnum::cases(), 'value')),
-            'form.regex_flags'=> 'nullable|string|max:20',
-            'form.target'     => 'required|string|max:1000',
-            'form.http_code'  => 'required|integer|in:301,302,303,307,308',
+            'form.locale'     => ['nullable', 'string', 'max:5'],
+            'form.source'     => ['required', 'string', 'max:1000'],
+            'form.match_type' => ['required', 'string', 'in:' . implode(',', array_column(RedirectMatchTypeEnum::cases(), 'value'))],
+            'form.regex_flags'=> ['nullable', 'string', 'max:20'],
+            'form.target'     => ['required', 'string', 'max:1000'],
+            'form.http_code'  => ['required', 'integer', 'in:301,302,303,307,308'],
             'form.is_active'  => 'boolean',
-            'form.priority'   => 'integer|min:0',
-            'form.starts_at'  => 'nullable|date',
-            'form.ends_at'    => 'nullable|date|after_or_equal:form.starts_at',
-            'form.notes'      => 'nullable|string|max:2000',
+            'form.priority'   => ['integer', 'min:0'],
+            'form.starts_at'  => ['nullable', 'date'],
+            'form.ends_at'    => ['nullable', 'date', 'after_or_equal:form.starts_at'],
+            'form.notes'      => ['nullable', 'string', 'max:2000'],
         ];
     }
 

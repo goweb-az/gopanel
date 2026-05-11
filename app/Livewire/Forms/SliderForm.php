@@ -20,10 +20,10 @@ class SliderForm extends BaseForm
     protected function rules(): array
     {
         return [
-            'form.link'       => 'nullable|string|max:255',
+            'form.link'       => ['nullable', 'string', 'max:255'],
             'form.is_active'  => 'boolean',
-            'form.sort_order' => 'integer|min:0',
-            'upload'          => 'nullable|image|max:4096',
+            'form.sort_order' => ['integer', 'min:0'],
+            'upload'          => ['nullable', 'image', 'max:4096'],
         ];
     }
 

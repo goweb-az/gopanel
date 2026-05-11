@@ -23,11 +23,11 @@ class ServiceForm extends BaseForm
     protected function rules(): array
     {
         return [
-            'form.icon'       => 'nullable|string|max:255',
-            'form.icon_type'  => 'required|string|in:' . implode(',', SocialIconTypeEnum::values()),
-            'form.sort_order' => 'integer|min:0',
-            'iconUpload'      => 'nullable|image|max:2048',
-            'imageUpload'     => 'nullable|image|max:4096',
+            'form.icon'       => ['nullable', 'string', 'max:255'],
+            'form.icon_type'  => ['required', 'string', 'in:' . implode(',', SocialIconTypeEnum::values())],
+            'form.sort_order' => ['integer', 'min:0'],
+            'iconUpload'      => ['nullable', 'image', 'max:2048'],
+            'imageUpload'     => ['nullable', 'image', 'max:4096'],
         ];
     }
 

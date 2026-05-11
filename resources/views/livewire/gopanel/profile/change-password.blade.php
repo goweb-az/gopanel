@@ -28,9 +28,9 @@ class extends Component {
     public function save(): void
     {
         $this->validate([
-            'current_password'      => 'required|string',
-            'password'              => 'required|string|min:6|confirmed',
-            'password_confirmation' => 'required|string',
+            'current_password'      => ['required', 'string'],
+            'password'              => ['required', 'string', 'min:6', 'confirmed'],
+            'password_confirmation' => ['required', 'string'],
         ]);
 
         if (! Hash::check($this->current_password, $this->record->password)) {

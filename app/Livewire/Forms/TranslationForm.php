@@ -29,12 +29,12 @@ class TranslationForm extends Form
     protected function rules(): array
     {
         return [
-            'form.key'      => 'required|string|max:255',
-            'form.platform' => 'required|string|in:' . implode(',', array_column(TranslationPlatfroms::cases(), 'value')),
-            'form.group'    => 'required|string|in:' . implode(',', array_column(TranslationGroups::cases(), 'value')),
-            'form.filename' => 'nullable|string|max:255',
+            'form.key'      => ['required', 'string', 'max:255'],
+            'form.platform' => ['required', 'string', 'in:' . implode(',', array_column(TranslationPlatfroms::cases(), 'value'))],
+            'form.group'    => ['required', 'string', 'in:' . implode(',', array_column(TranslationGroups::cases(), 'value'))],
+            'form.filename' => ['nullable', 'string', 'max:255'],
             'values'        => 'array',
-            'values.*'      => 'nullable|string',
+            'values.*'      => ['nullable', 'string'],
         ];
     }
 

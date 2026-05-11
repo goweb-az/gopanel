@@ -24,14 +24,14 @@ class SocialForm extends BaseForm
     protected function rules(): array
     {
         return [
-            'form.name'         => 'required|string|max:100',
-            'form.url'          => 'required|string|max:255',
-            'form.icon'         => 'nullable|string|max:255',
-            'form.icon_type'    => 'required|string|in:' . implode(',', SocialIconTypeEnum::values()),
+            'form.name'         => ['required', 'string', 'max:100'],
+            'form.url'          => ['required', 'string', 'max:255'],
+            'form.icon'         => ['nullable', 'string', 'max:255'],
+            'form.icon_type'    => ['required', 'string', 'in:' . implode(',', SocialIconTypeEnum::values())],
             'form.target_blank' => 'boolean',
             'form.is_active'    => 'boolean',
-            'form.sort_order'   => 'integer|min:0',
-            'upload'            => 'nullable|image|max:2048',
+            'form.sort_order'   => ['integer', 'min:0'],
+            'upload'            => ['nullable', 'image', 'max:2048'],
         ];
     }
 

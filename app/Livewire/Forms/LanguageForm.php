@@ -23,10 +23,10 @@ class LanguageForm extends BaseForm
         $id = $this->form['id'] ?? 'NULL';
 
         return [
-            'form.country_id' => 'nullable|integer|exists:countries,id',
-            'form.code'       => "required|string|max:5|unique:languages,code,{$id}",
-            'form.name'       => 'required|string|max:100',
-            'form.sort_order' => 'integer|min:0',
+            'form.country_id' => ['nullable', 'integer', 'exists:countries,id'],
+            'form.code'       => ['required', 'string', 'max:5', "unique:languages,code,{$id}"],
+            'form.name'       => ['required', 'string', 'max:100'],
+            'form.sort_order' => ['integer', 'min:0'],
             'form.is_active'  => 'boolean',
             'form.is_show'    => 'boolean',
             'form.default'    => 'boolean',

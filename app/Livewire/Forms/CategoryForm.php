@@ -26,16 +26,16 @@ class CategoryForm extends BaseForm
     protected function rules(): array
     {
         return [
-            'form.parent_id'    => 'nullable|integer|exists:categories,id',
-            'form.icon'         => 'nullable|string|max:255',
-            'form.icon_type'    => 'required|string|in:' . implode(',', SocialIconTypeEnum::values()),
-            'form.color'        => 'nullable|string|max:20',
-            'form.sort_order'   => 'integer|min:0',
-            'form.home_order'   => 'integer|min:0',
+            'form.parent_id'    => ['nullable', 'integer', 'exists:categories,id'],
+            'form.icon'         => ['nullable', 'string', 'max:255'],
+            'form.icon_type'    => ['required', 'string', 'in:' . implode(',', SocialIconTypeEnum::values())],
+            'form.color'        => ['nullable', 'string', 'max:20'],
+            'form.sort_order'   => ['integer', 'min:0'],
+            'form.home_order'   => ['integer', 'min:0'],
             'form.is_active'    => 'boolean',
             'form.show_in_home' => 'boolean',
             'form.show_in_menu' => 'boolean',
-            'iconUpload'        => 'nullable|image|max:2048',
+            'iconUpload'        => ['nullable', 'image', 'max:2048'],
         ];
     }
 

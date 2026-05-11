@@ -33,8 +33,8 @@ class extends Component {
     public function save(): void
     {
         $this->validate(array_merge($this->rules(), [
-            'email'  => 'required|email|max:160|unique:admins,email,' . $this->record->id,
-            'upload' => 'nullable|image|max:2048',
+            'email'  => ['required', 'email', 'max:160', 'unique:admins,email,'] . $this->record->id,
+            'upload' => ['nullable', 'image', 'max:2048'],
         ]));
 
         UpdateAdminProfileAction::run(

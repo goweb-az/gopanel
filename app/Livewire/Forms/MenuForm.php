@@ -26,14 +26,14 @@ class MenuForm extends BaseForm
     protected function rules(): array
     {
         return [
-            'form.parent_id'     => 'nullable|integer|exists:menus,id',
-            'form.type'          => 'required|string|in:' . implode(',', array_column(MenuTypeEnum::cases(), 'value')),
-            'form.position'      => 'required|string|in:' . implode(',', array_column(MenuPositionEnum::cases(), 'value')),
-            'form.route_name'    => 'nullable|string|max:255',
-            'form.function_name' => 'nullable|string|max:255',
+            'form.parent_id'     => ['nullable', 'integer', 'exists:menus,id'],
+            'form.type'          => ['required', 'string', 'in:' . implode(',', array_column(MenuTypeEnum::cases(), 'value'))],
+            'form.position'      => ['required', 'string', 'in:' . implode(',', array_column(MenuPositionEnum::cases(), 'value'))],
+            'form.route_name'    => ['nullable', 'string', 'max:255'],
+            'form.function_name' => ['nullable', 'string', 'max:255'],
             'form.is_active'     => 'boolean',
             'form.is_dropdown'   => 'boolean',
-            'form.sort_order'    => 'integer|min:0',
+            'form.sort_order'    => ['integer', 'min:0'],
         ];
     }
 

@@ -22,14 +22,14 @@ class ContactInfoForm extends BaseForm
     protected function rules(): array
     {
         return [
-            'form.phone'            => 'nullable|string|max:50',
-            'form.mobile'           => 'nullable|string|max:50',
-            'form.whatsapp'         => 'nullable|string|max:50',
-            'form.support_whatsapp' => 'nullable|string|max:50',
-            'form.sales_whatsapp'   => 'nullable|string|max:50',
-            'form.info_email'       => 'nullable|email|max:120',
-            'form.support_email'    => 'nullable|email|max:120',
-            'form.map'              => 'nullable|string',
+            'form.phone'            => ['nullable', 'string', 'max:50'],
+            'form.mobile'           => ['nullable', 'string', 'max:50'],
+            'form.whatsapp'         => ['nullable', 'string', 'max:50'],
+            'form.support_whatsapp' => ['nullable', 'string', 'max:50'],
+            'form.sales_whatsapp'   => ['nullable', 'string', 'max:50'],
+            'form.info_email'       => ['nullable', 'email', 'max:120'],
+            'form.support_email'    => ['nullable', 'email', 'max:120'],
+            'form.map'              => ['nullable', 'string'],
         ];
     }
 

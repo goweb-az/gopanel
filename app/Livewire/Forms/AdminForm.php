@@ -28,13 +28,15 @@ class AdminForm extends Form
         $id = $this->form['id'] ?? 'NULL';
 
         return [
-            'form.full_name' => 'required|string|max:120',
-            'form.email'     => "required|email|max:160|unique:admins,email,{$id}",
+            'form.full_name' => ['required', 'string', 'max:120'],
+            'form.email'     => ['required', 'email', 'max:160', "unique:admins,email,{$id}"],
             'form.is_active' => 'boolean',
             'form.is_super'  => 'boolean',
-            'form.role_id'   => 'nullable|integer|exists:roles,id',
-            'password'       => $this->form['id'] ? 'nullable|string|min:6|confirmed' : 'required|string|min:6|confirmed',
-            'upload'         => 'nullable|image|max:2048',
+            'form.role_id'   => ['nullable', 'integer', 'exists:roles,id'],
+            'password'       => $this->form['id']
+                ? ['nullable', 'string', 'min:6', 'confirmed']
+                : ['required', 'string', 'min:6', 'confirmed'],
+            'upload'         => ['nullable', 'image', 'max:2048'],
         ];
     }
 

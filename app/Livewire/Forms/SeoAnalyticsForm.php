@@ -21,12 +21,12 @@ class SeoAnalyticsForm extends Form
     protected function rules(): array
     {
         return [
-            'form.head'       => 'nullable|string',
-            'form.body'       => 'nullable|string',
-            'form.footer'     => 'nullable|string',
-            'form.robots_txt' => 'nullable|string',
-            'form.ai_txt'     => 'nullable|string',
-            'form.other'      => 'nullable|string',
+            'form.head'       => ['nullable', 'string'],
+            'form.body'       => ['nullable', 'string'],
+            'form.footer'     => ['nullable', 'string'],
+            'form.robots_txt' => ['nullable', 'string'],
+            'form.ai_txt'     => ['nullable', 'string'],
+            'form.other'      => ['nullable', 'string'],
         ];
     }
 
