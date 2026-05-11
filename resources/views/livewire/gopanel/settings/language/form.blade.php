@@ -89,32 +89,31 @@ new class extends Component {
                 @error('form.form.country_id') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
             </div>
 
-            <div class="row">
-                <div class="col-md-4 mb-3">
-                    <label class="form-label">{{ __('Sıra') }}</label>
-                    <input type="number" class="form-control" wire:model="form.form.sort_order" min="0">
-                </div>
-                <div class="col-md-4 mb-3">
-                    <label class="form-label">{{ __('Status') }}</label>
-                    <select class="form-select" wire:model="form.form.is_active">
-                        <option value="1">{{ __('Aktiv') }}</option>
-                        <option value="0">{{ __('Deaktiv') }}</option>
-                    </select>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <label class="form-label">{{ __('Sayt göstər') }}</label>
-                    <select class="form-select" wire:model="form.form.is_show">
-                        <option value="1">{{ __('Bəli') }}</option>
-                        <option value="0">{{ __('Xeyr') }}</option>
-                    </select>
-                </div>
+            <div class="mb-3">
+                <label class="form-label">{{ __('Sıra') }}</label>
+                <input type="number" class="form-control" wire:model="form.form.sort_order" min="0">
             </div>
 
-            <div class="form-check form-switch mb-2">
-                <input type="checkbox" class="form-check-input" id="defaultSwitch" wire:model="form.form.default">
-                <label class="form-check-label" for="defaultSwitch">{{ __('Default dil') }}</label>
+            <div class="border rounded p-2">
+                <x-gopanel.toggle
+                    name="form.form.is_active"
+                    :label="__('Aktiv')"
+                    :description="__('Dil panel və site dropdownlarında görünsün')"
+                    :live="false"
+                />
+                <x-gopanel.toggle
+                    name="form.form.is_show"
+                    :label="__('Sayt göstər')"
+                    :description="__('Site frontend-də dil seçiminə qoy')"
+                    :live="false"
+                />
+                <x-gopanel.toggle
+                    name="form.form.default"
+                    :label="__('Default dil')"
+                    :description="__('Default seçildikdə avtomatik aktiv olur.')"
+                    :live="false"
+                />
             </div>
-            <small class="text-muted">{{ __('Default seçildikdə avtomatik aktiv olur.') }}</small>
         </form>
 
         <x-slot:footer>
