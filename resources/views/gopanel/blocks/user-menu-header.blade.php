@@ -9,17 +9,17 @@
     <div class="dropdown-menu dropdown-menu-end">
         <!-- item-->
         <a class="dropdown-item" href="/" target="_blank">
-            <i class="bx bx-desktop font-size-16 align-middle me-1"></i> <span>Sayta keç</span>
+            <i class="bx bx-desktop font-size-16 align-middle me-1"></i> <span>{{ __('Sayta keç') }}</span>
         </a>
         <a wire:navigate class="dropdown-item" href="{{route('gopanel.profile.index')}}">
-            <i class="bx bx-user font-size-16 align-middle me-1"></i> <span>Profil məlumatlarım</span>
+            <i class="bx bx-user font-size-16 align-middle me-1"></i> <span>{{ __('Profil məlumatlarım') }}</span>
         </a>
         <a wire:navigate class="dropdown-item" href="{{route('gopanel.profile.change-password.index')}}">
-            <i class="bx bx-lock-open font-size-16 align-middle me-1"></i> <span>Şifrəni dəyiş</span>
+            <i class="bx bx-lock-open font-size-16 align-middle me-1"></i> <span>{{ __('Şifrəni dəyiş') }}</span>
         </a>
         <div class="dropdown-divider"></div>
         <a class="dropdown-item text-danger" href="{{route("gopanel.auth.logout")}}">
-            <i class="bx bx-power-off font-size-16 align-middle me-1 text-danger"></i> <span key="t-logout">Çıxış</span>
+            <i class="bx bx-power-off font-size-16 align-middle me-1 text-danger"></i> <span key="t-logout">{{ __('Çıxış') }}</span>
         </a>
     </div>
 </div>
