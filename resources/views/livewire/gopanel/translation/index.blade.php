@@ -135,11 +135,10 @@ class extends Component {
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered mb-0">
-                        <thead class="table-light">
+        <div class="gp-datatable">
+                    <div class="gp-datatable__wrapper">
+                    <table class="gp-datatable__table">
+                        <thead>
                             <tr>
                                 <th style="width:200px;">{{ __('Açar') }}</th>
                                 <th style="width:100px;">{{ __('Platforma') }}</th>

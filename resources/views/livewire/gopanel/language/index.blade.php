@@ -110,11 +110,10 @@ class extends Component {
 
         <div class="row">
             <div class="col-xl-12">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-bordered mb-0">
-                                <thead class="table-light">
+                <div class="gp-datatable">
+                    <div class="gp-datatable__wrapper">
+                            <table class="gp-datatable__table">
+                                <thead>
                                     <tr>
                                         <th style="width:20px;"></th>
                                         <th style="width:50px;">#</th>
@@ -203,7 +202,6 @@ class extends Component {
                                 </x-gopanel.sortable>
                             </table>
                         </div>
-                    </div>
                 </div>
             </div>
         </div>
