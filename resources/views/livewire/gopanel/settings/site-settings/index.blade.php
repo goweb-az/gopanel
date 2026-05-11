@@ -28,6 +28,13 @@ class extends Component {
 
         $this->dispatch('notify', type: 'success', message: __('Yadda saxlanıldı'));
     }
+
+    public function saveSwitches(): void
+    {
+        DB::transaction(fn () => $this->form->save());
+
+        $this->dispatch('notify', type: 'success', message: __('Yadda saxlanıldı'));
+    }
 }; ?>
 
 <div class="page-content">
@@ -36,7 +43,7 @@ class extends Component {
 
         <form wire:submit.prevent="save">
             <x-gopanel.tabs :tabs="[
-                'general' => ['icon' => 'fas fa-sliders-h', 'label' => __('Status keçidləri')],
+                'general' => ['icon' => 'fas fa-sliders-h', 'label' => __('Sayt funksiyaları')],
                 'logos'   => ['icon' => 'far fa-image',     'label' => __('Loqolar')],
             ]">
                 <div class="card">
@@ -52,7 +59,7 @@ class extends Component {
                                 'block_bad_bots' => __('Bot bloklama'),
                             ] as $key => $label)
                                 <div class="form-checkd d-flex align-items-center form-switch mb-3 mt-0">
-                                    <input type="checkbox" class="form-check-input" id="sw_{{ $key }}" wire:model="form.form.{{ $key }}">
+                                    <input type="checkbox" class="form-check-input" id="sw_{{ $key }}" wire:model.live="form.form.{{ $key }}" wire:change="saveSwitches">
                                     <label class="form-check-label" for="sw_{{ $key }}">{{ $label }}</label>
                                 </div>
                             @endforeach
@@ -92,18 +99,19 @@ class extends Component {
                                         :existing="$form->form['gopanel_logo'] ? asset($form->form['gopanel_logo']) : null"
                                     />
                                 </div>
+
+                                <div class="text-end mt-3">
+                                    <button type="submit" class="btn btn-primary">
+                                        <span class="lw-not-loading"><i class="fas fa-save me-1"></i> {{ __('Yadda saxla') }}</span>
+                                        <span class="lw-loading"><i class="fas fa-spinner fa-spin me-1"></i> {{ __('Saxlanır...') }}</span>
+                                    </button>
+                                </div>
                             </div>
                         </x-gopanel.tab>
                     </div>
                 </div>
             </x-gopanel.tabs>
 
-            <div class="text-end mt-3">
-                <button type="submit" class="btn btn-primary">
-                    <span class="lw-not-loading"><i class="fas fa-save me-1"></i> {{ __('Yadda saxla') }}</span>
-                    <span class="lw-loading"><i class="fas fa-spinner fa-spin me-1"></i> {{ __('Saxlanır...') }}</span>
-                </button>
-            </div>
         </form>
     </div>
 </div>
