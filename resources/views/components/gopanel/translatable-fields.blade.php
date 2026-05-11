@@ -4,8 +4,8 @@
 ])
 
 @php
-    $languages = \App\Models\Geography\Language::getCachedAll();
-    $defaultLocale = optional($languages->firstWhere('default', true))->code ?? optional($languages->first())->code ?? 'az';
+    $languages = \App\Facades\Locale::all();
+    $defaultLocale = \App\Facades\Locale::defaultCode();
 @endphp
 
 <div x-data="{ active: '{{ $defaultLocale }}' }">

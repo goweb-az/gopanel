@@ -187,6 +187,7 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
         'Gopanel' => App\Facades\GopanelFacades::class,
+        'Locale'  => App\Facades\Locale::class,
     ])->toArray(),
 
 ];

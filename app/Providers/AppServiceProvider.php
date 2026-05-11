@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Helpers\Gopanel\GoPanelHelper;
+use App\Models\Geography\Language;
+use App\Services\Locale\LocaleManager;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -15,6 +17,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton('gopanel', function ($app) {
             return new GoPanelHelper();
         });
+
+        $this->app->singleton(LocaleManager::class);
     }
 
     /**
@@ -30,5 +34,8 @@ class AppServiceProvider extends ServiceProvider
             return \Illuminate\Support\Facades\Route::post('/livewire/update', $handle)
                 ->middleware(['web', \App\Http\Middleware\UseGopanelGuardIfAuthenticated::class]);
         });
+
+        Language::saved(fn () => app(LocaleManager::class)->clearCache());
+        Language::deleted(fn () => app(LocaleManager::class)->clearCache());
     }
 }

@@ -6,7 +6,6 @@ namespace App\Providers;
 use App\Enums\Common\SocialIconTypeEnum;
 use App\Models\Contact\ContactInfo;
 use App\Models\Contact\Social;
-use App\Models\Geography\Language;
 use App\Models\Navigation\Menu;
 use App\Models\Seo\SeoAnalytics;
 use App\Models\Settings\SiteSetting;
@@ -14,8 +13,6 @@ use App\Services\Site\Seo\AlternatesService;
 use App\Services\Site\Seo\MetaService;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Http\Request;
 
 class ViewServiceProvider extends ServiceProvider
@@ -29,7 +26,6 @@ class ViewServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->markSiteViews();
-        $this->shareLanguages();
         $this->shareSiteContent();
         $this->shareSiteMetaData();
         $this->shareAlternatesLinks();
@@ -42,28 +38,12 @@ class ViewServiceProvider extends ServiceProvider
         });
     }
 
-    private function shareLanguages()
-    {
-        View::composer('*', function ($view) {
-            if (!Schema::hasTable('languages')) {
-                $view->with('languages', collect());
-                $view->with('currentLocale', config('app.locale', 'az'));
-                return;
-            }
-            $languages = Cache::remember("languages", now()->addDay(), function () {
-                return Language::where('is_active', true)->orderBy("sort_order", "asc")->get();
-            });
-            $currentLocale = app()->getLocale();
-            $view->with('languages', $languages);
-            $view->with('currentLocale', $currentLocale);
-        });
-    }
-
     private function shareSiteContent()
     {
         View::composer('site.*', function ($view) {
             $siteSettings   = SiteSetting::getCached();
             $seoAnalytics   = SeoAnalytics::getCached();
+            $locale         = app(\App\Services\Locale\LocaleManager::class);
 
             $view->with('siteSettings', $siteSettings);
             $view->with('seoAnalytics', $seoAnalytics);
@@ -72,6 +52,8 @@ class ViewServiceProvider extends ServiceProvider
             $view->with('company_name', $siteSettings->company_name ?? config('app.name', 'Gopanel'));
             $view->with('menus', Menu::getSiteMenu());
             $view->with('SocialIconTypeEnum', SocialIconTypeEnum::class);
+            $view->with('languages', $locale->all());
+            $view->with('currentLocale', $locale->current());
         });
     }
 
