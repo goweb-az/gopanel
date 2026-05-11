@@ -41,12 +41,13 @@ class extends Component {
         </div>
 
         <form wire:submit.prevent="save">
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ __('Status keçidləri') }}</h5>
-
+            <x-gopanel.tabs :tabs="[
+                'general' => ['icon' => 'fas fa-sliders-h', 'label' => __('Status keçidləri')],
+                'logos'   => ['icon' => 'far fa-image',     'label' => __('Loqolar')],
+            ]">
+                <div class="card">
+                    <div class="card-body">
+                        <x-gopanel.tab name="general">
                             @foreach ([
                                 'site_status' => __('Sayt aktiv'),
                                 'login_status' => __('Giriş aktiv'),
@@ -61,46 +62,47 @@ class extends Component {
                                     <label class="form-check-label" for="sw_{{ $key }}">{{ $label }}</label>
                                 </div>
                             @endforeach
-                        </div>
+                        </x-gopanel.tab>
+
+                        <x-gopanel.tab name="logos">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <x-gopanel.file-upload
+                                        name="form.logoLightUpload"
+                                        :label="__('Sayt loqo (light)')"
+                                        accept="image/*"
+                                        :existing="$form->form['logo_light'] ? asset($form->form['logo_light']) : null"
+                                    />
+                                </div>
+                                <div class="col-md-6">
+                                    <x-gopanel.file-upload
+                                        name="form.logoDarkUpload"
+                                        :label="__('Sayt loqo (dark)')"
+                                        accept="image/*"
+                                        :existing="$form->form['logo_dark'] ? asset($form->form['logo_dark']) : null"
+                                    />
+                                </div>
+                                <div class="col-md-6">
+                                    <x-gopanel.file-upload
+                                        name="form.mailLogoUpload"
+                                        :label="__('Mail loqo')"
+                                        accept="image/*"
+                                        :existing="$form->form['mail_logo'] ? asset($form->form['mail_logo']) : null"
+                                    />
+                                </div>
+                                <div class="col-md-6">
+                                    <x-gopanel.file-upload
+                                        name="form.gopanelLogoUpload"
+                                        :label="__('Gopanel loqo')"
+                                        accept="image/*"
+                                        :existing="$form->form['gopanel_logo'] ? asset($form->form['gopanel_logo']) : null"
+                                    />
+                                </div>
+                            </div>
+                        </x-gopanel.tab>
                     </div>
                 </div>
-
-                <div class="col-lg-6">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ __('Loqolar') }}</h5>
-
-                            <x-gopanel.file-upload
-                                name="form.logoLightUpload"
-                                :label="__('Sayt loqo (light)')"
-                                accept="image/*"
-                                :existing="$form->form['logo_light'] ? asset($form->form['logo_light']) : null"
-                            />
-
-                            <x-gopanel.file-upload
-                                name="form.logoDarkUpload"
-                                :label="__('Sayt loqo (dark)')"
-                                accept="image/*"
-                                :existing="$form->form['logo_dark'] ? asset($form->form['logo_dark']) : null"
-                            />
-
-                            <x-gopanel.file-upload
-                                name="form.mailLogoUpload"
-                                :label="__('Mail loqo')"
-                                accept="image/*"
-                                :existing="$form->form['mail_logo'] ? asset($form->form['mail_logo']) : null"
-                            />
-
-                            <x-gopanel.file-upload
-                                name="form.gopanelLogoUpload"
-                                :label="__('Gopanel loqo')"
-                                accept="image/*"
-                                :existing="$form->form['gopanel_logo'] ? asset($form->form['gopanel_logo']) : null"
-                            />
-                        </div>
-                    </div>
-                </div>
-            </div>
+            </x-gopanel.tabs>
 
             <div class="text-end mt-3">
                 <button type="submit" class="btn btn-primary">

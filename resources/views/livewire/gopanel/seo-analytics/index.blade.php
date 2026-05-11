@@ -37,28 +37,26 @@ class extends Component {
             </div>
         </div>
 
-        <form wire:submit.prevent="save" x-data="{ tab: 'head' }">
-            <div class="card">
-                <div class="card-body">
-                    <ul class="nav nav-tabs mb-3">
-                        @foreach (['head' => 'Head', 'body' => 'Body', 'footer' => 'Footer', 'robots_txt' => 'robots.txt', 'ai_txt' => 'ai.txt', 'other' => __('Digər')] as $key => $label)
-                            <li class="nav-item">
-                                <button type="button" class="nav-link" :class="tab === '{{ $key }}' ? 'active' : ''"
-                                    x-on:click.prevent="tab = '{{ $key }}'">
-                                    {{ $label }}
-                                </button>
-                            </li>
+        <form wire:submit.prevent="save">
+            <x-gopanel.tabs :tabs="[
+                'head' => 'Head',
+                'body' => 'Body',
+                'footer' => 'Footer',
+                'robots_txt' => 'robots.txt',
+                'ai_txt' => 'ai.txt',
+                'other' => __('Digər'),
+            ]">
+                <div class="card">
+                    <div class="card-body">
+                        @foreach (['head', 'body', 'footer', 'robots_txt', 'ai_txt', 'other'] as $key)
+                            <x-gopanel.tab :name="$key">
+                                <textarea class="form-control font-monospace" rows="18" wire:model="form.form.{{ $key }}"></textarea>
+                                @error("form.form.{$key}") <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+                            </x-gopanel.tab>
                         @endforeach
-                    </ul>
-
-                    @foreach (['head', 'body', 'footer', 'robots_txt', 'ai_txt', 'other'] as $key)
-                        <div x-show="tab === '{{ $key }}'" x-cloak>
-                            <textarea class="form-control font-monospace" rows="18" wire:model="form.form.{{ $key }}"></textarea>
-                            @error("form.form.{$key}") <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                        </div>
-                    @endforeach
+                    </div>
                 </div>
-            </div>
+            </x-gopanel.tabs>
 
             <div class="text-end mt-3">
                 <button type="submit" class="btn btn-primary">

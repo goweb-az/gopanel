@@ -8,7 +8,7 @@
             </div>
             <div class="modal-body p-0">
                 <div class="px-3 pt-3">
-                    <ul class="nav nav-tabs nav-tabs-custom" role="tablist">
+                    <ul class="nav nav-tabs gp-tabs" role="tablist">
                         <li class="nav-item" role="presentation">
                             <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#globalIconPickerFa" data-provider="fa" type="button" role="tab">
                                 Font Awesome <span class="badge bg-light text-dark ms-1" data-count-for="fa">…</span>
