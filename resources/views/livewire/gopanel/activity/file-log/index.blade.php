@@ -29,13 +29,26 @@ class extends Component {
     #[Url(as: 'to', except: '')]
     public string $filterDateTo = '';
 
+    #[Url(as: 'user', except: '')]
+    public string $filterAdminId = '';
+
     public bool $cleanupOpen = false;
     public ?int $cleanupDays = 30;
+
+    public bool $showOpen = false;
+    public ?int $showRecordId = null;
 
     public function updatedFilterLevel(): void { $this->resetPage(); }
     public function updatedFilterChannel(): void { $this->resetPage(); }
     public function updatedFilterDateFrom(): void { $this->resetPage(); }
     public function updatedFilterDateTo(): void { $this->resetPage(); }
+    public function updatedFilterAdminId(): void { $this->resetPage(); }
+
+    public function showDetails(int $id): void
+    {
+        $this->showRecordId = $id;
+        $this->showOpen = true;
+    }
 
     protected function datatableQuery(): Builder
     {
@@ -55,6 +68,10 @@ class extends Component {
 
         if ($this->filterDateTo !== '') {
             $query->where('created_at', '<=', $this->filterDateTo . ' 23:59:59');
+        }
+
+        if ($this->filterAdminId !== '') {
+            $query->where('admin_id', $this->filterAdminId);
         }
 
         return $query;
@@ -106,12 +123,22 @@ class extends Component {
     {
         return FileLog::query()->select('channel')->distinct()->whereNotNull('channel')->pluck('channel')->all();
     }
+
+    public function getAdminOptionsProperty()
+    {
+        $ids = FileLog::query()->select('admin_id')->distinct()->whereNotNull('admin_id')->pluck('admin_id')->all();
+        return \App\Models\Gopanel\Admin::whereIn('id', $ids)->orderBy('name')->get(['id', 'name', 'surname']);
+    }
 }; ?>
 
-<div class="page-content">
+<div class="page-content" x-data="{ filterOpen: {{ ($filterLevel || $filterChannel || $filterDateFrom || $filterDateTo || $filterAdminId) ? 'true' : 'false' }} }">
     <div class="container-fluid">
         <x-gopanel.page-header :title="__('Fayl logları')" :showCreateButton="false">
             <x-slot:actions>
+                <button type="button" class="btn btn-outline-secondary" x-on:click="filterOpen = !filterOpen">
+                    <template x-if="filterOpen"><span><i class="fas fa-times me-1"></i> {{ __('Filteri bağla') }}</span></template>
+                    <template x-if="!filterOpen"><span><i class="fas fa-filter me-1"></i> {{ __('Filter') }}</span></template>
+                </button>
                 @can('gopanel.activity.file-logs.delete')
                     <button type="button" class="btn btn-outline-danger" wire:click="$set('cleanupOpen', true)">
                         <i class="fas fa-broom"></i> {{ __('Təmizləmə') }}
@@ -120,35 +147,46 @@ class extends Component {
             </x-slot:actions>
         </x-gopanel.page-header>
 
-        <div class="gp-datatable__filters mb-3">
-                <div class="row g-2">
-                    <div class="col-md-3">
-                        <label class="form-label small">{{ __('Səviyyə') }}</label>
-                        <select class="form-select form-select-sm" wire:model.live="filterLevel">
+        <div class="mb-3" x-show="filterOpen" x-cloak>
+            <div class="card card-body">
+                <div class="row g-3">
+                    <div class="col-md-4 col-lg-3">
+                        <label class="form-label">{{ __('Səviyyə') }}</label>
+                        <select class="form-select" wire:model.live="filterLevel">
                             <option value="">{{ __('Hamısı') }}</option>
                             @foreach ($this->levelOptions as $level)
                                 <option value="{{ $level }}">{{ $level }}</option>
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label small">{{ __('Kanal') }}</label>
-                        <select class="form-select form-select-sm" wire:model.live="filterChannel">
+                    <div class="col-md-4 col-lg-3">
+                        <label class="form-label">{{ __('Kanal') }}</label>
+                        <select class="form-select" wire:model.live="filterChannel">
                             <option value="">{{ __('Hamısı') }}</option>
                             @foreach ($this->channelOptions as $ch)
                                 <option value="{{ $ch }}">{{ $ch }}</option>
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label small">{{ __('Tarix (dan)') }}</label>
-                        <input type="date" class="form-control form-control-sm" wire:model.live="filterDateFrom">
+                    <div class="col-md-4 col-lg-3">
+                        <label class="form-label">{{ __('Kim') }}</label>
+                        <select class="form-select" wire:model.live="filterAdminId">
+                            <option value="">{{ __('Hamısı') }}</option>
+                            @foreach ($this->adminOptions as $admin)
+                                <option value="{{ $admin->id }}">{{ trim(($admin->name ?? '') . ' ' . ($admin->surname ?? '')) ?: ('#' . $admin->id) }}</option>
+                            @endforeach
+                        </select>
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label small">{{ __('Tarix (dək)') }}</label>
-                        <input type="date" class="form-control form-control-sm" wire:model.live="filterDateTo">
+                    <div class="col-md-6 col-lg-3">
+                        <label class="form-label">{{ __('Tarix (dan)') }}</label>
+                        <input type="date" class="form-control" wire:model.live="filterDateFrom">
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <label class="form-label">{{ __('Tarix (dək)') }}</label>
+                        <input type="date" class="form-control" wire:model.live="filterDateTo">
                     </div>
                 </div>
+            </div>
         </div>
 
                         <x-gopanel.datatable
@@ -166,7 +204,11 @@ class extends Component {
                     <td>{!! $record->message_short !!}</td>
                     <td>{{ $record->admin_name ?? $record->user_name ?? '—' }}</td>
                     <td>{{ $record->created_at_formatted }}</td>
-                    <td class="text-center">
+                    <td class="text-center d-flex">
+                        <button type="button" class="btn btn-sm btn-outline-primary me-1"
+                            wire:click="showDetails({{ $record->id }})" title="{{ __('Detal') }}">
+                            <i class="fas fa-eye"></i>
+                        </button>
                         @can('gopanel.activity.file-logs.delete')
                             <button type="button" class="btn btn-sm btn-outline-danger"
                                 wire:click="delete({{ $record->id }})"
@@ -178,6 +220,23 @@ class extends Component {
                 </tr>
             @endforeach
         </x-gopanel.datatable>
+
+        <x-gopanel.modal
+            name="filelog-show"
+            :title="__('Fayl log detalı')"
+            size="lg"
+            wireOpen="showOpen"
+        >
+            @if ($showRecordId)
+                <livewire:gopanel.activity.file-log.show :recordId="$showRecordId" :key="'flog-show-' . $showRecordId" />
+            @endif
+
+            <x-slot:footer>
+                <button type="button" class="btn btn-secondary" x-on:click="isOpen = false">
+                    {{ __('Bağla') }}
+                </button>
+            </x-slot:footer>
+        </x-gopanel.modal>
 
         <x-gopanel.modal
             name="filelog-cleanup"
