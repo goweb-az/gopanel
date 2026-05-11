@@ -16,7 +16,7 @@
 
             <x-gopanel.sidebar />
 
-            <div class="main-content">
+            <div class="main-content pb-4">
 
                 @yield('content', $slot ?? '')
 
