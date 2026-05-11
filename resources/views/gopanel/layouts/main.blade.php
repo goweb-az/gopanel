@@ -2,9 +2,6 @@
 <html lang="en">
     @include('gopanel.blocks.head')
     <body data-sidebar="dark" data-layout-mode="light">
-    {{-- Restore vertical-collpsed BEFORE first paint to avoid sidebar flicker.
-         Must run synchronously right after <body> opens so the class is on
-         document.body before any layout-related CSS resolves. --}}
     <script>
         (function () {
             if (localStorage.getItem('gopanel:sidebar-collapsed') === '1') {
@@ -13,35 +10,24 @@
         })();
     </script>
 
-    <!-- <body data-layout="horizontal" data-topbar="dark"> -->
-        
-        <!-- Begin page -->
         <div id="layout-wrapper">
 
-            @include('gopanel.blocks.header')
-            
-            <!-- ========== Left Sidebar Start ========== -->
-            @include('gopanel.blocks.sidebar')
-            <!-- Left Sidebar End -->
+            <x-gopanel.header />
 
-            <!-- ============================================================== -->
-            <!-- Start right Content here -->
-            <!-- ============================================================== -->
+            <x-gopanel.sidebar />
+
             <div class="main-content">
 
-                @yield('content', $slot ?? '')
-                <!-- End Page-content -->
+                {{ $slot }}
 
                 <x-gopanel.toast-bridge />
 
-                @include('gopanel.blocks.footer')
-            </div>
-            <!-- end main content-->
-        </div>
-        <!-- END layout-wrapper -->
+                <x-gopanel.footer />
 
-        
-        <!-- JAVASCRIPT -->
+            </div>
+            
+        </div>
+
         @include('gopanel.assets.scripts')
     </body>
 </html>

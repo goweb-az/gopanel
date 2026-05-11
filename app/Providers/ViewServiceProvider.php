@@ -4,7 +4,6 @@
 namespace App\Providers;
 
 use App\Enums\Common\SocialIconTypeEnum;
-use App\Helpers\Gopanel\GoPanelSidebar;
 use App\Models\Contact\ContactInfo;
 use App\Models\Contact\Social;
 use App\Models\Geography\Language;
@@ -21,45 +20,23 @@ use Illuminate\Http\Request;
 
 class ViewServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
+
     public function register()
     {
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     *
-     * @return void
-     */
     public function boot()
     {
-        $this->generateGopanelSidebar();
+        $this->markSiteViews();
         $this->shareLanguages();
         $this->shareSiteContent();
-        $this->shareGopanelContent();
         $this->shareSiteMetaData();
         $this->shareAlternatesLinks();
     }
 
-
-
-    /**
-     * @throws \Exception
-     */
-    public function generateGopanelSidebar(): void
+    private function markSiteViews(): void
     {
-
-        view()->composer('gopanel.blocks.sidebar', function () {
-            $adminSidebarMenu = GoPanelSidebar::getInstance();
-            $adminSidebarMenu->addItems(config('gopanel.sidebar_menu_list'));
-            view()->share('sidebarItems', GoPanelSidebar::getInstance()->getItems());
-        });
-
         View::composer('gopanel.pages.site.*', function ($view) {
             $view->with('isSiteView', true);
         });
@@ -82,7 +59,6 @@ class ViewServiceProvider extends ServiceProvider
         });
     }
 
-
     private function shareSiteContent()
     {
         View::composer('site.*', function ($view) {
@@ -99,19 +75,6 @@ class ViewServiceProvider extends ServiceProvider
         });
     }
 
-
-    private function shareGopanelContent()
-    {
-        View::composer('gopanel.*', function ($view) {
-            $settings = SiteSetting::latest()->first();
-            $view->with('settings', $settings);
-        });
-    }
-
-
-    /**
-     * Site üçün meta data (title, description, keywords, image) paylaşır
-     */
     private function shareSiteMetaData(): void
     {
         View::composer('site.layouts.head', function ($view) {
@@ -133,10 +96,6 @@ class ViewServiceProvider extends ServiceProvider
         });
     }
 
-
-    /**
-     * Alternates və hreflang linkləri site layout-a enjekte edir
-     */
     private function shareAlternatesLinks(): void
     {
         View::composer('site.layouts.head', function ($view) {

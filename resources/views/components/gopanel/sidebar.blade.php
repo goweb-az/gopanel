@@ -7,7 +7,7 @@
             <!-- Left Menu Start -->
             <ul class="metismenu list-unstyled" id="side-menu">
 
-                @foreach ($sidebarItems as $item)
+                @foreach ($items as $item)
                     @if (!$item->get('route') and $item->get('inner') === null)
                         <li class="menu-title" key="t-menu">{!! $item['title'] !!}</li>
                     @elseif($item->get('route') and !is_array($item->get('inner')))
@@ -33,9 +33,6 @@
                             </a>
                             <ul class="sub-menu">
                                 @foreach ($item->get('inner') as $inner)
-                                    {{-- @if(!sidebarGuardCheck($inner->get('guards')))
-                                        @continue
-                                    @endif --}}
                                     <li class="{{ $inner->get('isActiveGroup') ? 'mm-active' : '' }}">
                                         <a wire:navigate href="{{ route($inner->get('route')) }}" class="{{ $inner->get('isActiveGroup') ? 'active' : '' }}">
                                             @if ($inner->has("icon"))
@@ -48,9 +45,7 @@
                             </ul>
                         </li>
                     @endif
-                    @endforeach
-
-                
+                @endforeach
 
             </ul>
         </div>
