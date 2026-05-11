@@ -1,9 +1,11 @@
 <?php
 
+use App\Actions\Gopanel\Social\DeleteSocialAction;
+use App\Actions\Gopanel\Social\ReorderSocialsAction;
+use App\Actions\Gopanel\Social\ToggleSocialActiveAction;
 use App\Livewire\Concerns\AuthorizesGopanel;
 use App\Models\Contact\Social;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
@@ -32,7 +34,7 @@ class extends Component {
     public function delete(int $id): void
     {
         $this->authorize($this->permissionDelete);
-        Social::findOrFail($id)->delete();
+        DeleteSocialAction::run($id);
         unset($this->records);
         $this->dispatch('notify', type: 'success', message: __('Silindi'));
     }
@@ -40,20 +42,14 @@ class extends Component {
     public function toggleActive(int $id): void
     {
         $this->authorize($this->permissionEdit);
-        $record = Social::findOrFail($id);
-        $record->is_active = ! $record->is_active;
-        $record->save();
+        ToggleSocialActiveAction::run($id);
         unset($this->records);
     }
 
     public function reorder(array $ids): void
     {
         $this->authorize($this->permissionEdit);
-        DB::transaction(function () use ($ids) {
-            foreach ($ids as $order => $id) {
-                Social::where('id', $id)->update(['sort_order' => $order]);
-            }
-        });
+        ReorderSocialsAction::run($ids);
         $this->skipRender();
     }
 }; ?>

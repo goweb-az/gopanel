@@ -1,9 +1,12 @@
 <?php
 
+use App\Actions\Gopanel\Language\DeleteLanguageAction;
+use App\Actions\Gopanel\Language\ReorderLanguagesAction;
+use App\Actions\Gopanel\Language\ToggleLanguageActiveAction;
+use App\Actions\Gopanel\Language\ToggleLanguageDefaultAction;
 use App\Livewire\Concerns\AuthorizesGopanel;
 use App\Models\Geography\Language;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
@@ -36,8 +39,7 @@ class extends Component {
     public function delete(int $id): void
     {
         $this->authorize($this->permissionDelete);
-        Language::findOrFail($id)->delete();
-        Language::ensureFallbackDefault();
+        DeleteLanguageAction::run($id);
         unset($this->records);
         $this->dispatch('notify', type: 'success', message: __('Silindi'));
     }
@@ -45,32 +47,21 @@ class extends Component {
     public function toggleActive(int $id): void
     {
         $this->authorize($this->permissionEdit);
-        $record = Language::findOrFail($id);
 
-        if ($record->default && $record->is_active) {
+        $result = ToggleLanguageActiveAction::run($id);
+
+        if ($result === null) {
             $this->dispatch('notify', type: 'warning', message: __('Default dili deaktiv etmək olmaz'));
             return;
         }
 
-        $record->is_active = ! $record->is_active;
-        $record->save();
         unset($this->records);
     }
 
     public function toggleDefault(int $id): void
     {
         $this->authorize($this->permissionEdit);
-        $record = Language::findOrFail($id);
-
-        DB::transaction(function () use ($record) {
-            if ($record->default) {
-                $record->forceFill(['default' => false])->save();
-                Language::ensureFallbackDefault();
-            } else {
-                Language::query()->update(['default' => false]);
-                $record->forceFill(['default' => true, 'is_active' => true])->save();
-            }
-        });
+        ToggleLanguageDefaultAction::run($id);
 
         unset($this->records);
         $this->dispatch('notify', type: 'success', message: __('Default dil yeniləndi'));
@@ -79,11 +70,7 @@ class extends Component {
     public function reorder(array $ids): void
     {
         $this->authorize($this->permissionEdit);
-        DB::transaction(function () use ($ids) {
-            foreach ($ids as $order => $id) {
-                Language::where('id', $id)->update(['sort_order' => $order]);
-            }
-        });
+        ReorderLanguagesAction::run($ids);
         // Do not invalidate $this->records — DOM is already in the correct order
         // from SortableJS. A re-render here fights the morph algorithm and can
         // wipe sibling regions (e.g. page-title-box) due to wire:ignore.self.

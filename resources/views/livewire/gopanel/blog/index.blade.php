@@ -1,5 +1,7 @@
 <?php
 
+use App\Actions\Gopanel\Blog\DeleteBlogAction;
+use App\Actions\Gopanel\Blog\ToggleBlogActiveAction;
 use App\Livewire\Concerns\AuthorizesGopanel;
 use App\Livewire\Concerns\WithDatatable;
 use App\Models\Site\Blog;
@@ -36,16 +38,14 @@ class extends Component {
     public function delete(int $id): void
     {
         $this->authorize($this->permissionDelete);
-        Blog::findOrFail($id)->delete();
+        DeleteBlogAction::run($id);
         $this->dispatch('notify', type: 'success', message: __('Silindi'));
     }
 
     public function toggleActive(int $id): void
     {
         $this->authorize($this->permissionEdit);
-        $record = Blog::findOrFail($id);
-        $record->is_active = ! $record->is_active;
-        $record->save();
+        ToggleBlogActiveAction::run($id);
     }
 }; ?>
 

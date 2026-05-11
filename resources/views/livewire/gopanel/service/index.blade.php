@@ -1,9 +1,10 @@
 <?php
 
+use App\Actions\Gopanel\Service\DeleteServiceAction;
+use App\Actions\Gopanel\Service\ReorderServicesAction;
 use App\Livewire\Concerns\AuthorizesGopanel;
 use App\Models\Site\Service;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
@@ -32,7 +33,7 @@ class extends Component {
     public function delete(int $id): void
     {
         $this->authorize($this->permissionDelete);
-        Service::findOrFail($id)->delete();
+        DeleteServiceAction::run($id);
         unset($this->records);
         $this->dispatch('notify', type: 'success', message: __('Silindi'));
     }
@@ -40,11 +41,7 @@ class extends Component {
     public function reorder(array $ids): void
     {
         $this->authorize($this->permissionEdit);
-        DB::transaction(function () use ($ids) {
-            foreach ($ids as $order => $id) {
-                Service::where('id', $id)->update(['sort_order' => $order]);
-            }
-        });
+        ReorderServicesAction::run($ids);
         $this->skipRender();
     }
 }; ?>
