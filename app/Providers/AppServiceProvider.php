@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Helpers\Gopanel\GoPanelHelper;
 use App\Models\Geography\Language;
 use App\Services\Locale\LocaleManager;
 use Illuminate\Support\ServiceProvider;
@@ -14,10 +13,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton('gopanel', function ($app) {
-            return new GoPanelHelper;
-        });
-
         $this->app->singleton(LocaleManager::class);
 
         if (config('app.env') === 'local') {

@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Gopanel\AuthController;
-use App\Http\Controllers\Gopanel\Common\GeneralController;
 use App\Http\Controllers\Gopanel\DatatableController;
 use Illuminate\Support\Facades\Route;
 
@@ -35,19 +34,6 @@ Route::group(['middleware' => 'gopanel'], function () {
     // Legacy server-side datatable handler (still wired by App\Datatable\Gopanel\*
     // until those classes are deleted alongside the migrated controllers)
     Route::get('datatable/{table}', [DatatableController::class, 'handle'])->name('datatable.source');
-
-    // Legacy crud.js endpoints (sortable, status toggle, generic delete/edit/...)
-    // still consumed by the few non-Livewire pages: dashboard, analytics, system.
-    Route::prefix('general')->name('general.')->group(function () {
-        Route::get('/icon-picker/list', [GeneralController::class, 'iconPickerList'])->name('icon-picker.list');
-        Route::post('/status/change', [GeneralController::class, 'statusChange'])->name('status.change');
-        Route::post('/sortable', [GeneralController::class, 'sortable'])->name('sortable');
-        Route::post('/add', [GeneralController::class, 'add'])->name('add');
-        Route::post('/delete/{id?}', [GeneralController::class, 'delete'])->name('delete');
-        Route::post('/archive/{id?}', [GeneralController::class, 'archive'])->name('archive');
-        Route::post('/edit/{id?}', [GeneralController::class, 'edit'])->name('edit');
-        Route::post('/editable/{id?}', [GeneralController::class, 'editable'])->name('editable');
-    });
 
     Route::prefix('settings')->name('settings.')->group(function () {
         Route::livewire('/site-settings', 'gopanel.settings.site-settings.index')->name('site-settings.index');

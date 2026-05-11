@@ -17,7 +17,6 @@
 <script src="/assets/gopanel/js/app.js"></script>
 <script src="/assets/gopanel/js/main.js?={{time()}}"></script>
 <script src="/assets/gopanel/js/functions.js?={{time()}}"></script>
-<script src="/assets/gopanel/js/crud.js?={{time()}}"></script>
 @stack('scripts')
 @stack('js_stack')
 @livewireScripts

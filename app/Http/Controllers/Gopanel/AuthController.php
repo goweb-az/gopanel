@@ -2,56 +2,24 @@
 
 namespace App\Http\Controllers\Gopanel;
 
-use App\Http\Controllers\GoPanelController;
-use Exception;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-/**
- * @deprecated login/attempt migrated to livewire/gopanel/auth/login.blade.php (SFC).
- *             logout() stays as it is a stateless GET that just kills the session.
- */
-class AuthController extends GoPanelController
+class AuthController extends Controller
 {
-    public function login(Request $request)
-    {
-        return view('gopanel.auth.login');
-    }
-
-    public function attempt(Request $request)
-    {
-        try {
-            $credentials = $request->only('email', 'password');
-            $remember = $request->has('remember');
-            if (Auth::guard('gopanel')->attempt($credentials, $remember)) {
-                $this->response['redirect_to'] = route('gopanel.index');
-                $this->success_response([], 'Sistemə uğurla daxil oldunuz');
-            } else {
-                $this->response_code = 403;
-                throw new Exception('Məlumatlar düzgün göndərilməyib');
-            }
-        } catch (Exception $e) {
-            $this->response['message'] .= $e->getMessage();
-        }
-
-        return $this->response_json();
-    }
-
+    /**
+     * Stateless GET that ends the gopanel session and redirects to the
+     * Livewire-rendered login page. Kept as a controller because Livewire
+     * doesn't model session-killing requests cleanly.
+     */
     public function logout(Request $request)
     {
-        try {
-            Auth::guard('gopanel')->logout();
+        Auth::guard('gopanel')->logout();
 
-            // Clear session after logout
-            $request->session()->invalidate();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
-            // Create a new session ID
-            $request->session()->regenerateToken();
-
-            // Redirect the user to the login page or home page
-            return redirect()->route('gopanel.auth.login');
-        } catch (Exception $e) {
-            throw $e;
-        }
+        return redirect()->route('gopanel.auth.login');
     }
 }
