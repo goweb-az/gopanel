@@ -19,6 +19,11 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton(LocaleManager::class);
+
+        if (config('app.env') === 'local') {
+            $this->app->register(\App\Providers\HorizonServiceProvider::class);
+            $this->app->register(\App\Providers\TelescopeServiceProvider::class);
+        }
     }
 
     /**
