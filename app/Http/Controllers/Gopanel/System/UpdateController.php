@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Gopanel\System;
 
 use App\Http\Controllers\GoPanelController;
 use App\Services\Gopanel\GitHubUpdateService;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -18,27 +17,6 @@ class UpdateController extends GoPanelController
     {
         parent::__construct();
         $this->updateService = new GitHubUpdateService();
-    }
-
-    /**
-     * Yeniləmələr səhifəsi
-     */
-    public function index()
-    {
-        $localVersion = $this->updateService->getLocalVersion();
-
-        $localVersion['last_checked_at_formatted'] = !empty($localVersion['last_checked_at'])
-            ? Carbon::parse($localVersion['last_checked_at'])->format('d.m.Y H:i')
-            : null;
-
-        // Tarixçədəki tarixləri formatla
-        if (!empty($localVersion['update_history'])) {
-            foreach ($localVersion['update_history'] as &$history) {
-                $history['date_formatted'] = Carbon::parse($history['date'])->format('d.m.Y H:i');
-            }
-        }
-
-        return view('gopanel.pages.system.updates.index', compact('localVersion'));
     }
 
     /**

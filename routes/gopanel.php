@@ -180,11 +180,11 @@ Route::group(['middleware' => 'gopanel'], function () {
         });
     });
 
-    // System updates: out of scope for the Livewire migration — file-system
-    // updater that orchestrates artisan commands behind the scenes.
+    // System updates: index is a Livewire SFC; the AJAX endpoints still
+    // live on the controller because updater.js drives them directly.
     Route::prefix('system')->name('system.')->group(function () {
         Route::prefix('updates')->name('updates.')->group(function () {
-            Route::get('/', [UpdateController::class, 'index'])->name('index');
+            Route::livewire('/', 'gopanel.system-updates.index')->name('index');
             Route::post('/check', [UpdateController::class, 'check'])->name('check');
             Route::post('/diff', [UpdateController::class, 'diff'])->name('diff');
             Route::post('/apply', [UpdateController::class, 'apply'])->name('apply');
