@@ -27,7 +27,7 @@ class GenerateAdminAvatarAction
             }
 
             $path = 'admins/admin-' . $admin->id . '.png';
-            Storage::disk('public')->put($path, $contents);
+            Storage::disk(gopanel_disk())->put($path, $contents);
 
             return $path;
         } catch (\Exception $e) {

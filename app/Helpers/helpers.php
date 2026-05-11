@@ -198,3 +198,20 @@ if (!function_exists("get_today")) {
         return $date->translatedFormat('d F Y');
     }
 }
+
+if (!function_exists('gopanel_disk')) {
+    /**
+     * Default storage disk used by Gopanel writes/reads. Driven by config so
+     * we never sprinkle Storage::disk('public') across the codebase.
+     *
+     * Resolves to the disk defined at config('gopanel.configs.storage.disk')
+     * (env: GOPANEL_STORAGE_DISK), falling back to the framework default
+     * filesystems.default when unset.
+     */
+    function gopanel_disk(): string
+    {
+        return config('gopanel.configs.storage.disk')
+            ?? config('filesystems.default')
+            ?? 'public';
+    }
+}

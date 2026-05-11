@@ -279,7 +279,7 @@ class FileUploader
 
         if ($disk === 'storage') {
             // Storage disk — symlink ilə əlçatan
-            if (Storage::disk('public')->exists($path)) {
+            if (Storage::disk(gopanel_disk())->exists($path)) {
                 return asset('storage/' . $path);
             }
             return null;
@@ -312,7 +312,7 @@ class FileUploader
 
         try {
             if ($disk === 'storage') {
-                return Storage::disk('public')->delete($path);
+                return Storage::disk(gopanel_disk())->delete($path);
             }
 
             $fullPath = public_path($path);
@@ -593,7 +593,7 @@ class FileUploader
 
         $finalName = $this->resolveFileName($file->getClientOriginalExtension());
 
-        $file->storeAs($this->folder, $finalName, 'public');
+        $file->storeAs($this->folder, $finalName, gopanel_disk());
 
         // Köhnə faylı sil
         $this->cleanOldFile();
@@ -645,7 +645,7 @@ class FileUploader
 
         $finalName = $this->resolveFileName($extension);
 
-        Storage::disk('public')->put("{$this->folder}/{$finalName}", $decodedData);
+        Storage::disk(gopanel_disk())->put("{$this->folder}/{$finalName}", $decodedData);
 
         $this->cleanOldFile();
 

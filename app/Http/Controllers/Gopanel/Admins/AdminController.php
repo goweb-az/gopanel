@@ -91,7 +91,7 @@ class AdminController extends GoPanelController
             if ($contents) {
                 $folder = 'admins';
                 $filename = 'admin-' . $item->id . '.png';
-                Storage::disk('public')->put($folder . '/' . $filename, $contents);
+                Storage::disk(gopanel_disk())->put($folder . '/' . $filename, $contents);
 
                 return "{$folder}/{$filename}";
             }

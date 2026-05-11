@@ -116,8 +116,8 @@ class Admin extends Authenticatable
 
     public function getAvatarUrlAttribute(): string
     {
-        if (!empty($this->image) && Storage::disk('public')->exists($this->image)) {
-            return Storage::disk('public')->url($this->image);
+        if (!empty($this->image) && Storage::disk(gopanel_disk())->exists($this->image)) {
+            return Storage::disk(gopanel_disk())->url($this->image);
         }
 
         return Cache::rememberForever("admin_avatar_{$this->id}", function () {
