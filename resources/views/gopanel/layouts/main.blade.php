@@ -18,7 +18,7 @@
 
             <div class="main-content">
 
-                {{ $slot }}
+                @yield('content', $slot ?? '')
 
                 <x-gopanel.toast-bridge />
 
