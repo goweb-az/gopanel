@@ -4,13 +4,19 @@ namespace App\Actions\Gopanel\Admin;
 
 use App\Helpers\Gopanel\FileUploader;
 use App\Models\Gopanel\Admin;
-use App\Models\Gopanel\CustomRole;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use Lorisleiva\Actions\Concerns\AsAction;
 
+/**
+ * Save an admin record. Orchestrates the discrete sub-actions:
+ *   - file upload  → FileUploader helper (single statement, no Action wrapper)
+ *   - role sync    → SyncAdminRoleAction
+ *   - auto avatar  → GenerateAdminAvatarAction (create + no manual upload)
+ *
+ * Password hashing stays inline because it's a one-liner with no other behaviour.
+ */
 class SaveAdminFormAction
 {
     use AsAction;
@@ -38,44 +44,16 @@ class SaveAdminFormAction
             $admin->save();
 
             if ($isCreate && empty($admin->image)) {
-                $generated = $this->generateAvatar($admin);
+                $generated = GenerateAdminAvatarAction::run($admin);
                 if ($generated) {
                     $admin->image = $generated;
                     $admin->save();
                 }
             }
 
-            $roleId = $form['role_id'] ?? null;
-            if ($roleId) {
-                $role = CustomRole::find($roleId);
-                if ($role) {
-                    $admin->syncRoles($role->name);
-                }
-            } else {
-                $admin->syncRoles([]);
-            }
+            SyncAdminRoleAction::run($admin, $form['role_id'] ?? null);
 
             return $admin;
         });
-    }
-
-    private function generateAvatar(Admin $admin): ?string
-    {
-        try {
-            $name = urlencode($admin->full_name ?? 'Admin');
-            $url = "https://ui-avatars.com/api/?name={$name}&background=556ee6&color=fff&size=256&font-size=0.4&format=png";
-            $contents = @file_get_contents($url);
-
-            if ($contents) {
-                $folder = 'admins';
-                $filename = 'admin-' . $admin->id . '.png';
-                Storage::disk('public')->put($folder . '/' . $filename, $contents);
-                return "{$folder}/{$filename}";
-            }
-        } catch (\Exception $e) {
-            //
-        }
-
-        return null;
     }
 }
