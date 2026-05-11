@@ -3,7 +3,6 @@
 use App\Http\Controllers\Gopanel\AuthController;
 use App\Http\Controllers\Gopanel\Common\GeneralController;
 use App\Http\Controllers\Gopanel\DatatableController;
-use App\Http\Controllers\Gopanel\Seo\AnalyticsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -96,17 +95,8 @@ Route::group(['middleware' => 'gopanel'], function () {
         });
     });
 
-    // Analytics: pages are Livewire SFCs; the chart/search AJAX endpoints
-    // remain on the controllers because analytics.js drives them directly.
     Route::prefix('analytics')->name('analytics.')->group(function () {
         Route::livewire('/', 'gopanel.analytics.index')->name('index');
-        Route::get('/get/top-hits', [AnalyticsController::class, 'getTopHits'])->name('get.top.hits');
-        Route::get('/get/countries-map', [AnalyticsController::class, 'getCountriesMap'])->name('get.countries.map');
-        Route::get('/get/cities-chart', [AnalyticsController::class, 'getCitiesChart'])->name('cities.chart');
-        Route::get('/get/languages-chart', [AnalyticsController::class, 'getLanguagesChart'])->name('get.languages');
-        Route::get('/get/os-chart', [AnalyticsController::class, 'getOperatingSystemsChart'])->name('os.chart');
-        Route::get('/api/countries', [AnalyticsController::class, 'searchCountries'])->name('api.countries');
-        Route::get('/api/cities', [AnalyticsController::class, 'searchCities'])->name('api.cities');
         Route::prefix('detail')->name('detail.')->group(function () {
             Route::livewire('/devices',           'gopanel.analytics.detail.devices')->name('devices');
             Route::livewire('/operating-systems', 'gopanel.analytics.detail.operating_systems')->name('operating.systems');
