@@ -70,33 +70,32 @@ class extends Component {
 
 <div class="page-content">
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <div>
-                        <h4 class="mb-sm-0 font-size-18">{{ __('Kateqoriyalar') }}</h4>
-                        @if ($this->parent)
-                            <nav aria-label="breadcrumb">
-                                <ol class="breadcrumb mb-0">
-                                    <li class="breadcrumb-item"><a wire:navigate href="{{ route('gopanel.categories.index') }}">{{ __('Kök') }}</a></li>
-                                    <li class="breadcrumb-item active">
-                                        {{ $this->parent->getTranslation('name', app()->getLocale(), true) ?? '#' . $this->parent->id }}
-                                    </li>
-                                </ol>
-                            </nav>
-                        @endif
-                    </div>
-                    <div class="page-title-right">
-                        @can('gopanel.categories.add')
-                            <button type="button" class="btn btn-success"
-                                x-on:click="$dispatch('category-form-open', { parentId: {{ $parent_id ?? 'null' }} })">
-                                <i class="fas fa-plus"></i> {{ __('Əlavə et') }}
-                            </button>
-                        @endcan
-                    </div>
-                </div>
-            </div>
-        </div>
+        <x-gopanel.page-header
+            :title="__('Kateqoriyalar')"
+            :showCreateButton="false"
+        >
+            @if ($this->parent)
+                <x-slot:belowTitle>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item"><a wire:navigate href="{{ route('gopanel.categories.index') }}">{{ __('Kök') }}</a></li>
+                            <li class="breadcrumb-item active">
+                                {{ $this->parent->getTranslation('name', app()->getLocale(), true) ?? '#' . $this->parent->id }}
+                            </li>
+                        </ol>
+                    </nav>
+                </x-slot:belowTitle>
+            @endif
+
+            <x-slot:actions>
+                @can('gopanel.categories.add')
+                    <button type="button" class="btn btn-success"
+                        x-on:click="$dispatch('category-form-open', { parentId: {{ $parent_id ?? 'null' }} })">
+                        <i class="fas fa-plus"></i> {{ __('Əlavə et') }}
+                    </button>
+                @endcan
+            </x-slot:actions>
+        </x-gopanel.page-header>
 
         <div class="gp-datatable">
                     <div class="gp-datatable__wrapper">

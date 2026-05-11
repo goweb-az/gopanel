@@ -57,25 +57,15 @@ class extends Component {
 
 <div class="page-content">
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <div>
-                        <h4 class="mb-sm-0 font-size-18">{{ __('Adminlər') }}</h4>
-                        <p class="text-muted mb-0 mt-1">{{ __('Panel adminlərini idarə edin.') }}</p>
-                    </div>
-                    <div class="page-title-right">
-                        @can('gopanel.admins.add')
-                            <a wire:navigate class="btn btn-success" href="{{ route('gopanel.admins.create') }}">
-                                <i class="fas fa-plus"></i> {{ __('Əlavə et') }}
-                            </a>
-                        @endcan
-                    </div>
-                </div>
-            </div>
-        </div>
+        <x-gopanel.page-header
+            :title="__('Adminlər')"
+            :caption="__('Panel adminlərini idarə edin.')"
+            :createUrl="route('gopanel.admins.create')"
+            createPermission="gopanel.admins.add"
+        />
 
-                        <x-gopanel.datatable
+
+        <x-gopanel.datatable
             :rows="$this->rows"
             :columns="$this->columns"
             :sortField="$sortField"

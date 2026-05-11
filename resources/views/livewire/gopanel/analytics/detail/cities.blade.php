@@ -36,18 +36,13 @@ class extends Component {
 
 <div class="page-content">
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h4 class="mb-sm-0 font-size-18">{{ __('Şəhərlər üzrə statistika') }}</h4>
-                    <div class="page-title-right">
-                        <a wire:navigate href="{{ route('gopanel.analytics.index', request()->only(['from', 'to'])) }}" class="btn btn-outline-secondary">
-                            <i class="fas fa-arrow-left"></i> {{ __('Analitikə dön') }}
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <x-gopanel.page-header :title="__('Şəhərlər üzrə statistika')" :showCreateButton="false">
+            <x-slot:actions>
+                <a wire:navigate href="{{ route('gopanel.analytics.index', request()->only(['from', 'to'])) }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> {{ __('Analitikə dön') }}
+                </a>
+            </x-slot:actions>
+        </x-gopanel.page-header>
 
         <x-gopanel.datatable
             :rows="$this->rows"

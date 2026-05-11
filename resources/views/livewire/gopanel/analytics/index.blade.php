@@ -256,31 +256,26 @@ class extends Component {
 
     @php $vd = $this->viewData; extract($vd); @endphp
 
-    <div wire:ignore.self class="page-content" id="analyticsWrapperDahboard" style="position:relative;">
+    <div wire:ignore.self class="page-content" id="analyticsWrapperDahboard" style="position:relative;"
+         x-data="{ filterOpen: {{ ($countryId || $cityId || $browserId || $deviceId) ? 'true' : 'false' }} }">
         <div class="analytics-loader-overlay" id="analyticsLoader" wire:loading.class="active">
             <div class="analytics-loader-spinner"></div>
         </div>
 
         <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <div class="page-title-box d-flex align-items-center justify-content-between">
-                        <h4 class="mb-0">{{ __('Analitika') }}</h4>
-                        <div class="d-flex align-items-center gap-2" x-data="{ filterOpen: {{ ($countryId || $cityId || $browserId || $deviceId) ? 'true' : 'false' }} }">
-                            <div id="analyticsDateRange" class="btn btn-light border d-flex align-items-center gap-2" style="cursor:pointer; min-width:220px;" wire:ignore>
-                                <i class="bx bx-calendar font-size-16"></i>
-                                <span id="dateRangeLabel">{{ Carbon::parse($dateFrom)->format('d/m/Y') }} – {{ Carbon::parse($dateTo)->format('d/m/Y') }}</span>
-                                <i class="bx bx-chevron-down ms-auto"></i>
-                            </div>
-                            <button type="button" class="btn btn-outline-secondary" x-on:click="filterOpen = !filterOpen">
-                                <template x-if="filterOpen"><span><i class="fas fa-times"></i> {{ __('Filteri bağla') }}</span></template>
-                                <template x-if="!filterOpen"><span><i class="fas fa-filter"></i> Filter</span></template>
-                            </button>
-                            <div class="position-fixed top-0 start-0 end-0" style="display:none"></div>
-                        </div>
+            <x-gopanel.page-header :title="__('Analitika')" :showCreateButton="false">
+                <x-slot:actions>
+                    <div id="analyticsDateRange" class="btn btn-light border d-flex align-items-center gap-2" style="cursor:pointer; min-width:220px;" wire:ignore>
+                        <i class="bx bx-calendar font-size-16"></i>
+                        <span id="dateRangeLabel">{{ Carbon::parse($dateFrom)->format('d/m/Y') }} – {{ Carbon::parse($dateTo)->format('d/m/Y') }}</span>
+                        <i class="bx bx-chevron-down ms-auto"></i>
                     </div>
-                </div>
-            </div>
+                    <button type="button" class="btn btn-outline-secondary" x-on:click="filterOpen = !filterOpen">
+                        <template x-if="filterOpen"><span><i class="fas fa-times"></i> {{ __('Filteri bağla') }}</span></template>
+                        <template x-if="!filterOpen"><span><i class="fas fa-filter"></i> Filter</span></template>
+                    </button>
+                </x-slot:actions>
+            </x-gopanel.page-header>
 
             <div class="mb-3" x-show="filterOpen" x-cloak>
                 <div class="card card-body analytics-filter-panel">

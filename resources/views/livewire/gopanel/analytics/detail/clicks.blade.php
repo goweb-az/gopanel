@@ -71,31 +71,26 @@ class extends Component {
     public function getBrowserOptionsProperty() { return AnalyticsBrowser::orderBy('name')->get(['id', 'name']); }
 }; ?>
 
-<div class="page-content">
+<div class="page-content" x-data="{ filterOpen: {{ ($deviceId || $osId || $browserId || $from || $to) ? 'true' : 'false' }} }">
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h4 class="mb-sm-0 font-size-18">{{ __('Klikləmələr üzrə statistikalar') }}</h4>
-                    <div class="page-title-right d-flex align-items-center gap-2" x-data="{ filterOpen: {{ ($deviceId || $osId || $browserId || $from || $to) ? 'true' : 'false' }} }">
-                        @if ($deviceId || $osId || $browserId || $from || $to)
-                            <button type="button" wire:click="clearFilter" class="btn btn-outline-danger">
-                                <i class="fas fa-times-circle"></i> {{ __('Filteri sil') }}
-                            </button>
-                        @endif
-                        <button type="button" class="btn btn-outline-primary" x-on:click="filterOpen = !filterOpen">
-                            <template x-if="filterOpen"><span><i class="fas fa-times"></i> {{ __('Filteri bağla') }}</span></template>
-                            <template x-if="!filterOpen"><span><i class="fas fa-filter"></i> {{ __('Filteri aç') }}</span></template>
-                        </button>
-                        <a wire:navigate href="{{ route('gopanel.analytics.index') }}" class="btn btn-outline-secondary">
-                            <i class="fas fa-arrow-left"></i> {{ __('Analitikə dön') }}
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <x-gopanel.page-header :title="__('Klikləmələr üzrə statistikalar')" :showCreateButton="false">
+            <x-slot:actions>
+                @if ($deviceId || $osId || $browserId || $from || $to)
+                    <button type="button" wire:click="clearFilter" class="btn btn-outline-danger">
+                        <i class="fas fa-times-circle"></i> {{ __('Filteri sil') }}
+                    </button>
+                @endif
+                <button type="button" class="btn btn-outline-primary" x-on:click="filterOpen = !filterOpen">
+                    <template x-if="filterOpen"><span><i class="fas fa-times"></i> {{ __('Filteri bağla') }}</span></template>
+                    <template x-if="!filterOpen"><span><i class="fas fa-filter"></i> {{ __('Filteri aç') }}</span></template>
+                </button>
+                <a wire:navigate href="{{ route('gopanel.analytics.index') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> {{ __('Analitikə dön') }}
+                </a>
+            </x-slot:actions>
+        </x-gopanel.page-header>
 
-        <div class="row" x-data="{ open: {{ ($deviceId || $osId || $browserId || $from || $to) ? 'true' : 'false' }} }" x-show="open" x-cloak>
+        <div class="row" x-show="filterOpen" x-cloak>
             <div class="col-xl-12">
                 <div class="card">
                     <div class="card-body">

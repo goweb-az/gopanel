@@ -110,20 +110,15 @@ class extends Component {
 
 <div class="page-content">
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h4 class="mb-sm-0 font-size-18">{{ __('Fayl logları') }}</h4>
-                    <div class="page-title-right">
-                        @can('gopanel.activity.file-logs.delete')
-                            <button type="button" class="btn btn-outline-danger" wire:click="$set('cleanupOpen', true)">
-                                <i class="fas fa-broom"></i> {{ __('Təmizləmə') }}
-                            </button>
-                        @endcan
-                    </div>
-                </div>
-            </div>
-        </div>
+        <x-gopanel.page-header :title="__('Fayl logları')" :showCreateButton="false">
+            <x-slot:actions>
+                @can('gopanel.activity.file-logs.delete')
+                    <button type="button" class="btn btn-outline-danger" wire:click="$set('cleanupOpen', true)">
+                        <i class="fas fa-broom"></i> {{ __('Təmizləmə') }}
+                    </button>
+                @endcan
+            </x-slot:actions>
+        </x-gopanel.page-header>
 
         <div class="gp-datatable__filters mb-3">
                 <div class="row g-2">

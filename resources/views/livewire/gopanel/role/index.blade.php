@@ -48,23 +48,12 @@ class extends Component {
 
 <div class="page-content">
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <div>
-                        <h4 class="mb-sm-0 font-size-18">{{ __('Vəzifələr') }}</h4>
-                        <p class="text-muted mb-0 mt-1">{{ __('Admin rollarını və icazələrini idarə edin.') }}</p>
-                    </div>
-                    <div class="page-title-right">
-                        @can('gopanel.admins.roles.add')
-                            <a wire:navigate class="btn btn-success" href="{{ route('gopanel.admins.roles.create') }}">
-                                <i class="fas fa-plus"></i> {{ __('Əlavə et') }}
-                            </a>
-                        @endcan
-                    </div>
-                </div>
-            </div>
-        </div>
+        <x-gopanel.page-header
+            :title="__('Vəzifələr')"
+            :caption="__('Admin rollarını və icazələrini idarə edin.')"
+            :createUrl="route('gopanel.admins.roles.create')"
+            createPermission="gopanel.admins.roles.add"
+        />
 
                         <x-gopanel.datatable
             :rows="$this->rows"

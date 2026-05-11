@@ -63,32 +63,24 @@ class extends Component {
 
 <div class="page-content">
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <div>
-                        <h4 class="mb-sm-0 font-size-18">{{ __('Menyu') }}</h4>
-                        @if ($this->parent)
-                            <nav aria-label="breadcrumb">
-                                <ol class="breadcrumb mb-0">
-                                    <li class="breadcrumb-item"><a wire:navigate href="{{ route('gopanel.settings.menu.index') }}">{{ __('Kök') }}</a></li>
-                                    <li class="breadcrumb-item active">
-                                        {{ $this->parent->getTranslation('title', app()->getLocale(), true) ?? '#' . $this->parent->id }}
-                                    </li>
-                                </ol>
-                            </nav>
-                        @endif
-                    </div>
-                    <div class="page-title-right">
-                        @can('gopanel.settings.menu.add')
-                            <a wire:navigate class="btn btn-success" href="{{ route('gopanel.settings.menu.create', ['parent_id' => $parent_id]) }}">
-                                <i class="fas fa-plus"></i> {{ __('Əlavə et') }}
-                            </a>
-                        @endcan
-                    </div>
-                </div>
-            </div>
-        </div>
+        <x-gopanel.page-header
+            :title="__('Menyu')"
+            :createUrl="route('gopanel.settings.menu.create', ['parent_id' => $parent_id])"
+            createPermission="gopanel.settings.menu.add"
+        >
+            @if ($this->parent)
+                <x-slot:belowTitle>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item"><a wire:navigate href="{{ route('gopanel.settings.menu.index') }}">{{ __('Kök') }}</a></li>
+                            <li class="breadcrumb-item active">
+                                {{ $this->parent->getTranslation('title', app()->getLocale(), true) ?? '#' . $this->parent->id }}
+                            </li>
+                        </ol>
+                    </nav>
+                </x-slot:belowTitle>
+            @endif
+        </x-gopanel.page-header>
 
         <div class="gp-datatable">
                     <div class="gp-datatable__wrapper">

@@ -11,18 +11,13 @@ class extends Component {
 
 <div class="page-content">
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h4 class="mb-sm-0 font-size-18">{{ __('Yeni məhsul') }}</h4>
-                    <div class="page-title-right">
-                        <a wire:navigate class="btn btn-secondary" href="{{ route('gopanel.products.index') }}">
-                            <i class="fas fa-arrow-left"></i> {{ __('Geri') }}
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <x-gopanel.page-header :title="__('Yeni məhsul')" :showCreateButton="false">
+            <x-slot:actions>
+                <a wire:navigate class="btn btn-secondary" href="{{ route('gopanel.products.index') }}">
+                    <i class="fas fa-arrow-left"></i> {{ __('Geri') }}
+                </a>
+            </x-slot:actions>
+        </x-gopanel.page-header>
 
         <livewire:gopanel.product.form />
     </div>

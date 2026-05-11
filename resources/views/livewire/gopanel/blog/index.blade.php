@@ -51,23 +51,12 @@ class extends Component {
 
 <div class="page-content">
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <div>
-                        <h4 class="mb-sm-0 font-size-18">{{ __('Bloq') }}</h4>
-                        <p class="text-muted mb-0 mt-1">{{ __('Bloq yazılarını şəkil, məzmun, tarix və status ilə birlikdə buradan idarə edə bilərsiniz.') }}</p>
-                    </div>
-                    <div class="page-title-right">
-                        @can('gopanel.blog.add')
-                            <a wire:navigate class="btn btn-success" href="{{ route('gopanel.blog.create') }}">
-                                <i class="fas fa-plus"></i> {{ __('Əlavə et') }}
-                            </a>
-                        @endcan
-                    </div>
-                </div>
-            </div>
-        </div>
+        <x-gopanel.page-header
+            :title="__('Bloq')"
+            :caption="__('Bloq yazılarını şəkil, məzmun, tarix və status ilə birlikdə buradan idarə edə bilərsiniz.')"
+            :createUrl="route('gopanel.blog.create')"
+            createPermission="gopanel.blog.add"
+        />
 
                         <x-gopanel.datatable
             :rows="$this->rows"
