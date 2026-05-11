@@ -4,7 +4,6 @@ use App\Http\Controllers\Gopanel\AuthController;
 use App\Http\Controllers\Gopanel\Common\GeneralController;
 use App\Http\Controllers\Gopanel\DatatableController;
 use App\Http\Controllers\Gopanel\Seo\AnalyticsController;
-use App\Http\Controllers\Gopanel\System\UpdateController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -178,17 +177,9 @@ Route::group(['middleware' => 'gopanel'], function () {
         });
     });
 
-    // System updates: index is a Livewire SFC; the AJAX endpoints still
-    // live on the controller because updater.js drives them directly.
     Route::prefix('system')->name('system.')->group(function () {
         Route::prefix('updates')->name('updates.')->group(function () {
             Route::livewire('/', 'gopanel.system-updates.index')->name('index');
-            Route::post('/check', [UpdateController::class, 'check'])->name('check');
-            Route::post('/diff', [UpdateController::class, 'diff'])->name('diff');
-            Route::post('/apply', [UpdateController::class, 'apply'])->name('apply');
-            Route::post('/rollback', [UpdateController::class, 'rollback'])->name('rollback');
-            Route::post('/history-diff', [UpdateController::class, 'historyDiff'])->name('history-diff');
-            Route::post('/rollback-file', [UpdateController::class, 'rollbackFile'])->name('rollback-file');
         });
     });
 });
