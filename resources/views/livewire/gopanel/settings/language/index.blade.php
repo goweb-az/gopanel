@@ -29,8 +29,7 @@ class extends Component {
     #[Computed]
     public function records(): Collection
     {
-        return Language::orderByDesc('default')
-            ->orderBy('sort_order')
+        return Language::orderBy('sort_order')
             ->orderBy('id')
             ->with('country:id,name')
             ->get();
@@ -50,7 +49,7 @@ class extends Component {
 
         $result = ToggleLanguageActiveAction::run($id);
 
-        if ($result === null) {
+        if (is_null($result)) {
             $this->dispatch('notify', type: 'warning', message: __('Default dili deaktiv etmək olmaz'));
             return;
         }
@@ -112,13 +111,10 @@ class extends Component {
                                         <td>{{ $record?->country?->name ?? '—' }}</td>
                                         <td class="text-center">
                                             @can('gopanel.settings.languages.edit')
-                                                <button
-                                                    type="button"
-                                                    wire:click="toggleDefault({{ $record->id }})"
-                                                    class="btn btn-sm {{ $record->default ? 'btn-primary' : 'btn-outline-secondary' }}"
-                                                >
-                                                    {{ $record->default ? __('Bəli') : __('Xeyr') }}
-                                                </button>
+                                                <x-gopanel.toggle
+                                                    :click="'toggleDefault(' . $record->id . ')'"
+                                                    :checked="(bool) $record->default"
+                                                />
                                             @else
                                                 <span class="badge {{ $record->default ? 'bg-primary' : 'bg-secondary' }}">
                                                     {{ $record->default ? __('Bəli') : __('Xeyr') }}
@@ -127,13 +123,11 @@ class extends Component {
                                         </td>
                                         <td class="text-center">
                                             @can('gopanel.settings.languages.edit')
-                                                <button
-                                                    type="button"
-                                                    wire:click="toggleActive({{ $record->id }})"
-                                                    class="btn btn-sm {{ $record->is_active ? 'btn-success' : 'btn-secondary' }}"
-                                                >
-                                                    {{ $record->is_active ? __('Aktiv') : __('Deaktiv') }}
-                                                </button>
+                                                <x-gopanel.toggle
+                                                    :click="'toggleActive(' . $record->id . ')'"
+                                                    :checked="(bool) $record->is_active"
+                                                    :disabled="(bool) $record->default"
+                                                />
                                             @else
                                                 <span class="badge {{ $record->is_active ? 'bg-success' : 'bg-secondary' }}">
                                                     {{ $record->is_active ? __('Aktiv') : __('Deaktiv') }}
