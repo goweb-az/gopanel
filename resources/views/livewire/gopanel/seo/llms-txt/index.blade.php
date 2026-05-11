@@ -34,11 +34,12 @@ class extends Component {
         <form wire:submit.prevent="save">
             <div class="card">
                 <div class="card-body">
-                    <div class="mb-3">
-                        <label class="form-label">{{ __('Məzmun') }}</label>
-                        <textarea class="form-control font-monospace" rows="20" wire:model="form.form.content" placeholder="# llms.txt"></textarea>
-                        @error('form.form.content') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                    </div>
+                    <x-gopanel.fullscreen-textarea
+                        name="form.form.content"
+                        :label="__('Məzmun')"
+                        :rows="20"
+                        placeholder="# llms.txt"
+                    />
                 </div>
             </div>
 

@@ -44,8 +44,7 @@ class extends Component {
                     <div class="card-body">
                         @foreach (['head', 'body', 'footer', 'robots_txt', 'ai_txt', 'other'] as $key)
                             <x-gopanel.tab :name="$key">
-                                <textarea class="form-control font-monospace" rows="18" wire:model="form.form.{{ $key }}"></textarea>
-                                @error("form.form.{$key}") <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+                                <x-gopanel.fullscreen-textarea :name="'form.form.' . $key" :rows="18" />
                             </x-gopanel.tab>
                         @endforeach
                     </div>
