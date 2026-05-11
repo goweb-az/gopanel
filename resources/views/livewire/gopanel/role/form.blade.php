@@ -163,7 +163,7 @@ new class extends Component {
         </div>
 
         <div class="text-end mt-4">
-            <a href="{{ route($indexRoute) }}" class="btn btn-secondary">
+            <a wire:navigate href="{{ route($indexRoute) }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left me-1"></i> {{ __('Geri') }}
             </a>
             <button type="submit" class="btn btn-primary">

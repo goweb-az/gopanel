@@ -78,7 +78,7 @@ class extends Component {
                         @if ($this->parent)
                             <nav aria-label="breadcrumb">
                                 <ol class="breadcrumb mb-0">
-                                    <li class="breadcrumb-item"><a href="{{ route('gopanel.categories.index') }}">{{ __('Kök') }}</a></li>
+                                    <li class="breadcrumb-item"><a wire:navigate href="{{ route('gopanel.categories.index') }}">{{ __('Kök') }}</a></li>
                                     <li class="breadcrumb-item active">
                                         {{ $this->parent->getTranslation('name', app()->getLocale(), true) ?? '#' . $this->parent->id }}
                                     </li>
@@ -143,7 +143,7 @@ class extends Component {
                                         @endcan
                                     </td>
                                     <td class="text-center">
-                                        <a href="{{ route('gopanel.categories.index', ['parent_id' => $record->id]) }}"
+                                        <a wire:navigate href="{{ route('gopanel.categories.index', ['parent_id' => $record->id]) }}"
                                             class="btn btn-sm btn-outline-info" title="{{ __('Alt kateqoriyalar') }}">
                                             <i class="fas fa-sitemap"></i> {{ $record->children_count }}
                                         </a>

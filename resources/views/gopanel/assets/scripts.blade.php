@@ -21,3 +21,42 @@
 @stack('scripts')
 @stack('js_stack')
 @livewireScripts
+
+{{--
+    Persist sidebar collapsed state across page reloads + wire:navigate.
+    The pre-paint <script> in main layout sets it on first paint;
+    here we wire the toggle button + re-apply on every Livewire navigation.
+--}}
+<script>
+    (function () {
+        var KEY = 'gopanel:sidebar-collapsed';
+
+        function applyState() {
+            var collapsed = localStorage.getItem(KEY) === '1';
+            document.body.classList.toggle('vertical-collpsed', collapsed);
+        }
+
+        function bindToggle() {
+            var btn = document.getElementById('vertical-menu-btn');
+            if (!btn || btn.dataset.persistBound === '1') return;
+            btn.dataset.persistBound = '1';
+            btn.addEventListener('click', function () {
+                // app.js already toggled the class; sync to storage on the next tick.
+                setTimeout(function () {
+                    var collapsed = document.body.classList.contains('vertical-collpsed');
+                    localStorage.setItem(KEY, collapsed ? '1' : '0');
+                }, 0);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            applyState();
+            bindToggle();
+        });
+
+        document.addEventListener('livewire:navigated', function () {
+            applyState();
+            bindToggle();
+        });
+    })();
+</script>

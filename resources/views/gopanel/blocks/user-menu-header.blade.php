@@ -11,10 +11,10 @@
         <a class="dropdown-item" href="/" target="_blank">
             <i class="bx bx-desktop font-size-16 align-middle me-1"></i> <span>Sayta keç</span>
         </a>
-        <a class="dropdown-item" href="{{route('gopanel.profile.index')}}">
+        <a wire:navigate class="dropdown-item" href="{{route('gopanel.profile.index')}}">
             <i class="bx bx-user font-size-16 align-middle me-1"></i> <span>Profil məlumatlarım</span>
         </a>
-        <a class="dropdown-item" href="{{route('gopanel.profile.change-password.index')}}">
+        <a wire:navigate class="dropdown-item" href="{{route('gopanel.profile.change-password.index')}}">
             <i class="bx bx-lock-open font-size-16 align-middle me-1"></i> <span>Şifrəni dəyiş</span>
         </a>
         <div class="dropdown-divider"></div>

@@ -57,7 +57,7 @@ class extends Component {
                     </div>
                     <div class="page-title-right">
                         @can('gopanel.admins.roles.add')
-                            <a class="btn btn-success" href="{{ route('gopanel.admins.roles.create') }}">
+                            <a wire:navigate class="btn btn-success" href="{{ route('gopanel.admins.roles.create') }}">
                                 <i class="fas fa-plus"></i> {{ __('Əlavə et') }}
                             </a>
                         @endcan
@@ -86,7 +86,7 @@ class extends Component {
                             <td>{{ $record->created_at?->format('Y-m-d H:i') }}</td>
                             <td class="text-center">
                                 @can('gopanel.admins.roles.edit')
-                                    <a href="{{ route('gopanel.admins.roles.edit', $record) }}" class="btn btn-sm btn-outline-success" title="{{ __('Düzəliş') }}">
+                                    <a wire:navigate href="{{ route('gopanel.admins.roles.edit', $record) }}" class="btn btn-sm btn-outline-success" title="{{ __('Düzəliş') }}">
                                         <i class="fas fa-pen"></i>
                                     </a>
                                 @endcan

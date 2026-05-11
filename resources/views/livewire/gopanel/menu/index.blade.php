@@ -71,7 +71,7 @@ class extends Component {
                         @if ($this->parent)
                             <nav aria-label="breadcrumb">
                                 <ol class="breadcrumb mb-0">
-                                    <li class="breadcrumb-item"><a href="{{ route('gopanel.settings.menu.index') }}">{{ __('Kök') }}</a></li>
+                                    <li class="breadcrumb-item"><a wire:navigate href="{{ route('gopanel.settings.menu.index') }}">{{ __('Kök') }}</a></li>
                                     <li class="breadcrumb-item active">
                                         {{ $this->parent->getTranslation('title', app()->getLocale(), true) ?? '#' . $this->parent->id }}
                                     </li>
@@ -81,7 +81,7 @@ class extends Component {
                     </div>
                     <div class="page-title-right">
                         @can('gopanel.settings.menu.add')
-                            <a class="btn btn-success" href="{{ route('gopanel.settings.menu.create', ['parent_id' => $parent_id]) }}">
+                            <a wire:navigate class="btn btn-success" href="{{ route('gopanel.settings.menu.create', ['parent_id' => $parent_id]) }}">
                                 <i class="fas fa-plus"></i> {{ __('Əlavə et') }}
                             </a>
                         @endcan
@@ -131,14 +131,14 @@ class extends Component {
                                         @endcan
                                     </td>
                                     <td class="text-center">
-                                        <a href="{{ route('gopanel.settings.menu.index', ['parent_id' => $record->id]) }}"
+                                        <a wire:navigate href="{{ route('gopanel.settings.menu.index', ['parent_id' => $record->id]) }}"
                                             class="btn btn-sm btn-outline-info" title="{{ __('Alt menyular') }}">
                                             <i class="fas fa-sitemap"></i> {{ $record->children_count }}
                                         </a>
                                     </td>
                                     <td class="text-center">
                                         @can('gopanel.settings.menu.edit')
-                                            <a href="{{ route('gopanel.settings.menu.edit', $record) }}" class="btn btn-sm btn-outline-success" title="{{ __('Düzəliş') }}">
+                                            <a wire:navigate href="{{ route('gopanel.settings.menu.edit', $record) }}" class="btn btn-sm btn-outline-success" title="{{ __('Düzəliş') }}">
                                                 <i class="fas fa-pen"></i>
                                             </a>
                                         @endcan

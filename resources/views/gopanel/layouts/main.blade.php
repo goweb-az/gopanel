@@ -2,6 +2,16 @@
 <html lang="en">
     @include('gopanel.blocks.head')
     <body data-sidebar="dark" data-layout-mode="light">
+    {{-- Restore vertical-collpsed BEFORE first paint to avoid sidebar flicker.
+         Must run synchronously right after <body> opens so the class is on
+         document.body before any layout-related CSS resolves. --}}
+    <script>
+        (function () {
+            if (localStorage.getItem('gopanel:sidebar-collapsed') === '1') {
+                document.body.classList.add('vertical-collpsed');
+            }
+        })();
+    </script>
 
     <!-- <body data-layout="horizontal" data-topbar="dark"> -->
         

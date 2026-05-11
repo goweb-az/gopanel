@@ -3,7 +3,7 @@
         <div class="d-flex">
             <!-- LOGO -->
             <div class="navbar-brand-box">
-                <a href="{{url("gopanel")}}" class="logo logo-dark">
+                <a wire:navigate href="{{url("gopanel")}}" class="logo logo-dark">
                     <span class="logo-sm">
                         <img src="/assets/gopanel/images/gopanel-logo-icon.png" alt="" height="70">
                     </span>
@@ -12,7 +12,7 @@
                     </span>
                 </a>
 
-                <a href="{{url("gopanel")}}" class="logo logo-light">
+                <a wire:navigate href="{{url("gopanel")}}" class="logo logo-light">
                     <span class="logo-sm">
                         <img src="/assets/gopanel/images/gopanel-logo-icon.png" alt="" height="70">
                     </span>

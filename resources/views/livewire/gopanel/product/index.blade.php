@@ -60,7 +60,7 @@ class extends Component {
                     </div>
                     <div class="page-title-right">
                         @can('gopanel.products.add')
-                            <a class="btn btn-success" href="{{ route('gopanel.products.create') }}">
+                            <a wire:navigate class="btn btn-success" href="{{ route('gopanel.products.create') }}">
                                 <i class="fas fa-plus"></i> {{ __('Əlavə et') }}
                             </a>
                         @endcan
@@ -105,7 +105,7 @@ class extends Component {
                             </td>
                             <td class="text-center">
                                 @can('gopanel.products.edit')
-                                    <a href="{{ route('gopanel.products.edit', $record) }}" class="btn btn-sm btn-outline-success" title="{{ __('Düzəliş') }}">
+                                    <a wire:navigate href="{{ route('gopanel.products.edit', $record) }}" class="btn btn-sm btn-outline-success" title="{{ __('Düzəliş') }}">
                                         <i class="fas fa-pen"></i>
                                     </a>
                                 @endcan
