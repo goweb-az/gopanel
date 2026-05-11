@@ -1,0 +1,141 @@
+/* ============================================================
+ * Modern modal / drawer component (<x-gopanel.modal>)
+ *
+ * Two layouts:
+ *   - .gp-modal--side    → right-side drawer that slides in/out
+ *   - .gp-modal--center  → centered classic modal (fade only)
+ *
+ * Backdrop is a separate sibling element that fades and is click-to-close.
+ * Body gets .gp-modal-open while any drawer is visible to lock scroll.
+ * ============================================================ */
+
+body.gp-modal-open {
+    overflow: hidden;
+}
+
+.gp-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, .45);
+    z-index: 1050;
+    backdrop-filter: blur(2px);
+}
+
+.gp-modal {
+    position: fixed;
+    z-index: 1055;
+    display: flex;
+    outline: 0;
+}
+
+/* Right-side drawer ---------------------------------------- */
+.gp-modal--side {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 480px;
+    background: transparent;
+    align-items: stretch;
+}
+
+.gp-modal--side.gp-modal--sm { max-width: 360px; }
+.gp-modal--side.gp-modal--md { max-width: 480px; }
+.gp-modal--side.gp-modal--lg { max-width: 640px; }
+.gp-modal--side.gp-modal--xl { max-width: 880px; }
+
+.gp-modal--side .gp-modal__content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    box-shadow: -8px 0 32px -8px rgba(15, 23, 42, .25);
+    border-radius: 0;
+}
+
+/* Slide-from-right transition (Alpine x-transition class hooks) */
+.gp-modal-slide-enter {
+    transition: transform .32s cubic-bezier(.16, 1, .3, 1);
+}
+.gp-modal-slide-enter-start {
+    transform: translateX(100%);
+}
+.gp-modal-slide-enter-end {
+    transform: translateX(0);
+}
+.gp-modal-slide-leave {
+    transition: transform .25s cubic-bezier(.7, 0, .84, 0);
+}
+.gp-modal-slide-leave-start {
+    transform: translateX(0);
+}
+.gp-modal-slide-leave-end {
+    transform: translateX(100%);
+}
+
+/* Centered modal ------------------------------------------ */
+.gp-modal--center {
+    inset: 0;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+.gp-modal--center .gp-modal__content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 480px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 24px 64px -16px rgba(15, 23, 42, .35);
+    max-height: calc(100vh - 48px);
+}
+.gp-modal--center.gp-modal--sm .gp-modal__content { max-width: 360px; }
+.gp-modal--center.gp-modal--md .gp-modal__content { max-width: 480px; }
+.gp-modal--center.gp-modal--lg .gp-modal__content { max-width: 720px; }
+.gp-modal--center.gp-modal--xl .gp-modal__content { max-width: 1000px; }
+
+/* Header / body / footer ---------------------------------- */
+.gp-modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 18px 22px;
+    border-bottom: 1px solid rgba(15, 23, 42, .06);
+    flex-shrink: 0;
+}
+.gp-modal__title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #2a3042;
+}
+.gp-modal__header .btn-close {
+    margin: 0;
+    padding: 8px;
+    opacity: .55;
+    transition: opacity .15s ease;
+}
+.gp-modal__header .btn-close:hover {
+    opacity: 1;
+}
+
+.gp-modal__body {
+    padding: 22px;
+    overflow-y: auto;
+    flex: 1 1 auto;
+    color: #2a3042;
+}
+
+.gp-modal__footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 14px 22px;
+    border-top: 1px solid rgba(15, 23, 42, .06);
+    background: #f8fafb;
+    flex-shrink: 0;
+}
