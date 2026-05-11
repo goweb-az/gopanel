@@ -307,11 +307,6 @@ class GeneralController extends Controller
         return $this->response_json();
     }
 
-    public function route()
-    {
-        return response()->json($this->service->getSharedRoutes(), 200);
-    }
-
     public function iconPickerList()
     {
         $payload = \App\Helpers\Gopanel\IconPickerHelper::all();

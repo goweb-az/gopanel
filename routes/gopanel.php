@@ -43,7 +43,6 @@ Route::group(['middleware' => 'gopanel'], function () {
     // Legacy crud.js endpoints (sortable, status toggle, generic delete/edit/...)
     // still consumed by the few non-Livewire pages: dashboard, analytics, system.
     Route::prefix('general')->name('general.')->group(function () {
-        Route::get('/get/route', [GeneralController::class, 'route'])->name('get.route');
         Route::get('/icon-picker/list', [GeneralController::class, 'iconPickerList'])->name('icon-picker.list');
         Route::post('/status/change', [GeneralController::class, 'statusChange'])->name('status.change');
         Route::post('/sortable', [GeneralController::class, 'sortable'])->name('sortable');
