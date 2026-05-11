@@ -250,7 +250,7 @@ class extends Component {
     }
 }; ?>
 
-<div>
+<div id="gpAnalyticsRoot">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
@@ -351,6 +351,7 @@ class extends Component {
         </div>
     </div>
 
+    @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/moment@2.30.1/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -372,4 +373,5 @@ class extends Component {
     </script>
 
     <script src="{{ asset('/assets/gopanel/js/modules/analytics.js?v=' . time()) }}"></script>
+    @endpush
 </div>
