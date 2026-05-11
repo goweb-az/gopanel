@@ -60,3 +60,47 @@
         });
     })();
 </script>
+
+{{--
+    Native sidebar accordion. metisMenu's slideDown is way too sluggish for
+    an admin panel, so we replace it with a single delegated click handler
+    that just toggles .mm-show / .mm-active. CSS handles the visibility.
+    Survives wire:navigate because the listener is on document.body.
+--}}
+<script>
+    (function () {
+        function disableMetisMenu() {
+            if (!window.jQuery) return;
+            try { jQuery('#side-menu').metisMenu('dispose'); } catch (e) { /* noop */ }
+        }
+
+        document.body.addEventListener('click', function (e) {
+            var trigger = e.target.closest('#side-menu .has-arrow');
+            if (!trigger) return;
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            var li = trigger.parentElement;
+            var sub = trigger.nextElementSibling;
+            if (!sub || !sub.classList.contains('sub-menu')) return;
+
+            // Close sibling open menus at the same level for a clean accordion.
+            var parentList = li.parentElement;
+            if (parentList) {
+                parentList.querySelectorAll(':scope > li.mm-active').forEach(function (other) {
+                    if (other === li) return;
+                    other.classList.remove('mm-active');
+                    var otherSub = other.querySelector(':scope > .sub-menu');
+                    if (otherSub) otherSub.classList.remove('mm-show');
+                });
+            }
+
+            li.classList.toggle('mm-active');
+            sub.classList.toggle('mm-show');
+        });
+
+        document.addEventListener('DOMContentLoaded', disableMetisMenu);
+        document.addEventListener('livewire:navigated', disableMetisMenu);
+    })();
+</script>

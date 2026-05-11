@@ -99,6 +99,18 @@
     position: relative;
 }
 
+/* metisMenu collapses sub-menus by toggling .mm-show on them, but on
+   wire:navigate the JS doesn't always re-init in time — the sub-menu
+   briefly renders open before being hidden. Force collapsed-by-default so
+   only mm-show / mm-active parents expand. */
+[data-sidebar="dark"] #sidebar-menu .sub-menu {
+    display: none;
+}
+[data-sidebar="dark"] #sidebar-menu .sub-menu.mm-show,
+[data-sidebar="dark"] #sidebar-menu li.mm-active > .sub-menu {
+    display: block;
+}
+
 [data-sidebar="dark"] #sidebar-menu .sub-menu li a {
     padding: 8px 14px 8px 22px;
     margin: 1px 8px;
