@@ -36,12 +36,10 @@
                                     {{-- @if(!sidebarGuardCheck($inner->get('guards')))
                                         @continue
                                     @endif --}}
-                                    <li>
-                                        <a wire:navigate href="{{ route($inner->get('route')) }}" class="pc-link {{ $inner->get('isActiveGroup') ? 'active' : '' }}">
+                                    <li class="{{ $inner->get('isActiveGroup') ? 'mm-active' : '' }}">
+                                        <a wire:navigate href="{{ route($inner->get('route')) }}" class="{{ $inner->get('isActiveGroup') ? 'active' : '' }}">
                                             @if ($inner->has("icon"))
-                                            <span class="mm-inner-icon">
                                                 {!! $inner->get('icon') !!}
-                                            </span> 
                                             @endif
                                             {!! $inner->get('title') !!}
                                         </a>

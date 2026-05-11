@@ -1,3 +1,5 @@
+@import './datatable.css';
+
 /*
  * Livewire v4 loading-state helpers
  *
@@ -23,3 +25,134 @@
 
 [data-loading] .lw-loading      { display: inline; }
 [data-loading] .lw-not-loading  { display: none; }
+
+
+/* ============================================================
+ * Modern sidebar overrides (Skote dark sidebar)
+ *
+ * Skote ships with very 2018-era sidebar styling — flat hover, no rounded
+ * states, abrupt transitions, sub-menu items hugging the edge. The rules
+ * below stay inside Skote's selectors and just polish:
+ *   - rounded active + hover background
+ *   - smoother transitions
+ *   - better spacing and typography
+ *   - consistent icon column so titles line up
+ *   - sub-menu indent + indicator
+ * ============================================================ */
+
+/* Top-level menu item */
+[data-sidebar="dark"] #sidebar-menu ul li a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    margin: 2px 10px;
+    border-radius: 8px;
+    color: #a6b0cf;
+    transition: background-color .18s ease, color .18s ease, padding .18s ease;
+    font-size: 13.5px;
+    font-weight: 500;
+}
+
+[data-sidebar="dark"] #sidebar-menu ul li a > i,
+[data-sidebar="dark"] #sidebar-menu ul li a > svg,
+[data-sidebar="dark"] #sidebar-menu ul li a > .bx,
+[data-sidebar="dark"] #sidebar-menu ul li a > .fa,
+[data-sidebar="dark"] #sidebar-menu ul li a > .mdi {
+    font-size: 18px;
+    width: 22px;
+    text-align: center;
+    flex-shrink: 0;
+    color: inherit;
+    margin: 0;
+    line-height: 1;
+}
+
+/* Hover */
+[data-sidebar="dark"] #sidebar-menu ul li a:hover {
+    background-color: rgba(255, 255, 255, .04);
+    color: #ffffff;
+}
+
+/* Active item */
+[data-sidebar="dark"] #sidebar-menu ul li.mm-active > a,
+[data-sidebar="dark"] #sidebar-menu ul li a.active {
+    background-color: rgba(85, 110, 230, .15);
+    color: #ffffff;
+    font-weight: 600;
+}
+
+/* Section titles ("Tənzimləmələr" header) */
+[data-sidebar="dark"] #sidebar-menu .menu-title {
+    padding: 18px 22px 8px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    color: #6a7187;
+    font-weight: 600;
+}
+
+/* Sub-menu indent + connector */
+[data-sidebar="dark"] #sidebar-menu .sub-menu {
+    padding: 4px 0 6px 12px;
+    position: relative;
+}
+
+[data-sidebar="dark"] #sidebar-menu .sub-menu li a {
+    padding: 8px 14px 8px 22px;
+    margin: 1px 8px;
+    font-size: 13px;
+    font-weight: 400;
+    color: #79808f;
+    position: relative;
+}
+[data-sidebar="dark"] #sidebar-menu .sub-menu li a:hover,
+[data-sidebar="dark"] #sidebar-menu .sub-menu li.mm-active > a,
+[data-sidebar="dark"] #sidebar-menu .sub-menu li a.active {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, .04);
+}
+
+/* Active sub-menu indicator dot */
+[data-sidebar="dark"] #sidebar-menu .sub-menu li.mm-active > a::before,
+[data-sidebar="dark"] #sidebar-menu .sub-menu li a.active::before {
+    content: "";
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #556ee6;
+    box-shadow: 0 0 0 3px rgba(85, 110, 230, .15);
+}
+
+/* has-arrow chevron polish — push to the right edge inside flex parent */
+[data-sidebar="dark"] #sidebar-menu .has-arrow::after {
+    transition: transform .25s ease;
+    color: #6a7187;
+    font-size: 0.9rem;
+    margin-left: auto;
+    float: none;
+}
+
+/* Vertical menu container — softer divider with header */
+[data-sidebar="dark"] .vertical-menu {
+    border-right: 1px solid rgba(255, 255, 255, .04);
+}
+
+/* Collapsed-mode polish: center icons, slightly larger hit area */
+.vertical-collpsed[data-sidebar="dark"] #sidebar-menu > ul > li > a {
+    margin: 4px 8px;
+    border-radius: 8px;
+    padding: 12px 0;
+    justify-content: center;
+}
+.vertical-collpsed[data-sidebar="dark"] #sidebar-menu > ul > li > a > i,
+.vertical-collpsed[data-sidebar="dark"] #sidebar-menu > ul > li > a > .bx {
+    font-size: 20px;
+    width: auto;
+}
+
+
