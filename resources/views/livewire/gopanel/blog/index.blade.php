@@ -69,52 +69,48 @@ class extends Component {
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-body">
-                <x-gopanel.datatable
-                    :rows="$this->rows"
-                    :columns="$this->columns"
-                    :sortField="$sortField"
-                    :sortDirection="$sortDirection"
-                    :perPage="$perPage"
-                >
-                    @foreach ($this->rows as $record)
-                        <tr wire:key="blog-{{ $record->id }}">
-                            <td>{{ $record->id }}</td>
-                            <td>{!! $record->image_view !!}</td>
-                            <td><strong>{{ $record->getTranslation('title', app()->getLocale(), true) ?? '—' }}</strong></td>
-                            <td>{{ optional($record->date_time)->format('Y-m-d H:i') ?? '—' }}</td>
-                            <td class="text-center">{{ $record->views }}</td>
-                            <td class="text-center">
-                                @can('gopanel.blog.edit')
-                                    <button type="button" wire:click="toggleActive({{ $record->id }})"
-                                        class="btn btn-sm {{ $record->is_active ? 'btn-success' : 'btn-secondary' }}">
-                                        {{ $record->is_active ? __('Aktiv') : __('Deaktiv') }}
-                                    </button>
-                                @else
-                                    <span class="badge {{ $record->is_active ? 'bg-success' : 'bg-secondary' }}">
-                                        {{ $record->is_active ? __('Aktiv') : __('Deaktiv') }}
-                                    </span>
-                                @endcan
-                            </td>
-                            <td class="text-center">
-                                @can('gopanel.blog.edit')
-                                    <a wire:navigate href="{{ route('gopanel.blog.edit', $record) }}" class="btn btn-sm btn-outline-success" title="{{ __('Düzəliş') }}">
-                                        <i class="fas fa-pen"></i>
-                                    </a>
-                                @endcan
-                                @can('gopanel.blog.delete')
-                                    <button type="button" class="btn btn-sm btn-outline-danger"
-                                        wire:click="delete({{ $record->id }})"
-                                        wire:confirm="{{ __('Silmək istədiyinizə əminsiniz?') }}" title="{{ __('Sil') }}">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                @endcan
-                            </td>
-                        </tr>
-                    @endforeach
-                </x-gopanel.datatable>
-            </div>
-        </div>
+                        <x-gopanel.datatable
+            :rows="$this->rows"
+            :columns="$this->columns"
+            :sortField="$sortField"
+            :sortDirection="$sortDirection"
+            :perPage="$perPage"
+        >
+            @foreach ($this->rows as $record)
+                <tr wire:key="blog-{{ $record->id }}">
+                    <td>{{ $record->id }}</td>
+                    <td>{!! $record->image_view !!}</td>
+                    <td><strong>{{ $record->getTranslation('title', app()->getLocale(), true) ?? '—' }}</strong></td>
+                    <td>{{ optional($record->date_time)->format('Y-m-d H:i') ?? '—' }}</td>
+                    <td class="text-center">{{ $record->views }}</td>
+                    <td class="text-center">
+                        @can('gopanel.blog.edit')
+                            <button type="button" wire:click="toggleActive({{ $record->id }})"
+                                class="btn btn-sm {{ $record->is_active ? 'btn-success' : 'btn-secondary' }}">
+                                {{ $record->is_active ? __('Aktiv') : __('Deaktiv') }}
+                            </button>
+                        @else
+                            <span class="badge {{ $record->is_active ? 'bg-success' : 'bg-secondary' }}">
+                                {{ $record->is_active ? __('Aktiv') : __('Deaktiv') }}
+                            </span>
+                        @endcan
+                    </td>
+                    <td class="text-center">
+                        @can('gopanel.blog.edit')
+                            <a wire:navigate href="{{ route('gopanel.blog.edit', $record) }}" class="btn btn-sm btn-outline-success" title="{{ __('Düzəliş') }}">
+                                <i class="fas fa-pen"></i>
+                            </a>
+                        @endcan
+                        @can('gopanel.blog.delete')
+                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                wire:click="delete({{ $record->id }})"
+                                wire:confirm="{{ __('Silmək istədiyinizə əminsiniz?') }}" title="{{ __('Sil') }}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        @endcan
+                    </td>
+                </tr>
+            @endforeach
+        </x-gopanel.datatable>
     </div>
 </div>

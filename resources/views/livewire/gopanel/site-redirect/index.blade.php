@@ -80,56 +80,52 @@ class extends Component {
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-body">
-                <x-gopanel.datatable
-                    :rows="$this->rows"
-                    :columns="$this->columns"
-                    :sortField="$sortField"
-                    :sortDirection="$sortDirection"
-                    :perPage="$perPage"
-                >
-                    @foreach ($this->rows as $record)
-                        <tr wire:key="rd-{{ $record->id }}">
-                            <td>{{ $record->id }}</td>
-                            <td>{{ $record->locale ? strtoupper($record->locale) : '*' }}</td>
-                            <td><code>{{ $record->source }}</code></td>
-                            <td><code>{{ $record->target }}</code></td>
-                            <td class="text-center"><span class="badge bg-info">{{ $record->http_code }}</span></td>
-                            <td class="text-center">{{ $record->priority }}</td>
-                            <td class="text-center">{{ $record->hits ?? 0 }}</td>
-                            <td class="text-center">
-                                @can('gopanel.seo.site-redirects.edit')
-                                    <button type="button" wire:click="toggleActive({{ $record->id }})"
-                                        class="btn btn-sm {{ $record->is_active ? 'btn-success' : 'btn-secondary' }}">
-                                        {{ $record->is_active ? __('Aktiv') : __('Deaktiv') }}
-                                    </button>
-                                @else
-                                    <span class="badge {{ $record->is_active ? 'bg-success' : 'bg-secondary' }}">
-                                        {{ $record->is_active ? __('Aktiv') : __('Deaktiv') }}
-                                    </span>
-                                @endcan
-                            </td>
-                            <td class="text-center">
-                                @can('gopanel.seo.site-redirects.edit')
-                                    <button type="button" class="btn btn-sm btn-outline-success"
-                                        x-on:click="$dispatch('site-redirect-form-open', { id: {{ $record->id }} })" title="{{ __('Düzəliş') }}">
-                                        <i class="fas fa-pen"></i>
-                                    </button>
-                                @endcan
-                                @can('gopanel.seo.site-redirects.delete')
-                                    <button type="button" class="btn btn-sm btn-outline-danger"
-                                        wire:click="delete({{ $record->id }})"
-                                        wire:confirm="{{ __('Silmək istədiyinizə əminsiniz?') }}" title="{{ __('Sil') }}">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                @endcan
-                            </td>
-                        </tr>
-                    @endforeach
-                </x-gopanel.datatable>
-            </div>
-        </div>
+                        <x-gopanel.datatable
+            :rows="$this->rows"
+            :columns="$this->columns"
+            :sortField="$sortField"
+            :sortDirection="$sortDirection"
+            :perPage="$perPage"
+        >
+            @foreach ($this->rows as $record)
+                <tr wire:key="rd-{{ $record->id }}">
+                    <td>{{ $record->id }}</td>
+                    <td>{{ $record->locale ? strtoupper($record->locale) : '*' }}</td>
+                    <td><code>{{ $record->source }}</code></td>
+                    <td><code>{{ $record->target }}</code></td>
+                    <td class="text-center"><span class="badge bg-info">{{ $record->http_code }}</span></td>
+                    <td class="text-center">{{ $record->priority }}</td>
+                    <td class="text-center">{{ $record->hits ?? 0 }}</td>
+                    <td class="text-center">
+                        @can('gopanel.seo.site-redirects.edit')
+                            <button type="button" wire:click="toggleActive({{ $record->id }})"
+                                class="btn btn-sm {{ $record->is_active ? 'btn-success' : 'btn-secondary' }}">
+                                {{ $record->is_active ? __('Aktiv') : __('Deaktiv') }}
+                            </button>
+                        @else
+                            <span class="badge {{ $record->is_active ? 'bg-success' : 'bg-secondary' }}">
+                                {{ $record->is_active ? __('Aktiv') : __('Deaktiv') }}
+                            </span>
+                        @endcan
+                    </td>
+                    <td class="text-center">
+                        @can('gopanel.seo.site-redirects.edit')
+                            <button type="button" class="btn btn-sm btn-outline-success"
+                                x-on:click="$dispatch('site-redirect-form-open', { id: {{ $record->id }} })" title="{{ __('Düzəliş') }}">
+                                <i class="fas fa-pen"></i>
+                            </button>
+                        @endcan
+                        @can('gopanel.seo.site-redirects.delete')
+                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                wire:click="delete({{ $record->id }})"
+                                wire:confirm="{{ __('Silmək istədiyinizə əminsiniz?') }}" title="{{ __('Sil') }}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        @endcan
+                    </td>
+                </tr>
+            @endforeach
+        </x-gopanel.datatable>
 
         <livewire:gopanel.site-redirect.form />
     </div>

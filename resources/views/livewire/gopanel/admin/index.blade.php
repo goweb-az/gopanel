@@ -75,71 +75,67 @@ class extends Component {
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-body">
-                <x-gopanel.datatable
-                    :rows="$this->rows"
-                    :columns="$this->columns"
-                    :sortField="$sortField"
-                    :sortDirection="$sortDirection"
-                    :perPage="$perPage"
-                >
-                    @foreach ($this->rows as $record)
-                        <tr wire:key="admin-{{ $record->id }}">
-                            <td>{{ $record->id }}</td>
-                            <td>
-                                @if ($record->image)
-                                    <img src="{{ \App\Helpers\Gopanel\FileUploader::url($record->image) }}" alt="" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
-                                @else
-                                    <span class="badge bg-light text-muted">—</span>
-                                @endif
-                            </td>
-                            <td><strong>{{ $record->full_name }}</strong></td>
-                            <td>{{ $record->email }}</td>
-                            <td>
-                                @forelse ($record->roles as $role)
-                                    <span class="badge bg-info">{{ $role->name }}</span>
-                                @empty
-                                    <span class="text-muted">—</span>
-                                @endforelse
-                            </td>
-                            <td class="text-center">
-                                @if ($record->is_super)
-                                    <span class="badge bg-warning text-dark">{{ __('Super') }}</span>
-                                @else
-                                    <span class="text-muted">—</span>
-                                @endif
-                            </td>
-                            <td class="text-center">
-                                @can('gopanel.admins.edit')
-                                    <button type="button" wire:click="toggleActive({{ $record->id }})"
-                                        class="btn btn-sm {{ $record->is_active ? 'btn-success' : 'btn-secondary' }}">
-                                        {{ $record->is_active ? __('Aktiv') : __('Deaktiv') }}
-                                    </button>
-                                @else
-                                    <span class="badge {{ $record->is_active ? 'bg-success' : 'bg-secondary' }}">
-                                        {{ $record->is_active ? __('Aktiv') : __('Deaktiv') }}
-                                    </span>
-                                @endcan
-                            </td>
-                            <td class="text-center">
-                                @can('gopanel.admins.edit')
-                                    <a wire:navigate href="{{ route('gopanel.admins.edit', $record) }}" class="btn btn-sm btn-outline-success" title="{{ __('Düzəliş') }}">
-                                        <i class="fas fa-pen"></i>
-                                    </a>
-                                @endcan
-                                @can('gopanel.admins.delete')
-                                    <button type="button" class="btn btn-sm btn-outline-danger"
-                                        wire:click="delete({{ $record->id }})"
-                                        wire:confirm="{{ __('Silmək istədiyinizə əminsiniz?') }}" title="{{ __('Sil') }}">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                @endcan
-                            </td>
-                        </tr>
-                    @endforeach
-                </x-gopanel.datatable>
-            </div>
-        </div>
+                        <x-gopanel.datatable
+            :rows="$this->rows"
+            :columns="$this->columns"
+            :sortField="$sortField"
+            :sortDirection="$sortDirection"
+            :perPage="$perPage"
+        >
+            @foreach ($this->rows as $record)
+                <tr wire:key="admin-{{ $record->id }}">
+                    <td>{{ $record->id }}</td>
+                    <td>
+                        @if ($record->image)
+                            <img src="{{ \App\Helpers\Gopanel\FileUploader::url($record->image) }}" alt="" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
+                        @else
+                            <span class="badge bg-light text-muted">—</span>
+                        @endif
+                    </td>
+                    <td><strong>{{ $record->full_name }}</strong></td>
+                    <td>{{ $record->email }}</td>
+                    <td>
+                        @forelse ($record->roles as $role)
+                            <span class="badge bg-info">{{ $role->name }}</span>
+                        @empty
+                            <span class="text-muted">—</span>
+                        @endforelse
+                    </td>
+                    <td class="text-center">
+                        @if ($record->is_super)
+                            <span class="badge bg-warning text-dark">{{ __('Super') }}</span>
+                        @else
+                            <span class="text-muted">—</span>
+                        @endif
+                    </td>
+                    <td class="text-center">
+                        @can('gopanel.admins.edit')
+                            <button type="button" wire:click="toggleActive({{ $record->id }})"
+                                class="btn btn-sm {{ $record->is_active ? 'btn-success' : 'btn-secondary' }}">
+                                {{ $record->is_active ? __('Aktiv') : __('Deaktiv') }}
+                            </button>
+                        @else
+                            <span class="badge {{ $record->is_active ? 'bg-success' : 'bg-secondary' }}">
+                                {{ $record->is_active ? __('Aktiv') : __('Deaktiv') }}
+                            </span>
+                        @endcan
+                    </td>
+                    <td class="text-center">
+                        @can('gopanel.admins.edit')
+                            <a wire:navigate href="{{ route('gopanel.admins.edit', $record) }}" class="btn btn-sm btn-outline-success" title="{{ __('Düzəliş') }}">
+                                <i class="fas fa-pen"></i>
+                            </a>
+                        @endcan
+                        @can('gopanel.admins.delete')
+                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                wire:click="delete({{ $record->id }})"
+                                wire:confirm="{{ __('Silmək istədiyinizə əminsiniz?') }}" title="{{ __('Sil') }}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        @endcan
+                    </td>
+                </tr>
+            @endforeach
+        </x-gopanel.datatable>
     </div>
 </div>

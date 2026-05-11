@@ -125,8 +125,7 @@ class extends Component {
             </div>
         </div>
 
-        <div class="card mb-3">
-            <div class="card-body">
+        <div class="gp-datatable__filters mb-3">
                 <div class="row g-2">
                     <div class="col-md-3">
                         <label class="form-label small">{{ __('Səviyyə') }}</label>
@@ -155,40 +154,35 @@ class extends Component {
                         <input type="date" class="form-control form-control-sm" wire:model.live="filterDateTo">
                     </div>
                 </div>
-            </div>
         </div>
 
-        <div class="card">
-            <div class="card-body">
-                <x-gopanel.datatable
-                    :rows="$this->rows"
-                    :columns="$this->columns"
-                    :sortField="$sortField"
-                    :sortDirection="$sortDirection"
-                    :perPage="$perPage"
-                >
-                    @foreach ($this->rows as $record)
-                        <tr wire:key="flog-{{ $record->id }}">
-                            <td>{{ $record->id }}</td>
-                            <td>{!! $record->level_badge !!}</td>
-                            <td><code>{{ $record->channel }}</code></td>
-                            <td>{!! $record->message_short !!}</td>
-                            <td>{{ $record->admin_name ?? $record->user_name ?? '—' }}</td>
-                            <td>{{ $record->created_at_formatted }}</td>
-                            <td class="text-center">
-                                @can('gopanel.activity.file-logs.delete')
-                                    <button type="button" class="btn btn-sm btn-outline-danger"
-                                        wire:click="delete({{ $record->id }})"
-                                        wire:confirm="{{ __('Silmək istədiyinizə əminsiniz?') }}" title="{{ __('Sil') }}">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                @endcan
-                            </td>
-                        </tr>
-                    @endforeach
-                </x-gopanel.datatable>
-            </div>
-        </div>
+                        <x-gopanel.datatable
+            :rows="$this->rows"
+            :columns="$this->columns"
+            :sortField="$sortField"
+            :sortDirection="$sortDirection"
+            :perPage="$perPage"
+        >
+            @foreach ($this->rows as $record)
+                <tr wire:key="flog-{{ $record->id }}">
+                    <td>{{ $record->id }}</td>
+                    <td>{!! $record->level_badge !!}</td>
+                    <td><code>{{ $record->channel }}</code></td>
+                    <td>{!! $record->message_short !!}</td>
+                    <td>{{ $record->admin_name ?? $record->user_name ?? '—' }}</td>
+                    <td>{{ $record->created_at_formatted }}</td>
+                    <td class="text-center">
+                        @can('gopanel.activity.file-logs.delete')
+                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                wire:click="delete({{ $record->id }})"
+                                wire:confirm="{{ __('Silmək istədiyinizə əminsiniz?') }}" title="{{ __('Sil') }}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        @endcan
+                    </td>
+                </tr>
+            @endforeach
+        </x-gopanel.datatable>
 
         <x-gopanel.modal
             name="filelog-cleanup"
