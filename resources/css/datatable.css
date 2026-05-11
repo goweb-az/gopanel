@@ -1,0 +1,296 @@
+/* ============================================================
+ * Modern datatable component (<x-gopanel.datatable>)
+ *
+ * Replaces the default Bootstrap "table table-bordered table-hover"
+ * with a calmer, more modern look:
+ *   - tight toolbar with icon-led search + clear button
+ *   - borderless table with subtle separators between rows
+ *   - sticky-feel header with neutral gray, hover row tint
+ *   - sortable headers with visible active state
+ *   - empty-state illustration block instead of a single muted line
+ *   - paginator inherits livewire::bootstrap markup but is restyled
+ * ============================================================ */
+
+.gp-datatable {
+    --gp-dt-border: rgba(15, 23, 42, .06);
+    --gp-dt-row-hover: rgba(85, 110, 230, .04);
+    --gp-dt-header-bg: #f8fafb;
+    --gp-dt-header-color: #495365;
+    --gp-dt-text: #2a3042;
+    --gp-dt-muted: #74788d;
+    --gp-dt-accent: #556ee6;
+}
+
+/* Toolbar -------------------------------------------------- */
+.gp-datatable__toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.gp-datatable__search {
+    position: relative;
+    flex: 1 1 320px;
+    max-width: 480px;
+}
+.gp-datatable__search input {
+    width: 100%;
+    height: 40px;
+    padding: 0 38px 0 38px;
+    border: 1px solid var(--gp-dt-border);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--gp-dt-text);
+    font-size: 14px;
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+.gp-datatable__search input:focus {
+    outline: none;
+    border-color: var(--gp-dt-accent);
+    box-shadow: 0 0 0 4px rgba(85, 110, 230, .08);
+}
+.gp-datatable__search input::placeholder {
+    color: #a4adc1;
+}
+.gp-datatable__search-icon {
+    position: absolute;
+    top: 50%;
+    left: 14px;
+    transform: translateY(-50%);
+    color: #a4adc1;
+    font-size: 14px;
+    pointer-events: none;
+}
+.gp-datatable__search-clear {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 0;
+    background: rgba(15, 23, 42, .06);
+    color: #74788d;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    transition: background-color .15s ease, color .15s ease;
+}
+.gp-datatable__search-clear:hover {
+    background: rgba(15, 23, 42, .12);
+    color: #2a3042;
+}
+.gp-datatable__search-spinner {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    transform: translateY(-50%);
+    color: var(--gp-dt-accent);
+    font-size: 13px;
+}
+
+.gp-datatable__per-page {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+    color: var(--gp-dt-muted);
+    font-size: 13px;
+}
+.gp-datatable__per-page select {
+    height: 36px;
+    padding: 0 32px 0 12px;
+    border: 1px solid var(--gp-dt-border);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--gp-dt-text);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2374788d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    transition: border-color .15s ease;
+}
+.gp-datatable__per-page select:focus {
+    outline: none;
+    border-color: var(--gp-dt-accent);
+}
+
+/* Table ---------------------------------------------------- */
+.gp-datatable__wrapper {
+    border: 1px solid var(--gp-dt-border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+}
+
+.gp-datatable__table {
+    width: 100%;
+    margin: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+    color: var(--gp-dt-text);
+    font-size: 13.5px;
+}
+
+.gp-datatable__table thead th {
+    background: var(--gp-dt-header-bg);
+    color: var(--gp-dt-header-color);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--gp-dt-border);
+    white-space: nowrap;
+    vertical-align: middle;
+}
+.gp-datatable__table thead th[data-sorted] {
+    color: var(--gp-dt-accent);
+    background: rgba(85, 110, 230, .06);
+}
+
+.gp-datatable__sort {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    font: inherit;
+    text-transform: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+    cursor: pointer;
+    transition: color .15s ease;
+}
+.gp-datatable__sort:hover {
+    color: var(--gp-dt-accent);
+}
+.gp-datatable__sort i {
+    font-size: 11px;
+    opacity: .6;
+    transition: opacity .15s ease;
+}
+.gp-datatable__sort.is-active i {
+    opacity: 1;
+    color: var(--gp-dt-accent);
+}
+
+.gp-datatable__table tbody td {
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--gp-dt-border);
+    vertical-align: middle;
+}
+.gp-datatable__table tbody tr:last-child td {
+    border-bottom: 0;
+}
+.gp-datatable__table tbody tr {
+    transition: background-color .12s ease;
+}
+.gp-datatable__table tbody tr:hover {
+    background: var(--gp-dt-row-hover);
+}
+
+/* Action buttons inside cells: pill-shaped, smaller, hover lift */
+.gp-datatable__table tbody .btn-sm {
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.4;
+    transition: transform .12s ease, box-shadow .12s ease;
+}
+.gp-datatable__table tbody .btn-sm:hover {
+    transform: translateY(-1px);
+}
+.gp-datatable__table tbody .btn-outline-success:hover,
+.gp-datatable__table tbody .btn-outline-danger:hover,
+.gp-datatable__table tbody .btn-outline-secondary:hover {
+    box-shadow: 0 4px 10px -4px rgba(15, 23, 42, .15);
+}
+
+/* Empty state --------------------------------------------- */
+.gp-datatable__empty-row td {
+    padding: 0 !important;
+    border-bottom: 0 !important;
+}
+.gp-datatable__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 60px 20px;
+    color: var(--gp-dt-muted);
+}
+.gp-datatable__empty i {
+    font-size: 36px;
+    color: #d4d8e0;
+}
+.gp-datatable__empty p {
+    margin: 0;
+    font-size: 14px;
+}
+
+/* Paginator ------------------------------------------------ */
+.gp-datatable__paginator {
+    margin-top: 16px;
+}
+.gp-datatable__paginator nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+    justify-content: space-between;
+}
+.gp-datatable__paginator .pagination {
+    margin: 0;
+    gap: 4px;
+}
+.gp-datatable__paginator .page-item .page-link,
+.gp-datatable__paginator .page-link {
+    border: 1px solid var(--gp-dt-border);
+    border-radius: 8px !important;
+    color: var(--gp-dt-text);
+    background: #fff;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background-color .12s ease, color .12s ease, border-color .12s ease;
+}
+.gp-datatable__paginator .page-item.active .page-link,
+.gp-datatable__paginator .page-link.active {
+    background: var(--gp-dt-accent);
+    border-color: var(--gp-dt-accent);
+    color: #fff;
+    box-shadow: 0 4px 10px -2px rgba(85, 110, 230, .35);
+}
+.gp-datatable__paginator .page-item:not(.active) .page-link:hover {
+    background: rgba(85, 110, 230, .08);
+    color: var(--gp-dt-accent);
+    border-color: rgba(85, 110, 230, .25);
+}
+.gp-datatable__paginator .page-item.disabled .page-link {
+    background: #f8fafb;
+    color: #c1c6d2;
+    border-color: var(--gp-dt-border);
+}
+.gp-datatable__paginator p {
+    margin: 0;
+    color: var(--gp-dt-muted);
+    font-size: 13px;
+}
+.gp-datatable__paginator p .font-medium {
+    color: var(--gp-dt-text);
+    font-weight: 600;
+}
+
+[x-cloak] { display: none !important; }

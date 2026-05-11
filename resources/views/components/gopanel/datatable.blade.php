@@ -8,35 +8,46 @@
     'emptyMessage' => null,
 ])
 
-<div>
+<div class="gp-datatable">
     @if ($searchable)
-        <div class="row mb-3">
-            <div class="col-md-4">
-                <div class="input-group">
-                    <span class="input-group-text"><i class="fas fa-search"></i></span>
-                    <input
-                        type="text"
-                        class="form-control"
-                        placeholder="{{ __('Axtar...') }}"
-                        wire:model.live.debounce.400ms="search"
-                    >
-                </div>
+        <div class="gp-datatable__toolbar">
+            <div class="gp-datatable__search">
+                <i class="fas fa-search gp-datatable__search-icon"></i>
+                <input
+                    type="text"
+                    placeholder="{{ __('Axtar...') }}"
+                    wire:model.live.debounce.400ms="search"
+                >
+                <button
+                    type="button"
+                    class="gp-datatable__search-clear lw-not-loading"
+                    x-data
+                    x-show="$wire.search"
+                    x-cloak
+                    x-on:click="$wire.set('search', '')"
+                    aria-label="{{ __('Təmizlə') }}"
+                >
+                    <i class="fas fa-times"></i>
+                </button>
+                <span class="gp-datatable__search-spinner lw-loading">
+                    <i class="fas fa-circle-notch fa-spin"></i>
+                </span>
             </div>
-            <div class="col-md-2 ms-auto">
-                <select class="form-select" wire:model.live="perPage">
-                    <option value="10">10</option>
-                    <option value="15">15</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
+
+            <div class="gp-datatable__per-page">
+                <label class="gp-datatable__per-page-label">{{ __('Göstər') }}</label>
+                <select wire:model.live="perPage">
+                    @foreach ([10, 15, 25, 50, 100] as $n)
+                        <option value="{{ $n }}">{{ $n }}</option>
+                    @endforeach
                 </select>
             </div>
         </div>
     @endif
 
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover mb-0">
-            <thead class="table-light">
+    <div class="gp-datatable__wrapper">
+        <table class="gp-datatable__table">
+            <thead>
                 <tr>
                     @foreach ($columns as $col)
                         @php
@@ -45,22 +56,24 @@
                             $sortable = (bool) ($col['sortable'] ?? false);
                             $width = $col['width'] ?? null;
                             $align = $col['align'] ?? null;
+                            $isSortedBy = $sortField === $key;
                         @endphp
                         <th
                             @if ($width) style="width: {{ $width }}" @endif
                             @if ($align) class="text-{{ $align }}" @endif
+                            @if ($isSortedBy) data-sorted="{{ $sortDirection }}" @endif
                         >
                             @if ($sortable)
                                 <button
                                     type="button"
                                     wire:click="sortBy('{{ $key }}')"
-                                    class="btn btn-link p-0 text-decoration-none text-dark fw-bold"
+                                    class="gp-datatable__sort {{ $isSortedBy ? 'is-active' : '' }}"
                                 >
-                                    {{ $label }}
-                                    @if ($sortField === $key)
-                                        <i class="fas fa-sort-{{ $sortDirection === 'asc' ? 'up' : 'down' }} ms-1"></i>
+                                    <span>{{ $label }}</span>
+                                    @if ($isSortedBy)
+                                        <i class="fas fa-sort-{{ $sortDirection === 'asc' ? 'up' : 'down' }}"></i>
                                     @else
-                                        <i class="fas fa-sort text-muted ms-1"></i>
+                                        <i class="fas fa-sort"></i>
                                     @endif
                                 </button>
                             @else
@@ -73,9 +86,12 @@
 
             <tbody>
                 @if ($rows->isEmpty())
-                    <tr>
-                        <td colspan="{{ count($columns) }}" class="text-center text-muted py-4">
-                            {{ $emptyMessage ?? __('Heç nə tapılmadı') }}
+                    <tr class="gp-datatable__empty-row">
+                        <td colspan="{{ count($columns) }}">
+                            <div class="gp-datatable__empty">
+                                <i class="fas fa-inbox"></i>
+                                <p>{{ $emptyMessage ?? __('Heç nə tapılmadı') }}</p>
+                            </div>
                         </td>
                     </tr>
                 @else
@@ -86,7 +102,7 @@
     </div>
 
     @if ($rows->hasPages())
-        <div class="mt-3 datatable-paginator">
+        <div class="gp-datatable__paginator">
             {{ $rows->onEachSide(1)->links('livewire::bootstrap') }}
         </div>
     @endif
