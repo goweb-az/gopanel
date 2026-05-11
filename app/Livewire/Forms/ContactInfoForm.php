@@ -30,7 +30,10 @@ class ContactInfoForm extends BaseForm
             'form.info_email'       => ['nullable', 'email', 'max:120'],
             'form.support_email'    => ['nullable', 'email', 'max:120'],
             'form.map'              => ['nullable', 'string'],
-        ];
+        ] + $this->translationRules(
+            required: [],
+            optional: ['page_title' => 255, 'page_description' => 65535, 'adress' => 500],
+        );
     }
 
     public function setItem(ContactInfo $item): void

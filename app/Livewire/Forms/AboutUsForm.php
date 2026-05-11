@@ -18,7 +18,10 @@ class AboutUsForm extends BaseForm
     {
         return [
             'upload' => ['nullable', 'image', 'max:4096'],
-        ];
+        ] + $this->translationRules(
+            required: ['title' => 255],
+            optional: ['description' => 65535],
+        );
     }
 
     public function setItem(AboutUs $item): void

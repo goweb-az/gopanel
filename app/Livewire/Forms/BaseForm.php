@@ -13,10 +13,6 @@ abstract class BaseForm extends Form
      */
     public array $translations = [];
 
-    /**
-     * Hydrate $translations from the model's existing translation rows.
-     * Called by setItem() in concrete form objects.
-     */
     protected function prepareTranslations(Model $model): void
     {
         $this->translations = [];
@@ -44,6 +40,32 @@ abstract class BaseForm extends Form
         }
     }
 
-    // syncTranslations() moved to App\Actions\Gopanel\Support\SyncModelTranslationsAction.
-    // Form Objects must not write to the database directly — see migration plan §14.
+    protected function translationRules(array $required, array $optional = []): array
+    {
+        $rules = [];
+        $defaultLocale = Language::getDefaultCode(config('app.locale', 'az'));
+
+        foreach (Language::getCachedAll() as $lang) {
+            $isDefault = $lang->code === $defaultLocale;
+
+            foreach ($required as $attr => $max) {
+                $rules["translations.{$lang->code}.{$attr}"] = [
+                    $isDefault ? 'required' : 'nullable',
+                    'string',
+                    "max:{$max}",
+                ];
+            }
+
+            foreach ($optional as $attr => $max) {
+                $rules["translations.{$lang->code}.{$attr}"] = [
+                    'nullable',
+                    'string',
+                    "max:{$max}",
+                ];
+            }
+        }
+
+        return $rules;
+    }
+
 }

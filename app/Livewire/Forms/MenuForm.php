@@ -34,7 +34,10 @@ class MenuForm extends BaseForm
             'form.is_active'     => 'boolean',
             'form.is_dropdown'   => 'boolean',
             'form.sort_order'    => ['integer', 'min:0'],
-        ];
+        ] + $this->translationRules(
+            required: ['title' => 255],
+            optional: ['description' => 65535, 'slug' => 255],
+        );
     }
 
     public function setItem(Menu $menu): void

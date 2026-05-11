@@ -36,7 +36,10 @@ class CategoryForm extends BaseForm
             'form.show_in_home' => 'boolean',
             'form.show_in_menu' => 'boolean',
             'iconUpload'        => ['nullable', 'image', 'max:2048'],
-        ];
+        ] + $this->translationRules(
+            required: ['name' => 255],
+            optional: ['description' => 65535, 'slug' => 255],
+        );
     }
 
     public function setItem(Category $category): void

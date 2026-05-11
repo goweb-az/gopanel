@@ -24,7 +24,10 @@ class SliderForm extends BaseForm
             'form.is_active'  => 'boolean',
             'form.sort_order' => ['integer', 'min:0'],
             'upload'          => ['nullable', 'image', 'max:4096'],
-        ];
+        ] + $this->translationRules(
+            required: ['title' => 255],
+            optional: ['description' => 1000, 'link_title' => 255],
+        );
     }
 
     public function setItem(Slider $slider): void

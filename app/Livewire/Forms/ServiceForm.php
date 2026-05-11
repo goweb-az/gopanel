@@ -28,7 +28,10 @@ class ServiceForm extends BaseForm
             'form.sort_order' => ['integer', 'min:0'],
             'iconUpload'      => ['nullable', 'image', 'max:2048'],
             'imageUpload'     => ['nullable', 'image', 'max:4096'],
-        ];
+        ] + $this->translationRules(
+            required: ['title' => 255],
+            optional: ['short_description' => 1000, 'description' => 65535],
+        );
     }
 
     public function setItem(Service $service): void

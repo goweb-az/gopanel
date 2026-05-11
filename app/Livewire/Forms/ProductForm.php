@@ -24,7 +24,10 @@ class ProductForm extends BaseForm
             'form.discount'  => ['nullable', 'numeric', 'min:0'],
             'form.is_active' => 'boolean',
             'upload'         => ['nullable', 'image', 'max:4096'],
-        ];
+        ] + $this->translationRules(
+            required: ['title' => 255],
+            optional: ['short_description' => 1000, 'description' => 65535, 'slug' => 255],
+        );
     }
 
     public function setItem(Product $product): void
