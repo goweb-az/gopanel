@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\Gopanel\AuthController;
 use App\Http\Controllers\Gopanel\Common\GeneralController;
-use App\Http\Controllers\Gopanel\DashboardController;
 use App\Http\Controllers\Gopanel\DatatableController;
 use App\Http\Controllers\Gopanel\Seo\AnalyticsController;
 use App\Http\Controllers\Gopanel\Seo\AnalyticsDetailController;
@@ -32,7 +31,7 @@ Route::prefix('auth')->name('auth.')->group(function () {
 Route::group(['middleware' => 'gopanel'], function () {
 
     // Dashboard
-    Route::get('/', [DashboardController::class, 'index'])->name('index');
+    Route::livewire('/', 'gopanel.dashboard.index')->name('index');
 
     // Livewire smoke tests (TEMP — remove before production)
     Route::livewire('/_lw-probe', 'test-probe')->name('_lw.probe');
