@@ -100,7 +100,27 @@ new class extends Component {
 
             <div class="mb-3">
                 <label class="form-label">{{ __('Mənbə (source)') }} <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" wire:model="form.form.source" placeholder="/old-page">
+                <input type="text" class="form-control" wire:model="form.form.source" placeholder="{{ $form->form['match_type'] === 'regex' ? '^/old/(.*)$' : '/old-page' }}">
+                <div class="form-text small">
+                    @switch($form->form['match_type'])
+                        @case('exact')
+                            {{ __('Tam uyğun: sadəcə bu URL yönləndiriləcək.') }}
+                            <br><code>/old-page</code>
+                            @break
+                        @case('prefix')
+                            {{ __('Başlanğıc uyğun: bu prefiks ilə başlayan bütün URL-lər yönləndiriləcək.') }}
+                            <br><code>/blog</code>
+                            @break
+                        @case('contains')
+                            {{ __('İçərisində: URL bu mətni ehtiva edirsə yönləndiriləcək.') }}
+                            <br><code>category-id=5</code>
+                            @break
+                        @case('regex')
+                            {{ __('Regex: PCRE pattern. Capture qruplarına hədəfdə $1, $2 ilə müraciət edin.') }}
+                            <br><code>^/old/(.*)$</code>
+                            @break
+                    @endswitch
+                </div>
                 @error('form.form.source') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
             </div>
 
@@ -108,12 +128,21 @@ new class extends Component {
                 <div class="mb-3">
                     <label class="form-label">{{ __('Regex flags') }}</label>
                     <input type="text" class="form-control" wire:model="form.form.regex_flags" placeholder="i">
+                    <div class="form-text small">
+                        {{ __('Məsələn: i (case-insensitive), u (utf-8), s (dotall).') }}
+                    </div>
                 </div>
             @endif
 
             <div class="mb-3">
                 <label class="form-label">{{ __('Hədəf (target)') }} <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" wire:model="form.form.target" placeholder="/new-page or https://...">
+                <div class="form-text small">
+                    {{ __('Daxili yol (/new-page) və ya tam URL (https://...) ola bilər.') }}
+                    @if ($form->form['match_type'] === 'regex')
+                        <br>{{ __('Regex capture qrupları üçün $1, $2 istifadə edin: /new/$1') }}
+                    @endif
+                </div>
                 @error('form.form.target') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
             </div>
 
