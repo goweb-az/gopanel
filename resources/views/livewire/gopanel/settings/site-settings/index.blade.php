@@ -51,7 +51,7 @@ class extends Component {
                                 'site_analytics' => __('Analitika aktiv'),
                                 'block_bad_bots' => __('Bot bloklama'),
                             ] as $key => $label)
-                                <div class="form-check form-switch mb-2">
+                                <div class="form-checkd d-flex align-items-center form-switch mb-3 mt-0">
                                     <input type="checkbox" class="form-check-input" id="sw_{{ $key }}" wire:model="form.form.{{ $key }}">
                                     <label class="form-check-label" for="sw_{{ $key }}">{{ $label }}</label>
                                 </div>

@@ -271,3 +271,15 @@
 .card, .gp-datatable, .shadow{
     box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
 }
+/* Slightly larger toggle switches across the panel */
+.form-switch .form-check-input {
+    width: 3em;
+    height: 1.5em;
+    margin-top: 0;
+    border-radius: 2em;
+}
+
+.form-switch .form-check-label {
+    padding-left: 0.35em;
+    font-weight: 500;
+}
