@@ -104,3 +104,39 @@
         document.addEventListener('livewire:navigated', disableMetisMenu);
     })();
 </script>
+
+{{--
+    Bootstrap data-bs-* widgets (dropdown, tooltip, popover, tab, collapse,
+    offcanvas) are bound on first page load by app.js but not after a
+    wire:navigate swap. Re-instantiate them on every navigation so any
+    new markup picks up its handlers.
+--}}
+<script>
+    (function () {
+        if (typeof bootstrap === 'undefined') return;
+
+        var widgets = [
+            ['[data-bs-toggle="dropdown"]', bootstrap.Dropdown],
+            ['[data-bs-toggle="tooltip"]',  bootstrap.Tooltip],
+            ['[data-bs-toggle="popover"]',  bootstrap.Popover],
+            ['[data-bs-toggle="tab"]',      bootstrap.Tab],
+            ['[data-bs-toggle="collapse"]', bootstrap.Collapse],
+            ['.offcanvas',                  bootstrap.Offcanvas],
+        ];
+
+        function reinitBootstrap() {
+            widgets.forEach(function (pair) {
+                var selector = pair[0];
+                var Cls = pair[1];
+                if (!Cls) return;
+                document.querySelectorAll(selector).forEach(function (el) {
+                    var existing = Cls.getInstance(el);
+                    if (existing) return; // already wired (initial paint)
+                    new Cls(el);
+                });
+            });
+        }
+
+        document.addEventListener('livewire:navigated', reinitBootstrap);
+    })();
+</script>
