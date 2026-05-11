@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\Gopanel\AuthController;
 use App\Http\Controllers\Gopanel\Common\GeneralController;
-use App\Http\Controllers\Gopanel\DatatableController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -34,12 +33,8 @@ Route::group(['middleware' => 'gopanel'], function () {
     Route::livewire('/_lw-probe', 'test-probe')->name('_lw.probe');
     Route::livewire('/_dt-probe', 'dt-probe')->name('_dt.probe');
 
-    // Legacy server-side datatable handler (still wired by App\Datatable\Gopanel\*
-    // until those classes are deleted alongside the migrated controllers)
-    Route::get('datatable/{table}', [DatatableController::class, 'handle'])->name('datatable.source');
-
-    // Legacy crud.js endpoints (sortable, status toggle, generic delete/edit/...)
-    // still consumed by the few non-Livewire pages: dashboard, analytics, system.
+    // General endpoints still consumed by GoPanelHelper status/edit/delete buttons
+    // and the icon picker modal.
     Route::prefix('general')->name('general.')->group(function () {
         Route::get('/icon-picker/list', [GeneralController::class, 'iconPickerList'])->name('icon-picker.list');
         Route::post('/status/change', [GeneralController::class, 'statusChange'])->name('status.change');

@@ -227,12 +227,16 @@
         renderOs(data.os);
     }
 
-    function initDateRangePicker(component) {
+    function initDateRangePicker(component, boot) {
         var el = document.getElementById('analyticsDateRange');
         if (!el || typeof jQuery === 'undefined' || !jQuery.fn.daterangepicker) return;
+        var startDate = moment(boot.dateFrom, 'YYYY-MM-DD');
+        var endDate   = moment(boot.dateTo, 'YYYY-MM-DD');
+        if (!startDate.isValid()) startDate = moment().subtract(6, 'days');
+        if (!endDate.isValid())   endDate   = moment();
         jQuery(el).daterangepicker({
-            startDate: moment(component.dateFrom, 'YYYY-MM-DD'),
-            endDate: moment(component.dateTo, 'YYYY-MM-DD'),
+            startDate: startDate,
+            endDate: endDate,
             locale: {
                 format: 'DD/MM/YYYY', applyLabel: 'Tətbiq et', cancelLabel: 'Ləğv et',
                 customRangeLabel: 'Öz ilə seçim',
@@ -268,7 +272,7 @@
 
         if (window.Livewire) {
             var component = Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id'));
-            initDateRangePicker(component);
+            initDateRangePicker(component, boot);
 
             Livewire.on('analytics-data-updated', function (payload) {
                 var data = payload[0]?.data ?? payload.data ?? payload;

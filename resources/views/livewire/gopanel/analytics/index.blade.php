@@ -269,7 +269,7 @@ class extends Component {
                         <div class="d-flex align-items-center gap-2" x-data="{ filterOpen: {{ ($countryId || $cityId || $browserId || $deviceId) ? 'true' : 'false' }} }">
                             <div id="analyticsDateRange" class="btn btn-light border d-flex align-items-center gap-2" style="cursor:pointer; min-width:220px;" wire:ignore>
                                 <i class="bx bx-calendar font-size-16"></i>
-                                <span id="dateRangeLabel">{{ Carbon\Carbon::parse($dateFrom)->format('d/m/Y') }} – {{ Carbon\Carbon::parse($dateTo)->format('d/m/Y') }}</span>
+                                <span id="dateRangeLabel">{{ Carbon::parse($dateFrom)->format('d/m/Y') }} – {{ Carbon::parse($dateTo)->format('d/m/Y') }}</span>
                                 <i class="bx bx-chevron-down ms-auto"></i>
                             </div>
                             <button type="button" class="btn btn-outline-secondary" x-on:click="filterOpen = !filterOpen">
