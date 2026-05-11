@@ -45,6 +45,7 @@ class extends Component {
             <x-gopanel.tabs :tabs="[
                 'general' => ['icon' => 'fas fa-sliders-h', 'label' => __('Sayt funksiyaları')],
                 'logos'   => ['icon' => 'far fa-image',     'label' => __('Loqolar')],
+                'seo'     => ['icon' => 'fas fa-search',    'label' => __('SEO meta')],
             ]">
                 <div class="card">
                     <div class="card-body">
@@ -106,6 +107,17 @@ class extends Component {
                                         <span class="lw-loading"><i class="fas fa-spinner fa-spin me-1"></i> {{ __('Saxlanır...') }}</span>
                                     </button>
                                 </div>
+                            </div>
+                        </x-gopanel.tab>
+
+                        <x-gopanel.tab name="seo">
+                            <x-gopanel.meta-fields form="form" />
+
+                            <div class="text-end mt-3">
+                                <button type="submit" class="btn btn-primary">
+                                    <span class="lw-not-loading"><i class="fas fa-save me-1"></i> {{ __('Yadda saxla') }}</span>
+                                    <span class="lw-loading"><i class="fas fa-spinner fa-spin me-1"></i> {{ __('Saxlanır...') }}</span>
+                                </button>
                             </div>
                         </x-gopanel.tab>
                     </div>

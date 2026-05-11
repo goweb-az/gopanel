@@ -38,7 +38,7 @@ class MenuForm extends BaseForm
         ] + $this->translationRules(
             required: ['title' => 255],
             optional: ['description' => 65535, 'slug' => 255],
-        );
+        ) + $this->metaRules();
     }
 
     public function setItem(Menu $menu): void
@@ -58,6 +58,7 @@ class MenuForm extends BaseForm
         ];
 
         $this->prepareTranslations($menu);
+        $this->prepareMeta($menu);
     }
 
     public function save(): Menu
@@ -65,9 +66,14 @@ class MenuForm extends BaseForm
         $menu = SaveMenuFormAction::run(
             form: $this->form,
             translations: $this->translations,
+            meta: $this->meta,
+            metaUploads: $this->metaUploads,
         );
 
         $this->form['id'] = $menu->id;
+        foreach ($this->metaUploads as $code => $_) {
+            $this->metaUploads[$code] = null;
+        }
 
         return $menu;
     }

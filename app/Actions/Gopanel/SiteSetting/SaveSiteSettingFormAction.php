@@ -2,6 +2,7 @@
 
 namespace App\Actions\Gopanel\SiteSetting;
 
+use App\Actions\Gopanel\Support\SyncModelMetaAction;
 use App\Helpers\Gopanel\FileUploader;
 use App\Models\Settings\SiteSetting;
 use Illuminate\Http\UploadedFile;
@@ -19,8 +20,10 @@ class SaveSiteSettingFormAction
         ?UploadedFile $logoDarkUpload = null,
         ?UploadedFile $mailLogoUpload = null,
         ?UploadedFile $gopanelLogoUpload = null,
+        array $meta = [],
+        array $metaUploads = [],
     ): SiteSetting {
-        return DB::transaction(function () use ($form, $logoLightUpload, $logoDarkUpload, $mailLogoUpload, $gopanelLogoUpload): SiteSetting {
+        return DB::transaction(function () use ($form, $logoLightUpload, $logoDarkUpload, $mailLogoUpload, $gopanelLogoUpload, $meta, $metaUploads): SiteSetting {
             $item = SiteSetting::findOrNew($form['id'] ?? null);
 
             if ($logoLightUpload) {
@@ -38,6 +41,8 @@ class SaveSiteSettingFormAction
 
             $item->fill(collect($form)->except('id')->all());
             $item->save();
+
+            SyncModelMetaAction::run($item, $meta, $metaUploads);
 
             Cache::forget('site_settings' . app()->getLocale());
 

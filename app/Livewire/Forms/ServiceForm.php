@@ -32,7 +32,7 @@ class ServiceForm extends BaseForm
         ] + $this->translationRules(
             required: ['title' => 255],
             optional: ['short_description' => 1000, 'description' => 65535],
-        );
+        ) + $this->metaRules();
     }
 
     public function setItem(Service $service): void
@@ -46,6 +46,7 @@ class ServiceForm extends BaseForm
         ];
 
         $this->prepareTranslations($service);
+        $this->prepareMeta($service);
     }
 
     public function save(): Service
@@ -55,11 +56,16 @@ class ServiceForm extends BaseForm
             iconUpload: $this->iconUpload,
             imageUpload: $this->imageUpload,
             translations: $this->translations,
+            meta: $this->meta,
+            metaUploads: $this->metaUploads,
         );
 
         $this->form['id']  = $service->id;
         $this->iconUpload  = null;
         $this->imageUpload = null;
+        foreach ($this->metaUploads as $code => $_) {
+            $this->metaUploads[$code] = null;
+        }
 
         return $service;
     }

@@ -64,6 +64,8 @@ class extends Component {
                             />
                         </div>
                     </div>
+
+                    <x-gopanel.meta-fields form="form" />
                 </div>
             </div>
 

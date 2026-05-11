@@ -27,7 +27,7 @@ class ProductForm extends BaseForm
         ] + $this->translationRules(
             required: ['title' => 255],
             optional: ['short_description' => 1000, 'description' => 65535, 'slug' => 255],
-        );
+        ) + $this->metaRules();
     }
 
     public function setItem(Product $product): void
@@ -41,6 +41,7 @@ class ProductForm extends BaseForm
         ];
 
         $this->prepareTranslations($product);
+        $this->prepareMeta($product);
     }
 
     public function save(): Product
@@ -49,10 +50,15 @@ class ProductForm extends BaseForm
             form: $this->form,
             upload: $this->upload,
             translations: $this->translations,
+            meta: $this->meta,
+            metaUploads: $this->metaUploads,
         );
 
         $this->form['id'] = $product->id;
         $this->upload     = null;
+        foreach ($this->metaUploads as $code => $_) {
+            $this->metaUploads[$code] = null;
+        }
 
         return $product;
     }

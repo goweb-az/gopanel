@@ -27,7 +27,7 @@ class BlogForm extends BaseForm
         ] + $this->translationRules(
             required: ['title' => 255],
             optional: ['description' => 65535, 'slug' => 255],
-        );
+        ) + $this->metaRules();
     }
 
     public function setItem(Blog $blog): void
@@ -41,6 +41,7 @@ class BlogForm extends BaseForm
         ];
 
         $this->prepareTranslations($blog);
+        $this->prepareMeta($blog);
     }
 
     public function save(): Blog
@@ -49,10 +50,15 @@ class BlogForm extends BaseForm
             form: $this->form,
             upload: $this->upload,
             translations: $this->translations,
+            meta: $this->meta,
+            metaUploads: $this->metaUploads,
         );
 
         $this->form['id'] = $blog->id;
         $this->upload     = null;
+        foreach ($this->metaUploads as $code => $_) {
+            $this->metaUploads[$code] = null;
+        }
 
         return $blog;
     }

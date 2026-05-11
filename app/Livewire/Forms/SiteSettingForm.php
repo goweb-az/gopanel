@@ -41,7 +41,7 @@ class SiteSettingForm extends BaseForm
             'logoDarkUpload'            => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'mailLogoUpload'            => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'gopanelLogoUpload'         => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
-        ];
+        ] + $this->metaRules();
     }
 
     public function setItem(SiteSetting $item): void
@@ -60,6 +60,8 @@ class SiteSettingForm extends BaseForm
             'mail_logo'            => $item->mail_logo ?? '',
             'gopanel_logo'         => $item->gopanel_logo ?? '',
         ];
+
+        $this->prepareMeta($item);
     }
 
     public function save(): SiteSetting
@@ -70,6 +72,8 @@ class SiteSettingForm extends BaseForm
             logoDarkUpload: $this->logoDarkUpload,
             mailLogoUpload: $this->mailLogoUpload,
             gopanelLogoUpload: $this->gopanelLogoUpload,
+            meta: $this->meta,
+            metaUploads: $this->metaUploads,
         );
 
         $this->form['id']        = $item->id;
@@ -77,6 +81,9 @@ class SiteSettingForm extends BaseForm
         $this->logoDarkUpload    = null;
         $this->mailLogoUpload    = null;
         $this->gopanelLogoUpload = null;
+        foreach ($this->metaUploads as $code => $_) {
+            $this->metaUploads[$code] = null;
+        }
 
         return $item;
     }

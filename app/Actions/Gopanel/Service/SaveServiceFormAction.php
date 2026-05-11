@@ -2,6 +2,7 @@
 
 namespace App\Actions\Gopanel\Service;
 
+use App\Actions\Gopanel\Support\SyncModelMetaAction;
 use App\Actions\Gopanel\Support\SyncModelTranslationsAction;
 use App\Enums\Common\SocialIconTypeEnum;
 use App\Helpers\Gopanel\FileUploader;
@@ -19,8 +20,10 @@ class SaveServiceFormAction
         ?UploadedFile $iconUpload = null,
         ?UploadedFile $imageUpload = null,
         array $translations = [],
+        array $meta = [],
+        array $metaUploads = [],
     ): Service {
-        return DB::transaction(function () use ($form, $iconUpload, $imageUpload, $translations): Service {
+        return DB::transaction(function () use ($form, $iconUpload, $imageUpload, $translations, $meta, $metaUploads): Service {
             $service = Service::findOrNew($form['id'] ?? null);
             $title   = $translations['az']['title'] ?? 'service';
 
@@ -44,6 +47,7 @@ class SaveServiceFormAction
             $service->save();
 
             SyncModelTranslationsAction::run($service, $translations);
+            SyncModelMetaAction::run($service, $meta, $metaUploads);
 
             return $service;
         });

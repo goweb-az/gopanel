@@ -21,7 +21,7 @@ class AboutUsForm extends BaseForm
         ] + $this->translationRules(
             required: ['title' => 255],
             optional: ['description' => 65535],
-        );
+        ) + $this->metaRules();
     }
 
     public function setItem(AboutUs $item): void
@@ -32,6 +32,7 @@ class AboutUsForm extends BaseForm
         ];
 
         $this->prepareTranslations($item);
+        $this->prepareMeta($item);
     }
 
     public function save(): AboutUs
@@ -40,10 +41,15 @@ class AboutUsForm extends BaseForm
             form: $this->form,
             upload: $this->upload,
             translations: $this->translations,
+            meta: $this->meta,
+            metaUploads: $this->metaUploads,
         );
 
         $this->form['id'] = $item->id;
         $this->upload     = null;
+        foreach ($this->metaUploads as $code => $_) {
+            $this->metaUploads[$code] = null;
+        }
 
         return $item;
     }

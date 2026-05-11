@@ -2,6 +2,7 @@
 
 namespace App\Actions\Gopanel\AboutUs;
 
+use App\Actions\Gopanel\Support\SyncModelMetaAction;
 use App\Actions\Gopanel\Support\SyncModelTranslationsAction;
 use App\Helpers\Gopanel\FileUploader;
 use App\Models\Site\AboutUs;
@@ -13,9 +14,14 @@ class SaveAboutUsFormAction
 {
     use AsAction;
 
-    public function handle(array $form, ?UploadedFile $upload = null, array $translations = []): AboutUs
-    {
-        return DB::transaction(function () use ($form, $upload, $translations): AboutUs {
+    public function handle(
+        array $form,
+        ?UploadedFile $upload = null,
+        array $translations = [],
+        array $meta = [],
+        array $metaUploads = [],
+    ): AboutUs {
+        return DB::transaction(function () use ($form, $upload, $translations, $meta, $metaUploads): AboutUs {
             $item = AboutUs::findOrNew($form['id'] ?? null);
 
             if ($upload) {
@@ -30,6 +36,7 @@ class SaveAboutUsFormAction
             $item->save();
 
             SyncModelTranslationsAction::run($item, $translations);
+            SyncModelMetaAction::run($item, $meta, $metaUploads);
 
             return $item;
         });

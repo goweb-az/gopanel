@@ -40,7 +40,7 @@ class CategoryForm extends BaseForm
         ] + $this->translationRules(
             required: ['name' => 255],
             optional: ['description' => 65535, 'slug' => 255],
-        );
+        ) + $this->metaRules();
     }
 
     public function setItem(Category $category): void
@@ -59,6 +59,7 @@ class CategoryForm extends BaseForm
         ];
 
         $this->prepareTranslations($category);
+        $this->prepareMeta($category);
     }
 
     public function save(): Category
@@ -67,10 +68,15 @@ class CategoryForm extends BaseForm
             form: $this->form,
             iconUpload: $this->iconUpload,
             translations: $this->translations,
+            meta: $this->meta,
+            metaUploads: $this->metaUploads,
         );
 
         $this->form['id'] = $category->id;
         $this->iconUpload = null;
+        foreach ($this->metaUploads as $code => $_) {
+            $this->metaUploads[$code] = null;
+        }
 
         return $category;
     }

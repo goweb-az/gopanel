@@ -2,6 +2,7 @@
 
 namespace App\Actions\Gopanel\Category;
 
+use App\Actions\Gopanel\Support\SyncModelMetaAction;
 use App\Actions\Gopanel\Support\SyncModelTranslationsAction;
 use App\Enums\Common\SocialIconTypeEnum;
 use App\Helpers\Gopanel\FileUploader;
@@ -18,8 +19,10 @@ class SaveCategoryFormAction
         array $form,
         ?UploadedFile $iconUpload = null,
         array $translations = [],
+        array $meta = [],
+        array $metaUploads = [],
     ): Category {
-        return DB::transaction(function () use ($form, $iconUpload, $translations): Category {
+        return DB::transaction(function () use ($form, $iconUpload, $translations, $meta, $metaUploads): Category {
             $category = Category::findOrNew($form['id'] ?? null);
 
             if ($iconUpload && ($form['icon_type'] ?? null) === SocialIconTypeEnum::Image->value) {
@@ -34,6 +37,7 @@ class SaveCategoryFormAction
             $category->save();
 
             SyncModelTranslationsAction::run($category, $translations);
+            SyncModelMetaAction::run($category, $meta, $metaUploads);
 
             return $category;
         });

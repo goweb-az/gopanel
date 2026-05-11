@@ -59,12 +59,13 @@ new class extends Component {
                         />
                     </div>
                 </div>
+
+                <x-gopanel.meta-fields form="form" />
             </div>
 
             <div class="col-lg-4">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">{{ __('Şəkil') }}</h5>
                         <x-gopanel.file-upload
                             name="form.upload"
                             :label="__('Əsas şəkil')"

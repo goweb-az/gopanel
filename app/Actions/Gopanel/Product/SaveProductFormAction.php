@@ -2,6 +2,7 @@
 
 namespace App\Actions\Gopanel\Product;
 
+use App\Actions\Gopanel\Support\SyncModelMetaAction;
 use App\Actions\Gopanel\Support\SyncModelTranslationsAction;
 use App\Helpers\Gopanel\FileUploader;
 use App\Models\Site\Product;
@@ -13,9 +14,14 @@ class SaveProductFormAction
 {
     use AsAction;
 
-    public function handle(array $form, ?UploadedFile $upload = null, array $translations = []): Product
-    {
-        return DB::transaction(function () use ($form, $upload, $translations): Product {
+    public function handle(
+        array $form,
+        ?UploadedFile $upload = null,
+        array $translations = [],
+        array $meta = [],
+        array $metaUploads = [],
+    ): Product {
+        return DB::transaction(function () use ($form, $upload, $translations, $meta, $metaUploads): Product {
             $product = Product::findOrNew($form['id'] ?? null);
 
             if ($upload) {
@@ -30,6 +36,7 @@ class SaveProductFormAction
             $product->save();
 
             SyncModelTranslationsAction::run($product, $translations);
+            SyncModelMetaAction::run($product, $meta, $metaUploads);
 
             return $product;
         });
