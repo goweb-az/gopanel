@@ -265,9 +265,41 @@ class extends Component {
         <div class="container-fluid">
             <x-gopanel.page-header :title="__('Analitika')" :showCreateButton="false">
                 <x-slot:actions>
-                    <div id="analyticsDateRange" class="btn btn-light border d-flex align-items-center gap-2" style="cursor:pointer; min-width:220px;" wire:ignore>
+                    <div
+                        wire:ignore
+                        x-data="{ label: @js(Carbon::parse($dateFrom)->format('d/m/Y') . ' – ' . Carbon::parse($dateTo)->format('d/m/Y')) }"
+                        x-init="
+                            if (typeof jQuery === 'undefined' || typeof moment === 'undefined') return;
+                            const $wireComponent = $wire;
+                            jQuery($el).daterangepicker({
+                                startDate: moment(@js($dateFrom)),
+                                endDate:   moment(@js($dateTo)),
+                                locale: {
+                                    format: 'DD/MM/YYYY', applyLabel: 'Tətbiq et', cancelLabel: 'Ləğv et',
+                                    customRangeLabel: 'Öz ilə seçim',
+                                    daysOfWeek: ['B.e','Ç.a','Ç','C.a','C','Ş','Hz'],
+                                    monthNames: ['Yanvar','Fevral','Mart','Aprel','May','İyun','İyul','Avqust','Sentyabr','Oktyabr','Noyabr','Dekabr'],
+                                    firstDay: 1
+                                },
+                                ranges: {
+                                    'Bu gün':     [moment(), moment()],
+                                    'Dünən':      [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                                    'Son 7 Gün':  [moment().subtract(6, 'days'), moment()],
+                                    'Son 30 Gün': [moment().subtract(29, 'days'), moment()],
+                                    'Bu Ay':      [moment().startOf('month'), moment().endOf('month')],
+                                    'Keçən Ay':   [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                                },
+                                alwaysShowCalendars: true, opens: 'left'
+                            }, function (start, end) {
+                                label = start.format('DD/MM/YYYY') + ' – ' + end.format('DD/MM/YYYY');
+                                $wireComponent.applyDateRange(start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'));
+                            });
+                        "
+                        class="btn btn-light border d-flex align-items-center gap-2"
+                        style="cursor:pointer; min-width:220px;"
+                    >
                         <i class="bx bx-calendar font-size-16"></i>
-                        <span id="dateRangeLabel">{{ Carbon::parse($dateFrom)->format('d/m/Y') }} – {{ Carbon::parse($dateTo)->format('d/m/Y') }}</span>
+                        <span x-text="label"></span>
                         <i class="bx bx-chevron-down ms-auto"></i>
                     </div>
                     <button type="button" class="btn btn-outline-secondary" x-on:click="filterOpen = !filterOpen">
@@ -326,52 +358,48 @@ class extends Component {
                 </div>
             </div>
 
-            @include('gopanel.pages.analytics.partials.summary')
+            <livewire:gopanel.analytics.widgets.summary :key="'summary-' . $dateFrom . '-' . $dateTo" />
 
             <div class="row">
-                @include('gopanel.pages.analytics.partials.borowsers')
-                @include('gopanel.pages.analytics.partials.devices')
+                <div class="col-xl-6">
+                    <livewire:gopanel.analytics.widgets.browsers :key="'browsers-' . $dateFrom . '-' . $dateTo" />
+                </div>
+                <div class="col-xl-6">
+                    <livewire:gopanel.analytics.widgets.devices :key="'devices-' . $dateFrom . '-' . $dateTo" />
+                </div>
             </div>
 
             <div class="row">
-                @include('gopanel.pages.analytics.partials.countries')
-                @include('gopanel.pages.analytics.partials.city')
+                <div class="col-xl-6">
+                    <livewire:gopanel.analytics.widgets.countries :key="'countries-' . $dateFrom . '-' . $dateTo" />
+                </div>
+                <div class="col-xl-6">
+                    <livewire:gopanel.analytics.widgets.cities :key="'cities-' . $dateFrom . '-' . $dateTo" />
+                </div>
             </div>
 
-            @include('gopanel.pages.analytics.partials.adplatforms')
+            <livewire:gopanel.analytics.widgets.ad-platforms :key="'ad-platforms-' . $dateFrom . '-' . $dateTo" />
 
             <div class="row">
-                @include('gopanel.pages.analytics.partials.languages')
-                @include('gopanel.pages.analytics.partials.operatings')
+                <div class="col-xl-6">
+                    <livewire:gopanel.analytics.widgets.languages :key="'languages-' . $dateFrom . '-' . $dateTo" />
+                </div>
+                <div class="col-xl-6">
+                    <livewire:gopanel.analytics.widgets.operating-systems :key="'os-' . $dateFrom . '-' . $dateTo" />
+                </div>
             </div>
 
-            @include('gopanel.pages.analytics.partials.utms')
-            @include('gopanel.pages.analytics.partials.clicks')
-            @include('gopanel.pages.analytics.partials.links')
+            <livewire:gopanel.analytics.widgets.utms :key="'utms-' . $dateFrom . '-' . $dateTo" />
+            <livewire:gopanel.analytics.widgets.clicks :key="'clicks-' . $dateFrom . '-' . $dateTo" />
+            <livewire:gopanel.analytics.widgets.links :key="'links-' . $dateFrom . '-' . $dateTo" />
         </div>
     </div>
 
     @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/moment@2.30.1/moment.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="{{ asset('/assets/gopanel/libs/apexcharts/apexcharts.min.js') }}"></script>
-    <script src="{{ asset('/assets/gopanel/libs/chart.js/Chart.bundle.min.js') }}"></script>
-
-    <script>
-        window.gpAnalyticsBoot = @js([
-            'dateFrom'  => $dateFrom,
-            'dateTo'    => $dateTo,
-            'devices'   => ['labels' => $deviceLabels,  'hits' => $deviceHits],
-            'browsers'  => ['labels' => $browserLabels, 'hits' => $browserHits],
-            'topHits'   => $this->topHits,
-            'countriesMap' => $this->countriesMap(),
-            'cities'    => $this->citiesChart(),
-            'languages' => $this->languagesChart(),
-            'os'        => $this->osChart(),
-        ]);
-    </script>
-
-    <script src="{{ asset('/assets/gopanel/js/modules/analytics.js?v=' . time()) }}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/moment@2.30.1/moment.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <script src="{{ asset('/assets/gopanel/libs/apexcharts/apexcharts.min.js') }}"></script>
+        <script src="{{ asset('/assets/gopanel/libs/chart.js/Chart.bundle.min.js') }}"></script>
     @endpush
 </div>
