@@ -1,0 +1,182 @@
+/*
+ * Modern button styling for the gopanel panel.
+ *
+ * Targets every Bootstrap 5 .btn variant (primary, success, danger,
+ * warning, info, secondary, light, dark plus their .btn-outline-*
+ * twins) and the size modifiers .btn-sm / .btn-lg. Goes for a flat,
+ * slightly rounded button with a small lift on hover, a calm focus
+ * ring and no aggressive Bootstrap blue glow.
+ */
+
+:root {
+    --gp-btn-radius: 8px;
+    --gp-btn-padding-y: 0.5rem;
+    --gp-btn-padding-x: 1rem;
+    --gp-btn-font-size: 0.875rem;
+    --gp-btn-font-weight: 500;
+    --gp-btn-transition: background-color .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease, transform .08s ease;
+    --gp-btn-shadow-hover: 0 4px 10px rgba(85, 110, 230, 0.18);
+    --gp-btn-ring-width: 3px;
+
+    --gp-btn-primary:   #556ee6;
+    --gp-btn-success:   #34c38f;
+    --gp-btn-danger:    #f46a6a;
+    --gp-btn-warning:   #f1b44c;
+    --gp-btn-info:      #50a5f1;
+    --gp-btn-secondary: #74788d;
+    --gp-btn-dark:      #343a40;
+    --gp-btn-light-bg:  #f5f6fa;
+    --gp-btn-light-fg:  #4b5568;
+    --gp-btn-light-border: #e3e6ef;
+}
+
+/* Base ---------------------------------------------------- */
+.btn {
+    border-radius: var(--gp-btn-radius);
+    padding: var(--gp-btn-padding-y) var(--gp-btn-padding-x);
+    font-size: var(--gp-btn-font-size);
+    font-weight: var(--gp-btn-font-weight);
+    line-height: 1.5;
+    transition: var(--gp-btn-transition);
+    border-width: 1px;
+    box-shadow: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+}
+
+.btn:focus,
+.btn.focus,
+.btn:focus-visible {
+    outline: 0;
+    box-shadow: 0 0 0 var(--gp-btn-ring-width) rgba(85, 110, 230, 0.2);
+}
+
+.btn:disabled,
+.btn.disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+.btn:not(:disabled):not(.disabled):active,
+.btn:not(:disabled):not(.disabled).active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+/* Filled variants ---------------------------------------- */
+.btn-primary,
+.btn-success,
+.btn-danger,
+.btn-warning,
+.btn-info,
+.btn-secondary,
+.btn-dark {
+    color: #ffffff;
+    border-color: transparent;
+}
+
+.btn-primary { background-color: var(--gp-btn-primary); }
+.btn-primary:hover:not(:disabled):not(.disabled) { background-color: #4a62d2; box-shadow: 0 4px 10px rgba(85, 110, 230, 0.28); transform: translateY(-1px); }
+.btn-primary:focus-visible { box-shadow: 0 0 0 var(--gp-btn-ring-width) rgba(85, 110, 230, 0.28); }
+
+.btn-success { background-color: var(--gp-btn-success); }
+.btn-success:hover:not(:disabled):not(.disabled) { background-color: #2eae80; box-shadow: 0 4px 10px rgba(52, 195, 143, 0.28); transform: translateY(-1px); }
+.btn-success:focus-visible { box-shadow: 0 0 0 var(--gp-btn-ring-width) rgba(52, 195, 143, 0.28); }
+
+.btn-danger { background-color: var(--gp-btn-danger); }
+.btn-danger:hover:not(:disabled):not(.disabled) { background-color: #e15555; box-shadow: 0 4px 10px rgba(244, 106, 106, 0.28); transform: translateY(-1px); }
+.btn-danger:focus-visible { box-shadow: 0 0 0 var(--gp-btn-ring-width) rgba(244, 106, 106, 0.28); }
+
+.btn-warning { background-color: var(--gp-btn-warning); color: #ffffff; }
+.btn-warning:hover:not(:disabled):not(.disabled) { background-color: #dca138; box-shadow: 0 4px 10px rgba(241, 180, 76, 0.28); transform: translateY(-1px); }
+.btn-warning:focus-visible { box-shadow: 0 0 0 var(--gp-btn-ring-width) rgba(241, 180, 76, 0.28); }
+
+.btn-info { background-color: var(--gp-btn-info); }
+.btn-info:hover:not(:disabled):not(.disabled) { background-color: #3d92dd; box-shadow: 0 4px 10px rgba(80, 165, 241, 0.28); transform: translateY(-1px); }
+.btn-info:focus-visible { box-shadow: 0 0 0 var(--gp-btn-ring-width) rgba(80, 165, 241, 0.28); }
+
+.btn-secondary { background-color: var(--gp-btn-secondary); }
+.btn-secondary:hover:not(:disabled):not(.disabled) { background-color: #5f6477; box-shadow: 0 4px 10px rgba(116, 120, 141, 0.28); transform: translateY(-1px); }
+.btn-secondary:focus-visible { box-shadow: 0 0 0 var(--gp-btn-ring-width) rgba(116, 120, 141, 0.28); }
+
+.btn-dark { background-color: var(--gp-btn-dark); }
+.btn-dark:hover:not(:disabled):not(.disabled) { background-color: #23272b; box-shadow: 0 4px 10px rgba(52, 58, 64, 0.28); transform: translateY(-1px); }
+.btn-dark:focus-visible { box-shadow: 0 0 0 var(--gp-btn-ring-width) rgba(52, 58, 64, 0.28); }
+
+/* Light ---------------------------------------------------- */
+.btn-light {
+    background-color: var(--gp-btn-light-bg);
+    color: var(--gp-btn-light-fg);
+    border-color: var(--gp-btn-light-border);
+}
+
+.btn-light:hover:not(:disabled):not(.disabled) {
+    background-color: #ecedf2;
+    border-color: #d4d8e3;
+    color: var(--gp-btn-light-fg);
+}
+
+.btn-light:focus-visible {
+    box-shadow: 0 0 0 var(--gp-btn-ring-width) rgba(116, 120, 141, 0.18);
+}
+
+/* Outline variants --------------------------------------- */
+.btn-outline-primary,
+.btn-outline-success,
+.btn-outline-danger,
+.btn-outline-warning,
+.btn-outline-info,
+.btn-outline-secondary,
+.btn-outline-dark {
+    background-color: transparent;
+    border-width: 1px;
+}
+
+.btn-outline-primary   { color: var(--gp-btn-primary);   border-color: var(--gp-btn-primary); }
+.btn-outline-success   { color: var(--gp-btn-success);   border-color: var(--gp-btn-success); }
+.btn-outline-danger    { color: var(--gp-btn-danger);    border-color: var(--gp-btn-danger); }
+.btn-outline-warning   { color: var(--gp-btn-warning);   border-color: var(--gp-btn-warning); }
+.btn-outline-info      { color: var(--gp-btn-info);      border-color: var(--gp-btn-info); }
+.btn-outline-secondary { color: var(--gp-btn-secondary); border-color: var(--gp-btn-light-border); }
+.btn-outline-dark      { color: var(--gp-btn-dark);      border-color: var(--gp-btn-dark); }
+
+.btn-outline-primary:hover:not(:disabled):not(.disabled)   { background-color: var(--gp-btn-primary);   color: #fff; border-color: var(--gp-btn-primary); }
+.btn-outline-success:hover:not(:disabled):not(.disabled)   { background-color: var(--gp-btn-success);   color: #fff; border-color: var(--gp-btn-success); }
+.btn-outline-danger:hover:not(:disabled):not(.disabled)    { background-color: var(--gp-btn-danger);    color: #fff; border-color: var(--gp-btn-danger); }
+.btn-outline-warning:hover:not(:disabled):not(.disabled)   { background-color: var(--gp-btn-warning);   color: #fff; border-color: var(--gp-btn-warning); }
+.btn-outline-info:hover:not(:disabled):not(.disabled)      { background-color: var(--gp-btn-info);      color: #fff; border-color: var(--gp-btn-info); }
+.btn-outline-secondary:hover:not(:disabled):not(.disabled) { background-color: var(--gp-btn-light-bg);  color: var(--gp-btn-secondary); border-color: var(--gp-btn-light-border); }
+.btn-outline-dark:hover:not(:disabled):not(.disabled)      { background-color: var(--gp-btn-dark);      color: #fff; border-color: var(--gp-btn-dark); }
+
+/* Sizes -------------------------------------------------- */
+.btn-sm {
+    padding: 0.3rem 0.7rem;
+    font-size: 0.8125rem;
+    border-radius: 6px;
+    gap: 0.3rem;
+}
+
+.btn-lg {
+    padding: 0.7rem 1.4rem;
+    font-size: 1rem;
+    border-radius: 10px;
+    gap: 0.5rem;
+}
+
+/* Icon-only square buttons ------------------------------ */
+.btn .btn-icon,
+.btn-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+}
+.btn-icon.btn-sm { width: 1.85rem; height: 1.85rem; }
+.btn-icon.btn-lg { width: 2.75rem; height: 2.75rem; }
+
+/* Button group ----------------------------------------- */
+.btn-group > .btn:not(:first-child) { margin-left: -1px; }
+.btn-group > .btn:focus-visible { z-index: 2; }

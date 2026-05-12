@@ -2,6 +2,7 @@
 @import './modal.css';
 @import './tabs.css';
 @import './forms.css';
+@import './buttons.css';
 
 /*
  * Livewire v4 loading-state helpers
