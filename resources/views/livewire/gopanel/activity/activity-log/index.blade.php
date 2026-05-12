@@ -204,7 +204,7 @@ class extends Component {
                     <td>{!! $record->description_short !!}</td>
                     <td>{{ $record->causer_name }}</td>
                     <td>{{ $record->created_at_formatted }}</td>
-                    <td class="text-center">
+                    <td class="text-center d-flex">
                         <button type="button" class="btn btn-sm btn-outline-primary me-1"
                             wire:click="showDetails({{ $record->id }})" title="{{ __('Detal') }}">
                             <i class="fas fa-eye"></i>
