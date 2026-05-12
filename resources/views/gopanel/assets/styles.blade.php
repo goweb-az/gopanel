@@ -19,6 +19,6 @@
 <link rel="stylesheet" href="{{asset("/assets/gopanel/libs/magnific-popup/magnific-popup.css")}}" >
 <!-- App Css-->
 <link href="/assets/gopanel/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
-<link href="{{asset('/assets/gopanel/css/custom.css?v=' . time())}}" id="app-style" rel="stylesheet" type="text/css" />
+<link href="{{ asset('/assets/gopanel/css/custom.css?v=' . filemtime(public_path('assets/gopanel/css/custom.css'))) }}" id="app-style" rel="stylesheet" type="text/css" />
 @stack('styles')
 @stack('css_stack')

@@ -15,8 +15,8 @@
 <script src="{{asset("/assets/gopanel/libs/bootstrap-switch-button/bootstrap-switch-button.min.js")}}"></script>
 <script src="{{asset("/assets/gopanel/libs/magnific-popup/jquery.magnific-popup.min.js")}}"></script>
 <script src="/assets/gopanel/js/app.js"></script>
-<script src="/assets/gopanel/js/main.js?={{time()}}"></script>
-<script src="/assets/gopanel/js/functions.js?={{time()}}"></script>
+<script src="/assets/gopanel/js/main.js?v={{ filemtime(public_path('assets/gopanel/js/main.js')) }}"></script>
+<script src="/assets/gopanel/js/functions.js?v={{ filemtime(public_path('assets/gopanel/js/functions.js')) }}"></script>
 @stack('scripts')
 @stack('js_stack')
 @livewireScripts
