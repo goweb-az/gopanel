@@ -1,0 +1,203 @@
+/*
+ * Modern form controls for the gopanel panel.
+ *
+ * Targets Bootstrap 5's .form-control / .form-select / .form-check-input
+ * plus the few legacy <textarea> and <input type="..."> elements that
+ * don't carry a Bootstrap class. The goal is a flat, slightly rounded
+ * input with a soft border, a calm focus ring and clear hover state —
+ * no heavy shadows, no aggressive accent colour bleed.
+ */
+
+:root {
+    --gp-input-bg: #ffffff;
+    --gp-input-color: #2a3042;
+    --gp-input-border: #e3e6ef;
+    --gp-input-border-hover: #c8cee0;
+    --gp-input-border-focus: #556ee6;
+    --gp-input-ring: rgba(85, 110, 230, 0.15);
+    --gp-input-placeholder: #a6acbf;
+    --gp-input-disabled-bg: #f5f6fa;
+    --gp-input-disabled-color: #a6acbf;
+    --gp-input-invalid-border: #f46a6a;
+    --gp-input-invalid-ring: rgba(244, 106, 106, 0.18);
+    --gp-input-radius: 8px;
+    --gp-input-padding-y: 0.55rem;
+    --gp-input-padding-x: 0.85rem;
+    --gp-input-font-size: 0.875rem;
+    --gp-input-transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
+}
+
+/* Base ---------------------------------------------------- */
+.form-control,
+.form-select,
+input[type="text"]:not(.gp-bare),
+input[type="email"]:not(.gp-bare),
+input[type="password"]:not(.gp-bare),
+input[type="number"]:not(.gp-bare),
+input[type="tel"]:not(.gp-bare),
+input[type="url"]:not(.gp-bare),
+input[type="search"]:not(.gp-bare),
+input[type="date"]:not(.gp-bare),
+input[type="datetime-local"]:not(.gp-bare),
+input[type="time"]:not(.gp-bare),
+input[type="month"]:not(.gp-bare),
+input[type="week"]:not(.gp-bare),
+textarea:not(.gp-bare) {
+    background-color: var(--gp-input-bg);
+    color: var(--gp-input-color);
+    border: 1px solid var(--gp-input-border);
+    border-radius: var(--gp-input-radius);
+    padding: var(--gp-input-padding-y) var(--gp-input-padding-x);
+    font-size: var(--gp-input-font-size);
+    line-height: 1.5;
+    transition: var(--gp-input-transition);
+    box-shadow: none;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+/* Placeholder color -------------------------------------- */
+.form-control::placeholder,
+input::placeholder,
+textarea::placeholder {
+    color: var(--gp-input-placeholder);
+    opacity: 1;
+}
+
+/* Hover --------------------------------------------------- */
+.form-control:hover:not(:disabled):not(:focus):not([readonly]),
+.form-select:hover:not(:disabled):not(:focus),
+input:hover:not(:disabled):not(:focus):not([readonly]),
+textarea:hover:not(:disabled):not(:focus):not([readonly]) {
+    border-color: var(--gp-input-border-hover);
+}
+
+/* Focus --------------------------------------------------- */
+.form-control:focus,
+.form-select:focus,
+input:focus,
+textarea:focus {
+    border-color: var(--gp-input-border-focus) !important;
+    box-shadow: 0 0 0 3px var(--gp-input-ring) !important;
+    outline: 0;
+}
+
+/* Disabled ----------------------------------------------- */
+.form-control:disabled,
+.form-select:disabled,
+input:disabled,
+textarea:disabled,
+.form-control[readonly]:not([type="date"]):not([type="datetime-local"]) {
+    background-color: var(--gp-input-disabled-bg);
+    color: var(--gp-input-disabled-color);
+    border-color: var(--gp-input-border);
+    cursor: not-allowed;
+}
+
+/* Form labels -------------------------------------------- */
+.form-label {
+    margin-bottom: 0.4rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #4b5568;
+}
+
+/* Help/feedback text ------------------------------------- */
+.form-text {
+    color: #74788d;
+    font-size: 0.8125rem;
+}
+
+/* Invalid state ------------------------------------------ */
+.form-control.is-invalid,
+.form-select.is-invalid,
+.was-validated .form-control:invalid,
+.was-validated .form-select:invalid {
+    border-color: var(--gp-input-invalid-border) !important;
+}
+
+.form-control.is-invalid:focus,
+.form-select.is-invalid:focus,
+.was-validated .form-control:invalid:focus,
+.was-validated .form-select:invalid:focus {
+    box-shadow: 0 0 0 3px var(--gp-input-invalid-ring) !important;
+}
+
+.invalid-feedback {
+    font-size: 0.8125rem;
+    color: var(--gp-input-invalid-border);
+    margin-top: 0.3rem;
+}
+
+/* Sizes -------------------------------------------------- */
+.form-control-sm,
+.form-select-sm {
+    padding: 0.35rem 0.65rem;
+    font-size: 0.8125rem;
+    border-radius: 6px;
+}
+
+.form-control-lg,
+.form-select-lg {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border-radius: 10px;
+}
+
+/* Select arrow ------------------------------------------- */
+.form-select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%2374788d'%3E%3Cpath d='M3.204 5.5L8 10.293l4.796-4.793-.707-.707L8 8.879 3.911 4.793z'/%3E%3C/svg%3E");
+    background-position: right 0.85rem center;
+    background-size: 14px 14px;
+    background-repeat: no-repeat;
+    padding-right: 2.25rem;
+}
+
+/* Input group ------------------------------------------- */
+.input-group-text {
+    background-color: #f5f6fa;
+    border: 1px solid var(--gp-input-border);
+    border-radius: var(--gp-input-radius);
+    color: #4b5568;
+    font-size: var(--gp-input-font-size);
+    padding: var(--gp-input-padding-y) var(--gp-input-padding-x);
+}
+
+.input-group > :not(:last-child):not(.dropdown-toggle):not(.dropdown-menu) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.input-group > :not(:first-child):not(.dropdown-menu) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    margin-left: -1px;
+}
+
+/* Textarea minimum height ------------------------------- */
+textarea.form-control {
+    min-height: 92px;
+}
+
+/* Checkbox / radio (non-switch) ------------------------- */
+.form-check-input:not([role="switch"]) {
+    border-color: var(--gp-input-border-hover);
+    transition: var(--gp-input-transition);
+}
+
+.form-check-input:not([role="switch"]):focus {
+    border-color: var(--gp-input-border-focus);
+    box-shadow: 0 0 0 3px var(--gp-input-ring);
+}
+
+.form-check-input:checked {
+    background-color: var(--gp-input-border-focus);
+    border-color: var(--gp-input-border-focus);
+}
+
+/* Date/time native picker icon spacing ------------------ */
+input[type="date"],
+input[type="datetime-local"],
+input[type="time"] {
+    min-height: calc(var(--gp-input-padding-y) * 2 + var(--gp-input-font-size) * 1.5 + 2px);
+}
