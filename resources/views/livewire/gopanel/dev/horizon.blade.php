@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Artisan;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -9,33 +8,44 @@ new
 #[Layout('gopanel.layouts.main')]
 class extends Component
 {
+    /**
+     * Horizon registers its console commands behind a runningInConsole() guard,
+     * so Artisan::call() from an HTTP request can't see them. Run artisan in a
+     * detached shell so the request returns immediately and the CLI binary
+     * picked up from PATH can resolve the horizon commands.
+     */
+    private function runArtisan(string $command): void
+    {
+        shell_exec('php '.escapeshellarg(base_path('artisan')).' '.$command.' > /dev/null 2>&1 &');
+    }
+
     public function pause(): void
     {
-        Artisan::call('horizon:pause');
+        $this->runArtisan('horizon:pause');
         $this->dispatch('notify', type: 'success', message: __('Horizon dayandırıldı'));
     }
 
     public function continueHorizon(): void
     {
-        Artisan::call('horizon:continue');
+        $this->runArtisan('horizon:continue');
         $this->dispatch('notify', type: 'success', message: __('Horizon davam etdirildi'));
     }
 
     public function terminate(): void
     {
-        Artisan::call('horizon:terminate');
+        $this->runArtisan('horizon:terminate');
         $this->dispatch('notify', type: 'success', message: __('Horizon yenidən başladılır'));
     }
 
     public function snapshot(): void
     {
-        Artisan::call('horizon:snapshot');
+        $this->runArtisan('horizon:snapshot');
         $this->dispatch('notify', type: 'success', message: __('Snapshot alındı'));
     }
 
     public function clearFailed(): void
     {
-        Artisan::call('horizon:clear', ['--queue' => 'failed']);
+        $this->runArtisan('horizon:clear --queue=failed');
         $this->dispatch('notify', type: 'success', message: __('Failed növbə təmizləndi'));
     }
 }; ?>

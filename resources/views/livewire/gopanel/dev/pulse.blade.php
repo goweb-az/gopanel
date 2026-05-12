@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Artisan;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -9,15 +8,25 @@ new
 #[Layout('gopanel.layouts.main')]
 class extends Component
 {
+    /**
+     * Pulse registers its console commands behind a runningInConsole() guard,
+     * so Artisan::call() from an HTTP request can't see them. Run artisan in a
+     * detached shell instead.
+     */
+    private function runArtisan(string $command): void
+    {
+        shell_exec('php '.escapeshellarg(base_path('artisan')).' '.$command.' > /dev/null 2>&1 &');
+    }
+
     public function restart(): void
     {
-        Artisan::call('pulse:restart');
+        $this->runArtisan('pulse:restart');
         $this->dispatch('notify', type: 'success', message: __('Pulse işçiləri yenidən başladıldı'));
     }
 
     public function clear(): void
     {
-        Artisan::call('pulse:clear');
+        $this->runArtisan('pulse:clear');
         $this->dispatch('notify', type: 'success', message: __('Pulse verisi silindi'));
     }
 }; ?>
