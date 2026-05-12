@@ -25,6 +25,13 @@ class TranslationSeeder extends Seeder
 
         $json = File::get($path);
         $translations = json_decode($json, true);
+
+        if (! is_array($translations)) {
+            $this->command->error('JSON parse xətası: '.json_last_error_msg()." ({$path})");
+
+            return;
+        }
+
         foreach ($translations as $data) {
             Translation::updateOrCreate(
                 [
