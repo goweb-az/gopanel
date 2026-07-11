@@ -7,10 +7,11 @@ use App\Enums\Common\Menu\MenuPositionEnum;
 use App\Helpers\Gopanel\Site\PageMetaDataHelper;
 use App\Helpers\Gopanel\TranslationHelper;
 use App\Http\Controllers\GoPanelController;
+use App\Http\Requests\Gopanel\Menus\MoveMenuRequest;
+use App\Http\Requests\Gopanel\Menus\SortMenuRequest;
 use App\Models\Navigation\Menu;
-use Exception;
+use App\Services\Gopanel\Menus\MenuTreeService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\View;
 
 class MenuController extends GoPanelController
 {
@@ -27,9 +28,46 @@ class MenuController extends GoPanelController
 
     public function index(Request $request)
     {
-        $query      = is_null($this->parent_id) ? Menu::whereNull("parent_id") : Menu::where("parent_id", $this->parent_id);
-        $menuList   = $query->orderBy("sort_order", "ASC")->get();
-        return view("gopanel.pages.settings.menu.index", compact('menuList'));
+        $query = is_null($this->parent_id)
+            ? Menu::whereNull("parent_id")
+            : Menu::where("parent_id", $this->parent_id);
+
+        $menuList = $query->withCount('childrenAdmin')
+            ->orderBy("sort_order", "ASC")
+            ->get();
+
+        $parent = $this->parent_id ? Menu::find($this->parent_id) : null;
+
+        return view("gopanel.pages.settings.menu.index", compact('menuList', 'parent'));
+    }
+
+
+    /**
+     * Reorder menu items within the current level via a dedicated endpoint
+     * (not the generic model/column sortable route).
+     */
+    public function sort(SortMenuRequest $request, MenuTreeService $tree)
+    {
+        try {
+            $ids = array_column($request->validated('items'), 'id');
+            $tree->reorder($ids);
+            $this->success_response([], 'Sıralama uğurla yeniləndi');
+        } catch (\Throwable $e) {
+            $this->response['message'] .= $e->getMessage();
+        }
+        return $this->response_json();
+    }
+
+
+    public function move(MoveMenuRequest $request, MenuTreeService $tree)
+    {
+        try {
+            $result = $tree->move($request->validated());
+            $this->success_response($result, 'Menyu uğurla köçürüldü');
+        } catch (\Throwable $e) {
+            $this->response['message'] .= $e->getMessage();
+        }
+        return $this->response_json();
     }
 
 

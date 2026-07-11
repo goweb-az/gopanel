@@ -109,7 +109,14 @@ function initMetaCollapse(context) {
 function initFormUiElements(context) {
     var $context = $(context || document);
 
-    $context.find('.select2').addBack('.select2').each(function () {
+    // NOTE: match only <select> elements, never a bare ".select2". select2's own
+    // generated container is a <span class="select2 select2-container">, which
+    // also carries the "select2" class. Because a MutationObserver re-runs this
+    // function for nodes added inside #form-wrap, selecting ".select2" would pick
+    // up that generated span, call .select2() on it, insert more ".select2" nodes,
+    // and spin into an infinite loop that freezes the page. Restricting to
+    // "select.select2" keeps it idempotent.
+    $context.find('select.select2').addBack('select.select2').each(function () {
         if (!$(this).data('select2')) {
             $(this).select2({
                 theme: 'bootstrap-5',

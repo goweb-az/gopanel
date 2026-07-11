@@ -95,6 +95,12 @@ Route::group(['middleware' => 'gopanel'], function () {
             Route::get('/', [MenuController::class, 'index'])->name('index');
             Route::get('/store/{item?}', [MenuController::class, 'store'])->name('store');
             Route::post('/save/{item?}', [MenuController::class, 'save'])->name('save');
+            Route::post('/sort', [MenuController::class, 'sort'])
+                ->name('sort')
+                ->middleware('can:gopanel.settings.menu.sort');
+            Route::post('/move', [MenuController::class, 'move'])
+                ->name('move')
+                ->middleware('can:gopanel.settings.menu.move');
         });
 
         Route::prefix('languages')->name("languages.")->group(function () {
@@ -102,6 +108,9 @@ Route::group(['middleware' => 'gopanel'], function () {
             Route::get('/get/form/{item?}', [LanguageController::class, 'getForm'])->name('get.form');
             Route::post('/save/{item?}', [LanguageController::class, 'save'])->name('save');
             Route::post('/toggle-default', [LanguageController::class, 'toggleDefault'])->name('toggle.default');
+            Route::post('/sort', [LanguageController::class, 'sort'])
+                ->name('sort')
+                ->middleware('can:gopanel.settings.languages.sort');
         });
 
         //Translates
@@ -109,6 +118,17 @@ Route::group(['middleware' => 'gopanel'], function () {
             Route::get('/', [TranslationController::class, 'index'])->name('index');
             Route::get('/get/form/{item?}', [TranslationController::class, 'getForm'])->name('get.form');
             Route::post('/save/form/{item?}', [TranslationController::class, 'save'])->name('save.form');
+
+            Route::post('/bulk-import', [TranslationController::class, 'bulkImport'])
+                ->name('bulk-import')
+                ->middleware('can:gopanel.settings.translations.import');
+            Route::get('/bulk-template/json', [TranslationController::class, 'jsonTemplate'])
+                ->name('bulk-template.json');
+            Route::get('/bulk-template/xlsx', [TranslationController::class, 'xlsxTemplate'])
+                ->name('bulk-template.xlsx');
+            Route::post('/export-json', [TranslationController::class, 'exportJson'])
+                ->name('export-json')
+                ->middleware('can:gopanel.settings.translations.export');
         });
     });
 

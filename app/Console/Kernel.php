@@ -13,6 +13,17 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
+
+
+        // Köhnə file_logs qeydlərini təmizlə - hər gün saat 03:30-da
+        $schedule->command('logs:cleanup --days=10')
+            ->dailyAt('03:30')
+            ->onOneServer();
+
+        // Köhnə activity_log qeydlərini təmizlə - hər gün saat 04:00-da
+        $schedule->command('activity-logs:cleanup --days=30')
+            ->dailyAt('04:00')
+            ->onOneServer();
     }
 
     /**
@@ -20,7 +31,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands(): void
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }

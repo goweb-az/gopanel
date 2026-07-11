@@ -16,6 +16,7 @@ return [
             ['name' => 'gopanel.settings.languages.add', 'title' => 'Dil əlavə etmə'],
             ['name' => 'gopanel.settings.languages.edit', 'title' => 'Dil redaktə'],
             ['name' => 'gopanel.settings.languages.delete', 'title' => 'Dil silmə'],
+            ['name' => 'gopanel.settings.languages.sort', 'title' => 'Dil sıralama'],
         ],
 
         'Tərcümələr' => [
@@ -23,6 +24,8 @@ return [
             ['name' => 'gopanel.settings.translations.add', 'title' => 'Tərcümə əlavə etmə'],
             ['name' => 'gopanel.settings.translations.edit', 'title' => 'Tərcümə redaktə'],
             ['name' => 'gopanel.settings.translations.delete', 'title' => 'Tərcümə silmə'],
+            ['name' => 'gopanel.settings.translations.import', 'title' => 'Tərcümə idxal'],
+            ['name' => 'gopanel.settings.translations.export', 'title' => 'Tərcümə ixrac'],
         ],
 
         'Adminlər' => [
@@ -137,6 +140,8 @@ return [
             ['name' => 'gopanel.settings.menu.add', 'title' => 'Menyu əlavə etmə'],
             ['name' => 'gopanel.settings.menu.edit', 'title' => 'Menyu redaktə'],
             ['name' => 'gopanel.settings.menu.delete', 'title' => 'Menyu silmə'],
+            ['name' => 'gopanel.settings.menu.sort', 'title' => 'Menyu sıralama'],
+            ['name' => 'gopanel.settings.menu.move', 'title' => 'Menyu köçürmə'],
         ],
 
         'Yeniləmələr' => [

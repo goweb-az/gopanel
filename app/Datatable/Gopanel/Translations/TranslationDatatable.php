@@ -16,6 +16,7 @@ class TranslationDatatable extends GopanelDatatable
             'key'                   => 'Açar',
             'editable_value'        => 'Dəyər',
             'platform'              => 'Platforma',
+            'page'                  => 'Səhifə',
             'locale'                => 'Dil',
             'lang_check_exists'     => 'Mövcudluq',
         ], [
@@ -39,8 +40,12 @@ class TranslationDatatable extends GopanelDatatable
         }
 
 
-        if (request()->has("platform")) {
+        if (request()->filled("platform")) {
             $query->where('platform', request()->input("platform"));
+        }
+
+        if (request()->filled("page")) {
+            $query->where('page', request()->input("page"));
         }
 
         if (request()->has("locale")) {

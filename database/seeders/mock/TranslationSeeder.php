@@ -2,47 +2,87 @@
 
 namespace Database\Seeders\mock;
 
+use App\Models\Geography\Language;
 use App\Models\Translations\Translation;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Database\Seeders\mock\Concerns\HasSeederProgress;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
 
 class TranslationSeeder extends Seeder
 {
+    use HasSeederProgress;
 
     public string $mockName = 'Tercumeler';
 
-    /**
-     * Run the database seeds.
-     */
     public function run()
     {
-        $path = database_path('seeders/json-data/translations.json');
+        $dir = database_path('seeders/json-data/translations');
 
-        if (!File::exists($path)) {
-            $this->command->error("JSON faylı tapılmadı: {$path}");
+        if (!File::isDirectory($dir)) {
+            File::makeDirectory($dir, 0755, true);
+        }
+
+        $files = collect(File::files($dir))
+            ->filter(fn($f) => str_ends_with($f->getFilename(), '.json'))
+            ->values();
+
+        if ($files->isEmpty()) {
+            $this->command?->warn("  JSON faylı tapılmadı: {$dir}");
             return;
         }
 
-        $json           = File::get($path);
-        $translations   = json_decode($json, true);
-        foreach ($translations as $data) {
-            Translation::updateOrCreate(
-                [
-                    'locale' => $data['locale'],
-                    'key' => $data['key'],
-                    'group' => $data['group'],
-                    'platform' => $data['platform'],
-                ],
-                [
-                    'value' => $data['value'],
-                    'filename' => $data['filename'],
-                    'deleted_at' => $data['deleted_at'],
-                ]
-            );
-            // $this->command->info("{$data['key']} [{$data['locale']}] dilində əlavə edildi ");
+        $allowedLocales = Language::pluck('code')->all();
+
+        Translation::query()
+            ->whereNotIn('locale', $allowedLocales)
+            ->delete();
+
+        $this->progressStart($files->count());
+        $total = 0;
+
+        foreach ($files as $file) {
+            $json         = File::get($file->getPathname());
+            $translations = json_decode($json, true);
+
+            if (empty($translations)) {
+                $this->command?->warn("  Bos/parse edilmedi: {$file->getFilename()}");
+                $this->progressTick("skip: {$file->getFilename()}");
+                continue;
+            }
+
+            $fileCount = 0;
+            foreach ($translations as $data) {
+                if (!in_array($data['locale'] ?? null, $allowedLocales, true)) {
+                    continue;
+                }
+
+                $platform = $data['platform'] ?? 'website';
+                $page     = $data['page']     ?? 'general';
+                $group    = $data['group']     ?? 'general';
+                $filename = $data['filename']  ?? $platform;
+
+                Translation::updateOrCreate(
+                    [
+                        'locale'   => $data['locale'],
+                        'key'      => $data['key'],
+                        'platform' => $platform,
+                        'page'     => $page,
+                        'group'    => $group,
+                        'filename' => $filename,
+                    ],
+                    [
+                        'value'      => $data['value'] ?? null,
+                        'deleted_at' => $data['deleted_at'] ?? null,
+                    ]
+                );
+
+                $fileCount++;
+                $total++;
+            }
+
+            $this->progressTick("{$file->getFilename()} ({$fileCount} sətir)");
         }
 
-        $this->command->info("Bütün təecümələr əlavə edildi!");
+        $this->progressFinish("Tamamlandi! {$total} tercume elave edildi.");
     }
 }

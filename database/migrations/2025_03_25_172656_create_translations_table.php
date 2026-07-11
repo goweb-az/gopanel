@@ -13,15 +13,23 @@ return new class extends Migration
     {
         Schema::create('translations', function (Blueprint $table) {
             $table->id();
-            $table->string('locale');
-            $table->string('key');
+            // Column widths are kept small on purpose so the composite unique
+            // index below stays within MySQL's 3072-byte key limit (utf8mb4).
+            $table->string('locale', 10);
+            $table->string('key', 191);
             $table->text('value')->nullable();
-            $table->char('platform', 15)->default("website");
-            $table->string('filename')->nullable();
-            $table->string('group')->nullable();
-            $table->unique(['key', 'locale', 'platform']);
+            $table->char('platform', 15)->default('website');
+            $table->string('page', 100)->default('general');
+            $table->string('filename', 100)->nullable();
+            $table->string('group', 100)->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->unique(
+                ['key', 'locale', 'platform', 'page', 'group', 'filename'],
+                'translations_unique'
+            );
+            $table->index(['platform', 'page', 'locale'], 'translations_platform_page_locale_index');
         });
     }
 

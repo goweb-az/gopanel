@@ -47,9 +47,16 @@ class Menu extends BaseModel
         });
 
         static::creating(function ($model) {
-            // sort_order her yeni kayıtta +1 olsun
-            $maxSort = static::max('sort_order');
-            $model->sort_order = $maxSort ? $maxSort + 1 : 1;
+            // Append to the end of the item's own (parent_id + position) sibling
+            // group rather than using one global counter across the whole table,
+            // so newly created items don't share sort_order across parents.
+            if (is_null($model->sort_order) || $model->sort_order === 0) {
+                $maxSort = static::query()
+                    ->where('parent_id', $model->parent_id)
+                    ->where('position', $model->position)
+                    ->max('sort_order');
+                $model->sort_order = $maxSort ? $maxSort + 1 : 1;
+            }
         });
     }
 
@@ -61,6 +68,15 @@ class Menu extends BaseModel
     public function children()
     {
         return $this->hasMany(self::class, 'parent_id')->where("is_active", true);
+    }
+
+    /**
+     * Children for the admin tree: unlike children(), this is NOT filtered by
+     * is_active, so inactive items remain visible/manageable in the panel.
+     */
+    public function childrenAdmin()
+    {
+        return $this->hasMany(self::class, 'parent_id')->orderBy('sort_order', 'asc');
     }
 
     public function menuable()

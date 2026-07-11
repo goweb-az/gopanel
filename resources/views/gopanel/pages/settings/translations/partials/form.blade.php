@@ -1,4 +1,9 @@
-<form method="POST" action="{{$route}}" id="data-form">
+@php
+    $currentPlatform = isset($item->id) ? ($item->platform ?? 'website') : 'website';
+    $currentPage     = isset($item->id) ? ($item->page ?? 'general') : 'general';
+    $platformPages   = $allPages[$currentPlatform] ?? ['general' => 'Ümumi'];
+@endphp
+<form method="POST" action="{{$route}}" id="data-form" data-pages='@json($allPages)'>
     <ul class="nav nav-tabs" role="tablist">
         @foreach ($languages as $lang)
         <li class="nav-item">
@@ -51,11 +56,20 @@
 
         </div>
 
-        <div class="col-12">
+        <div class="col-12 mb-2">
             <label for="platform" class="form-label">Platfroma</label>
-            <select id="platform" class="form-select" name="platform" @disabled(isset($item->id))>
+            <select id="platform" class="form-select translation-platform-select" name="platform" @disabled(isset($item->id))>
                 @foreach ($platforms as $platform)
-                    <option value="{{$platform->value}}" @selected(isset($item->id) && $item->status == $platform->value)>{{$platform->value}}</option>
+                    <option value="{{$platform->value}}" @selected($currentPlatform == $platform->value)>{{$platform->value}}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="col-12">
+            <label for="page" class="form-label">Səhifə</label>
+            <select id="page" class="form-select translation-page-select" name="page" @disabled(isset($item->id))>
+                @foreach ($platformPages as $pageValue => $pageLabel)
+                    <option value="{{ $pageValue }}" @selected($currentPage == $pageValue)>{{ $pageLabel }}</option>
                 @endforeach
             </select>
         </div>

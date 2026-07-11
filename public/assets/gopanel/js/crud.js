@@ -31,8 +31,13 @@ $("body").on("click", "#open-create-modal", function(e){
         if (response.status == 'success') {
             setTimeout(() => {
                 formwrap.html(response.html);
-                if ($("#form-wrap").find(".select2").length) {
-                    $("#form-wrap").find(".select2").select2();
+                // Init select2/tags/tooltips through the shared, idempotent
+                // initializer (select-only selector) instead of calling
+                // .select2() on every ".select2" — the latter also matches
+                // select2's generated container span and loops via the
+                // #form-wrap MutationObserver, freezing the page.
+                if (typeof initFormUiElements === 'function') {
+                    initFormUiElements(formwrap[0]);
                 }
             }, 500);
         }
@@ -115,6 +120,9 @@ $("body").on("click", ".edit", function(e){
         if (response.status == 'success') {
             setTimeout(() => {
                 formwrap.html(response.html);
+                if (typeof initFormUiElements === 'function') {
+                    initFormUiElements(formwrap[0]);
+                }
             }, 500);
         }
         else{
