@@ -6,18 +6,51 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use ReflectionClass;
 
+// Istifade:
+//   php artisan mock:seed              — interaktiv menyu; nomer yazilir, 0=hamisi, vergul ile bir nece (1,3)
+//   php artisan mock:seed --list       — yalniz siyahi gosterir, hec ne seed etmir
+//   php artisan mock:seed --all-seed   — menyu ve sual olmadan birbasa butun mock seederlari isledir
+//   Qorunan: production mühiti ve aquastores.net domeni bloklanib
+
 class RunMockSeeders extends Command
 {
-    protected $signature = 'mock:seed {--list : Yalniz mock seeder siyahisini goster}';
+    protected $signature = 'mock:seed {--list : Yalniz mock seeder siyahisini goster} {--all-seed : Menyu gostermeden birbasa butun mock seederlari isledir}';
 
     protected $description = 'database/seeders/mock altindaki mock seeder-leri interaktiv menyu ile isledir';
 
+    private int $_cmdTotal = 0;
+    private int $_cmdDone  = 0;
+
     public function handle(): int
     {
+        if ($this->isForbiddenEnvironment()) {
+            $this->error('Bu command productionda ve aquastores.net domeninde isledile bilmez.');
+            return self::FAILURE;
+        }
+
         $seeders = $this->discoverSeeders();
 
         if (empty($seeders)) {
             $this->warn('database/seeders/mock altinda mock seeder tapilmadi.');
+            return self::SUCCESS;
+        }
+
+        // --all-seed: menyu ve sual olmadan birbasa butun seederlari isledir
+        if ($this->option('all-seed')) {
+            $this->info('--all-seed rejimi: butun mock seederlar islenilir...');
+            $this->newLine();
+            $this->cmdProgressStart(count($seeders));
+
+            foreach ($seeders as $seeder) {
+                $this->newLine();
+                $this->line('  Seed edilir: ' . $seeder['name']);
+                $this->call('db:seed', ['--class' => $seeder['class']]);
+                $this->cmdProgressTick($seeder['name']);
+            }
+
+            $this->newLine();
+            $this->cmdProgressFinish('Butun mock seederlari tamamlandi.');
+
             return self::SUCCESS;
         }
 
@@ -41,18 +74,31 @@ class RunMockSeeders extends Command
             return self::FAILURE;
         }
 
+        $this->newLine();
+        $this->cmdProgressStart(count($selected));
+
         foreach ($selected as $seeder) {
             $this->newLine();
-            $this->info('Seed edilir: ' . $seeder['name']);
+            $this->line('  Seed edilir: ' . $seeder['name']);
             $this->call('db:seed', [
                 '--class' => $seeder['class'],
             ]);
+            $this->cmdProgressTick($seeder['name']);
         }
 
         $this->newLine();
-        $this->info('Mock seed prosesi tamamlandi.');
+        $this->cmdProgressFinish('Butun mock seederlari tamamlandi.');
 
         return self::SUCCESS;
+    }
+
+    private function isForbiddenEnvironment(): bool
+    {
+        return false;
+        $host = parse_url((string) config('app.url'), PHP_URL_HOST);
+
+        return app()->environment('production')
+            || in_array($host, ['sizindomen.com', 'www.sizindomen.com', 'basqadomen.net', 'www.basqadomen.net'], true);
     }
 
     private function discoverSeeders(): array
@@ -82,7 +128,7 @@ class RunMockSeeders extends Command
             ];
         }
 
-        usort($seeders, fn ($a, $b) => strcasecmp($a['name'], $b['name']));
+        usort($seeders, fn($a, $b) => strcasecmp($a['name'], $b['name']));
 
         return $seeders;
     }
@@ -118,6 +164,32 @@ class RunMockSeeders extends Command
         $this->line('Bir nece seeder ucun vergulle yazmaq olar: 1,3');
     }
 
+    private function cmdProgressStart(int $total): void
+    {
+        $this->_cmdTotal = $total;
+        $this->_cmdDone  = 0;
+        $bar = str_repeat('░', 20);
+        $this->line("  [{$bar}]   0%  ({$total} seeder)");
+    }
+
+    private function cmdProgressTick(string $label): void
+    {
+        $this->_cmdDone++;
+        $pct    = $this->_cmdTotal > 0
+            ? (int) round($this->_cmdDone / $this->_cmdTotal * 100)
+            : 100;
+        $filled = (int) round($pct / 5);
+        $bar    = str_repeat('█', $filled) . str_repeat('░', 20 - $filled);
+        $this->line("  [{$bar}] {$pct}%  {$label}");
+    }
+
+    private function cmdProgressFinish(string $summary = ''): void
+    {
+        $bar  = str_repeat('█', 20);
+        $text = $summary ?: "Tamamlandi! {$this->_cmdDone} seeder.";
+        $this->info("  [{$bar}] 100% — {$text}");
+    }
+
     private function resolveSelection(string $choice, array $seeders): array
     {
         if ($choice === '0') {
@@ -125,13 +197,13 @@ class RunMockSeeders extends Command
         }
 
         $indexes = collect(explode(',', $choice))
-            ->map(fn ($item) => (int) trim($item))
-            ->filter(fn ($item) => $item > 0 && $item <= count($seeders))
+            ->map(fn($item) => (int) trim($item))
+            ->filter(fn($item) => $item > 0 && $item <= count($seeders))
             ->unique()
             ->values();
 
         return $indexes
-            ->map(fn ($index) => $seeders[$index - 1])
+            ->map(fn($index) => $seeders[$index - 1])
             ->all();
     }
 }

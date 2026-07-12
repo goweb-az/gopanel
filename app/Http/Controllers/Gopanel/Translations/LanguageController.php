@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Gopanel\Translations;
 
 use App\Http\Controllers\GoPanelController;
+use App\Http\Requests\Gopanel\Languages\SortLanguagesRequest;
 use App\Models\Geography\Country;
 use App\Models\Geography\Language;
+use App\Services\Gopanel\Languages\LanguageSortService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -19,10 +21,17 @@ class LanguageController extends GoPanelController
 
     public function index(Request $request)
     {
-        $languagesList = Language::orderBy('sort_order', 'ASC')
+        $countryId = $request->input('country_id');
+
+        $languagesList = Language::with('country')
+            ->when($countryId, fn ($query) => $query->where('country_id', $countryId))
+            ->orderBy('sort_order', 'ASC')
+            ->orderBy('id', 'ASC')
             ->get();
 
-        return view('gopanel.pages.settings.languages.index', compact('languagesList'));
+        $countries = Country::orderBy('name')->get();
+
+        return view('gopanel.pages.settings.languages.index', compact('languagesList', 'countries', 'countryId'));
     }
 
     public function getForm(Language $item, Request $request)
@@ -63,6 +72,18 @@ class LanguageController extends GoPanelController
             Language::ensureFallbackDefault();
 
             $this->success_response($item->fresh(), $message);
+        } catch (\Exception $e) {
+            $this->response['message'] .= $e->getMessage();
+        }
+
+        return $this->response_json();
+    }
+
+    public function sort(SortLanguagesRequest $request, LanguageSortService $service)
+    {
+        try {
+            $service->sort($request->validated('items'));
+            $this->success_response([], 'Sıralama uğurla yeniləndi');
         } catch (\Exception $e) {
             $this->response['message'] .= $e->getMessage();
         }

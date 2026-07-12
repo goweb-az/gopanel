@@ -60,8 +60,16 @@ class TranslationServiceProvider extends ServiceProvider
                 ->where('platform', 'website') // bu platformanı istəyə görə dəyiş
                 ->get()
                 ->mapWithKeys(function ($item) {
-                    // group varsa: group.key, yoxdursa sadəcə key
-                    $key = $item->group ? "{$item->group}.{$item->key}" : $item->key;
+                    // Page-aware runtime key so identical group/key values on
+                    // different pages don't collide:
+                    //   group varsa: filename.page.group.key
+                    //   group yoxdursa: filename.page.key
+                    $page = $item->page ?: 'general';
+
+                    $key = $item->group
+                        ? "{$item->filename}.{$page}.{$item->group}.{$item->key}"
+                        : "{$item->filename}.{$page}.{$item->key}";
+
                     return [$key => $item->value];
                 })
                 ->toArray();
