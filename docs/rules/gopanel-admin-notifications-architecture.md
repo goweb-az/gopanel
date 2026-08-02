@@ -1,5 +1,5 @@
 # Gopanel Admin Notifications: Reusable Architecture and Implementation Task
-
+Burada yazilan listing tender ve sair bir nümunədir onu yazdiqin admin penlde nedirse ona aid et misal senin yazdiqin admin panelde bu Məhsullar olabiler
 ## 1. Purpose
 
 This document explains how another AI model or developer should build or migrate an admin-notification system into a Laravel Gopanel.
