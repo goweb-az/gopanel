@@ -179,6 +179,26 @@ return [
             'manual'    => true,
             'name'      => 'Email logları'
         ],
+
+        // App\Services\Sms\SmsService və provayderlər
+        'sms' => [
+            'driver'    => 'daily',
+            'path'      => storage_path('logs/sms/sms-day.log'),
+            'level'     => env('LOG_LEVEL', 'debug'),
+            'days'      => 30,
+            'manual'    => true,
+            'name'      => 'SMS logları'
+        ],
+
+        // App\Services\Export\* - hesabat/export axını
+        'export' => [
+            'driver'    => 'daily',
+            'path'      => storage_path('logs/export/export-day.log'),
+            'level'     => env('LOG_LEVEL', 'debug'),
+            'days'      => 14,
+            'manual'    => true,
+            'name'      => 'Export logları'
+        ],
     ],
 
 ];

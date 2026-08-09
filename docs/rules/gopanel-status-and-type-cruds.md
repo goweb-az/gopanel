@@ -1,5 +1,11 @@
 # Gopanel-də Status və Tip CRUD-larının Qurulması
 
+> **Əvvəlcə oxu:** dəyər dəsti **kod** tərəfindən idarə olunursa (developer
+> deploy etmədən dəyişmirsə) o, CRUD deyil, **Enum** olmalıdır —
+> `app/Enums/`. CRUD yalnız admin özü əlavə/sıralama/söndürmə edə bildikdə
+> yazılır. Qərar qaydası:
+> [application-layering...md §25](application-layering-support-query-traits-helpers-enums.md).
+
 Bu sənəd başqa layihədə işləyən developer və ya süni intellekt üçün implementasiya spesifikasiyasıdır. Buradakı məqsəd konkret `ListingStatus` modeli yaratmaq deyil. Məqsəd Gopanel daxilində müxtəlif status və tip lüğətlərinin vahid arxitektura ilə necə qurulacağını izah etməkdir.
 
 Hədəf menyu adı nümunə olaraq **Status və Tiplər** ola bilər. Bu bölmənin daxilində layihənin ehtiyacına uyğun aşağıdakı CRUD-lardan hər hansı biri saxlanıla bilər:

@@ -1,5 +1,15 @@
 # Gopanel Admin Notifications: Reusable Architecture and Implementation Task
-Burada yazilan listing tender ve sair bir nümunədir onu yazdiqin admin penlde nedirse ona aid et misal senin yazdiqin admin panelde bu Məhsullar olabiler
+
+> ⚠️ **Background material — not the step-by-step rule.**
+> To build the notifications section in this Gopanel, start with
+> [gopanel-notifications-module.md](gopanel-notifications-module.md): it carries
+> this project's real file paths, routes, permission keys and config. This file
+> keeps the wider architectural analysis (options, trade-offs, edge cases).
+>
+> Model and type names such as `Listing`, `Tender`, `Company` or `NEW_REVIEW`
+> are **examples**. Replace them with the target project's real domain models
+> and events.
+
 ## 1. Purpose
 
 This document explains how another AI model or developer should build or migrate an admin-notification system into a Laravel Gopanel.

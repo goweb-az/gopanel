@@ -61,6 +61,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | CDN URL
+    |--------------------------------------------------------------------------
+    |
+    | Statik fayllar və yüklənmiş medianın verildiyi kök ünvan.
+    | `App\Support\Url\CdnUrl` bu dəyəri işlədir; boşdursa `app.url`-a düşür.
+    |
+    | DİQQƏT: CDN qoşulanda `config/filesystems.php` → `disks.public.url` da
+    | eyni ünvanla uzlaşdırılmalıdır, əks halda yüklənmiş fayllar köhnə domendə qalır.
+    |
+    */
+
+    'cdn_url' => env('CDN_URL'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |

@@ -1,6 +1,10 @@
 # Gopanel Hierarxik Category CRUD Arxitekturası
 
-Bu sənəd başqa Laravel layihəsində işləyən developer və ya süni intellekt üçün implementasiya spesifikasiyasıdır. Məqsəd Aquastores modelini kor-koranə köçürmək deyil; Gopanel-də parent/child ağac strukturlu kateqoriya CRUD-unun təhlükəsiz, genişlənə bilən və təkrar istifadə olunan formada necə qurulacağını göstərməkdir.
+> **Qeyd:** Gopanel-də `App\Models\Navigation\Category` və menyu ağacı
+> (`MenuTreeService`) artıq mövcuddur — yeni ağac CRUD-u yazmazdan əvvəl
+> onlara baxılır. Bu sənəd sıfırdan qurulma və ya genişləndirmə üçündür.
+
+Bu sənəd başqa Laravel layihəsində işləyən developer və ya süni intellekt üçün implementasiya spesifikasiyasıdır. Məqsəd mənbə layihənin modelini kor-koranə köçürmək deyil; Gopanel-də parent/child ağac strukturlu kateqoriya CRUD-unun təhlükəsiz, genişlənə bilən və təkrar istifadə olunan formada necə qurulacağını göstərməkdir.
 
 `Category` adı nümunədir. Eyni pattern aşağıdakılara tətbiq oluna bilər:
 
@@ -103,7 +107,7 @@ Schema::create('categories', function (Blueprint $table) {
 });
 ```
 
-Aquastores-də `name`, `description`, `slug` polymorphic `field_translations` cədvəlində saxlanılır. Başqa layihədə translation yoxdursa bu sütunlar `categories` cədvəlinə əlavə edilə bilər.
+Gopanel-də `name`, `description`, `slug` polimorfik `field_translations` cədvəlində saxlanılır (`App\Traits\Content\Translation` + `$translatedAttributes`). Tərcümə qatı olmayan layihədə bu sütunlar birbaşa `categories` cədvəlinə əlavə edilə bilər.
 
 Qərarlar əvvəlcədən müəyyən edilməlidir:
 

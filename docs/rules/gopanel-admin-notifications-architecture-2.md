@@ -1,6 +1,15 @@
-# Gopanel Admin Bildirişləri Arxitekturası
+# Gopanel Admin Bildirişləri Arxitekturası (geniş analiz)
 
-Burada yazilan listing tender ve sair bir nümunədir onu yazdiqin admin penlde nedirse ona aid et misal senin yazdiqin admin panelde bu Məhsullar olabiler
+> ⚠️ **Bu sənəd ARXA PLAN materialıdır, addım-addım qayda deyil.**
+> Gopanel-də bildiriş bölməsi qurulanda əvvəlcə
+> [gopanel-notifications-module.md](gopanel-notifications-module.md) oxunur —
+> orada bu layihənin real fayl adları, route-ları və konfiqurasiyası ilə
+> yazılmış icra ardıcıllığı var. Bu fayl isə arxitektura seçimlərinin
+> geniş izahını saxlayır (nə üçün belə, hansı alternativlər var).
+>
+> Sənəddəki `Listing`, `Tender`, `Company`, `NEW_REVIEW` kimi adlar **nümunədir** —
+> hədəf layihədə onların yerini real domen modelləri və hadisələri tutur
+> (məsələn `Product`, `Order`, `Müraciət`).
 
 Bu sənəd başqa Laravel layihəsində işləyən developer və ya süni intellekt üçün reusable **Admin Bildiriş (Admin Notification)** implementasiya spesifikasiyasıdır. Model, tip və mətn adları nümunədir; hədəf layihədə `Listing`, `Tender`, `Company` və ya `NEW_REVIEW` olmaya bilər — onların yerinə layihənin real domen modelləri və hadisələri istifadə edilməlidir.
 

@@ -1,5 +1,11 @@
 # Gopanel User Management: Reusable Architecture and Implementation Task
 
+> **Note:** Gopanel already ships admin management (`App\Models\Gopanel\Admin`,
+> `CustomRole`, `CustomPermission`, `AdminDatatable`, `RoleDatatable`). This
+> document covers the **end-user** (`users` table) management section, which is
+> a separate module. Reuse the existing datatable/permission conventions from
+> [.claude/rules/02-gopanel.md](../../.claude/rules/02-gopanel.md) §1.
+
 ## 1. Purpose
 
 This document tells an AI model or developer how to build or migrate a production-ready user-management section into another Laravel Gopanel.
