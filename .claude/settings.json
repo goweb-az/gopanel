@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+
+  "//": "QAYDA: hər şeyə icazə var, YALNIZ silmə/geri qaytarılmayan əməliyyatlar soruşulur. Bu fayl repoda qalır (paylaşılan). Şəxsi override üçün .claude/settings.local.json işlədilir - o, gitignore-dadır.",
+
+  "permissions": {
+    "defaultMode": "acceptEdits",
+
+    "deny": [],
+
+    "ask": [
+      "Bash(rm:*)",
+      "Bash(rmdir:*)",
+      "Bash(del:*)",
+      "Bash(unlink:*)",
+      "Bash(shred:*)",
+      "Bash(truncate:*)",
+      "Bash(git rm:*)",
+      "Bash(git clean:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(git checkout -- :*)",
+      "Bash(git branch -D:*)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(php artisan migrate:fresh:*)",
+      "Bash(php artisan migrate:reset:*)",
+      "Bash(php artisan migrate:rollback:*)",
+      "Bash(php artisan db:wipe:*)",
+      "Bash(php artisan queue:flush:*)",
+      "Bash(mysql:*)",
+      "Bash(mysqldump:*)",
+      "PowerShell(Remove-Item:*)",
+      "PowerShell(rm:*)",
+      "PowerShell(del:*)",
+      "PowerShell(rmdir:*)",
+      "PowerShell(Clear-Content:*)",
+      "PowerShell(git rm:*)",
+      "PowerShell(git clean:*)",
+      "PowerShell(git reset --hard:*)",
+      "PowerShell(php artisan migrate:fresh:*)",
+      "PowerShell(php artisan migrate:reset:*)",
+      "PowerShell(php artisan db:wipe:*)"
+    ],
+
+    "allow": [
+      "Bash",
+      "PowerShell",
+      "Read",
+      "Edit",
+      "Write",
+      "Glob",
+      "Grep",
+      "Skill",
+      "WebFetch",
+      "WebSearch",
+      "TodoWrite"
+    ]
+  }
+}

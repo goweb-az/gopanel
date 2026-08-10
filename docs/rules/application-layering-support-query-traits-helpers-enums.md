@@ -1,5 +1,18 @@
 # Laravel Application Layering: Support, Query, Traits, Helpers, Enums and Related Layers
 
+> **Status: theory / decision reference.** This is the long-form reasoning behind
+> the layer boundaries. The short, binding version for day-to-day work is
+> [.claude/rules/01-umumi.md](../../.claude/rules/01-umumi.md) §1, and the
+> catalogue of what already exists is [shared-layer.md](../shared-layer.md).
+> Read this file when a placement decision is genuinely unclear — not before
+> every change.
+>
+> Several recommendations here are now implemented in Gopanel: `app/Support/`
+> exists with `Cache/`, `Date/`, `Url/`, `Export/`, `Gopanel/` subfolders;
+> `app/Queries/{Gopanel,Site,Api}` and `app/DTOs` are scaffolded; cache-key
+> construction lives in `Support/Cache/CacheKey` while cache storage stays in
+> `Services/Cache/CacheService` (see §14 and migration step 9).
+
 ## 1. Purpose
 
 This document is a reusable architecture guide for another AI model or developer working on a Laravel application. It explains what belongs in `Support`, `Queries`, `Traits`, `Helpers`, `Enums`, `Services`, `Repositories`, DTOs and Value Objects, how these layers differ, and how to decide where new code should be placed.

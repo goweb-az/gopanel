@@ -19,6 +19,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Default TTL
+    |--------------------------------------------------------------------------
+    |
+    | TTL göndərilmədən çağırılan bütün `App\Services\Cache\CacheService`
+    | metodları bu ömrü işlədir (saniyə). Keşin ümumi ömrünü dəyişmək üçün
+    | kodun heç bir yerinə toxunmaq lazım deyil - yalnız bu dəyər dəyişir.
+    |
+    */
+
+    'default_ttl' => (int) env('CACHE_DEFAULT_TTL', 3600),
+
+    /*
+    |--------------------------------------------------------------------------
     | Cache Stores
     |--------------------------------------------------------------------------
     |

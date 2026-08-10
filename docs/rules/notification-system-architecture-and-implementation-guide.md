@@ -1,5 +1,12 @@
 # Laravel bildiriş sistemi arxitekturası və tətbiq bələdçisi
 
+> ⚠️ **Bu sənəd SON İSTİFADƏÇİ (sayt/mobil) bildirişləri haqqındadır** —
+> `notifications` cədvəli, `web`/`sanctum` guard-ı.
+>
+> **Admin** (GoPanel) bildirişləri ayrı sistemdir və ayrı cədvəldədir:
+> [gopanel-notifications-module.md](gopanel-notifications-module.md).
+> İkisi bir cədvəldə birləşdirilmir.
+
 ## Sənədin məqsədi
 
 Bu sənəd başqa Laravel layihəsində tam bildiriş sistemi quracaq proqramçı və ya süni intellekt modeli üçün texniki tapşırıqdır. Sənəd `app.qrgate.loc` layihəsindəki bildiriş axınlarının, mail və push kanallarının, verilənlər bazası bildirişlərinin, şablonların, şirkət ayarlarının, queue və scheduler mexanizmlərinin, kampaniyaların və Gopanel izləmə ekranlarının analizinə əsaslanır.

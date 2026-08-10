@@ -1,6 +1,17 @@
 # GoPanel — AI inkişaf bələdçisi
 
-> Bu sənəd layihənin strukturunu, konvensiyalarını və mövcud abstraksiyalarını izah edir. Yeni xüsusiyyət əlavə etməzdən əvvəl bu sənədi oxu — yenidən kəşf etməyə ehtiyac yoxdur.
+> Bu sənəd layihənin strukturunu, konvensiyalarını və mövcud abstraksiyalarını
+> izah edir — **kod nümunələri ilə**. Yeni xüsusiyyət əlavə etməzdən əvvəl oxu,
+> yenidən kəşf etməyə ehtiyac yoxdur.
+>
+> **Sənədlərin sırası:**
+> 1. [`.claude/CLAUDE.md`](../.claude/CLAUDE.md) — qısa layihə brifinqi
+> 2. [`.claude/rules/`](../.claude/rules/README.md) — **bağlayıcı qaydalar** (ziddiyyətdə bunlar üstündür)
+> 3. [`shared-layer.md`](shared-layer.md) — hazır ümumi qat (yenidən yazma!)
+> 4. bu fayl — praktik naxışlar və kod nümunələri
+>
+> Bu fayl ilə `.claude/rules/` arasında fərq olarsa, **qaydalar üstündür** —
+> onlar daha yenidir və məcburidir.
 
 ## 1. Texnologiya stack
 
@@ -18,24 +29,41 @@
 
 ```
 app/
+  Contracts/                # İnfrastruktur adapter interfeysləri            [boş]
+  DTOs/                     # Typed data transfer obyektləri                 [boş]
   Datatable/Gopanel/        # Server-side datatable sinifləri (BlogDatatable, ProductDatatable, ...)
   Enums/                    # Enum siniflər (SocialIconTypeEnum, ...)
   Helpers/Common/           # Ümumi helper-lər (ActivityLogHelper, ...)
   Helpers/Gopanel/          # Admin panel helper-ləri (FileUploader, CrudHelper, GoPanelHelper, IconPickerHelper, TranslationHelper)
   Helpers/Gopanel/Site/     # Sayt-istiqamətli helper-lər (PageMetaDataHelper, GoPanelSiteHelper)
   Http/Controllers/Gopanel/ # Admin controller-ləri
+  Http/Resources/           # API cavab formatı                              [boş]
+  Jobs/                     # Növbəyə düşən işlər                            [boş]
   Models/                   # BaseModel + alt qovluqlar
     Site/                   # Blog, Service, Product, Slider, AboutUs
     Navigation/             # Category, Menu
-    Translations/           # FieldTranslation, Language
-    Seo/                    # PageMetaData, SiteRedirect
+    Translations/           # FieldTranslation, Translation
+    Geography/              # Country, City, State, Language, Currency
+    Seo/                    # PageMetaData, SiteRedirect, LlmsTxt, SeoAnalytics
     Gopanel/                # Admin, CustomRole, CustomPermission
+    Activity/               # Activity, FileLog, DataUpdate
+    Analytics/              # Analytics* (klik, ölkə, cihaz, UTM, ...)
+  Observers/                # Model event dinləyiciləri                      [boş]
+  Policies/                 # İcazə qərarları                                [boş]
+  Queries/{Gopanel,Site,Api}/  # BÜTÜN böyük SELECT-lər                      [boş]
+  Repositories/             # YALNIZ insert / update / delete
+  Rules/                    # Xüsusi validasiya qaydaları                    [boş]
+  Services/                 # İş məntiqi (bax: docs/shared-layer.md)
+    Activity/ Bulk/ Cache/ Export/ Mail/ Queue/ Sms/ Gopanel/ Site/
+  Support/                  # Saf, vəziyyətsiz primitivlər
+    Cache/ Date/ Export/ Gopanel/ Url/
   Traits/
     System/                 # AddUuid, HasRouteKey, HasArchive, Cacheable
     Content/                # Translation, HasFiles, MetaData
     Activity/               # LogsAdminActivity
     Ui/                     # UiElements, FormatsDate
 
+config/custom/              # activity_messages, cache, mail, sms, export, security, logging
 config/gopanel/             # Permission siyahısı, sidebar menyusu, FA ikon adları
 database/migrations/        # Cədvəllərin yaradılması
 database/seeders/           # DatabaseSeeder + alt seeder-lər

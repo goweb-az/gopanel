@@ -1,8 +1,15 @@
 # Laravel API arxitekturası və tətbiq bələdçisi
 
+> **Status:** Gopanel-də API qatı hazırda **minimaldır** (`routes/api.php` —
+> yalnız `auth:sanctum` nümunəsi). Bu sənəd tam API qatı açılanda tətbiq olunur.
+> Qısa qaydalar: [.claude/rules/04-api.md](../../.claude/rules/04-api.md).
+>
+> Sənəd `aquastores` layihəsinin API qatının analizindən çıxıb; sinif və
+> endpoint adları **nümunədir**.
+
 ## Sənədin məqsədi
 
-Bu sənəd başqa Laravel layihəsində web frontend və mobil tətbiq üçün API qatını quracaq proqramçı və ya süni intellekt modeli üçün texniki tapşırıqdır. Məqsəd Aquastores-dəki işlək yanaşmaları saxlamaq, mövcud təkrarları və təhlükəli hissələri isə yeni layihəyə daşımamaqdır.
+Bu sənəd başqa Laravel layihəsində web frontend və mobil tətbiq üçün API qatını quracaq proqramçı və ya süni intellekt modeli üçün texniki tapşırıqdır. Məqsəd mənbə layihədəki işlək yanaşmaları saxlamaq, mövcud təkrarları və təhlükəli hissələri isə yeni layihəyə daşımamaqdır.
 
 Bu sənəd yalnız endpoint siyahısı deyil. Route, middleware, autentifikasiya, Form Request, controller, query, service, repository, resource, response, exception, config, enum, fayl yükləmə, keş, log, queue, təhlükəsizlik, versiyalama, test və API sənədləşdirməsinin sərhədlərini müəyyən edir.
 
@@ -666,7 +673,7 @@ Axın:
 8. Controller Resource-u vahid `ApiResponse` ilə `201` qaytarır.
 9. Global handler bütün xətaları eyni contract-a çevirir.
 
-## Mövcud Aquastores strukturundan mərhələli keçid
+## Mövcud (mənbə) strukturdan mərhələli keçid
 
 1. Web və mobile response formatını vahidləşdirin.
 2. Global API exception renderer yaradıb controller `try/catch` təkrarını silin.

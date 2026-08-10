@@ -18,3 +18,9 @@ yarn-error.log
 /.idea
 /.vscode
 gopanel_version.json
+
+# Claude Code: .claude/settings.json və .claude/rules/ REPODA QALIR (paylaşılan qaydalar).
+# Yalnız şəxsi/lokal fayllar ignore olunur.
+.claude/settings.local.json
+.claude/worktrees/
+.claude/*.local.md

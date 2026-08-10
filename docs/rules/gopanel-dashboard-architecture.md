@@ -1,5 +1,10 @@
 # Gopanel Dashboard Arxitekturası
 
+> **Gopanel-də hazır olanlar:** stat kartı və trend hesablaması
+> `App\Support\Gopanel\StatCard`, dövr müqayisəsi
+> `App\Support\Gopanel\PeriodRange` siniflərindədir — faiz/ox/rəng yenidən
+> yazılmır. Bax: [shared-layer.md](../shared-layer.md).
+
 Bu sənəd başqa Laravel layihəsində işləyən developer və ya süni intellekt üçün reusable Dashboard implementasiya spesifikasiyasıdır. Model adları nümunədir. Hədəf layihədə `Listing`, `Tender` və ya `Company` olmaya bilər; onların yerinə layihənin real domen modelləri istifadə edilməlidir.
 
 Məqsəd ağır aggregate query-ləri ilkin HTML render-dən ayırmaq, dashboard widget-lərini müstəqil AJAX ilə yükləmək və controller/query/Blade/JavaScript məsuliyyətlərini aydın saxlamaqdır.

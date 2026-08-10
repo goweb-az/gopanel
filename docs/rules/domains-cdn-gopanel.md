@@ -1,70 +1,90 @@
-# Domains, CDN & Gopanel Deployment
+# Domenlər, CDN və GoPanel Deployment
 
-## A) Local Development
+> **Status:** deployment qaydası. Domen adları (`example.dev`) **nümunədir** —
+> hər layihədə öz domeni ilə əvəzlənir. Kod tərəfi Gopanel-də hazırdır:
+> `config/app.php` → `cdn_url` və `App\Support\Url\CdnUrl`.
 
-Localda subdomain lazım deyil. Bütün trafikr `http://aquastores.loc` üzərindən gedir.
+## A) Lokal iş mühiti
 
-### Local .env
+Lokalda subdomen lazım deyil — bütün trafik bir host üzərindən gedir.
+
+### Lokal `.env`
 
 ```env
-APP_URL=http://aquastores.loc
-API_URL=http://aquastores.loc
+APP_URL=http://gopanel.loc
 CDN_URL=
 ASSET_URL=
 GOPANEL_URL=
 ```
 
-`CDN_URL` boş qaldıqda bütün fayl/storage/assets URL-ləri avtomatik `APP_URL` ilə yaranır.
-`GOPANEL_URL` boş qaldıqda `GopanelHostMiddleware` host yoxlaması etmir — gopanel hər domainə cavab verir.
+`CDN_URL` **boş qaldıqda** bütün fayl/storage/assets URL-ləri avtomatik
+`APP_URL` ilə yaranır — `App\Support\Url\CdnUrl::base()` `app.cdn_url ?: app.url`
+oxuyur. Yəni lokalda heç nə konfiqurasiya etmək lazım deyil.
 
-### Local test URL-ləri
+`GOPANEL_URL` boş qaldıqda host yoxlaması **işləmir** — gopanel hər domenə
+cavab verir (lokalda istənilən budur).
 
-```
-http://aquastores.loc/api/...          → API endpoints
-http://aquastores.loc/gopanel          → Gopanel admin panel
-http://aquastores.loc/storage/...      → Storage files
-http://aquastores.loc/assets/...       → Public assets
+### Lokal test ünvanları
+
+```text
+http://gopanel.loc/            → sayt
+http://gopanel.loc/gopanel     → GoPanel admin
+http://gopanel.loc/storage/... → yüklənmiş fayllar
+http://gopanel.loc/assets/...  → statik fayllar
 ```
 
 ---
 
-## B) Production
+## B) Canlı (production)
 
-### Domain planı
+### Domen planı
 
-| Domain              | Rol                                      |
-|---------------------|------------------------------------------|
-| `api.aqustores.dev` | Laravel app — API endpoints              |
-| `cdn.aqustores.dev` | Static serving — /storage və /assets     |
-| `go.aqustores.dev`  | Laravel app — Gopanel admin panel        |
+| Domen | Rol |
+|---|---|
+| `example.dev` | Laravel app — sayt + API |
+| `cdn.example.dev` | Statik verilmə — `/storage` və `/assets` |
+| `go.example.dev` | Laravel app — GoPanel admin |
 
-Üç domain eyni Laravel `public/` folder-ə yönləndirilir.
-Nginx konfiqurasiyası ilə hər domain öz rolunu yerinə yetirir.
+Üç domen **eyni** Laravel `public/` qovluğuna yönləndirilir; rolları nginx
+konfiqurasiyası ayırır. Ayrı-ayrı deploy lazım deyil.
 
-### Production .env
+### Canlı `.env`
 
 ```env
-APP_URL=https://api.aqustores.dev
-API_URL=https://api.aqustores.dev
-CDN_URL=https://cdn.aqustores.dev
-ASSET_URL=https://cdn.aqustores.dev
-GOPANEL_URL=https://go.aqustores.dev
+APP_URL=https://example.dev
+CDN_URL=https://cdn.example.dev
+ASSET_URL=https://cdn.example.dev
+GOPANEL_URL=https://go.example.dev
 ```
 
-### Nginx konfiqurasiyası
+> ⚠️ **`CDN_URL` tək başına kifayət deyil.** `CdnUrl::storage()` `storage/`
+> prefiksi olmayan yolları `Storage::disk('public')->url()`-a ötürür, o isə
+> **diskin öz konfiqurasiyasına** baxır. CDN qoşulanda
+> `config/filesystems.php` → `disks.public.url` da eyni ünvanla uzlaşdırılır,
+> əks halda yüklənmiş fayllar köhnə domendə qalır və şəkillərin bir hissəsi
+> CDN-dən, bir hissəsi app serverindən gəlir.
+>
+> ```php
+> 'public' => [
+>     'driver' => 'local',
+>     'root'   => storage_path('app/public'),
+>     'url'    => env('CDN_URL', env('APP_URL')) . '/storage',
+>     'visibility' => 'public',
+> ],
+> ```
 
-#### api.aqustores.dev — Laravel API
+### Nginx — app (sayt + API)
 
 ```nginx
 server {
     listen 443 ssl;
-    server_name api.aqustores.dev;
+    server_name example.dev;
 
-    root /var/www/aquastores/public;
+    root /var/www/gopanel/public;
     index index.php;
 
-    ssl_certificate     /etc/ssl/aqustores.dev/fullchain.pem;
-    ssl_certificate_key /etc/ssl/aqustores.dev/privkey.pem;
+    ssl_certificate     /etc/ssl/example.dev/fullchain.pem;
+    ssl_certificate_key /etc/ssl/example.dev/privkey.pem;
 
     location / {
         try_files $uri $uri/ /index.php?$query_string;
@@ -79,20 +99,20 @@ server {
 }
 ```
 
-#### go.aqustores.dev — Gopanel Admin
+### Nginx — GoPanel
 
 ```nginx
 server {
     listen 443 ssl;
-    server_name go.aqustores.dev;
+    server_name go.example.dev;
 
-    root /var/www/aquastores/public;
+    root /var/www/gopanel/public;
     index index.php;
 
-    ssl_certificate     /etc/ssl/aqustores.dev/fullchain.pem;
-    ssl_certificate_key /etc/ssl/aqustores.dev/privkey.pem;
+    ssl_certificate     /etc/ssl/example.dev/fullchain.pem;
+    ssl_certificate_key /etc/ssl/example.dev/privkey.pem;
 
-    # Root-dan gopanel-ə yönləndir (optional)
+    # Kökdən panelə yönləndir (opsional)
     location = / {
         return 301 /gopanel;
     }
@@ -110,19 +130,19 @@ server {
 }
 ```
 
-#### cdn.aqustores.dev — Static file serving
+### Nginx — CDN (yalnız statik)
 
 ```nginx
 server {
     listen 443 ssl;
-    server_name cdn.aqustores.dev;
+    server_name cdn.example.dev;
 
-    ssl_certificate     /etc/ssl/aqustores.dev/fullchain.pem;
-    ssl_certificate_key /etc/ssl/aqustores.dev/privkey.pem;
+    ssl_certificate     /etc/ssl/example.dev/fullchain.pem;
+    ssl_certificate_key /etc/ssl/example.dev/privkey.pem;
 
     # /storage → storage/app/public
     location /storage/ {
-        alias /var/www/aquastores/storage/app/public/;
+        alias /var/www/gopanel/storage/app/public/;
         expires 30d;
         add_header Cache-Control "public, immutable";
         add_header Access-Control-Allow-Origin "*";
@@ -131,31 +151,41 @@ server {
 
     # /assets → public/assets
     location /assets/ {
-        alias /var/www/aquastores/public/assets/;
+        alias /var/www/gopanel/public/assets/;
         expires 30d;
         add_header Cache-Control "public, immutable";
         add_header Access-Control-Allow-Origin "*";
         try_files $uri =404;
     }
 
-    # Digər sorğular 404
+    # Qalan hər şey 404 - CDN domenində PHP İŞLƏMİR
     location / {
         return 404;
     }
 }
 ```
 
-### Gopanel host restriction
+**Niyə CDN blokunda PHP yoxdur:** eyni tətbiq üç domendə açıq olsa, sessiya
+cookie-si və CSRF token üç origin arasında qarışır; həmçinin CDN domenində
+işləyən PHP bütün keşləmə üstünlüyünü itirir. CDN yalnız fayl verir.
 
-`GopanelHostMiddleware` production-da yalnız `go.aqustores.dev` hostundan gopanel-ə girişə icazə verir.
+### GoPanel host məhdudiyyəti
 
+Canlıda panel **yalnız** öz subdomenindən açılmalıdır. Bunun üçün
+`GOPANEL_URL` yoxlayan middleware yazılır (`app/Http/Middleware/`):
+
+```text
+go.example.dev/gopanel  → ✓ açılır
+example.dev/gopanel     → 404
+cdn.example.dev/gopanel → 404
 ```
-go.aqustores.dev/gopanel   → ✓ açılır
-api.aqustores.dev/gopanel  → 404
-cdn.aqustores.dev/gopanel  → 404
-```
 
-Local mühitdə `GOPANEL_URL` boş olduğundan middleware işləmir.
+`GOPANEL_URL` boş olduqda middleware yoxlama etmir — lokalda panel hər hostda açılır.
+
+**Niyə vacibdir:** panelin ayrı origin-də olması PWA scope-larını ayırır, admin
+sessiya cookie-sini sayt sessiyasından təcrid edir və nginx səviyyəsində
+IP məhdudiyyəti (`config/custom/security.php` → `allowed_ips`) tətbiq etməyi
+asanlaşdırır.
 
 ### Storage symlink
 
@@ -163,6 +193,21 @@ Local mühitdə `GOPANEL_URL` boş olduğundan middleware işləmir.
 php artisan storage:link
 ```
 
-Bu əmr `public/storage → storage/app/public` symlink yaradır.
-CDN server blockunda `alias` istifadə etdiyimiz üçün symlink CDN tərəfindən lazım deyil,
-amma Laravel-in özü üçün lazımdır (`storage:link` olmasa `public/storage/` mövcud olmayacaq).
+`public/storage → storage/app/public` symlink-i yaradır. CDN blokunda `alias`
+işlədildiyi üçün CDN-ə lazım deyil, amma **Laravel-in özünə lazımdır** —
+symlink olmasa `public/storage/` mövcud olmayacaq və CDN söndürüləndə bütün
+fayl URL-ləri 404 verəcək.
+
+### Deploy sonrası yoxlama siyahısı
+
+```bash
+php artisan config:clear && php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan storage:link
+php artisan migrate --force
+php artisan db:seed --class=PermissionSeeder --force
+```
+
+Sonra brauzerdə: şəkil CDN domenindən gəlirmi (`view-source` → `cdn.` prefiksi),
+panel yalnız `go.` subdomenində açılırmı, `cdn.example.dev/gopanel` 404 verirmi.
