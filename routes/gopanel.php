@@ -2,15 +2,16 @@
 
 use App\Http\Controllers\Gopanel\Activity\FileLogController;
 use App\Http\Controllers\Gopanel\Activity\ActivityLogController;
+use App\Http\Controllers\Gopanel\System\SystemStatusController;
 use App\Http\Controllers\Gopanel\System\UpdateController;
 use App\Http\Controllers\Gopanel\Admins\AdminController;
 use App\Http\Controllers\Gopanel\Admins\ProfileController;
 use App\Http\Controllers\Gopanel\Admins\RoleController;
 use App\Http\Controllers\Gopanel\AuthController;
+use App\Http\Controllers\Gopanel\Backup\BackupController;
 use App\Http\Controllers\Gopanel\AboutUsController;
 use App\Http\Controllers\Gopanel\BlogController;
 use App\Http\Controllers\Gopanel\CategoryController;
-use App\Http\Controllers\Gopanel\Communications\MessageTemplateController;
 use App\Http\Controllers\Gopanel\DashboardController;
 use App\Http\Controllers\Gopanel\DatatableController;
 use App\Http\Controllers\Gopanel\Common\GeneralController;
@@ -21,10 +22,8 @@ use App\Http\Controllers\Gopanel\Seo\AnalyticsDetailController;
 use App\Http\Controllers\Gopanel\Seo\SeoAnalyticsController;
 use App\Http\Controllers\Gopanel\Seo\SiteRedirectController;
 use App\Http\Controllers\Gopanel\Seo\LlmsTxtController;
-use App\Http\Controllers\Gopanel\Settings\MailSettingsController;
 use App\Http\Controllers\Gopanel\Settings\MenuController;
 use App\Http\Controllers\Gopanel\Settings\SiteSettingsController;
-use App\Http\Controllers\Gopanel\Settings\SubscriptionDurationController;
 use App\Http\Controllers\Gopanel\ProductController;
 use App\Http\Controllers\Gopanel\ServiceController;
 use App\Http\Controllers\Gopanel\SliderController;
@@ -217,7 +216,9 @@ Route::group(['middleware' => 'gopanel'], function () {
         Route::get('/', [CategoryController::class, 'index'])->name('index');
         Route::get('/get/form/{item?}', [CategoryController::class, 'getForm'])->name('get.form');
         Route::post('/save/{item?}', [CategoryController::class, 'save'])->name('save');
-        Route::post('/move', [CategoryController::class, 'moveCategory'])->name('move');
+        Route::post('/move', [CategoryController::class, 'moveCategory'])
+            ->name('move')
+            ->middleware('can:gopanel.categories.move');
     });
 
     //Blog
@@ -252,20 +253,6 @@ Route::group(['middleware' => 'gopanel'], function () {
         Route::post('/save/{item?}', [SliderController::class, 'save'])->name('save');
     });
 
-    //Contact
-    Route::prefix('contact')->name("contact.")->group(function () {
-        Route::prefix('contact-info')->name("contact-info.")->group(function () {
-            Route::get('/{item?}', [ContactInfoController::class, 'index'])->name('index');
-            Route::post('/save/{item?}', [ContactInfoController::class, 'save'])->name('save.form');
-        });
-
-        Route::prefix('socials')->name("socials.")->group(function () {
-            Route::get('/', [SocialController::class, 'index'])->name('index');
-            Route::get('/get/form/{item?}', [SocialController::class, 'getForm'])->name('get.form');
-            Route::post('/save/{item?}', [SocialController::class, 'save'])->name('save');
-        });
-    });
-
     //Activity
     Route::prefix('activity')->name("activity.")->group(function () {
         //tarixce
@@ -287,6 +274,26 @@ Route::group(['middleware' => 'gopanel'], function () {
             Route::get('/users', [FileLogController::class, 'getUsers'])->name('users');
         });
     });
+
+    // Backup - arxivlər `storage/app/backups` altındadır, endirmə yalnız buradan
+    Route::prefix('backup')->name("backup.")->group(function () {
+        Route::get('/', [BackupController::class, 'index'])
+            ->name('index')
+            ->middleware('can:gopanel.backup.index');
+        Route::post('/start', [BackupController::class, 'start'])->name('start');
+        Route::get('/status', [BackupController::class, 'status'])
+            ->name('status')
+            ->middleware('can:gopanel.backup.index');
+        Route::get('/download/{item}', [BackupController::class, 'download'])->name('download');
+        Route::post('/delete/{item}', [BackupController::class, 'delete'])->name('delete');
+    });
+
+    // Sistem vəziyyəti - serverin daxili göstəricilərini açır, ona görə
+    // icazə həm burada, həm də controller-də yoxlanılır
+    Route::prefix('system-status')->name("system-status.")->group(function () {
+        Route::get('/', [SystemStatusController::class, 'index'])->name('index');
+        Route::get('/data', [SystemStatusController::class, 'data'])->name('data');
+    })->middleware('can:gopanel.system-status.index');
 
     // System
     Route::prefix('system')->name("system.")->group(function () {

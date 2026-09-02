@@ -15,7 +15,10 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        //
+        // Policy-lər `App\Policies\` altındadır. Adlandırma qaydası standartdır
+        // (`gopanel.<modul>.index|add|edit|delete`), ona görə əksər modul üçün
+        // `CrudPolicy`-dən törəmə bir sinif kifayət edir.
+        \App\Models\Backup\Backup::class => \App\Policies\Gopanel\BackupPolicy::class,
     ];
 
     /**

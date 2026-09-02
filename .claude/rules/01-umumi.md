@@ -78,9 +78,14 @@ görürdü - ayrılanda həmin yerlərə `use` əlavə edilməlidir.
 
 ### 2.2 Boş qovluqlar
 
-`app/Queries`, `app/DTOs`, `app/Contracts`, `app/Policies`, `app/Rules` və s.
-boş olsa da `.gitkeep` ilə repoda saxlanılır - struktur ilk gündən görünsün,
-hər layihədə yenidən "haraya yazım?" sualı yaranmasın.
+Qovluq boş olsa da `.gitkeep` ilə repoda saxlanılır - struktur ilk gündən
+görünsün, hər layihədə yenidən "haraya yazım?" sualı yaranmasın.
+
+Hazırda boş olanlar: `app/Observers`, `app/Http/Resources`,
+`app/Queries/{Api,Site}`, `app/Enums/Common/Status`, `app/Support/Security`.
+Qalanlarında artıq işlək siniflər var - yeni sinif yazmazdan əvvəl
+[docs/shared-layer.md](../../docs/shared-layer.md) oxunur, çox güman lazım olan
+artıq mövcuddur.
 
 ## 3. Blade-də məntiq yoxdur
 
@@ -142,6 +147,8 @@ Düymənin gizlədilməsi tək müdafiə deyil - server tərəfdə (FormRequest/
 
 - Yazılan hər funksionallıq test edilir: `php artisan test`.
 - Yeni Feature testi öz layer qovluğuna düşür: `tests/Feature/{Gopanel,Site,Api}/`.
+  `tests/Unit/` yalnız kənar asılılığı olmayan saf siniflər üçündür - modul
+  testləri (model + route + icazə + view) Feature sayılır.
 - JS dəyişəndə ən azı `node --check`, PHP dəyişəndə `php -l`.
 - Testi "keçsin deyə" məntiq dəyişdirilmir - test real davranışı yoxlayır.
 

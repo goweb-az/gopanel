@@ -2,19 +2,16 @@
 
 namespace App\Http\Controllers\Gopanel;
 
-use App\Helpers\Gopanel\FileUploader;
-use App\Helpers\Gopanel\Site\GoPanelSiteHelper;
-use App\Helpers\Gopanel\Site\PageMetaDataHelper;
-use App\Helpers\Gopanel\TranslationHelper;
 use App\Http\Controllers\GoPanelController;
+use App\Http\Requests\Gopanel\Site\BlogSaveRequest;
 use App\Models\Site\Blog;
+use App\Services\Gopanel\Content\ContentSaveService;
 use Exception;
 use Illuminate\Http\Request;
 
 class BlogController extends GoPanelController
 {
-
-    public function __construct()
+    public function __construct(private readonly ContentSaveService $content)
     {
         parent::__construct();
     }
@@ -36,23 +33,13 @@ class BlogController extends GoPanelController
     }
 
 
-    public function save(Blog $item, Request $request)
+    public function save(Blog $item, BlogSaveRequest $request)
     {
         try {
-            $data = $request->except(['_token']);
             $message = !is_null($item->id) ? "Məlumat uğurla dəyişdirildi!" : "Məlumat uğurla yaradıldı!";
-            if ($request->hasFile("image")) {
-                $file = $request->file('image');
-                $fileName = FileUploader::nameGenerate($data, 'blog');
-                $data['image'] = FileUploader::toPublic($file, $item->getTable(), $fileName);
-            }
-            $item = $this->crudHelper->saveInstance($item, $data);
-            if (isset($item->id)) {
-                TranslationHelper::create($item, $request);
-                $metaDataInput = $request->input('meta', []);
-                $metaFiles = $request->file('meta', []);
-                PageMetaDataHelper::save($item, $metaDataInput, $metaFiles);
-            }
+
+            $item = $this->content->save($item, $request->payload(), $request->fileFields());
+
             $this->response['redirect'] = isset($item->id) ? route("gopanel.blog.index") : false;
             $this->success_response($item, $message);
         } catch (Exception $e) {

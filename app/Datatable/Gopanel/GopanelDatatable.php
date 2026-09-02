@@ -4,13 +4,11 @@
 namespace App\Datatable\Gopanel;
 
 use App\Models\Gopanel\Admin;
-use App\Models\User\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
 
 
@@ -95,8 +93,6 @@ abstract class GopanelDatatable
         $allRecordsCount = $this->baseQueryScope()->count();
         $filteredRecordsCount = $this->query()->count();
         $mainQuery          = $this->query();
-        // $mainQueryCustom    =  $mainQuery;
-        // dd($mainQuery);
         $response = [];
 
 
@@ -105,7 +101,6 @@ abstract class GopanelDatatable
             $mainQuery->take($requestQuery['perPage']);
         }
 
-        // $mainQuery->orderBy($mainQuery->getModel()->getTable() . "." . $requestQuery['columnName'], $requestQuery['columnSort']);
         $this->order($mainQuery, $requestQuery['columnName'], $requestQuery['columnSort']);
 
         if ($requestQuery['request']->has('sumFiltered')) {
@@ -113,17 +108,14 @@ abstract class GopanelDatatable
             $response['sumfilteredAzn'] = $mainQuery->take($requestQuery['perPage'])->get()->sum("azn");
         }
 
-        if (request()->has('dumpsql')) {
-            DB::enableQueryLog();
-            $mainQuery->get();
-            dd(DB::getQueryLog());
-        }
+        // Qeyd: burada `?dumpsql` ilə SQL-i ekrana verən debug bloku vardı.
+        // Silindi - istənilən istifadəçi ünvana parametr əlavə etməklə
+        // cədvəlin sorğusunu və struktur məlumatını görə bilirdi.
+
         $response["draw"] = $requestQuery['draw'];
         $response["recordsTotal"] = $allRecordsCount;
         $response["recordsFiltered"] = $filteredRecordsCount;
         $response["data"] = $this->processRecords($mainQuery->get());
-
-        // dd($response);
 
         return response()->json($response);
     }

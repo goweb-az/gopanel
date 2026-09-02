@@ -2,26 +2,28 @@
 
 namespace App\Http\Controllers\Gopanel;
 
-use App\Helpers\Gopanel\FileUploader;
-use App\Helpers\Gopanel\TranslationHelper;
 use App\Http\Controllers\GoPanelController;
+use App\Http\Requests\Gopanel\Site\SliderSaveRequest;
 use App\Models\Site\Slider;
+use App\Queries\Gopanel\Site\SliderQuery;
+use App\Services\Gopanel\Content\ContentSaveService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 
 class SliderController extends GoPanelController
 {
-
-    public function __construct()
-    {
+    public function __construct(
+        private readonly ContentSaveService $content,
+        private readonly SliderQuery $query,
+    ) {
         parent::__construct();
     }
 
 
     public function index(Request $request)
     {
-        $sliders  = Slider::orderBy('sort_order', 'ASC')->get();
+        $sliders  = $this->query->ordered();
         $modelKey = Slider::class;
 
         return view('gopanel.pages.slider.index', compact('sliders', 'modelKey'));
@@ -43,19 +45,12 @@ class SliderController extends GoPanelController
     }
 
 
-    public function save(Slider $item, Request $request)
+    public function save(Slider $item, SliderSaveRequest $request)
     {
         try {
-            $data       = $request->except(['_token']);
-            $message    = !is_null($item->id) ? "Məlumat uğurla dəyişdirildi!" : "Məlumat uğurla yaradıldı!";
-            if ($request->hasFile("image")) {
-                $file               = $request->file('image');
-                $fileName           = FileUploader::nameGenerate($data, 'slider');
-                $data['image']      = FileUploader::toPublic($file, $item->getTable(), $fileName);
-            }
-            $item       = $this->crudHelper->saveInstance($item, $data);
-            if (isset($item->id))
-                TranslationHelper::create($item, $request);
+            $message = !is_null($item->id) ? "Məlumat uğurla dəyişdirildi!" : "Məlumat uğurla yaradıldı!";
+
+            $item = $this->content->save($item, $request->payload(), $request->fileFields());
 
             $this->success_response($item, $message);
         } catch (\Exception $e) {

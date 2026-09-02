@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Gopanel\Seo;
 
-
 use App\Http\Controllers\GoPanelController;
+use App\Http\Requests\Gopanel\Seo\SeoAnalyticsSaveRequest;
 use App\Models\Seo\SeoAnalytics;
-use Exception;
+use App\Queries\Gopanel\Common\SingleRecordQuery;
+use App\Repositories\BaseRepository;
 use Illuminate\Http\Request;
 
 class SeoAnalyticsController extends GoPanelController
 {
-
-    public function __construct()
+    public function __construct(private readonly BaseRepository $repository)
     {
         parent::__construct();
     }
@@ -19,7 +19,8 @@ class SeoAnalyticsController extends GoPanelController
 
     public function index(Request $request)
     {
-        $item = SeoAnalytics::latest()->first() ?? new SeoAnalytics();
+        $item = (new SingleRecordQuery(SeoAnalytics::class))->currentOrNew();
+
         $fields = [
             'head'       => 'Head',
             'body'       => 'Body',
@@ -28,28 +29,22 @@ class SeoAnalyticsController extends GoPanelController
             'ai_txt'     => 'Ai txt',
             'other'      => 'Digər',
         ];
+
         return view("gopanel.pages.seo.seo-analytics.index", compact("item", "fields"));
     }
 
 
-
-    public function save(SeoAnalytics $item, Request $request)
+    public function save(SeoAnalytics $item, SeoAnalyticsSaveRequest $request)
     {
         try {
-            $message    = !is_null($item->id) ? "Məlumat uğurla dəyişdirildi!" : "Məlumat uğurla yaradıldı!";
-            $this->saveData($item, $request);
+            $message = !is_null($item->id) ? "Məlumat uğurla dəyişdirildi!" : "Məlumat uğurla yaradıldı!";
+
+            $item = $this->repository->save($item, $request->payload()->attributes);
+
             $this->success_response($item, $message);
         } catch (\Exception $e) {
             $this->response['message']   .= $e->getMessage();
         }
         return $this->response_json();
-    }
-
-
-    private function saveData($item, $request)
-    {
-        $data       = $request->except(['_token']);
-        $item  = $this->crudHelper->saveInstance($item, $data);
-        return $item;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Feature\Gopanel;
 
 use App\Models\Site\Product;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -66,9 +66,16 @@ class ProductModuleTest extends TestCase
     {
         $controller = file_get_contents(base_path('app/Http/Controllers/Gopanel/ProductController.php'));
 
-        $this->assertStringContainsString('TranslationHelper::create', $controller);
-        $this->assertStringContainsString('PageMetaDataHelper::save', $controller);
+        $this->assertStringContainsString('$this->content->save(', $controller);
         $this->assertStringContainsString("route('gopanel.products.index')", $controller);
+
+        // Tərcümə + meta yazılışı ortaq servisdədir
+        $service = file_get_contents(base_path('app/Services/Gopanel/Content/ContentSaveService.php'));
+        $this->assertStringContainsString('TranslationHelper::fromInput', $service);
+        $this->assertStringContainsString('PageMetaDataHelper::save', $service);
+
+        // Endirim qiymətdən böyük ola bilməz
+        $this->assertContains('lte:price', (new \App\Http\Requests\Gopanel\Site\ProductSaveRequest())->rules()['discount']);
     }
 
     public function test_product_datatable_columns_match_expected_layout(): void

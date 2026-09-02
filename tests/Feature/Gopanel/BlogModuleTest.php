@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Feature\Gopanel;
 
 use App\Models\Site\Blog;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -37,13 +37,33 @@ class BlogModuleTest extends TestCase
         $this->assertStringContainsString('gopanel.component.meta', $form);
     }
 
-    public function test_blog_controller_uses_translation_and_meta_helpers(): void
+    public function test_blog_controller_delegates_saving_to_content_service(): void
     {
         $controller = file_get_contents(base_path('app/Http/Controllers/Gopanel/BlogController.php'));
+        $service    = file_get_contents(base_path('app/Services/Gopanel/Content/ContentSaveService.php'));
 
-        $this->assertStringContainsString('TranslationHelper::create', $controller);
-        $this->assertStringContainsString('PageMetaDataHelper::save', $controller);
+        // Controller nazikdir: yazma məntiqi burada olmamalıdır
+        $this->assertStringContainsString('ContentSaveService', $controller);
+        $this->assertStringContainsString('$this->content->save(', $controller);
+        $this->assertStringNotContainsString('FileUploader::', $controller);
         $this->assertStringContainsString("redirect'] = isset(\$item->id) ? route(\"gopanel.blog.index\")", $controller);
+
+        // Tərcümə və SEO meta yazılışı ortaq servisdədir
+        $this->assertStringContainsString('TranslationHelper::fromInput', $service);
+        $this->assertStringContainsString('PageMetaDataHelper::save', $service);
+    }
+
+    public function test_blog_save_request_validates_and_declares_image_field(): void
+    {
+        $request = new \App\Http\Requests\Gopanel\Site\BlogSaveRequest();
+
+        $this->assertArrayHasKey('title', $request->rules());
+        $this->assertArrayHasKey('image', $request->rules());
+
+        $fields = $request->fileFields();
+        $this->assertCount(1, $fields);
+        $this->assertSame('image', $fields[0]->input);
+        $this->assertSame('image', $fields[0]->column);
     }
 
     public function test_blog_permissions_and_sidebar_are_registered(): void

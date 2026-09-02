@@ -4,15 +4,16 @@ namespace App\Http\Controllers\Gopanel\Seo;
 
 use App\Enums\Gopanel\Seo\RedirectMatchTypeEnum;
 use App\Http\Controllers\GoPanelController;
+use App\Http\Requests\Gopanel\Seo\SiteRedirectSaveRequest;
 use App\Models\Seo\SiteRedirect;
+use App\Repositories\BaseRepository;
 use Exception;
-use Illuminate\Support\Facades\View;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\View;
 
 class SiteRedirectController extends GoPanelController
 {
-
-    public function __construct()
+    public function __construct(private readonly BaseRepository $repository)
     {
         parent::__construct();
     }
@@ -40,12 +41,13 @@ class SiteRedirectController extends GoPanelController
     }
 
 
-    public function save(SiteRedirect $item, Request $request)
+    public function save(SiteRedirect $item, SiteRedirectSaveRequest $request)
     {
         try {
-            $data       = $request->except(['_token']);
-            $message    = !is_null($item->id) ? "Məlumat uğurla dəyişdirildi!" : "Məlumat uğurla yaradıldı!";
-            $item       = $this->crudHelper->saveInstance($item, $data);
+            $message = !is_null($item->id) ? "Məlumat uğurla dəyişdirildi!" : "Məlumat uğurla yaradıldı!";
+
+            $item = $this->repository->save($item, $request->payload()->attributes);
+
             $this->success_response($item, $message);
         } catch (\Exception $e) {
             $this->response['message']   .= $e->getMessage();

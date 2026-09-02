@@ -38,7 +38,9 @@ project overview and quick installation.
 - [Shared Layer (Support / Services / Queries)](shared-layer.md)  
   The project-agnostic reusable layer: cache (`CacheService` + `CacheKey`), mail, SMS,
   bulk actions, export skeleton, queue monitor, date helpers, CDN URLs, panel stat cards,
-  and the `config/custom/*` files that drive them.  
+  the write layer (`BaseRepository`), the shared content-save flow
+  (`GopanelFormRequest` + `ContentPayload` + `ContentSaveService`), `CrudPolicy`,
+  `RendersRichCells`, and the `config/custom/*` files that drive them.  
   **Read this before writing a new helper — it probably already exists.**
 
 - [Database Structure](database-structure.md)  
@@ -72,6 +74,19 @@ project overview and quick installation.
   MaxMind GeoLite2 `.mmdb` files, expected paths, restoring from backups, `--force`.
 
 ## Operations
+
+- [Backup (panel arxivi)](backup.md)  
+  Database and file backups from the panel: incremental file archives, queue jobs,
+  `mysqldump` without exposing the password, permissions, restore steps, and the
+  most common failure causes.
+
+- [System Status (monitor)](system-status.md)  
+  Live server monitor: CPU / RAM / disk gauges, queue and failed jobs, the cron
+  heartbeat that proves `schedule:run` is actually firing, DB and storage stats.
+
+- [Backup file permissions](BACKUP_PERMISSIONS.md)  
+  Why archive folders need `2770` + setgid on Linux, what breaks with `0700` or
+  `2750`, and the one-off fix commands for the server.
 
 - [Updater System](updater.md)  
   `gopanel_updates.json`, GitHub update checks, action types, backup behavior.

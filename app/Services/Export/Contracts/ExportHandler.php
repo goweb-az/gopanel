@@ -4,24 +4,16 @@ declare(strict_types=1);
 
 namespace App\Services\Export\Contracts;
 
-use App\Services\Export\ExportContext;
-use App\Services\Export\ExportResult;
+use App\Contracts\Export\ExportHandler as ExportHandlerContract;
 
 /**
- * Bir export tipini hazırlayan strategiya.
+ * @deprecated Yeni kodda `App\Contracts\Export\ExportHandler` işlədilir.
  *
- * Yeni export tipi əlavə etmək üçün:
- *  1) Bu interfeysi implement edən sinif yaz → `app/Services/Export/Handlers/`.
- *  2) `app/Enums/Export/ExportType`-a case + `handlerClass()` sətri əlavə et
- *     (və ya `config/custom/export.php` → `handlers` xəritəsinə yaz).
- *
- * Export-u işlədən job/controller-ə TOXUNMAQ LAZIM DEYİL - o, handler-i
- * xəritədən tapıb çağırır.
+ * Müqavilə `app/Contracts/` altına köçürülüb. Bu interfeys silinmir, çünki
+ * starter üzərində qurulmuş layihələrdə onu implement edən handler-lər var -
+ * namespace dəyişsəydi həmin layihələr sınardı. Törəmə interfeys olduğu üçün
+ * köhnə handler yeni müqaviləyə də uyğun gəlir.
  */
-interface ExportHandler
+interface ExportHandler extends ExportHandlerContract
 {
-    /**
-     * Faylı yaradır və konteksdəki `filePath`-ə yazır.
-     */
-    public function handle(ExportContext $context): ExportResult;
 }

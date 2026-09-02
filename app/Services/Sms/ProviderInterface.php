@@ -2,20 +2,17 @@
 
 namespace App\Services\Sms;
 
+use App\Contracts\Sms\SmsProvider;
+
 /**
- * SMS provayderi (Lsim, Twilio, Atl...) - infrastruktur adapteri.
+ * @deprecated Yeni kodda `App\Contracts\Sms\SmsProvider` işlədilir.
  *
- * Provayder YALNIZ göndərməklə məşğuldur: jurnal, limit, mətn təmizləmə və
- * xəta siyasəti `SmsService`-dədir. Yeni provayder yazanda `send()` uğursuz
- * olarsa exception atmalıdır - `false` qaytarmaq gizli xəta yaradır.
+ * Bu interfeys yalnız GERİYƏ UYĞUNLUQ üçün saxlanılır: starter üzərində
+ * qurulmuş layihələrdə artıq `implements ProviderInterface` yazan provayderlər
+ * var və onların namespace-i dəyişəndə həmin layihələr sınır. Ona görə sinif
+ * silinmir - müqavilə `Contracts`-a köçürülüb, bu isə ondan törəyir.
+ * Beləliklə köhnə provayder avtomatik olaraq `SmsProvider` də sayılır.
  */
-interface ProviderInterface
+interface ProviderInterface extends SmsProvider
 {
-    /**
-     * @param  string  $phone    Beynəlxalq formatda nömrə (+994...)
-     * @param  string  $message  Göndəriləcək mətn (artıq latına çevrilmiş)
-     *
-     * @throws \Throwable Göndəriş alınmadıqda
-     */
-    public function send($phone, $message);
 }

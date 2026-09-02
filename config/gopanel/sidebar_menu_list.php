@@ -161,6 +161,18 @@ return [
         'can'   => 'gopanel.activity.file-logs.index',
     ],
     [
+        'icon' => '<i class="bx bx-shield-quarter"></i>',
+        'title' => 'Backup',
+        'route' => 'gopanel.backup.index',
+        'can'   => 'gopanel.backup.index',
+    ],
+    [
+        'icon' => '<i class="bx bx-pulse"></i>',
+        'title' => 'Sistem vəziyyəti',
+        'route' => 'gopanel.system-status.index',
+        'can'   => 'gopanel.system-status.index',
+    ],
+    [
         'icon' => '<i class="bx bx-revision"></i>',
         'title' => 'Yeniləmələr',
         'route' => 'gopanel.system.updates.index',

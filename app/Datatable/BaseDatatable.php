@@ -3,13 +3,11 @@
 
 namespace App\Datatable;
 
-use App\Models\User\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
 
 
@@ -86,8 +84,6 @@ abstract class BaseDatatable
         $allRecordsCount        = $this->baseQueryScope()->count();
         $filteredRecordsCount   = $this->query()->count();
         $mainQuery              = $this->query();
-        // $mainQueryCustom    =  $mainQuery;
-        // dd($mainQuery);
         $response = [];
 
 
@@ -101,18 +97,15 @@ abstract class BaseDatatable
         } else {
             $mainQuery->orderBy("id", "DESC");
         }
-        // Dump sql
-        if (request()->has('dumpsql')) {
-            DB::enableQueryLog();
-            $mainQuery->get();
-            dd(DB::getQueryLog());
-        }
+        // Qeyd: burada `?dumpsql` ilə SQL-i ekrana verən debug bloku vardı.
+        // Silindi - istənilən istifadəçi ünvana parametr əlavə etməklə
+        // cədvəlin sorğusunu və struktur məlumatını görə bilirdi.
+        // Sorğuya baxmaq lazımdırsa `LogService` və ya lokal `DB::listen()`.
+
         $response["draw"] = $requestQuery['draw'];
         $response["recordsTotal"] = $allRecordsCount;
         $response["recordsFiltered"] = $filteredRecordsCount;
         $response["data"] = $this->processRecords($mainQuery->get());
-
-        // dd($response);
 
         return response()->json($response);
     }
