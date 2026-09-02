@@ -10,38 +10,51 @@ deyil - yeni layihədə olduğu kimi işləyir.
 
 ```text
 app/
-├── Contracts/          interfeyslər (infrastruktur adapterləri)          [boş]
-├── DTOs/               typed data transfer obyektləri                    [boş]
+├── Contracts/          interfeyslər (infrastruktur adapterləri)
+│   ├── Export/         ExportHandler
+│   └── Sms/            SmsProvider
+├── DTOs/               typed data transfer obyektləri
+│   └── Gopanel/        ContentPayload, FileField
 ├── Datatable/          server-side cədvəl sinifləri
+│   └── Gopanel/Concerns/  RendersRichCells (hüceyrə qəlibləri)
 ├── Enums/              sabit dəyər dəstləri
 │   └── Common/Status/                                                    [boş]
 ├── Helpers/            kiçik köməkçilər + global helpers.php
+│   └── Gopanel/        ServerMetricsHelper (CPU/RAM/disk/uptime)
 ├── Http/
+│   ├── Requests/Gopanel/  GopanelFormRequest (bazа) + modul sorğuları
 │   └── Resources/      API cavab formatı                                 [boş]
-├── Jobs/               növbəyə düşən işlər                               [boş]
+├── Jobs/               növbəyə düşən işlər
+│   └── Backup/         BackupJob, CreateDatabaseBackup, CreateFilesBackup
 ├── Observers/          model event dinləyiciləri                         [boş]
-├── Policies/           icazə qərarları                                   [boş]
+├── Policies/           icazə qərarları
+│   ├── BasePolicy      is_super qaydası
+│   ├── CrudPolicy      index/add/edit/delete → icazə adları
+│   └── Gopanel/        BackupPolicy
 ├── Queries/            BÜTÜN böyük SELECT-lər
 │   ├── Api/                                                              [boş]
-│   ├── Gopanel/                                                          [boş]
+│   ├── Gopanel/        Common/SingleRecordQuery, Navigation, Site, Contact, Backup, System
 │   └── Site/                                                             [boş]
 ├── Repositories/       YALNIZ insert / update / delete
-├── Rules/              xüsusi validasiya qaydaları                       [boş]
+│   ├── BaseRepository  fillable üzrə yazma, delete, forceDelete
+│   └── Gopanel/        BackupRepository
+├── Rules/              xüsusi validasiya qaydaları
+│   └── TranslatedRequired
 ├── Services/           iş məntiqi, tranzaksiyalar, xarici API
 │   ├── Activity/       LogService (fayl jurnalı)
 │   ├── Bulk/           BulkActionService (abstract)
 │   ├── Cache/          CacheService
-│   ├── Export/         ExportContext, ExportResult, Contracts/ExportHandler
+│   ├── Export/         ExportContext, ExportResult
 │   ├── Mail/           MailService + Templates/
 │   ├── Queue/          QueueMonitorService
-│   ├── Sms/            SmsService + ProviderInterface + Providers/
-│   ├── Gopanel/        panelə xas servislər
+│   ├── Sms/            SmsService + Providers/
+│   ├── Gopanel/        Content/, Backup/, System/, Navigation/, Settings/, Seo/
 │   └── Site/           sayt tərəfi servisləri
 ├── Support/            saf, vəziyyətsiz primitivlər
 │   ├── Cache/          CacheKey
 │   ├── Date/           DayRange, Duration, MonthNames
 │   ├── Export/         ExportBranding
-│   ├── Files/                                                            [boş]
+│   ├── Files/          ByteSize
 │   ├── Gopanel/        StatCard, PeriodRange, PanelIconMap
 │   ├── Security/                                                         [boş]
 │   └── Url/            CdnUrl
@@ -159,8 +172,13 @@ Bazaya da yazmaq istəyirsənsə (`sms_logs` cədvəli varsa):
 $sms->setLogger(fn (array $row) => SmsLog::create($row));
 ```
 
-Yeni provayder: `ProviderInterface` implement edilir, uğursuzluqda **exception atılır**
-(`false` qaytarmaq gizli xəta yaradır).
+Yeni provayder: `App\Contracts\Sms\SmsProvider` implement edilir, uğursuzluqda
+**exception atılır** (`false` qaytarmaq gizli xəta yaradır).
+
+> Köhnə `App\Services\Sms\ProviderInterface` silinməyib - o, artıq
+> `SmsProvider`-dən törəyir. Beləliklə starter üzərində qurulmuş layihələrdəki
+> mövcud provayderlər olduğu kimi işləyir. Eyni yanaşma `ExportHandler` üçün də
+> tətbiq olunub.
 
 ---
 
@@ -361,9 +379,134 @@ model bayrağı config-dən üstündür.
 
 ---
 
-## 11. Query qatı
+## 11. Yazma qatı - `BaseRepository`
 
-`app/Queries/{Gopanel,Site,Api}/` boşdur - hər layihə öz sorğularını yazır.
+`app/Repositories/BaseRepository.php` - **yalnız** insert / update / delete.
+
+```php
+use App\Repositories\BaseRepository;
+
+$item = app(BaseRepository::class)->save($item, ['title' => 'Yeni ad']);
+```
+
+- yalnız modelin `fillable`-ında olan **skalyar** açarlar mənimsədilir; massivlər
+  (`title[az]`, `meta[...]`) ayrıca layerdə emal olunur;
+- `delete()` modeldə `SoftDeletes` varsa arxivləmədir, `forceDelete()` isə
+  sətri tamamilə silir (toplu rejimdə çağırılmır);
+- burada SELECT **yoxdur**.
+
+Köhnə `CrudHelper::saveInstance()` imzası saxlanılıb - iş bu sinifə ötürülür,
+ona görə starter üzərində qurulmuş layihələr sınmır.
+
+---
+
+## 12. Məzmun formalarının saxlanması - `ContentSaveService`
+
+Bloq, kateqoriya, xidmət, məhsul, slayder, «Haqqımızda»... hamısında eyni
+ardıcıllıq var: **fayl yüklə → sütunları yaz → tərcümələri yaz → SEO meta yaz**.
+Bu ardıcıllıq tək yerdədir.
+
+```php
+// FormRequest formanın şəklini bilir
+$item = $this->content->save($item, $request->payload(), $request->fileFields());
+```
+
+| Sinif | Rolu |
+|---|---|
+| `App\DTOs\Gopanel\ContentPayload` | `attributes` / `translations` / `meta` / `files` - dörd axın ayrı |
+| `App\DTOs\Gopanel\FileField` | hansı input hansı sütuna düşür (`icon_image` → `icon`) |
+| `App\Http\Requests\Gopanel\GopanelFormRequest` | icazə + validasiya + `payload()` |
+| `App\Services\Gopanel\Content\ContentSaveService` | ardıcıllığın özü |
+
+**Nə həll edir:** əvvəllər bu blok yeddi controller-də kopyalanmışdı və hər
+nüsxədə bir addım fərqli idi - kimisi meta saxlamırdı, kimisi şəkil
+seçilməyəndə köhnə yolu boş dəyərlə əvəz edirdi.
+
+Yeni modul üçün:
+
+```php
+class NewsSaveRequest extends GopanelFormRequest
+{
+    protected string $module = 'gopanel.news';
+    protected array $translatedFields = ['title', 'description', 'slug'];
+    protected array $fileInputs = ['image'];
+
+    public function rules(): array
+    {
+        return ['title' => ['required', 'array', new TranslatedRequired()]];
+    }
+
+    public function fileFields(): array
+    {
+        return [new FileField(input: 'image', column: 'image', prefix: 'news')];
+    }
+}
+```
+
+`ability()` override edilməsə `.add` / `.edit` avtomatik seçilir. Tək sətirli
+səhifələrdə (Haqqımızda, Əlaqə, Sayt tənzimləmələri) həmişə `.edit` işlədilir.
+
+---
+
+## 13. İcazə qatı - `CrudPolicy`
+
+```php
+class NewsPolicy extends CrudPolicy
+{
+    protected string $module = 'gopanel.news';   // hamısı bu qədər
+}
+```
+
+`viewAny/view → .index`, `create → .add`, `update → .edit`, `delete → .delete`.
+`is_super` admin `BasePolicy::before()` ilə keçir - `Gate::before` işləməyən
+yerlərdə də (job içində `Gate::forUser(...)`) davranış eyni olsun deyə.
+
+Policy `app/Providers/AuthServiceProvider.php` → `$policies` massivində
+qeydiyyatdan keçir (avtomatik kəşf `App\Policies\<Model>Policy` gözlədiyi üçün
+alt qovluqdakı policy əl ilə yazılır).
+
+---
+
+## 14. Validasiya qaydası - `TranslatedRequired`
+
+```php
+'title' => ['required', 'array', new TranslatedRequired()],
+```
+
+Çoxdilli sahədə **yalnız standart dil** məcburidir. `required` massivin özünü
+yoxlayır (bütün dillər boş olsa da keçir), `required_array_keys` isə bütün
+dilləri məcbur edir. Standart dil `languages` cədvəlindən oxunur.
+
+---
+
+## 15. Bayt formatı - `ByteSize`
+
+```php
+ByteSize::human(5_872_025_600);   // "5.5 GB"
+ByteSize::humanOrDash(0);         // "—"
+```
+
+Format TƏK yerdədir - əks halda eyni ölçü bir səhifədə «5.4 GB», digərində
+«5487 MB» görünür.
+
+---
+
+## 16. Cədvəl hüceyrələri - `RendersRichCells`
+
+`app/Datatable/Gopanel/Concerns/RendersRichCells.php` - datatable sinifləri üçün
+hazır hüceyrə qəlibləri: `titleCell()`, `mutedCell()`, `textCell()`, `badge()`,
+`dateCell()`, `actionsCell()`, `linkBtn()`, `deleteRowBtn()`.
+
+Qarşılığı olan CSS: `public/assets/gopanel/css/custom.css` → «Cədvəl hüceyrələri»
+bloku (`gp-cell-*`, `gp-badge-*`). Sinif adları dəyişəndə **hər ikisi** dəyişir.
+
+`deleteRowBtn()`-a öz route-unu ötürmək olar: ümumi `gopanel.general.delete`
+ünvanı modul icazəsini yoxlamır, həssas modullar (backup) öz endpoint-ini verir.
+
+---
+
+## 17. Query qatı
+
 Stil qaydaları:
 
 ```php
@@ -402,6 +545,8 @@ final class BlogQuery
 | `config/custom/queue_monitor.php` | İzlənən növbələr |
 | `config/custom/security.php` | IP məhdudiyyəti, giriş limiti, yükləmə qaydaları |
 | `config/custom/sms.php` | SMS provayderi və açarları |
+| `config/gopanel/backup.php` | Backup yolları, `mysqldump` seçimləri, disk həddi ([docs/backup.md](backup.md)) |
+| `config/gopanel/system_status.php` | Monitor: yenilənmə aralığı, həddlər, heartbeat faylı ([docs/system-status.md](system-status.md)) |
 
 **Qayda:** `env()` yalnız config faylının içində çağırılır. Servis/controller
 içində `config()` işlədilir - əks halda `php artisan config:cache` sonrası

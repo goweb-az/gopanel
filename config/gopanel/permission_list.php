@@ -9,6 +9,10 @@ return [
         'Tənzimləmələr' => [
             ['name' => 'gopanel.settings.index', 'title' => 'Tənzimləmələr siyahısı'],
             ['name' => 'gopanel.settings.site-settings.index', 'title' => 'Əsas Tənzimləmələr'],
+            // Baxmaq və dəyişmək ayrı icazələrdir (bax: 01-umumi.md § 5) -
+            // tənzimləmələri görən hər admin loqonu və sayt statusunu
+            // dəyişməməlidir.
+            ['name' => 'gopanel.settings.site-settings.edit', 'title' => 'Əsas Tənzimləmələr redaktəsi'],
         ],
 
         'Dillər' => [
@@ -97,6 +101,20 @@ return [
             ['name' => 'gopanel.contact.socials.add', 'title' => 'Sosial əlavə etmə'],
             ['name' => 'gopanel.contact.socials.edit', 'title' => 'Sosial redaktə'],
             ['name' => 'gopanel.contact.socials.delete', 'title' => 'Sosial silmə'],
+        ],
+
+        // Backup - arxiv endirmək BÜTÜN məzmuna (baza + fayllar) çıxış deməkdir.
+        // Bu icazəni avtomatik paylamayın; yalnız etibarlı vəzifələrə verin.
+        'Backup' => [
+            ['name' => 'gopanel.backup.index',  'title' => 'Backup siyahısı və endirmə'],
+            ['name' => 'gopanel.backup.add',    'title' => 'Backup çıxarma'],
+            ['name' => 'gopanel.backup.delete', 'title' => 'Backup silmə'],
+        ],
+
+        // Sistem vəziyyəti - serverin daxili məlumatını (yollar, versiyalar,
+        // baza adı, növbə vəziyyəti) açır. Yalnız texniki adminlərə verilir.
+        'Sistem vəziyyəti' => [
+            ['name' => 'gopanel.system-status.index', 'title' => 'Sistem vəziyyəti monitoru'],
         ],
 
         'Hərkət Tarixçəsi' => [

@@ -2,25 +2,27 @@
 
 namespace App\Http\Controllers\Gopanel;
 
-use App\Helpers\Gopanel\FileUploader;
-use App\Helpers\Gopanel\Site\PageMetaDataHelper;
-use App\Helpers\Gopanel\TranslationHelper;
 use App\Http\Controllers\GoPanelController;
+use App\Http\Requests\Gopanel\Site\ServiceSaveRequest;
 use App\Models\Site\Service;
+use App\Queries\Gopanel\Site\ServiceQuery;
+use App\Services\Gopanel\Content\ContentSaveService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 
 class ServiceController extends GoPanelController
 {
-    public function __construct()
-    {
+    public function __construct(
+        private readonly ContentSaveService $content,
+        private readonly ServiceQuery $query,
+    ) {
         parent::__construct();
     }
 
     public function index(Request $request)
     {
-        $services  = Service::orderBy('sort_order')->get();
+        $services  = $this->query->ordered();
         $modelKey  = Service::class;
 
         return view('gopanel.pages.services.index', compact('services', 'modelKey'));
@@ -43,33 +45,12 @@ class ServiceController extends GoPanelController
         return $this->response_json();
     }
 
-    public function save(Service $item, Request $request)
+    public function save(Service $item, ServiceSaveRequest $request)
     {
         try {
-            $data = $request->except(['_token', 'meta', 'icon_image']);
             $message = !is_null($item->id) ? 'Məlumat uğurla dəyişdirildi!' : 'Məlumat uğurla yaradıldı!';
 
-            if ($request->hasFile('icon_image')) {
-                $fileName = FileUploader::nameGenerate($request->all(), 'service-icon');
-                $data['icon'] = FileUploader::toPublic($request->file('icon_image'), $item->getTable(), $fileName);
-                $data['icon_type'] = 'image';
-            }
-
-            if (($data['icon_type'] ?? null) === 'image' && !$request->hasFile('icon_image')) {
-                unset($data['icon']);
-            }
-
-            if ($request->hasFile('image')) {
-                $fileName = FileUploader::nameGenerate($request->all(), 'service');
-                $data['image'] = FileUploader::toPublic($request->file('image'), $item->getTable(), $fileName);
-            }
-
-            $item = $this->crudHelper->saveInstance($item, $data);
-
-            if (isset($item->id)) {
-                TranslationHelper::create($item, $request);
-                PageMetaDataHelper::save($item, $request->input('meta', []), $request->file('meta', []));
-            }
+            $item = $this->content->save($item, $request->payload(), $request->fileFields());
 
             $this->response['redirect'] = route('gopanel.services.index');
             $this->success_response($item, $message);

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
 
-  "//": "QAYDA: hər şeyə icazə var, YALNIZ silmə/geri qaytarılmayan əməliyyatlar soruşulur. Bu fayl repoda qalır (paylaşılan). Şəxsi override üçün .claude/settings.local.json işlədilir - o, gitignore-dadır.",
+  "//": "QAYDA: oxumaq, yazmaq, redaktə etmək, artisan/composer/npm/git işlətmək - SORUŞULMUR. YALNIZ geri qaytarılmayan əməliyyatlar (silmə, force push, bazanı uçurmaq, deploy) soruşulur. Bu fayl repoda qalır (paylaşılan). Şəxsi override üçün .claude/settings.local.json işlədilir - o, gitignore-dadır.",
 
   "permissions": {
     "defaultMode": "acceptEdits",
@@ -15,11 +15,14 @@
       "Bash(unlink:*)",
       "Bash(shred:*)",
       "Bash(truncate:*)",
+      "Bash(find:* -delete)",
+      "Bash(find:* -exec rm:*)",
       "Bash(git rm:*)",
       "Bash(git clean:*)",
       "Bash(git reset --hard:*)",
       "Bash(git checkout -- :*)",
       "Bash(git branch -D:*)",
+      "Bash(git push:*)",
       "Bash(git push --force:*)",
       "Bash(git push -f:*)",
       "Bash(php artisan migrate:fresh:*)",
@@ -27,18 +30,24 @@
       "Bash(php artisan migrate:rollback:*)",
       "Bash(php artisan db:wipe:*)",
       "Bash(php artisan queue:flush:*)",
+      "Bash(php artisan backup:*)",
       "Bash(mysql:*)",
       "Bash(mysqldump:*)",
       "PowerShell(Remove-Item:*)",
+      "PowerShell(Remove-ItemProperty:*)",
       "PowerShell(rm:*)",
+      "PowerShell(ri:*)",
       "PowerShell(del:*)",
+      "PowerShell(erase:*)",
       "PowerShell(rmdir:*)",
       "PowerShell(Clear-Content:*)",
       "PowerShell(git rm:*)",
       "PowerShell(git clean:*)",
       "PowerShell(git reset --hard:*)",
+      "PowerShell(git push:*)",
       "PowerShell(php artisan migrate:fresh:*)",
       "PowerShell(php artisan migrate:reset:*)",
+      "PowerShell(php artisan migrate:rollback:*)",
       "PowerShell(php artisan db:wipe:*)"
     ],
 
@@ -46,6 +55,8 @@
       "Bash",
       "PowerShell",
       "Read",
+      "Read(//c/OpenServer/domains/judo/**)",
+      "Read(//c/OpenServer/domains/qrgate/**)",
       "Edit",
       "Write",
       "Glob",
@@ -54,6 +65,10 @@
       "WebFetch",
       "WebSearch",
       "TodoWrite"
+    ],
+
+    "additionalDirectories": [
+      "C:\\OpenServer\\domains\\judo"
     ]
   }
 }

@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers\Gopanel;
 
-use App\Helpers\Gopanel\FileUploader;
-use App\Helpers\Gopanel\Site\PageMetaDataHelper;
-use App\Helpers\Gopanel\TranslationHelper;
 use App\Http\Controllers\GoPanelController;
+use App\Http\Requests\Gopanel\Site\ProductSaveRequest;
 use App\Models\Site\Product;
+use App\Services\Gopanel\Content\ContentSaveService;
 use Illuminate\Http\Request;
 
 class ProductController extends GoPanelController
 {
-    public function __construct()
+    public function __construct(private readonly ContentSaveService $content)
     {
         parent::__construct();
     }
@@ -29,23 +28,12 @@ class ProductController extends GoPanelController
         return view('gopanel.pages.products.store', compact('item', 'route'));
     }
 
-    public function save(Product $item, Request $request)
+    public function save(Product $item, ProductSaveRequest $request)
     {
         try {
-            $data    = $request->except(['_token', 'meta']);
             $message = !is_null($item->id) ? 'Məhsul uğurla dəyişdirildi!' : 'Məhsul uğurla yaradıldı!';
 
-            if ($request->hasFile('image')) {
-                $fileName = FileUploader::nameGenerate($request->all(), 'product');
-                $data['image'] = FileUploader::toPublic($request->file('image'), $item->getTable(), $fileName);
-            }
-
-            $item = $this->crudHelper->saveInstance($item, $data);
-
-            if (isset($item->id)) {
-                TranslationHelper::create($item, $request);
-                PageMetaDataHelper::save($item, $request->input('meta', []), $request->file('meta', []));
-            }
+            $item = $this->content->save($item, $request->payload(), $request->fileFields());
 
             $this->response['redirect'] = isset($item->id) ? route('gopanel.products.index') : false;
             $this->success_response($item, $message);

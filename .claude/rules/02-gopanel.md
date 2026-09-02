@@ -16,11 +16,17 @@ ya da icazəsiz açılır.
    - çoxdilli sahələr `public $translatedAttributes = [...]`;
    - fayl sahələri `protected $files = [...]`.
 3. **Controller** → `app/Http/Controllers/Gopanel/<Domen>/<Ad>Controller.php`.
-   Nazik: request → servis → cavab.
-4. **FormRequest** → `app/Http/Requests/Gopanel/<Domen>/`. Validasiya burada,
-   controller-də inline `validate()` yoxdur.
-5. **Service** → `app/Services/<Domen>/<Ad>Service.php` (iş məntiqi),
-   böyük SELECT lazımdırsa **Query** → `app/Queries/Gopanel/<Domen>/`.
+   Nazik: request → servis → cavab. Fayl yükləmə, tərcümə, meta burada YAZILMIR.
+4. **FormRequest** → `app/Http/Requests/Gopanel/<Domen>/`, `GopanelFormRequest`-dən
+   törəyir. Validasiya burada, controller-də inline `validate()` yoxdur.
+   Sinifdə `$module`, `$translatedFields`, `$fileInputs` və `fileFields()` elan
+   olunur - icazə yoxlaması və `payload()` avtomatik gəlir.
+5. **Service**: adi məzmun modulunda ayrıca servis yazılmır -
+   `App\Services\Gopanel\Content\ContentSaveService` işlədilir. Əlavə addım
+   varsa (keş invalidasiyası, ağac yoxlaması) modul servisi
+   `app/Services/Gopanel/<Domen>/` altına düşür.
+   Böyük SELECT lazımdırsa **Query** → `app/Queries/Gopanel/<Domen>/`,
+   yazma isə `App\Repositories\BaseRepository` üzərindən.
 6. **Datatable** → `app/Datatable/Gopanel/<Domen>/<Ad>Datatable.php`,
    `BaseDatatable`-dan törəyir.
 7. **Route** → `routes/gopanel.php`. Ad `gopanel.<qrup>.<modul>.<əməliyyat>`.
@@ -116,7 +122,33 @@ Admin bildiriş bölməsi (header badge + dropdown + siyahı + arxiv + toplu
 - queue-da `$admin->can()` **işləmir** (`Gate::before` login tələb edir);
 - `delete-all` route-u `{notification}`-dan **əvvəl** yazılır.
 
-## 9. Fəaliyyət jurnalı
+## 9. Backup bölməsi
+
+Panelin `Backup` bölməsi (baza + artımlı fayl arxivi) hazırdır - yenidən
+yazılmır: [docs/backup.md](../../docs/backup.md).
+
+Ən çox unudulan üç məqam:
+
+- `gopanel.backup.index` icazəsi **arxiv endirmək** deməkdir, arxivdə isə bütün
+  baza var - bu icazə hər vəzifəyə paylanmır;
+- job model obyekti yox, **`id`** daşıyır və `$tries = 1`-dir (uğursuz backup
+  təkrarlanmır - səbəb adətən sistemdədir);
+- `mysqldump` binary-si serverdəki baza ilə **eyni ailədən** olmalıdır
+  (MariaDB serverə MySQL 8-in dump-ı `column_statistics` xətası verir).
+
+## 10. Sistem vəziyyəti bölməsi
+
+Serverin canlı monitoru (CPU/RAM/disk, növbə, cron, baza) hazırdır:
+[docs/system-status.md](../../docs/system-status.md).
+
+İki qayda unudulmur:
+
+- səhifə bir neçə saniyədən bir yenilənir - oraya **ağır əməliyyat əlavə
+  edilmir** (rekursiv `public/site` gəzişi, limitsiz `get()`);
+- yenilənmədə **hazır HTML** göndərilir, JS heç nə formatlamır - əks halda eyni
+  dəyər panelin iki yerində iki cür görünür.
+
+## 11. Fəaliyyət jurnalı
 
 Yeni modelin dəyişiklikləri panelin «Fəaliyyət» bölməsində görünsün istəyirsənsə:
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Feature\Gopanel;
 
 use App\Helpers\Gopanel\TranslationPageRegistry;
 use App\Models\Translations\Translation;

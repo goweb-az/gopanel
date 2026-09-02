@@ -707,3 +707,169 @@
 }
 
 /* ─── Analytics Dashboard End ──────────────────────── */
+
+/* ─── Cədvəl hüceyrələri (RendersRichCells) ────────────
+   Qarşılığı: app/Datatable/Gopanel/Concerns/RendersRichCells.php
+   Sinif adları orada dəyişəndə burada da dəyişməlidir. */
+
+/* İki sətirli hüceyrə: üstdə əsas dəyər, altda izah */
+.gp-cell-main {
+    font-size: 13px;
+    font-weight: 500;
+    color: #495057;
+}
+
+.gp-cell-sub {
+    font-size: 11px;
+    color: #9aa3ad;
+}
+
+/* Uzun mətn sütunları cədvəli dağıtmasın */
+.gp-cell-clamp {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    max-width: 380px;
+}
+
+/* Yumşaq fonlu nişanlar — status sütunlarında rəng partlamasın */
+.gp-badge {
+    font-weight: 500;
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.gp-badge-primary   { background: rgba(85, 110, 230, .12);  color: #556ee6; }
+.gp-badge-success   { background: rgba(52, 195, 143, .12);  color: #34c38f; }
+.gp-badge-danger    { background: rgba(244, 106, 106, .12); color: #f46a6a; }
+.gp-badge-warning   { background: rgba(241, 180, 76, .16);  color: #d69b2d; }
+.gp-badge-info      { background: rgba(80, 165, 241, .12);  color: #50a5f1; }
+.gp-badge-secondary { background: rgba(116, 120, 141, .12); color: #74788d; }
+
+/* Sətir düymələri — alt-alta düşməsin, tək sətirdə qalsın */
+table.dataTable td .actions,
+.gp-actions {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+}
+
+table.dataTable td .actions > .btn,
+.gp-actions > .btn {
+    padding: 5px 9px;
+    font-size: 12px;
+    line-height: 1;
+    flex: 0 0 auto;
+    margin: 0;
+}
+
+table.dataTable td .actions > .btn i,
+.gp-actions > .btn i {
+    font-size: 12px;
+}
+
+/* Mobil: geniş cədvəl səhifəni yox, öz sarğısını sürüşdürsün */
+@media (max-width: 767.98px) {
+    .dataTables_wrapper {
+        overflow-x: auto;
+    }
+
+    .gp-cell-clamp {
+        max-width: 200px;
+    }
+}
+
+/* ─── Cədvəl hüceyrələri End ──────────────────────── */
+
+/* ==========================================================================
+   SİSTEM VƏZİYYƏTİ (monitor) — gopanel/pages/system_status
+   --------------------------------------------------------------------------
+   Səhifə bir neçə saniyədən bir yenilənir, ona görə blokların hündürlüyü
+   sabit saxlanılır: rəqəm dəyişəndə kart «tullanmasın». Cədvəllər öz içində
+   sürüşür ki, mobil ekranda səhifə üfüqi sürüşməsin.
+   ========================================================================== */
+
+/* «Etiket → dəyər» sətirləri (server, PHP, baza, disk kartları) */
+.gp-sys-meta li {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 5px 0;
+    border-bottom: 1px dashed #eff2f7;
+    font-size: 12.5px;
+}
+
+.gp-sys-meta li:last-child {
+    border-bottom: 0;
+}
+
+.gp-sys-meta li span {
+    color: #74788d;
+    flex: 0 0 auto;
+}
+
+/* Dəyər uzun ola bilər (prosessor adı, disk yolu) — sətir keçsin, kəsilməsin */
+.gp-sys-meta li b {
+    color: #495057;
+    text-align: right;
+    word-break: break-word;
+    min-width: 0;
+}
+
+/* Növbə göstəriciləri — sağ küncdə solğun ikon */
+.gp-sys-stat .card-body {
+    position: relative;
+    padding-right: 56px;
+}
+
+.gp-sys-stat-icon {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    font-size: 28px;
+    opacity: 0.25;
+    line-height: 1;
+}
+
+/* Cədvəllər — çox sətir yığılanda kart uzanmasın */
+.gp-sys-table {
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+.gp-sys-table table {
+    font-size: 12.5px;
+}
+
+.gp-sys-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+/* Qrafik sahəsi — sabit hündürlük, yeniləndikcə kart sıçramasın */
+.gp-sys-gauge {
+    min-height: 200px;
+}
+
+/* Crontab çıxışı */
+.gp-sys-cron {
+    background: #f8f9fa;
+    border: 1px solid #eff2f7;
+    border-radius: 4px;
+    padding: 12px 14px;
+    font-size: 12px;
+    line-height: 1.7;
+    max-height: 280px;
+    overflow: auto;
+    white-space: pre;
+    margin: 0;
+}
+
+/* ─── Sistem vəziyyəti End ──────────────────────── */

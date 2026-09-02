@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Feature\Gopanel;
 
 use App\Models\Navigation\Category;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -44,7 +44,16 @@ class CategoryModuleTest extends TestCase
 
         $this->assertStringNotContainsString('file_name_genarte', $controller);
         $this->assertStringNotContainsString('gopanelHelper->upload', $controller);
-        $this->assertStringContainsString("except(['_token', 'icon_file', 'icon_image', 'meta'])", $controller);
+
+        // İkon faylı artıq controller-də deyil, FormRequest-in təsvirindədir
+        $this->assertStringNotContainsString('FileUploader::', $controller);
+        $this->assertStringContainsString('$this->content->save(', $controller);
+
+        $fields = (new \App\Http\Requests\Gopanel\Navigation\CategorySaveRequest())->fileFields();
+
+        $this->assertSame('icon_image', $fields[0]->input);
+        $this->assertSame('icon', $fields[0]->column);
+        $this->assertSame('icon_type', $fields[0]->typeColumn);
     }
 
     public function test_category_page_uses_toggle_buttons_for_status(): void

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Feature\Gopanel;
 
 use App\Models\Site\Slider;
 use Tests\TestCase;
@@ -34,11 +34,16 @@ class SliderModuleTest extends TestCase
     public function test_slider_controller_passes_sliders_collection_and_handles_save(): void
     {
         $controller = file_get_contents(base_path('app/Http/Controllers/Gopanel/SliderController.php'));
+        $query      = file_get_contents(base_path('app/Queries/Gopanel/Site/SliderQuery.php'));
 
-        $this->assertStringContainsString("Slider::orderBy('sort_order'", $controller);
+        // Siyahı sorğusu Query sinifinə köçüb, controller yalnız çağırır
+        $this->assertStringContainsString('$this->query->ordered()', $controller);
         $this->assertStringContainsString('compact(', $controller);
-        $this->assertStringContainsString('TranslationHelper::create', $controller);
-        $this->assertStringContainsString('FileUploader::toPublic', $controller);
+        $this->assertStringContainsString("orderBy('sort_order', 'ASC')", $query);
+
+        // Yükləmə və tərcümə ortaq servisdədir
+        $this->assertStringNotContainsString('FileUploader::toPublic', $controller);
+        $this->assertStringContainsString('$this->content->save(', $controller);
     }
 
     public function test_slider_permissions_include_sort_action(): void

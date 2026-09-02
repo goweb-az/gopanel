@@ -10,15 +10,33 @@ class TranslationHelper
     /**
      * Create translations for the given item.
      *
+     * Köhnə imza saxlanılır - starter üzərində qurulmuş layihələr bu metodu
+     * birbaşa `Request` ilə çağırır. İş `fromInput()`-a ötürülür.
+     *
      * @param $item
      * @param $request
      * @return void
      */
     public static function create($item, $request)
     {
+        self::fromInput($item, is_null($request) ? [] : (array) $request->all());
+    }
+
+    /**
+     * Tərcümələri hazır massivdən yazır: `[sahə => [dil => dəyər]]`.
+     *
+     * NİYƏ `Request`-siz variant lazımdır:
+     * Servis layeri `Request`-i görməməlidir (bax: .claude/rules/01-umumi.md § 1).
+     * `ContentSaveService` tərcümələri DTO-dan alır və bura ötürür; həmçinin
+     * bu forma seeder və console command-lərdən də çağırıla bilir.
+     *
+     * @param  array<string, array<string, mixed>>  $input
+     */
+    public static function fromInput($item, array $input): void
+    {
         try {
             foreach (Language::all() as $lang) {
-                self::process($item, $request, $lang);
+                self::process($item, $input, $lang);
             }
         } catch (\Exception $e) {
             // Handle exception if needed (but no logging here)
@@ -29,14 +47,14 @@ class TranslationHelper
      * Process the translations for a specific language.
      *
      * @param $item
-     * @param $request
+     * @param array $input
      * @param $lang
      * @return void
      */
-    private static function process($item, $request, $lang)
+    private static function process($item, array $input, $lang)
     {
         foreach ($item->translatedAttributes as $transAttribute) {
-            $newValue = self::getTranslatedValue($item, $transAttribute, $lang, $request);
+            $newValue = self::getTranslatedValue($item, $transAttribute, $lang, $input);
 
             $item->translations()->updateOrCreate(
                 ['locale' => $lang->code, 'key' => $transAttribute],
@@ -51,26 +69,26 @@ class TranslationHelper
      * @param $item
      * @param $transAttribute
      * @param $lang
-     * @param $request
+     * @param array $input
      * @return string|null
      */
-    private static function getTranslatedValue($item, $transAttribute, $lang, $request)
+    private static function getTranslatedValue($item, $transAttribute, $lang, array $input)
     {
-        // Default translation value from request
-        $newValue = $request?->$transAttribute[$lang->code] ?? null;
+        // Default translation value from input
+        $newValue = $input[$transAttribute][$lang->code] ?? null;
 
         // Special handling for 'slug' attribute based on slug_key
         if (isset($item->slug_key) && $transAttribute == 'slug' && in_array($item?->slug_key, $item->translatedAttributes)) {
             $titleKey = $item?->slug_key;
-            $titleValue = $request?->$titleKey[$lang->code] ?? null;
+            $titleValue = $input[$titleKey][$lang->code] ?? null;
 
-            if (empty($request?->$transAttribute[$lang->code])) {
+            if (empty($input[$transAttribute][$lang->code])) {
                 $newValue = null;
                 if ($titleValue) {
                     $newValue = Str::slug($titleValue, "-", $lang->code);
                 }
             } else {
-                $newValue = $request?->$transAttribute[$lang->code];
+                $newValue = $input[$transAttribute][$lang->code];
             }
 
             if (!empty($item->slug_prefix[$lang->code]) && !empty($newValue)) {

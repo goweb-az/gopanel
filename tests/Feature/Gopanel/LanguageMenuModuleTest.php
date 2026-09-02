@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Feature\Gopanel;
 
 use App\Models\Navigation\Menu;
 use App\Services\Gopanel\Menus\MenuTreeService;

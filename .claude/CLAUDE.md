@@ -34,6 +34,16 @@ Tam siyahı və nümunələr: [docs/shared-layer.md](../docs/shared-layer.md)
 
 | Ehtiyac | Sinif |
 |---|---|
+| Modelə yazmaq (insert/update/delete) | `App\Repositories\BaseRepository` |
+| Panel formasının saxlanması (fayl + tərcümə + meta) | `App\Services\Gopanel\Content\ContentSaveService` |
+| Panel forması (icazə + validasiya + DTO) | `App\Http\Requests\Gopanel\GopanelFormRequest` |
+| Form məlumatının typed daşıyıcısı | `App\DTOs\Gopanel\ContentPayload` + `FileField` |
+| «Bu istifadəçi bunu edə bilər?» | `App\Policies\CrudPolicy` (`$module` elan et, bəsdir) |
+| Çoxdilli sahə məcburidirsə | `App\Rules\TranslatedRequired` |
+| Tək sətirli səhifə (Haqqımızda, Əlaqə...) | `App\Queries\Gopanel\Common\SingleRecordQuery` |
+| Cədvəl hüceyrəsi / sətir düymələri | `App\Datatable\Gopanel\Concerns\RendersRichCells` |
+| Bayt → oxunaqlı ölçü | `App\Support\Files\ByteSize` |
+| Serverin CPU/RAM/disk göstəriciləri | `App\Helpers\Gopanel\ServerMetricsHelper` |
 | Keş (oxu/yaz/flush) | `App\Services\Cache\CacheService` |
 | Keş açarı + qrup invalidasiyası | `App\Support\Cache\CacheKey` (+ `config/custom/cache.php`) |
 | Email göndərişi | `App\Services\Mail\MailService` |
@@ -88,6 +98,8 @@ docs              modul sənədləri
 - [docs/shared-layer.md](../docs/shared-layer.md) — ümumi qat (Support/Services/Queries) kataloqu
 - [docs/ai-guide.md](../docs/ai-guide.md) — praktik naxışlar və kod nümunələri (uzun)
 - [docs/database-structure.md](../docs/database-structure.md) — cədvəllər, əlaqələr, trait-lər
+- [docs/backup.md](../docs/backup.md) — panel backup bölməsi (baza + artımlı fayl arxivi)
+- [docs/system-status.md](../docs/system-status.md) — sistem vəziyyəti monitoru (CPU/RAM/disk, növbə, cron)
 - [docs/rules/README.md](../docs/rules/README.md) — böyük modul qurma spesifikasiyaları:
   bildirişlər, dashboard, istifadəçi idarəetməsi, kateqoriya ağacı, API, deployment
 

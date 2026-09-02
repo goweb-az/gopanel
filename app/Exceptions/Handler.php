@@ -92,6 +92,9 @@ class Handler extends ExceptionHandler
         // ✅ Validation Exception (422) - errors qaytarsın
         if ($e instanceof ValidationException && ($request->wantsJson() || $request->ajax() || $request->expectsJson())) {
             return response()->json([
+                // `status` panelin JSON müqaviləsidir (bax: 02-gopanel.md § 4) -
+                // crud.js cavabı məhz bu açara görə uğur/xəta kimi tanıyır.
+                'status'    => 'error',
                 'success'   => false,
                 'message'   => $e->validator->errors()->first(),
                 'errors'    => $e->errors(),
