@@ -50,6 +50,13 @@ blade-ləri. Layout `gopanel/layouts/`, təkrarlanan hissələr `gopanel/compone
 
 - JS: `public/assets/gopanel/js/` - ortaq davranış `crud.js`, `main.js`,
   `initDatatable.js`; modula xas kod `js/modules/<qrup>/` altında.
+- **Bir modul = bir JS faylı:** `products` modulu → `js/modules/products.js`
+  (qrup varsa `js/modules/<qrup>/products.js`). Modulun bütün səhifələri
+  (index, form, view) eyni faylı işlədir; düymə və ya modal üçün ayrıca fayl
+  yaradılmır. Fayl modulun blade-ində `@push('scripts')` + `asset_v()` ilə qoşulur.
+- Blade-də yalnız **konfiqurasiya** olur - route, id, icazə, seçim siyahısı
+  `data-*` atributu ilə (`<div id="products-page" data-save-url="...">`).
+  Məntiq JS faylındadır.
 - CSS: `public/assets/gopanel/css/`.
 - Blade-də `<script>` / `<style>` **yazılmır**. Dəyər `data-*` atributu ilə ötürülür.
 - Yeni plugin əlavə etməzdən əvvəl şablonda hazır olanlara baxılır (Skote şablonu):

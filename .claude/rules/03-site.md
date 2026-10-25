@@ -159,6 +159,23 @@ public/assets/front/
 - `custom.css` şablon CSS-lərindən **sonra**, `custom.js` şablon JS-lərindən
   **sonra** qoşulur - üstələmə və şablon funksiyalarına müraciət işləsin.
 
+### Hər xırda şey üçün ayrıca fayl yaradılmır
+
+- **CSS:** istisnasız hamısı `custom.css`-dədir. Səhifəyə və ya komponentə görə
+  ayrıca CSS faylı yaradılmır. Fayl daxilində bölmələr şərhlə ayrılır
+  (`/* ===== Ana səhifə ===== */`).
+- **JS:** default yer `custom.js`-dir. Karusel, modal, tab, forma kimi komponent
+  üçün ayrıca fayl (`home-carousel.js`, `contact-form.js`) **yaradılmır**.
+- **İstisna:** bir səhifənin JS-i artıq çoxdursa **və** yalnız o səhifədə
+  işləyirsə, səhifə üçün BİR fayl açılır: `js/pages/<səhifə>.js`
+  (`js/pages/home.js`). O, yalnız həmin səhifənin blade-ində
+  `@push('scripts')` ilə qoşulur. Bir səhifə = ən çox bir fayl.
+- Blade-dən JS-ə dəyər (route, id, config) yalnız `data-*` atributu ilə ötürülür.
+
+**Niyə:** onlarla kiçik fayl hər səhifədə ayrıca sorğu deməkdir və kodun
+harada olduğu axtarılmalı olur. Bütün kod bir faylda olanda isə ana səhifənin
+ağır JS-i hər səhifəyə yüklənir - səhifə faylı yalnız bu halda açılır.
+
 **Niyə:** şablonun yeni versiyası gələndə (yeni səhifə, düzəliş) onun faylları
 sadəcə üzərinə yazılır. Bizim kod şablon faylının içində olsaydı ya itərdi, ya da
 iki versiyanı əl ilə sətir-sətir birləşdirmək lazım gələrdi. Ayrıca fayl həm də
