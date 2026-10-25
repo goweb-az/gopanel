@@ -130,3 +130,31 @@ $menu = CacheService::remember(
 Model faylının ünvanı blade-də `asset()`/`Storage::url()` ilə yığılmır -
 `App\Support\Url\CdnUrl::url($path)` işlədilir. CDN qoşulanda tək dəyişən
 (`CDN_URL`) bütün sayt üçün kifayət edir.
+
+## 7. Saytın asset-ləri
+
+Saytın (frontend şablonunun) statik faylları **yalnız** `public/assets/front/`
+altındadır:
+
+```text
+public/assets/front/
+├── css/      saytın stilləri
+├── js/       saytın skriptləri (səhifəyə xas kod js/pages/<səhifə>.js)
+├── images/   şablonun şəkilləri, ikonlar
+├── fonts/    şriftlər
+└── libs/     kənar kitabxanalar (swiper, fancybox...)
+```
+
+- Blade-də qoşulma `asset_v('assets/front/...')` iləndir - fayl dəyişəndə
+  brauzer keşi avtomatik yenilənir.
+- Panelin faylları (`public/assets/gopanel/`) sayt blade-lərində işlədilmir,
+  saytın faylları da panelə qoşulmur.
+- Admin yüklədiyi fayllar (model şəkilləri) bura düşmür - onlar storage-dadır
+  və `CdnUrl` ilə verilir (§6).
+- Blade-də `<script>`/`<style>` bloku yoxdur (01-umumi §3) - kod bu qovluqdakı
+  fayllara yazılır.
+
+**Niyə:** törəmə layihələrdə şablon faylları `public/`-in kökünə, `public/site`
+və ya panel qovluğuna səpələnirdi. Hansı faylın sayta, hansının panelə aid
+olduğu bilinmirdi, deploy-da və CDN alias-ında (`/assets`) bir yer kifayət
+etmirdi.

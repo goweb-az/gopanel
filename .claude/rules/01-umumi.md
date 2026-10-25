@@ -83,7 +83,7 @@ görünsün, hər layihədə yenidən "haraya yazım?" sualı yaranmasın.
 
 Hazırda boş olanlar: `app/Observers`, `app/Http/Resources`,
 `app/Queries/{Api,Site}`, `app/Enums/Common/Status`, `app/Support/Security`,
-`app/Traits/Presentable`.
+`app/Traits/Presentable`, `public/assets/front`.
 Qalanlarında artıq işlək siniflər var - yeni sinif yazmazdan əvvəl
 [docs/shared-layer.md](../../docs/shared-layer.md) oxunur, çox güman lazım olan
 artıq mövcuddur.
@@ -108,7 +108,8 @@ accessor-lar model faylına yığılmır:
   şərtli mətn - hamısı controller/servisdə hazırlanıb blade-ə **hazır** ötürülür.
 - Blade-də ancaq: çap (`{{ }}`), sadə `@if/@foreach`, `@include`, komponent çağırışı.
 - Blade-də `<script>` və `<style>` bloku yazılmır - JS `public/assets/.../js/`,
-  CSS `public/assets/.../css/` altındadır.
+  CSS `public/assets/.../css/` altındadır (panel: `assets/gopanel/`,
+  sayt: `assets/front/`).
 - Blade-dən JS-ə dəyər ötürmək üçün **`data-*` atributu** işlədilir
   (route, id, uid, config). JS həmin dəyəri `$el.data('...')` ilə oxuyur.
 - **İSTİSNA:** email şablonları (`resources/views/emails/`). Email klientləri
