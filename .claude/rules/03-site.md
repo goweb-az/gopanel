@@ -39,7 +39,14 @@ analitikaya düşür və hesabatı korlayır.
 - Blade-də sabit mətn **hardcode edilmir**. Çağırış HƏMİŞƏ belədir:
 
   ```blade
-  @lang('website.<page>.<group>.<key>')     {{-- @lang('website.home.title.latest_posts') --}}
+  @lang('website.<page>.<group>.<key>')
+  ```
+
+  Nümunə:
+
+  ```blade
+  <a href="{{ url($currentLocale) }}">@lang('website.general.title.home')</a>      {{-- ✅ --}}
+  <a href="{{ url($currentLocale) }}">{{ __('Əsas səhifə') }}</a>                 {{-- ❌ --}}
   ```
 
   `__('Son yazılar')` kimi «mətnin özü açar» forması yazılmır - mətn dəyişəndə

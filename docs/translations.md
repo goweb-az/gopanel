@@ -26,6 +26,7 @@ value      Son yazılar                           mətn
 Blade-də çağırış **həmişə** belədir:
 
 ```blade
+<a href="{{ url($currentLocale) }}">@lang('website.general.title.home')</a>
 <h2>@lang('website.home.title.latest_posts')</h2>
 <p>@lang('website.contact.content.form_intro')</p>
 <button>@lang('website.general.title.send')</button>
