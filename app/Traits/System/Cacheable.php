@@ -26,7 +26,8 @@ use Illuminate\Support\Facades\Cache;
  * Sıralama:
  *   - `order` fillable-da varsa → ASC, yoxsa `id` DESC
  *
- * Auto-invalidation: model `saved` və ya `deleted` olanda standart açarlar avtomatik silinir.
+ * Auto-invalidation: model `saved` və ya `deleted` olanda standart açarlar və
+ * həmin rekordun `getCachedFirst()` açarı avtomatik silinir.
  */
 trait Cacheable
 {
@@ -117,12 +118,41 @@ trait Cacheable
     }
 
     /**
+     * `getCachedFirst($id)` açarını silir.
+     *
+     * Niyə: `flushCache()` yalnız siyahı açarlarını (`all`, `forever`) silir -
+     * id ilə keşlənmiş tək rekord TTL bitənə qədər (5 gün) köhnə qalırdı.
+     * Saxlanan/silinən rekordun öz id-si event-də bəllidir, ona görə onun açarı
+     * dəqiq silinə bilir. `getCachedBy()` açarları (ixtiyari sütun + dəyər)
+     * əvvəlcədən bilinmir - onlar üçün `CacheKey` qrup versiyası işlədilir
+     * (`CacheInvalidationServiceProvider`).
+     */
+    public static function forgetCachedRecord($id): void
+    {
+        if ($id === null || $id === '') {
+            return;
+        }
+
+        Cache::forget(static::cacheKey('first.' . $id));
+    }
+
+    /**
      * Auto-flush on save/delete. Model `bootCacheable()`-i avtomatik çağırır.
+     *
+     * Qrup keşi (`CacheKey::flushForModelType`) BURADA çağırılmır - onu
+     * `App\Providers\CacheInvalidationServiceProvider` edir; ikinci dəfə
+     * bağlamaq hər yazıda versiyanı iki dəfə artırardı.
      */
     protected static function bootCacheable(): void
     {
-        static::saved(fn ($model) => static::flushCache());
-        static::deleted(fn ($model) => static::flushCache());
+        static::saved(function ($model) {
+            static::flushCache();
+            static::forgetCachedRecord($model->getKey());
+        });
+        static::deleted(function ($model) {
+            static::flushCache();
+            static::forgetCachedRecord($model->getKey());
+        });
     }
 
     /**

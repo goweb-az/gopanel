@@ -4,7 +4,9 @@ namespace App\Services\Mail;
 
 use App\Services\Activity\LogService;
 use App\Services\Mail\Templates\BasicMail;
+use App\Services\Mail\Templates\ForgotPasswordMail;
 use App\Services\Mail\Templates\HtmlMail;
+use App\Services\Mail\Templates\OtpMail;
 use Illuminate\Contracts\Mail\Mailable;
 use Illuminate\Support\Facades\Mail;
 use Throwable;
@@ -233,6 +235,60 @@ class MailService
         $this->addData(['html' => $html]);
 
         $this->content = new HtmlMail($subject ?? $this->subject, $this->data, $this->fromAddress);
+
+        $this->send($recipient);
+    }
+
+    /**
+     * Birdəfəlik təsdiq kodu (`emails.otp`).
+     *
+     * Kod yalnız məktubun içindədir - jurnala (`logData`) düşmür. Adətən
+     * birbaşa çağırılmır: `App\Services\Auth\OtpService` kodu yaradıb bunu çağırır.
+     */
+    public function sendOtpEmail(
+        string $recipient,
+        string $otp,
+        ?string $userName = null,
+        int $ttlMinutes = 5,
+        ?string $subject = null,
+        ?string $intro = null,
+    ): void {
+        $this->addData([
+            'otp'         => $otp,
+            'user_name'   => $userName ?? '',
+            'ttl_minutes' => $ttlMinutes,
+            'intro'       => $intro ?? 'Təsdiq kodunuz aşağıdadır.',
+        ]);
+
+        $subject = $subject ?? 'Təsdiq kodu';
+        $this->setSubject($subject);
+
+        $this->content = new OtpMail($subject, $this->data, $this->fromAddress);
+
+        $this->send($recipient);
+    }
+
+    /**
+     * Şifrə bərpası linki (`emails.forgot-password`). Linki (token/imzalı URL)
+     * çağıran yer qurur - servis yalnız göndərir.
+     */
+    public function sendForgotPasswordEmail(
+        string $recipient,
+        string $actionUrl,
+        ?string $userName = null,
+        ?int $expiresMinutes = null,
+        ?string $subject = null,
+    ): void {
+        $this->addData([
+            'action_url'      => $actionUrl,
+            'user_name'       => $userName ?? '',
+            'expires_minutes' => $expiresMinutes,
+        ]);
+
+        $subject = $subject ?? 'Şifrənin bərpası';
+        $this->setSubject($subject);
+
+        $this->content = new ForgotPasswordMail($subject, $this->data, $this->fromAddress);
 
         $this->send($recipient);
     }

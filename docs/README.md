@@ -41,7 +41,21 @@ project overview and quick installation.
   the write layer (`BaseRepository`), the shared content-save flow
   (`GopanelFormRequest` + `ContentPayload` + `ContentSaveService`), `CrudPolicy`,
   `RendersRichCells`, and the `config/custom/*` files that drive them.  
+  Also: automatic cache invalidation, activity log `:changes`, the API response envelope,
+  phone/e-mail normalisation, localized dates, panel host restriction.  
   **Read this before writing a new helper — it probably already exists.**
+
+- [Export / Import](export-import.md) *(AZ)*  
+  One export definition → branded Excel, optional PDF, e-mail delivery; import counters and retry.
+
+- [Security & Auth](security-and-auth.md) *(AZ)*  
+  Admin PIN, login throttle, OTP, IP allowlist, site-closed mode, dev-domain guard — all config-gated.
+
+- [Record authors & typed settings](authors-settings.md) *(AZ)*  
+  `HasAuthors` (creator/assignee), `ActivityLogger`, config-declared typed settings.
+
+- [Presentable traits](rules/presentable-traits.md) *(AZ)*  
+  Where a model's display-only accessors live (`*_label`, `*_class`, `*_formatted`).
 
 - [Database Structure](database-structure.md)  
   Migrations, models, relationships, traits, polymorphic structures (translations / meta /
@@ -60,6 +74,14 @@ project overview and quick installation.
 
 - [Sitemap and RSS](sitemap-rss.md)  
   XML sitemap and RSS endpoints, and how to add a new model to them.
+
+- [Markdown pages (`.md`)](markdown-pages.md)  
+  Append `.md` to any public page URL to get it as Markdown; `/markdown-index.md`,
+  `/llms-full.txt`, the `Link: rel="alternate"` header, caching and 404 rules.
+
+- [Machine files](seo-machine-files.md)  
+  `robots.txt`, `ai.txt`, `ads.txt`, `llms.txt`, `llms-full.txt` — where each comes from
+  and where it is edited in the panel.
 
 ## Analytics
 

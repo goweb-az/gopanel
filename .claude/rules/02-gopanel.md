@@ -50,6 +50,13 @@ blade-ləri. Layout `gopanel/layouts/`, təkrarlanan hissələr `gopanel/compone
 
 - JS: `public/assets/gopanel/js/` - ortaq davranış `crud.js`, `main.js`,
   `initDatatable.js`; modula xas kod `js/modules/<qrup>/` altında.
+- **Bir modul = bir JS faylı:** `products` modulu → `js/modules/products.js`
+  (qrup varsa `js/modules/<qrup>/products.js`). Modulun bütün səhifələri
+  (index, form, view) eyni faylı işlədir; düymə və ya modal üçün ayrıca fayl
+  yaradılmır. Fayl modulun blade-ində `@push('scripts')` + `asset_v()` ilə qoşulur.
+- Blade-də yalnız **konfiqurasiya** olur - route, id, icazə, seçim siyahısı
+  `data-*` atributu ilə (`<div id="products-page" data-save-url="...">`).
+  Məntiq JS faylındadır.
 - CSS: `public/assets/gopanel/css/`.
 - Blade-də `<script>` / `<style>` **yazılmır**. Dəyər `data-*` atributu ilə ötürülür.
 - Yeni plugin əlavə etməzdən əvvəl şablonda hazır olanlara baxılır (Skote şablonu):
@@ -158,3 +165,32 @@ Yeni modelin dəyişiklikləri panelin «Fəaliyyət» bölməsində görünsün
 **İkinci addım olmadan heç nə jurnallanmır** - trait config-də adı olmayan modeli
 sükutla ötürür. Mesajlarda yalnız HƏMİŞƏ dolu olan sütunlar placeholder kimi
 işlədilir (`:name`, `:title`), nullable sahələr mesajda boş yer buraxır.
+
+## 12. Lookup / status-tip cədvəlləri
+
+**Nə:** admin özünün əlavə etdiyi, sıraladığı, söndürdüyü kiçik cədvəllər
+(sifariş statusları, məhsul tipləri, şikayət səbəbləri - adətən 5-10 sətir).
+Dəyər dəstini kod idarə edirsə bu lookup deyil, **Enum**-dur.
+
+**Harada:** ortaq qat hazırdır və yenidən yazılmır -
+`BaseLookupController` / `BaseLookupSaveRequest` / `LookupService` +
+`config/gopanel/lookups.php` reyestri. Spesifikasiya:
+[docs/rules/gopanel-status-and-type-cruds.md](../../docs/rules/gopanel-status-and-type-cruds.md).
+
+**Niyə:** lookup-lar 90% eynidir; hər tip üçün ayrıca CRUD yazanda route,
+icazə, menyu sətri və «tək default» / «istifadədə olan silinmir» qaydaları
+hər dəfə birində unudulurdu.
+
+**Necə əlavə olunur:**
+
+```bash
+php artisan gopanel:make-lookup OrderStatus --title="Sifariş statusları" --fields=color --booleans=is_default,is_active
+php artisan migrate
+php artisan db:seed --class=PermissionSeeder
+```
+
+- route, icazə (`gopanel.lookups.{tip}.index|add|edit|delete|sort`), əsas menyu
+  və bölmədaxili sidebar reyestr sətrindən **avtomatik** gəlir - əl ilə yazılmır;
+- tip istifadə olunursa controller-də `$usedBy = ['cədvəl' => 'xarici_açar']`
+  yazılır, əks halda istifadədə olan sətir silinə bilər;
+- starter-ə heç bir konkret lookup tipi əlavə edilmir - tip törəmə layihədə qalır.

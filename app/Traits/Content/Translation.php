@@ -33,26 +33,51 @@ trait Translation
     {
 
         if ($fallback == true) {
-            $translation = $this->translations()?->where('key', $attribute)?->where('locale', $locale)?->first();
-            return $translation ? $translation?->value : null;
+            return $this->resolveFieldTranslation($attribute, $locale);
         }
 
-        $language = null;
         if (is_null($locale)) {
             $locale = app()->getLocale();
         }
 
-        $language = Language::where("is_active", 1)->where('code', $locale)->first();
+        // Aktiv dillər keşdən oxunur (Language::getCachedAll) - əvvəl HƏR tərcümə
+        // atributuna girişdə `languages` cədvəlinə ayrıca sorğu gedirdi.
+        $activeLanguages = Language::getCachedAll();
 
-        if (is_null($language)) {
-            $locale = Language::where("is_active", 1)->first()?->locale;
+        if (!$activeLanguages->contains('code', $locale)) {
+            // Dil aktiv deyilsə standart dil (getCachedAll `default`-u birinci qaytarır).
+            // Qeyd: əvvəl burada mövcud olmayan `->locale` sütunu oxunurdu və nəticə
+            // həmişə null olurdu - fallback heç vaxt işləmirdi.
+            $locale = $activeLanguages->first()?->code;
         }
 
-        if (is_null($locale))
+        if (is_null($locale)) {
             return null;
+        }
 
-        $translation = $this->translations()?->where('key', $attribute)?->where('locale', $locale)?->first();
-        return $translation ? $translation?->value : null;
+        return $this->resolveFieldTranslation($attribute, $locale);
+    }
+
+    /**
+     * Tərcüməni tapır. `translations` əlaqəsi yüklənibsə (bu trait-in global
+     * scope-u onu həmişə `with()` edir) YADDAŞDA süzülür - N+1 sorğu olmur.
+     *
+     * Niyə: əvvəl əlaqə yüklənsə də `$this->translations()` builder-i ilə yeni
+     * sorğu atılırdı - 20 sətirlik siyahıda 3 tərcümə sahəsi = 60 əlavə sorğu.
+     * Yüklənməyibsə (məs. `withoutGlobalScopes()`) köhnə davranış: tək sorğu.
+     */
+    protected function resolveFieldTranslation($attribute, $locale)
+    {
+        if ($this->relationLoaded('translations')) {
+            return $this->getRelation('translations')->first(
+                fn ($t) => $t->key === $attribute && $t->locale === $locale
+            )?->value;
+        }
+
+        return $this->translations()
+            ->where('key', $attribute)
+            ->where('locale', $locale)
+            ->first()?->value;
     }
 
 

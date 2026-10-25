@@ -3,10 +3,21 @@
 namespace App\Http\Controllers\Site\Seo;
 
 use App\Http\Controllers\Site\SiteController;
-use App\Models\Navigation\Menu;
-use App\Models\Site\Blog;
+use App\Models\Geography\Language;
+use App\Services\Seo\SitemapService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
+/**
+ * Sitemap çıxışları:
+ *
+ *   /sitemap.xml          → indeks: hər dilin öz sitemap-ına keçid
+ *   /{dil}/sitemap.xml    → həmin dilin bütün URL-ləri (SitemapService)
+ *
+ * Ünvanlar dil qrupundan kənarda, `routes/web.php`-də aktiv dillər üzrə qeyd
+ * olunub; route `->defaults('locale', ...)` ilə dili özü ötürür. Siyahı
+ * servisdə qurulur - blade yalnız çap edir.
+ */
 class SitemapController extends SiteController
 {
 
@@ -18,32 +29,44 @@ class SitemapController extends SiteController
 
     private function setLocale(): void
     {
-        if (request()->segment(1)) {
-            app()->setLocale(request()->segment(1));
+        $segment = request()->segment(1);
+
+        if ($segment && preg_match('/^[a-z]{2}$/', $segment)) {
+            app()->setLocale($segment);
         }
     }
 
     public function index(Request $request)
     {
-        return response()
-            ->view('site.feed.sitemap')
-            ->header('Content-Type', 'application/xml; charset=UTF-8');
+        return $this->xml('site.feed.sitemap', ['sitemap_languages' => $this->languages()]);
     }
 
-    public function single()
+    public function single(?string $locale = null)
     {
-        $sitemap_menus = Menu::getRoutes(app()->getLocale());
+        $locale = $locale ?: app()->getLocale();
+        app()->setLocale($locale);
 
-        $blogs = Blog::query()
-            ->where('is_active', true)
-            ->latest()
-            ->get();
+        return $this->xml('site.feed.sitemap-single', [
+            'urls' => app(SitemapService::class)->urls($locale),
+        ]);
+    }
 
+    /**
+     * Aktiv dillər - yalnız sitemap route-u qeydiyyatdan keçənlər (dil sonradan
+     * əlavə olunubsa route keşi köhnə ola bilər; olmayan route-a `route()`
+     * istisna atardı).
+     */
+    private function languages()
+    {
+        return Language::getCachedAll()
+            ->filter(fn ($language) => Route::has("site.{$language->code}.sitemap.single"))
+            ->values();
+    }
+
+    private function xml(string $view, array $data)
+    {
         return response()
-            ->view('site.feed.sitemap-single', compact(
-                'sitemap_menus',
-                'blogs',
-            ))
+            ->view($view, $data)
             ->header('Content-Type', 'application/xml; charset=UTF-8');
     }
 }

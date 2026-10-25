@@ -29,7 +29,7 @@
             <div class="col-md-4 mb-3">
                 <h5>Dillər</h5>
                 @foreach($languages as $lang)
-                    <a href="{{ $lang->switchLanguage() }}" class="btn btn-sm {{ $currentLocale === $lang->code ? 'btn-light' : 'btn-outline-light' }} me-1">
+                    <a href="{{ $language_urls[$lang->code] ?? $lang->switchLanguage() }}" class="btn btn-sm {{ $currentLocale === $lang->code ? 'btn-light' : 'btn-outline-light' }} me-1">
                         {{ $lang->upper_code }}
                     </a>
                 @endforeach

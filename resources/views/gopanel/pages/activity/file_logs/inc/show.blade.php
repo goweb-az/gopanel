@@ -77,7 +77,6 @@
     </div>
 </div>
 
-<script>
-    window.logContextData = @json($item->context ?? []);
-    window.logDetailsData = @json($item->log_details ?? []);
-</script>
+<div id="file-log-data" class="d-none"
+     data-context="{{ json_encode((object) ($item->context ?? []), JSON_UNESCAPED_UNICODE) }}"
+     data-details="{{ json_encode((object) ($item->log_details ?? []), JSON_UNESCAPED_UNICODE) }}"></div>

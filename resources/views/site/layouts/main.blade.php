@@ -4,10 +4,11 @@
     @include("site.layouts.head")
 </head>
 <body>
-    @if ($siteSettings?->site_status == 0)
+    {{-- siteAdminPreview: SiteStatusMiddleware (SITE_STATUS_ENFORCE=true) panel adminini bağlı saytda buraxanda --}}
+    @if ($siteSettings?->site_status == 0 && empty($siteAdminPreview))
         @include('site.component.under_construction')
     @else
-        {!!$seoAnalytics->body!!}
+        {!! $seoAnalytics?->body !!}
         <!-- Header -->
         @include("site.layouts.header")
         <!-- Header -->

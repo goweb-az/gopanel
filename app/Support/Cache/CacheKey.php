@@ -39,6 +39,13 @@ final class CacheKey
     public const GROUP_HOME        = 'home';
     public const GROUP_PAGE        = 'page';
     public const GROUP_SEO         = 'seo';
+    public const GROUP_CONTENT     = 'content';
+    public const GROUP_LANGUAGE    = 'language';
+
+    /**
+     * `forLocale()` daxilində açarlara qoyulan dil (null = app()->getLocale()).
+     */
+    private static ?string $localeOverride = null;
 
     /**
      * Eyni request içində versiyaları təkrar-təkrar oxumamaq üçün memo.
@@ -183,6 +190,87 @@ final class CacheKey
         return $key . '.' . self::locale();
     }
 
+    /** Məzmun siyahıları (bloq, xəbər...): `content.v{ver}.{platform}.{filterHash}.{locale}` */
+    public static function content(string $platform, array $filters = []): string
+    {
+        return self::prefix(self::GROUP_CONTENT) . ".{$platform}." . self::hash($filters) . '.' . self::locale();
+    }
+
+    /** Aktiv dillər siyahısı: `language.v{ver}.active` (dildən asılı deyil) */
+    public static function languages(): string
+    {
+        return self::prefix(self::GROUP_LANGUAGE) . '.active';
+    }
+
+    /**
+     * Dil dəyişdiricisi üçün slug tərcüməsi:
+     * `content.v{ver}.lang_switch.{scope}.{md5(token)}.{locale}`
+     *
+     * Hədəf dil açıq verilir - açar cari sorğunun dilinə yox, keçid edilən dilə bağlıdır.
+     */
+    public static function languageSwitch(string $scope, string $token, string $locale): string
+    {
+        return self::prefix(self::GROUP_CONTENT) . ".lang_switch.{$scope}." . md5($token) . ".{$locale}";
+    }
+
+    /**
+     * Xarici API-dən gələn səhifə datası: `page.v{ver}.api.{name}.{locale}`.
+     *
+     * Dil açıq verilə bilər - sitemap kimi yerlərdə data sorğunun dilinə görə
+     * yox, gəzilən dilə görə lazımdır.
+     */
+    public static function api(string $name, ?string $locale = null): string
+    {
+        return self::prefix(self::GROUP_PAGE) . ".api.{$name}." . ($locale ?: self::locale());
+    }
+
+    /**
+     * Açarı BAŞQA qrupların versiyasına da bağlayır:
+     *
+     *   CacheKey::dependsOn(CacheKey::content('web', ['id' => 5]), 'category', 'menu')
+     *   // content.v3.web.<hash>.az+category.v7+menu.v2
+     *
+     * Niyə: hazır massiv keşlənəndə (bloq kartında kateqoriya adı, menyu linki)
+     * data başqa qruplardan da gəlir. Açar yalnız öz qrupuna bağlansa, kateqoriya
+     * adı dəyişəndə kart TTL bitənə qədər köhnə qalardı. Asılı qrupun versiyası
+     * açarda olanda həmin qrup təmizlənən kimi bu açar da yararsız olur.
+     */
+    public static function dependsOn(string $key, string ...$groups): string
+    {
+        foreach ($groups as $group) {
+            $key .= '+' . self::prefix($group);
+        }
+
+        return $key;
+    }
+
+    /**
+     * Callback daxilində qurulan BÜTÜN açarlar verilən dilə bağlanır.
+     *
+     *   foreach ($locales as $locale) {
+     *       $key = CacheKey::forLocale($locale, fn () => CacheKey::menu('web', 'header'));
+     *   }
+     *
+     * Niyə: sitemap, export, növbə işi bütün dilləri gəzir, sorğunun dili isə birdir.
+     * `app()->setLocale()` ilə dəyişmək tətbiqin qalanına (tərcümə, tarix) da təsir
+     * edir - burada yalnız açar dəyişir. Mövcud metodların imzası toxunulmaz qalır.
+     *
+     * @template T
+     * @param  callable(): T  $build
+     * @return T
+     */
+    public static function forLocale(string $locale, callable $build): mixed
+    {
+        $previous             = self::$localeOverride;
+        self::$localeOverride = $locale;
+
+        try {
+            return $build();
+        } finally {
+            self::$localeOverride = $previous;
+        }
+    }
+
     /**
      * Sərbəst açar - yuxarıdakı qəliblərdən heç biri uyğun gəlməyəndə.
      * Qrup adı config-dəki `groups` siyahısında olmalıdır ki, flush işləsin.
@@ -238,7 +326,7 @@ final class CacheKey
     /** Hazırkı aktiv dil kodu. */
     private static function locale(): string
     {
-        return app()->getLocale();
+        return self::$localeOverride ?? app()->getLocale();
     }
 
     /**

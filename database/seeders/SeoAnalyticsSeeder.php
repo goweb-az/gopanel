@@ -17,6 +17,8 @@ class SeoAnalyticsSeeder extends Seeder
             return;
         }
 
+        $machineFiles = new SeoMachineFilesSeeder();
+
         SeoAnalytics::create([
             'head' => <<<HTML
 <!-- HEAD Analytics -->
@@ -30,36 +32,11 @@ HTML,
 <!-- FOOTER Analytics -->
 <!-- Səhifənin sonunda yerləşdiriləcək izləmə/skript kodları -->
 HTML,
-            // Bütün axtarış sistemlərinə icazə verən robots.txt məzmunu
-            'robots_txt' => <<<TXT
-User-agent: *
-Allow:
-TXT,
-            // Ən çox istifadə olunan AI botlarına açıq icazə verən qaydalar
-            'ai_txt' => <<<TXT
-User-agent: *
-Allow: /
-
-Usage-Policy: all
-
-User-agent: GPTBot
-Allow: /
-
-User-agent: CCBot
-Allow: /
-
-User-agent: Ai2Bot
-Allow: /
-
-User-agent: Google-Extended
-Allow: /
-
-User-agent: ClaudeBot
-Allow: /
-
-User-agent: PerplexityBot
-Allow: /
-TXT,
+            // robots.txt / ai.txt default-ları SeoMachineFilesSeeder-dədir (sitemap,
+            // llms.txt, /markdown-index.md ünvanlarını göstərir). Mövcud bazada
+            // köhnə mətni yeniləmək üçün: db:seed --class=SeoMachineFilesSeeder
+            'robots_txt' => $machineFiles->robots(),
+            'ai_txt'     => $machineFiles->ai(),
             'other' => null,
         ]);
     }

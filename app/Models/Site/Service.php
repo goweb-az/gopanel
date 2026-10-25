@@ -8,11 +8,11 @@ use App\Traits\Content\MetaData;
 use App\Traits\Content\Translation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Str;
+use App\Traits\Presentable\Site\HasServicePresentation;
 
 class Service extends BaseModel
 {
-    use HasFactory, SoftDeletes, Translation, MetaData;
+    use HasFactory, SoftDeletes, Translation, MetaData, HasServicePresentation;
 
     protected $table = 'services';
 
@@ -43,43 +43,5 @@ class Service extends BaseModel
                 $service->sort_order = $max !== null ? $max + 1 : 0;
             }
         });
-    }
-
-    public function getShortDescriptionViewAttribute(): string
-    {
-        return Str::limit(strip_tags($this->short_description ?? ''), 80);
-    }
-
-    public function getImageViewAttribute(): string
-    {
-        if (empty($this->image_url)) {
-            return '<span class="text-muted">Şəkil yoxdur</span>';
-        }
-
-        return '<img src="' . e($this->image_url) . '" alt="' . e($this->title ?? 'Service') . '" style="width:50px;height:50px;object-fit:cover;border-radius:8px;">';
-    }
-
-    public function getIconViewAttribute(): string
-    {
-        if (empty($this->icon)) {
-            return '<span class="text-muted">İkon yoxdur</span>';
-        }
-
-        if ($this->icon_type === SocialIconTypeEnum::Image) {
-            return '<img src="' . e(asset($this->icon)) . '" alt="' . e($this->title ?? 'Service') . '" style="width:34px;height:34px;object-fit:contain;">';
-        }
-
-        if (str_starts_with(trim($this->icon), '<')) {
-            return '<span style="font-size:20px;">' . $this->icon . '</span>';
-        }
-
-        return '<i class="' . e($this->icon) . '" style="font-size:20px;"></i>';
-    }
-
-    public function getIconValueAttribute(): string
-    {
-        return $this->icon_type === SocialIconTypeEnum::Image
-            ? asset($this->icon)
-            : (string) $this->icon;
     }
 }

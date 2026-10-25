@@ -12,6 +12,7 @@ class EncryptCookies extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-        //
+        // Qlobal RestrictDevDomain bu cookie-ni EncryptCookies-dən əvvəl xam oxuyur (dəyəri HMAC-dır)
+        \App\Http\Middleware\Security\RestrictDevDomain::UNLOCK_COOKIE,
     ];
 }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Site\DynamicContentController;
 use App\Http\Controllers\Site\HomeController;
+use App\Http\Controllers\Site\Seo\MarkdownController;
 use App\Http\Controllers\Site\Seo\RssController;
 use App\Http\Controllers\Site\Seo\SitemapController;
 use App\Http\Controllers\Site\Seo\TxtController;
@@ -38,17 +39,31 @@ Route::withoutMiddleware(['site.redirects', 'track.analytics'])->group(function 
     Route::get('/rss-index.opml', [RssController::class, 'index'])->name('site.rss.index');
     Route::get('/robots.txt', [TxtController::class, 'robots'])->name('robots.txt');
     Route::get('/ai.txt', [TxtController::class, 'ai'])->name('ai.txt');
+    Route::get('/ads.txt', [TxtController::class, 'ads'])->name('ads.txt');
     Route::get('/llms.txt', [TxtController::class, 'llms'])->name('llms.txt');
+    Route::get('/llms-full.txt', [TxtController::class, 'llmsFull'])->name('llms-full.txt');
+
+    // Səhifələrin maşın üçün Markdown variantı: canonical URL + `.md`
+    // (docs/markdown-pages.md). Dil qrupundan ƏVVƏL yazılır - əks halda
+    // `/{dil}/{slug}` catch-all-ı `bloqlar.md`-ni öz slug-ı kimi oxuyub 404 verərdi.
+    Route::get('/markdown-index.md', [MarkdownController::class, 'index'])->name('markdown.index');
+    Route::get('/{locale}.md', [MarkdownController::class, 'page'])
+        ->where('locale', '[a-z]{2}')->name('markdown.home');
+    Route::get('/{locale}/{path}', [MarkdownController::class, 'page'])
+        ->where(['locale' => '[a-z]{2}', 'path' => '.+\.md'])->name('markdown.page');
 });
 
 if (Schema::hasTable('languages')) {
     try {
         foreach (Language::getCachedAll() as $language) {
             //Sitemap
+            // `defaults('locale')` - controller dili route-dan alır (SitemapService/RssService)
             Route::get("{$language->code}/sitemap.xml", [SitemapController::class, 'single'])->name("site.{$language->code}.sitemap.single")
+                ->defaults('locale', $language->code)
                 ->withoutMiddleware(['site.redirects', 'track.analytics']);
-            // Rss 
+            // Rss
             Route::get("/{$language->code}/rss.xml", [RssController::class, 'single'])->name("site.{$language->code}.rss.single")
+                ->defaults('locale', $language->code)
                 ->withoutMiddleware(['site.redirects', 'track.analytics']);
             //Site pages
             Route::prefix($language->code)->name("site.{$language->code}.")->middleware(['language'])->group(function () use ($language) {

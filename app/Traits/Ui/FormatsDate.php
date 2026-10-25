@@ -2,18 +2,37 @@
 
 namespace App\Traits\Ui;
 
-use Carbon\Carbon;
+use App\Support\Date\LocalizedDateFormatter;
 
+/**
+ * Model sahəsinin dilə görə mətni. Nüvə: `App\Support\Date\LocalizedDateFormatter`.
+ *
+ * Dil - sorğunun app locale-i (panel-də `az`, saytda `language` middleware-i,
+ * API-də `Accept-Language`). Əvvəl hər çağırış `Carbon::setLocale('az')` edirdi:
+ * həm ingilis səhifəsində tarix azərbaycanca çıxırdı, həm də QLOBAL locale
+ * dəyişdiyi üçün növbə worker-ində sonrakı işlərin dili «sızırdı».
+ * Formatter yalnız nüsxə səviyyəsində `->locale()` işlədir.
+ */
 trait FormatsDate
 {
-    public function formatDate(string $key, string $format = 'd F Y'): ?string
+    public function formatDate(string $key, string $format = LocalizedDateFormatter::DATE): ?string
     {
         if (!isset($this->$key) || empty($this->$key)) {
             return null;
         }
 
-        Carbon::setLocale('az');
-        return Carbon::parse($this->$key)->translatedFormat($format);
+        return LocalizedDateFormatter::format($this->$key, $format);
+    }
+
+    /**
+     * Tarix + saat: «27 sentyabr 2026, 01:03».
+     *
+     * Ayrıca metod ona görə var ki, panel siyahılarında hər yerdə format sətri
+     * (`'d F Y, H:i'`) təkrar yazılmasın - format bir yerdə dəyişir.
+     */
+    public function formatDateTime(string $key, string $format = LocalizedDateFormatter::DATE_TIME): ?string
+    {
+        return $this->formatDate($key, $format);
     }
 
     public function getCreatedAtFormattedAttribute(): ?string

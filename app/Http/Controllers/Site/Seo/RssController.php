@@ -3,11 +3,17 @@
 namespace App\Http\Controllers\Site\Seo;
 
 use App\Http\Controllers\Site\SiteController;
-use App\Models\Site\Blog;
+use App\Models\Geography\Language;
+use App\Services\Seo\RssService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Route;
 
+/**
+ * RSS çıxışları:
+ *
+ *   /rss-index.opml   → OPML: bütün dillərin feed linkləri
+ *   /{dil}/rss.xml    → həmin dilin RSS 2.0 feed-i (RssService)
+ */
 class RssController extends SiteController
 {
     public function __construct()
@@ -18,61 +24,41 @@ class RssController extends SiteController
 
     private function setLocale(): void
     {
-        if (request()->segment(1)) {
-            app()->setLocale(request()->segment(1));
+        $segment = request()->segment(1);
+
+        if ($segment && preg_match('/^[a-z]{2}$/', $segment)) {
+            app()->setLocale($segment);
         }
     }
 
     // OPML feed index – bütün dillərin RSS linklərini sıralayır
     public function index(Request $request)
     {
-        return response()
-            ->view('site.feed.rss-index-opml')
-            ->header('Content-Type', 'application/xml; charset=UTF-8');
+        return $this->xml('site.feed.rss-index-opml', [
+            'feed_languages' => Language::getCachedAll()
+                ->filter(fn ($language) => Route::has("site.{$language->code}.rss.single"))
+                ->values(),
+        ]);
     }
 
     // Dil bazlı RSS 2.0
-    public function single(Request $request)
+    public function single(?string $locale = null)
     {
-        $locale = app()->getLocale();
+        $locale = $locale ?: app()->getLocale();
+        app()->setLocale($locale);
 
-        $items = Cache::remember("rss_items_{$locale}", now()->addHours(12), function () use ($locale) {
-            $blogs = Blog::query()
-                ->where('is_active', true)
-                ->latest()
-                ->take(100)
-                ->get()
-                ->map(function ($blog) use ($locale) {
-                    $title = $blog->title ?? '[Başlıqsız]';
-                    $desc  = Str::limit(strip_tags($blog->short ?? $blog->description ?? ''), 400);
-                    $link  = $blog->single_url ?? null;
-                    $date  = $blog->updated_at ?? $blog->created_at;
+        $service = app(RssService::class);
 
-                    return [
-                        'title'       => $title,
-                        'description' => $desc,
-                        'link'        => $link,
-                        'guid'        => $link ?: ('blog-' . $blog->getKey()),
-                        'pubDate'     => optional($date)->toRfc2822String(),
-                    ];
-                });
+        return $this->xml('site.feed.rss-single', [
+            'channel' => $service->channel($locale, route("site.{$locale}.rss.single")),
+            'items'   => $service->items($locale),
+        ]);
+    }
 
-            return $blogs
-                ->filter(fn($i) => !empty($i['link']))
-                ->values();
-        });
-
-        $channel = [
-            'title'       => config('app.name') . ' — ' . strtoupper($locale),
-            'link'        => url($locale),
-            'description' => 'Son yazılar',
-            'language'    => $locale,
-            'lastBuild'   => now()->toRfc2822String(),
-            'self'        => route("site.{$locale}.rss.single"),
-        ];
-
+    private function xml(string $view, array $data)
+    {
         return response()
-            ->view('site.feed.rss-single', compact('channel', 'items'))
+            ->view($view, $data)
             ->header('Content-Type', 'application/xml; charset=UTF-8');
     }
 }

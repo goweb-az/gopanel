@@ -6,19 +6,19 @@ use App\Enums\Gopanel\TranslationGroups;
 use App\Enums\Gopanel\TranslationPlatfroms;
 use App\Helpers\Gopanel\TranslationPageRegistry;
 use App\Http\Controllers\GoPanelController;
-use App\Http\Requests\Gopanel\Translations\BulkTranslationImportRequest;
 use App\Http\Requests\Gopanel\Translations\ExportTranslationsRequest;
 use App\Http\Requests\Gopanel\Translations\StoreTranslationRequest;
+use App\Http\Requests\Gopanel\Translations\TranslationExcelImportRequest;
 use App\Models\Translations\Translation;
-use App\Services\Gopanel\Translations\TranslationBulkImportService;
 use App\Services\Gopanel\Translations\TranslationCacheService;
+use App\Services\Gopanel\Translations\TranslationExcelService;
 use App\Services\Gopanel\Translations\TranslationExportService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx as XlsxWriter;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class TranslationController extends GoPanelController
 {
@@ -31,12 +31,20 @@ class TranslationController extends GoPanelController
 
     public function index(Request $request, TranslationPageRegistry $pages)
     {
-        $items      = Translation::all();
-        $locale     = $request->has("locale") ? $request->input("locale") : app()->getLocale();
-        $filters    = $request->only('locale', 'platform', 'page');
-        $allPages   = $pages->all();
+        $locale      = $request->has("locale") ? $request->input("locale") : app()->getLocale();
+        $filters     = $request->only('locale', 'platform', 'page');
+        $allPages    = $pages->all();
+        $hasFilters  = !empty($filters['locale']) || !empty($filters['platform']) || !empty($filters['page']);
+        $filterPages = !empty($filters['platform']) ? ($allPages[$filters['platform']] ?? []) : [];
+        // Excel ixracı cari filtrə (platforma/səhifə) uyğun gəlsin
+        $excelExportUrl = route('gopanel.settings.translations.excel.export', array_filter([
+            'platform' => $filters['platform'] ?? null,
+            'page'     => $filters['page'] ?? null,
+        ]));
 
-        return view("gopanel.pages.settings.translations.index", compact("items", 'locale', 'filters', 'allPages'));
+        return view("gopanel.pages.settings.translations.index", compact(
+            'locale', 'filters', 'allPages', 'hasFilters', 'filterPages', 'excelExportUrl'
+        ));
     }
 
 
@@ -123,18 +131,32 @@ class TranslationController extends GoPanelController
     }
 
 
-    public function bulkImport(BulkTranslationImportRequest $request, TranslationBulkImportService $service): JsonResponse
+    /**
+     * Tərcümələri Excel-ə çıxarır (cari platforma/səhifə filtrinə görə).
+     * Fayl heç bir dəyişiklik etmədən `excelImport()`-a geri yüklənə bilər.
+     */
+    public function excelExport(ExportTranslationsRequest $request, TranslationExcelService $service): StreamedResponse
+    {
+        $data     = $request->validated();
+        $platform = $data['platform'] ?? null;
+        $page     = $data['page'] ?? null;
+        $writer   = new XlsxWriter($service->export($platform, $page));
+        $name     = 'translations-' . implode('-', array_filter([$platform ?: 'all', $page])) . '-' . now()->format('Y-m-d') . '.xlsx';
+
+        return response()->streamDownload(fn () => $writer->save('php://output'), $name, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
+    }
+
+    public function excelImport(TranslationExcelImportRequest $request, TranslationExcelService $service): JsonResponse
     {
         try {
-            $result = $service->import($request->validated(), $request->file('file'));
+            $result = $service->import($request->file('file'), $request->overwrite());
 
-            $failedOnly = $result['created'] === 0
-                && $result['updated'] === 0
-                && $result['failed'] > 0;
+            $this->response['data'] = $result;
 
-            if ($failedOnly) {
-                $this->response['data']    = $result;
-                $this->response['message'] = 'İdxal zamanı heç bir sətir yazılmadı.';
+            if ($result['created'] === 0 && $result['updated'] === 0 && $result['failed'] > 0) {
+                $this->response['message'] = 'Heç bir sətir yazılmadı - xətalara baxın.';
                 return $this->response_json();
             }
 
@@ -160,36 +182,4 @@ class TranslationController extends GoPanelController
         return $this->response_json();
     }
 
-
-    public function jsonTemplate()
-    {
-        $content = json_encode(
-            ['example_key' => 'Example value'],
-            JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
-        );
-
-        return response($content, 200, [
-            'Content-Type'        => 'application/json',
-            'Content-Disposition' => 'attachment; filename="translations-template.json"',
-        ]);
-    }
-
-
-    public function xlsxTemplate()
-    {
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        $sheet->setCellValue('A1', 'key');
-        $sheet->setCellValue('B1', 'value');
-        $sheet->setCellValue('A2', 'example_key');
-        $sheet->setCellValue('B2', 'Example value');
-
-        $writer = new XlsxWriter($spreadsheet);
-
-        return response()->streamDownload(function () use ($writer) {
-            $writer->save('php://output');
-        }, 'translations-template.xlsx', [
-            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        ]);
-    }
 }

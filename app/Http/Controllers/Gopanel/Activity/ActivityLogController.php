@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\Gopanel\Activity;
 
+use App\Helpers\Common\ActivityLogHelper;
 use App\Http\Controllers\GoPanelController;
 use App\Models\Activity\Activity;
 use App\Models\User\User;
+use App\Support\Activity\ActivityChangeFormatter;
+use App\Support\Activity\ActivitySubject;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -28,13 +31,13 @@ class ActivityLogController extends GoPanelController
         $to                 = $request->to;
         $event              = $request->event;
         $events             = config("activitylog.event_names");
-        $allMessages = config('custom.activity_messages', []);
-        $modelList = collect($allMessages)->map(function ($config, $key) {
-            return [
+        // Faylda model bloklarından başqa ortaq açarlar da var (attribute_labels...)
+        $modelList = collect(ActivityLogHelper::modelBlocks())
+            ->map(fn ($config, $key) => [
                 'key'   => $key,
-                'title' => $config['title'] ?? $key,
-            ];
-        })->values();
+                'title' => $config['title'],
+            ])
+            ->values();
         return view("gopanel.pages.activity.activity_logs.index", compact(
             'from',
             'to',
@@ -48,7 +51,88 @@ class ActivityLogController extends GoPanelController
     {
         $item->load(['causer', 'subject']);
 
-        return view('gopanel.pages.activity.activity_logs.inc.show', ['history' => $item]);
+        $properties = collect($item->properties ?? []);
+        $oldData    = (array) ($properties->get('old') ?? []);
+        $newData    = (array) ($properties->get('attributes') ?? []);
+
+        return view('gopanel.pages.activity.activity_logs.inc.show', [
+            'history'   => $item,
+            'oldData'   => $oldData,
+            'newData'   => $newData,
+            'alertIcon' => $this->eventIcon((string) $item->event),
+            'context'   => $this->contextRows($item),
+            'changes'   => $this->changeRows($item, $newData, $oldData),
+        ]);
+    }
+
+    private function eventIcon(string $event): string
+    {
+        return match ($event) {
+            'created' => 'fas fa-plus-circle',
+            'updated' => 'fas fa-edit',
+            'deleted' => 'fas fa-trash-alt',
+            default   => 'fas fa-info-circle',
+        };
+    }
+
+    /**
+     * Log sətrinin «kontekst» bloku - hazır etiket/dəyər cütləri.
+     *
+     * Kontekst modelin `activityContext()` metodundan gəlir (bax:
+     * `ActivityLogHelper::attachContext`). Etiketlər `activity_messages.php`
+     * → `context_labels` və `attribute_labels`-dən oxunur ki, törəmə layihə
+     * controller-ə toxunmadan öz kontekst açarlarını adlandıra bilsin.
+     *
+     * @return array<int, array{label: string, value: string}>
+     */
+    private function contextRows(Activity $item): array
+    {
+        $context = (array) (collect($item->properties ?? [])->get('context') ?? []);
+
+        if ($context === []) {
+            return [];
+        }
+
+        $labels = array_merge(
+            (array) config('custom.activity_messages.attribute_labels', []),
+            (array) config('custom.activity_messages.context_labels', []),
+        );
+
+        $rows = [];
+
+        foreach ($context as $key => $value) {
+            if ($value === null || $value === '' || is_array($value)) {
+                continue;
+            }
+
+            $rows[] = ['label' => $labels[$key] ?? (string) $key, 'value' => (string) $value];
+        }
+
+        return $rows;
+    }
+
+    /**
+     * «Nə dəyişdi» cədvəli: köhnə → yeni, oxunaqlı etiket və dəyərlərlə.
+     *
+     * Çevirmə qaydası `ActivityChangeFormatter`-dədir - log təsvirindəki
+     * `:changes` placeholder-i ilə eyni mətn göstərilsin deyə. Texniki sahələr
+     * (`technical_attributes`) və modelin `$logExcept` siyahısı burada gizlədilir;
+     * xam JSON aşağıda olduğu kimi qalır.
+     *
+     * @return array<int, array{key: string, label: string, old: string|null, new: string, has_old: bool}>
+     */
+    private function changeRows(Activity $item, array $newData, array $oldData): array
+    {
+        if ($newData === []) {
+            return [];
+        }
+
+        $hidden = array_merge(
+            (array) config('custom.activity_messages.technical_attributes', []),
+            $item->subject_type ? ActivitySubject::noiseAttributes($item->subject_type) : [],
+        );
+
+        return ActivityChangeFormatter::rows((string) $item->log_name, $newData, $oldData, [], $hidden);
     }
 
     public function delete(Activity $item)

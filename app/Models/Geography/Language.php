@@ -10,10 +10,11 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
+use App\Traits\Presentable\Geography\HasLanguagePresentation;
 
 class Language extends BaseModel
 {
-    use AddUuid, HasFactory, SoftDeletes;
+    use AddUuid, HasFactory, SoftDeletes, HasLanguagePresentation;
 
     protected $logEnabled = false;
 
@@ -50,11 +51,6 @@ class Language extends BaseModel
     public function country()
     {
         return $this->belongsTo(Country::class);
-    }
-
-    public function getUpperCodeAttribute()
-    {
-        return mb_strtoupper($this->code, 'UTF-8');
     }
 
     public static function getCachedAll(DateTimeInterface|DateInterval|int|null $ttl = null): Collection

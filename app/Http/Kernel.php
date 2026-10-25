@@ -14,8 +14,13 @@ class Kernel extends HttpKernel
      * @var array<int, class-string|string>
      */
     protected $middleware = [
+        // Server-Timing başlığı - SERVER_TIMING_ENABLED=true + APP_DEBUG=true olmadan heç nə etmir
+        \App\Http\Middleware\ServerTiming::class,
         // \App\Http\Middleware\TrustHosts::class,
         \App\Http\Middleware\TrustProxies::class,
+        // Dev domen qoruyucusu - DEV_GUARD_ENABLED=false (default) olanda heç nə etmir.
+        // TrustProxies-dən SONRA: real IP-ni görməlidir.
+        \App\Http\Middleware\Security\RestrictDevDomain::class,
         \Illuminate\Http\Middleware\HandleCors::class,
         \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
@@ -38,6 +43,8 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             //Kopyalama alətlərini dayanadırmaq üçün
             \App\Http\Middleware\HumanGate::class,
+            // HTML səhifəyə `Link: <...md>; rel="alternate"` başlığı (SEO / AI agentlər)
+            \App\Http\Middleware\Seo\MarkdownAlternateMiddleware::class,
         ],
 
         'api' => [
@@ -67,8 +74,16 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'gopanel' => \App\Http\Middleware\Gopanel::class,
+        'gopanel.can' => \App\Http\Middleware\Gopanel\GopanelPermissionMiddleware::class,
+        'gopanel.host' => \App\Http\Middleware\Gopanel\GopanelHostMiddleware::class,
         'language' => \App\Http\Middleware\LanguageMiddleware::class,
         'site.redirects' => \App\Http\Middleware\Seo\SiteRedirectMiddleware::class,
         'track.analytics' => \App\Http\Middleware\Seo\TrackAnalyticsMiddleware::class,
+        // Təhlükəsizlik - hamısı config ilə idarə olunur, default sönük (docs/security-and-auth.md)
+        'gopanel.pin' => \App\Http\Middleware\Gopanel\RequireAdminPin::class,
+        'ip.restrict' => \App\Http\Middleware\Security\RestrictByIp::class,
+        'dev.guard' => \App\Http\Middleware\Security\RestrictDevDomain::class,
+        'site.status' => \App\Http\Middleware\SiteStatusMiddleware::class,
+        'server.timing' => \App\Http\Middleware\ServerTiming::class,
     ];
 }

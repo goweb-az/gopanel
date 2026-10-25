@@ -3,9 +3,12 @@
 namespace App\Models\Analytics;
 
 use App\Models\BaseModel;
+use App\Traits\Presentable\Analytics\HasAnalyticsDevicePresentation;
 
 class AnalyticsDevice extends BaseModel
 {
+    use HasAnalyticsDevicePresentation;
+
     protected $table = 'analytics_devices';
 
     public $logEnabled = false;
@@ -40,14 +43,5 @@ class AnalyticsDevice extends BaseModel
         }
 
         $this->save();
-    }
-
-
-    public function getIconFontAttribute()
-    {
-        if (is_null($this->icon))
-            return null;
-        $icon = str_replace('fa-solid', 'fas', $this->icon);
-        return '<i class="' . $icon . '"></i>';
     }
 }

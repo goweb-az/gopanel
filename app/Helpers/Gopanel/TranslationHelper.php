@@ -34,12 +34,83 @@ class TranslationHelper
      */
     public static function fromInput($item, array $input): void
     {
+        self::fromInputWithChanges($item, $input);
+    }
+
+    /**
+     * `create()` ilə eyni, amma dəyişən tərcümələri qaytarır (bax: `fromInputWithChanges()`).
+     *
+     * @return array<string, array<string, array{old: ?string, new: ?string}>>
+     */
+    public static function createWithChanges($item, $request): array
+    {
+        return self::fromInputWithChanges($item, is_null($request) ? [] : (array) $request->all());
+    }
+
+    /**
+     * Tərcümələri yazır və DƏYİŞƏNLƏRİ qaytarır: `sahə => dil => ['old' => .., 'new' => ..]`.
+     *
+     * Niyə: tərcümə sahələri `field_translations` cədvəlindədir, modelin öz
+     * sütunu deyil - activity log-un `logOnlyDirty()` mexanizmi onları görmür.
+     * «Adını dəyişdirdi: Köhnə → Yeni» cümləsi yalnız bu massivdən qurula bilər
+     * (`App\Support\Activity\TranslationChanges::describe()`).
+     *
+     * Yalnız AKTİV dillər yazılır: panel forması yalnız aktiv dilləri göstərir
+     * (`ViewServiceProvider` → `languages`). `Language::all()` gəzilsə, müvəqqəti
+     * söndürülmüş dilin mövcud tərcüməsi hər saxlamada `null` ilə silinirdi.
+     *
+     * Köhnə dəyərlər BİR sorğu ilə oxunur (hər sahə/dil üçün ayrıca SELECT yox).
+     *
+     * @param  array<string, array<string, mixed>>  $input
+     * @return array<string, array<string, array{old: ?string, new: ?string}>>
+     */
+    public static function fromInputWithChanges($item, array $input): array
+    {
+        $changes = [];
+
         try {
-            foreach (Language::all() as $lang) {
-                self::process($item, $input, $lang);
+            $existing = self::existingValues($item);
+
+            foreach (Language::query()->where('is_active', true)->get() as $lang) {
+                $changes = array_merge_recursive($changes, self::process($item, $input, $lang, $existing));
             }
         } catch (\Exception $e) {
             // Handle exception if needed (but no logging here)
+        }
+
+        self::forgetLoadedTranslations($item);
+
+        return $changes;
+    }
+
+    /**
+     * Mövcud tərcümələr `"dil.sahə" => dəyər` şəklində.
+     *
+     * @return array<string, mixed>
+     */
+    private static function existingValues($item): array
+    {
+        if (!$item->exists) {
+            return [];
+        }
+
+        return $item->translations()
+            ->get(['locale', 'key', 'value'])
+            ->mapWithKeys(fn ($row) => [$row->locale . '.' . $row->key => $row->value])
+            ->all();
+    }
+
+    /**
+     * Yaddaşdakı `translations` əlaqəsini atır.
+     *
+     * Niyə: `Translation` trait-i tərcüməni yüklənmiş əlaqədən oxuyur (N+1 olmasın).
+     * Yazıdan sonra əlaqə atılmasa eyni sorğuda `$item->title` KÖHNƏ dəyəri
+     * qaytarır (məs. save cavabındakı mesaj). Növbəti oxu təzə sorğu ilə gəlir.
+     */
+    private static function forgetLoadedTranslations($item): void
+    {
+        if (is_object($item) && method_exists($item, 'unsetRelation')) {
+            $item->unsetRelation('translations');
         }
     }
 
@@ -49,18 +120,31 @@ class TranslationHelper
      * @param $item
      * @param array $input
      * @param $lang
-     * @return void
+     * @param array<string, mixed> $existing  `"dil.sahə" => köhnə dəyər`
+     * @return array<string, array<string, array{old: ?string, new: ?string}>>
      */
-    private static function process($item, array $input, $lang)
+    private static function process($item, array $input, $lang, array $existing = []): array
     {
+        $changes = [];
+
         foreach ($item->translatedAttributes as $transAttribute) {
             $newValue = self::getTranslatedValue($item, $transAttribute, $lang, $input);
+            $oldValue = $existing[$lang->code . '.' . $transAttribute] ?? null;
 
             $item->translations()->updateOrCreate(
                 ['locale' => $lang->code, 'key' => $transAttribute],
                 ['value' => $newValue]
             );
+
+            $old = is_scalar($oldValue) ? (string) $oldValue : null;
+            $new = is_scalar($newValue) ? (string) $newValue : null;
+
+            if ((string) $old !== (string) $new) {
+                $changes[$transAttribute][$lang->code] = ['old' => $old, 'new' => $new];
+            }
         }
+
+        return $changes;
     }
 
     /**
@@ -103,6 +187,12 @@ class TranslationHelper
     }
 
 
+    /**
+     * Bir sahənin tərcümələrini `[dil => dəyər]` massivindən yazır (seeder-lər).
+     *
+     * `fromInput()`-dan fərqli olaraq BÜTÜN dillər gəzilir: seeder söndürülmüş
+     * dilin məzmununu da əvvəlcədən hazırlayır ki, dil aktivləşəndə boş qalmasın.
+     */
     public static function basic($item, $data, $transAttribute)
     {
         foreach (Language::all() as $lang) {
@@ -115,5 +205,7 @@ class TranslationHelper
                 );
             }
         }
+
+        self::forgetLoadedTranslations($item);
     }
 }

@@ -3,9 +3,12 @@
 namespace App\Models\Analytics;
 
 use App\Models\BaseModel;
+use App\Traits\Presentable\Analytics\HasAnalyticsAdPlatformPresentation;
 
 class AnalyticsAdPlatform extends BaseModel
 {
+    use HasAnalyticsAdPlatformPresentation;
+
     protected $table = 'analytics_ad_platforms';
 
     public $logEnabled = false;
@@ -41,13 +44,5 @@ class AnalyticsAdPlatform extends BaseModel
         }
 
         $this->save();
-    }
-
-
-    public function getLogoImgAttribute()
-    {
-        if (is_null($this->logo))
-            return null;
-        return '<img src="' . $this->logo . '" width="25" alt="">';
     }
 }

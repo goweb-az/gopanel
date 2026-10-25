@@ -22,6 +22,13 @@ class HumanGate
             return $next($request);
         }
 
+        // Maşın üçün fayllar (robots.txt, llms.txt, ads.txt, sitemap.xml, rss, *.md) -
+        // onları məhz JS icra etməyən robotlar və AI agentlər oxuyur. Yoxlama
+        // səhifəsi göstərilsə bu faylların mənası itir.
+        if (preg_match('/\.(md|txt|xml|opml)$/i', $request->path())) {
+            return $next($request);
+        }
+
         // Yalnız HTML səhifələri
         $accept = $request->header('accept', '');
         $isHtml = str_contains($accept, 'text/html');

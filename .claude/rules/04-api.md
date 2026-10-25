@@ -6,6 +6,13 @@ Route `routes/api.php` · Controller `app/Http/Controllers/Api/`
 > Bu layer starter-də **minimaldır** (yalnız `auth:sanctum` nümunəsi). Aşağıdakı
 > qaydalar törəmə layihədə API açılanda tətbiq edilir - hər layihədə formatı
 > yenidən icad etməmək üçün.
+>
+> **Zərfin icrası hazırdır** - yenidən yazılmır:
+> controller `App\Http\Controllers\Api\ApiController`-dən törəyir
+> (`success()` / `created()` / `notFound()`...), iş qaydası xətası
+> `App\Exceptions\Domain\DomainException` törəməsi kimi atılır, səhifələmə
+> `App\Support\Api\PaginationParams` ilə oxunur. `Handler` `api/*` altındakı
+> bütün istisnaları bu zərfə çevirir. Detal: [docs/shared-layer.md §18](../../docs/shared-layer.md).
 
 ## 1. Cavab formatı - dəyişməz müqavilə
 

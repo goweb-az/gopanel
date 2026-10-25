@@ -54,6 +54,11 @@
                             <a href="{{ route('gopanel.profile.change-password.index') }}" class="btn btn-warning w-100">
                                 <i class="fas fa-key me-1"></i> Şifrəni Dəyiş
                             </a>
+                            @if (!empty($hasPersonalSettings))
+                                <a href="{{ route('gopanel.profile.settings.index') }}" class="btn btn-light w-100 mt-2">
+                                    <i class="fas fa-sliders-h me-1"></i> Şəxsi tənzimləmələr
+                                </a>
+                            @endif
                         </div>
                     </div>
                 </div>

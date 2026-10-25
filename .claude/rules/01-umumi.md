@@ -82,10 +82,25 @@ Qovluq boş olsa da `.gitkeep` ilə repoda saxlanılır - struktur ilk gündən
 görünsün, hər layihədə yenidən "haraya yazım?" sualı yaranmasın.
 
 Hazırda boş olanlar: `app/Observers`, `app/Http/Resources`,
-`app/Queries/{Api,Site}`, `app/Enums/Common/Status`, `app/Support/Security`.
+`app/Queries/{Api,Site}`, `app/Enums/Common/Status`, `app/Support/Security`,
+`app/Traits/Presentable`, `public/assets/front`.
 Qalanlarında artıq işlək siniflər var - yeni sinif yazmazdan əvvəl
 [docs/shared-layer.md](../../docs/shared-layer.md) oxunur, çox güman lazım olan
 artıq mövcuddur.
+
+### 2.3 Modelin göstəriş accessor-ları → Presentable trait
+
+Status adı, rəng tonu, formatlanmış tarix/məbləğ kimi **yalnız göstəriş** üçün
+accessor-lar model faylına yığılmır:
+`app/Traits/Presentable/<Domen>/Has<Model>Presentation.php`.
+
+- adlar sabit lüğətlədir: `*_label`, `*_class`, `*_color`, `*_formatted`, `*_url`;
+- trait-də sorğu, yazma və icazə yoxlaması **yoxdur**; HTML əvəzinə `*_label` + `*_class`;
+- format ortaq qatdan gəlir (`LocalizedDateFormatter`, `ByteSize`, `CdnUrl`, enum `labelOf()`).
+
+**Niyə:** model faylında data (fillable/cast/relation) ilə göstəriş qarışanda
+«bu sütun bazada var, yoxsa hesablanır?» sualı itir və model yüzlərlə sətrə
+çatır. Tam qayda: [docs/rules/presentable-traits.md](../../docs/rules/presentable-traits.md).
 
 ## 3. Blade-də məntiq yoxdur
 
@@ -93,7 +108,8 @@ artıq mövcuddur.
   şərtli mətn - hamısı controller/servisdə hazırlanıb blade-ə **hazır** ötürülür.
 - Blade-də ancaq: çap (`{{ }}`), sadə `@if/@foreach`, `@include`, komponent çağırışı.
 - Blade-də `<script>` və `<style>` bloku yazılmır - JS `public/assets/.../js/`,
-  CSS `public/assets/.../css/` altındadır.
+  CSS `public/assets/.../css/` altındadır (panel: `assets/gopanel/`,
+  sayt: `assets/front/`).
 - Blade-dən JS-ə dəyər ötürmək üçün **`data-*` atributu** işlədilir
   (route, id, uid, config). JS həmin dəyəri `$el.data('...')` ilə oxuyur.
 - **İSTİSNA:** email şablonları (`resources/views/emails/`). Email klientləri
@@ -141,6 +157,10 @@ Düymənin gizlədilməsi tək müdafiə deyil - server tərəfdə (FormRequest/
 - Fəaliyyət jurnalı (kim nə etdi): model `LogsAdminActivity` trait-ini işlədir
   **və** `config/custom/activity_messages.php`-də bir blok alır.
   **Config-də adı olmayan model ümumiyyətlə jurnallanmır** - trait tək kifayət deyil.
+  Yeniləmə mesajında `:changes` placeholder-i işlədilir; tez-tez dəyişən səs-küy
+  sahələri modeldə `$logExcept`-ə yazılır.
+- Scheduler-də işləyən daimi command `Timer::cronStart()` / `cronEnd()` ilə
+  `cron` kanalına yazır - «işlədimi, nə qədər çəkdi» bir filtrdə görünsün.
 - Jurnal xətası əsas əməliyyatı **dayandırmamalıdır** (`try/catch` + `report()`).
 
 ## 8. Test

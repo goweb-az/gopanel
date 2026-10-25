@@ -41,11 +41,30 @@ Tam siyahı və nümunələr: [docs/shared-layer.md](../docs/shared-layer.md)
 | «Bu istifadəçi bunu edə bilər?» | `App\Policies\CrudPolicy` (`$module` elan et, bəsdir) |
 | Çoxdilli sahə məcburidirsə | `App\Rules\TranslatedRequired` |
 | Tək sətirli səhifə (Haqqımızda, Əlaqə...) | `App\Queries\Gopanel\Common\SingleRecordQuery` |
+| Status/tip lookup cədvəli (CRUD + sürüklə-burax + tək default) | `App\Http\Controllers\Gopanel\Lookups\BaseLookupController` + `config/gopanel/lookups.php` (`php artisan gopanel:make-lookup`) |
+| Route-da panel icazəsi (`gopanel.can:a,b`) | `App\Http\Middleware\Gopanel\GopanelPermissionMiddleware` |
+| Sürüklə-burax sıra yazılışı (bir sorğu) | `App\Services\Gopanel\SortOrderService` |
+| Excel/PDF ixrac (bir tərif, hər format, mailə göndər) | `App\Exports\Gopanel\ExportDefinition` + `App\Support\Export\ExportRenderer` + `gopanel.exports.buttons` ([bələdçi](../docs/export-import.md)) |
+| Import sayğacları / uğursuz sətirlər (retry) | `App\Support\Import\{ImportReport,FailureBucket}` |
+| Fayl URL-i (disk avtomatik / fallback) | `FileUploader::url($p, 'auto')`, `storageUrl()`, `*OrFallback()`, `file_url()` |
+| Həssas əməliyyatın PIN təsdiqi | `App\Services\Gopanel\Admins\AdminPinService` + route-a `gopanel.pin` |
+| Giriş limiti / e-poçt OTP | `App\Services\Auth\{LoginThrottle,OtpService}` |
+| OTP / şifrə bərpası məktubu | `MailService::sendOtpEmail()` / `sendForgotPasswordEmail()` |
+| IP allowlist / sayt bağlı (503) / dev domen | `ip.restrict`, `site.status` (`SiteStatusService`), `RestrictDevDomain` - config ilə, default sönük ([sənəd](../docs/security-and-auth.md)) |
+| Qeydin müəllifi / məsulu («üzərinə götür») | `App\Traits\System\HasAuthors` (opt-in) + `RecordAuthorService` + `HandlesAssignment` |
+| Domen hadisəsi → activity_log + fayl jurnalı | `App\Services\Activity\ActivityLogger` (+ `App\Enums\System\LogChannelEnum`) |
+| Tipli key-value tənzimləmələr (config-də elan) | `App\Support\Settings\SettingDefinitions` + `App\Services\Settings\SettingsService` ([sənəd](../docs/authors-settings.md)) |
+| Saytın UI sözlərini bazaya yazmaq (prod-da da, yalnız çatışmayanlar) | `php artisan translations:seed-site` ← `database/data/translations/website.json` ([qayda](../docs/translations.md)) |
+| Tərcümələri mühitlər arası köçürmək (Excel, eyni format) | `App\Services\Gopanel\Translations\TranslationExcelService` (panel: Excel-ə çıxar / Excel-dən yüklə) |
+| UI tərcümələrinin toplu yazılışı | `App\Services\Gopanel\Translations\TranslationWriteService` |
+| Tərcümə dəyişikliyi jurnala | `TranslationHelper::fromInputWithChanges()` + `App\Support\Activity\TranslationChanges` |
+| Statik xəritə şəkli / headless sayt ünvanı | `App\Support\Geo\StaticMap`, `App\Support\Url\FrontendUrl` |
 | Cədvəl hüceyrəsi / sətir düymələri | `App\Datatable\Gopanel\Concerns\RendersRichCells` |
 | Bayt → oxunaqlı ölçü | `App\Support\Files\ByteSize` |
 | Serverin CPU/RAM/disk göstəriciləri | `App\Helpers\Gopanel\ServerMetricsHelper` |
-| Keş (oxu/yaz/flush) | `App\Services\Cache\CacheService` |
-| Keş açarı + qrup invalidasiyası | `App\Support\Cache\CacheKey` (+ `config/custom/cache.php`) |
+| Keş (oxu/yaz/flush, `rememberFound`) | `App\Services\Cache\CacheService` |
+| Keş açarı (dil + versiya) + qrup invalidasiyası | `App\Support\Cache\CacheKey` (+ `config/custom/cache.php`) |
+| Model dəyişəndə keşin avtomatik təmizlənməsi | `App\Providers\CacheInvalidationServiceProvider` (`model_groups`-a bir sətir) |
 | Email göndərişi | `App\Services\Mail\MailService` |
 | SMS göndərişi | `App\Services\Sms\SmsService` (+ `config/custom/sms.php`) |
 | Toplu (bulk) əməliyyatlar | `App\Services\Bulk\BulkActionService` (abstract) |
@@ -57,7 +76,29 @@ Tam siyahı və nümunələr: [docs/shared-layer.md](../docs/shared-layer.md)
 | Dövr müqayisəsi (bu dövr / əvvəlki) | `App\Support\Gopanel\PeriodRange` |
 | Kənar ikonu FA5-ə çevir | `App\Support\Gopanel\PanelIconMap` |
 | Fayl jurnalı | `App\Services\Activity\LogService` |
+| Cron command-in başlanğıc/son jurnalı | `App\Helpers\Common\Timer` (`cron` kanalı) |
 | Fəaliyyət jurnalı | `App\Traits\Activity\LogsAdminActivity` + `config/custom/activity_messages.php` |
+| Jurnalda «nə dəyişdi» mətni (`:changes`) | `App\Support\Activity\ActivityChangeFormatter` |
+| API cavab zərfi `{success, message, data}` | `App\Http\Controllers\Api\ApiController` + `App\Http\Responses\Api\{Success,Error}Response` |
+| İş qaydası istisnası (status + kod) | `App\Exceptions\Domain\DomainException` |
+| API səhifələmə (`per_page` limiti) | `App\Support\Api\PaginationParams` (+ `config/api.php`) |
+| Telefon / e-poçt normallaşdırma, maskalama | `App\Support\Contact\{PhoneNumber,EmailAddress}`, `App\Helpers\Common\StringHelpers` |
+| Dilə görə tarix mətni | `App\Support\Date\LocalizedDateFormatter` |
+| Siyahı filtrində tarix aralığı | `App\Support\Date\FilterDateRange` |
+| Koordinatlar arası məsafə | `App\Support\Geo\Distance` |
+| Link önizləmə robotu / bot tanıma | `App\Support\Http\PreviewBotDetector` |
+| Panel linki (növbədən/emaildən) | `App\Support\Url\GopanelUrl` (+ `GOPANEL_URL`, `gopanel.host` middleware) |
+| İnsan üçün artan nömrə (sifariş №) | `App\Traits\System\HasSerialNumber` |
+| Model adı / «X tapılmadı» | `App\Traits\System\{HasLabel,HasNotFoundMessage}` |
+| Modelin göstəriş accessor-ları | `App\Traits\Presentable\<Domen>\Has<Model>Presentation` ([qayda](../docs/rules/presentable-traits.md)) |
+| Publik səhifələr (sitemap / RSS / `.md` ortaq mənbə) | `App\Services\Seo\PublicContentService` (+ `config/seo/content.php`) |
+| Səhifənin `.md` variantı, `/markdown-index.md`, `/llms-full.txt` | `App\Services\Seo\Markdown\MarkdownPageService` + `markdown_url()` |
+| HTML → Markdown | `App\Services\Seo\Markdown\HtmlToMarkdown` |
+| Sitemap / RSS | `App\Services\Seo\SitemapService` / `RssService` |
+| JSON-LD (schema.org) | `App\Services\Seo\SchemaService` (+ `config/seo/schema.php`, `setSchemaGraph()`) |
+| robots/ai/ads/llms.txt | `App\Services\Seo\MachineFilesService` (panel: SEO → SEO və analitika) |
+| Meta (title/description/og), robots | `App\Services\Site\Seo\MetaService` (+ `config/seo/meta.php`, `setPageMeta()` / `setPageRobots()`) |
+| URL-in başqa dildəki variantı / yanlış dil slug-u → 301 | `App\Services\Site\Seo\{LanguageSwitcherService,SlugAliasResolver}` |
 
 ## Qovluq xəritəsi
 
@@ -100,6 +141,8 @@ docs              modul sənədləri
 - [docs/database-structure.md](../docs/database-structure.md) — cədvəllər, əlaqələr, trait-lər
 - [docs/backup.md](../docs/backup.md) — panel backup bölməsi (baza + artımlı fayl arxivi)
 - [docs/system-status.md](../docs/system-status.md) — sistem vəziyyəti monitoru (CPU/RAM/disk, növbə, cron)
+- [docs/seo.md](../docs/seo.md) — SEO: meta, JSON-LD, hreflang; [markdown-pages.md](../docs/markdown-pages.md) (`.md` səhifələr), [seo-machine-files.md](../docs/seo-machine-files.md) (robots/llms/ai/ads.txt)
+- [docs/rules/presentable-traits.md](../docs/rules/presentable-traits.md) — modelin göstəriş trait-ləri
 - [docs/rules/README.md](../docs/rules/README.md) — böyük modul qurma spesifikasiyaları:
   bildirişlər, dashboard, istifadəçi idarəetməsi, kateqoriya ağacı, API, deployment
 

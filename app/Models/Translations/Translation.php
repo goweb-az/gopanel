@@ -8,10 +8,11 @@ use App\Models\Geography\Language;
 use App\Traits\Ui\UiElements;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\Presentable\Translations\HasTranslationPresentation;
 
 class Translation extends BaseModel
 {
-    use HasFactory, SoftDeletes, UiElements;
+    use HasFactory, SoftDeletes, UiElements, HasTranslationPresentation;
 
     private $languages;
 
@@ -66,7 +67,6 @@ class Translation extends BaseModel
         });
     }
 
-
     public function getValue($locale)
     {
         return static::where('key', $this->key)
@@ -75,23 +75,6 @@ class Translation extends BaseModel
             ->where('page', $this->page)
             ->where('locale', $locale)
             ->first()?->value ?? null;
-    }
-
-    public function getLangCheckExistsAttribute()
-    {
-        // NOTE: this still issues one exists() query per language per row (N+1).
-        // A bounded fix would precompute existing (key,platform,filename,page,locale)
-        // tuples for the current result page in a single query and look them up here,
-        // but that requires plumbing the current page's row set into the model/accessor,
-        // which the datatable's per-row rendering doesn't currently expose. Left as-is
-        // to avoid a larger architectural change to GopanelDatatable for this task.
-        $result = '';
-        foreach ($this->languages as $language) {
-            $check = $this->checkExists($language->code, $this->key, $this->filename);
-            $icon  = $check ? '<i class="fas fa-check text-success"></i>' : '<i class="fas fa-times text-danger"></i>';
-            $result .= "{$language->code} {$icon} ";
-        }
-        return $result;
     }
 
     public function checkExists($code, $key, $filename)
@@ -104,19 +87,12 @@ class Translation extends BaseModel
             ->exists();
     }
 
-
-    public function getEditableValueAttribute()
-    {
-        return $this->double_click_edit("value");
-    }
-
-
     /**
      * Regenerate both the PHP lang file and the JSON lang file for a given
      * locale/filename/platform combination from the current DB state.
      *
      * Extracted out of the per-instance writeToLangFile()/writeToJsonFile()
-     * methods so bulk operations (e.g. TranslationBulkImportService) can
+     * methods so bulk operations (e.g. TranslationWriteService) can
      * regenerate files once per (locale, filename) pair after a chunked
      * upsert, instead of looping Eloquent save() and triggering the model
      * events for every single row.
@@ -195,7 +171,6 @@ class Translation extends BaseModel
         static::writeLangFileFor($this->locale, $this->filename, $this->platform);
     }
 
-
     private function removeFromLangFile()
     {
         $path = resource_path("lang/{$this->locale}/{$this->filename}.php");
@@ -223,13 +198,10 @@ class Translation extends BaseModel
         file_put_contents($path, '<?php return ' . var_export($translations, true) . ';');
     }
 
-
-
     private function writeToJsonFile()
     {
         static::writeJsonFileFor($this->locale, $this->filename, $this->platform);
     }
-
 
     private function removeFromJsonFile()
     {

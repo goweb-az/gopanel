@@ -3,9 +3,12 @@
 namespace App\Models\Analytics;
 
 use App\Models\BaseModel;
+use App\Traits\Presentable\Analytics\HasAnalyticsOperatingSystemPresentation;
 
 class AnalyticsOperatingSystem extends BaseModel
 {
+    use HasAnalyticsOperatingSystemPresentation;
+
     protected $table = 'analytics_operating_systems';
 
     public $logEnabled = false;
@@ -40,13 +43,5 @@ class AnalyticsOperatingSystem extends BaseModel
         }
 
         $this->save();
-    }
-
-
-    public function getIconImgAttribute()
-    {
-        if (is_null($this->icon))
-            return null;
-        return '<img src="' . $this->icon . '" width="25" alt="">';
     }
 }

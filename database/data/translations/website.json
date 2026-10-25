@@ -1,0 +1,86 @@
+[
+  {
+    "page": "general",
+    "group": "title",
+    "key": "home",
+    "values": { "az": "Ana səhifə", "en": "Home", "ru": "Главная" }
+  },
+  {
+    "page": "general",
+    "group": "title",
+    "key": "about",
+    "values": { "az": "Haqqımızda", "en": "About us", "ru": "О нас" }
+  },
+  {
+    "page": "general",
+    "group": "title",
+    "key": "blog",
+    "values": { "az": "Bloq", "en": "Blog", "ru": "Блог" }
+  },
+  {
+    "page": "general",
+    "group": "title",
+    "key": "contact",
+    "values": { "az": "Əlaqə", "en": "Contact", "ru": "Контакты" }
+  },
+  {
+    "page": "general",
+    "group": "title",
+    "key": "read_more",
+    "values": { "az": "Ətraflı", "en": "Read more", "ru": "Подробнее" }
+  },
+  {
+    "page": "general",
+    "group": "title",
+    "key": "send",
+    "values": { "az": "Göndər", "en": "Send", "ru": "Отправить" }
+  },
+  {
+    "page": "general",
+    "group": "title",
+    "key": "search",
+    "values": { "az": "Axtar", "en": "Search", "ru": "Поиск" }
+  },
+  {
+    "page": "general",
+    "group": "content",
+    "key": "copyright",
+    "values": {
+      "az": "Bütün hüquqlar qorunur.",
+      "en": "All rights reserved.",
+      "ru": "Все права защищены."
+    }
+  },
+  {
+    "page": "general",
+    "group": "content",
+    "key": "not_found_text",
+    "values": {
+      "az": "Axtardığınız səhifə tapılmadı. Ünvanı yoxlayın və ya ana səhifəyə qayıdın.",
+      "en": "The page you are looking for was not found. Check the address or go back to the home page.",
+      "ru": "Страница не найдена. Проверьте адрес или вернитесь на главную."
+    }
+  },
+  {
+    "page": "home",
+    "group": "title",
+    "key": "latest_posts",
+    "values": { "az": "Son yazılar", "en": "Latest posts", "ru": "Последние записи" }
+  },
+  {
+    "page": "contact",
+    "group": "title",
+    "key": "form_title",
+    "values": { "az": "Bizə yazın", "en": "Write to us", "ru": "Напишите нам" }
+  },
+  {
+    "page": "contact",
+    "group": "content",
+    "key": "form_intro",
+    "values": {
+      "az": "Sualınızı və ya təklifinizi göndərin, ən qısa zamanda sizinlə əlaqə saxlayacağıq.",
+      "en": "Send us your question or suggestion and we will get back to you as soon as possible.",
+      "ru": "Отправьте вопрос или предложение, и мы свяжемся с вами в ближайшее время."
+    }
+  }
+]

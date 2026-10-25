@@ -120,6 +120,30 @@ class CacheService
     }
 
     /**
+     * remember() kimi, amma `null` neticeni KESHLEMIR.
+     *
+     * Niye: "tapilmadi" cavabi keshlense, qeyd sonradan yaradilanda da TTL
+     * bitene qeder yoxmush kimi gorunur (meselen slug ile axtarish, settings
+     * acari). Bu metodla yalniz tapilan deyer saxlanilir.
+     */
+    public static function rememberFound(string $key, Closure $callback, int|DateTimeInterface|DateInterval|null $ttl = null): mixed
+    {
+        $cached = Cache::get($key);
+
+        if ($cached !== null) {
+            return $cached;
+        }
+
+        $value = $callback();
+
+        if ($value !== null) {
+            Cache::put($key, $value, self::ttl($ttl));
+        }
+
+        return $value;
+    }
+
+    /**
      * remember-in omurluk versiyasi.
      */
     public static function rememberForever(string $key, Closure $callback): mixed

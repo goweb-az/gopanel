@@ -18,26 +18,13 @@ class LlmsTxtSeeder extends Seeder
         ]);
     }
 
+    /**
+     * Default mətn SeoMachineFilesSeeder-dədir - `/markdown-index.md`,
+     * `/llms-full.txt` və sitemap ünvanlarını göstərir. Mövcud bazada köhnə
+     * default-u yeniləmək üçün: db:seed --class=SeoMachineFilesSeeder.
+     */
     private function defaultContent(): string
     {
-        $appName = config('app.name', 'Gopanel');
-        $appUrl  = config('app.url', 'https://example.com');
-
-        return <<<TXT
-# {$appName}
-
-> {$appName} veb saytı haqqında məlumat.
-
-## Sayt haqqında
-- Ad: {$appName}
-- URL: {$appUrl}
-- Dillər: Azərbaycan, English, Русский
-
-## Əlaqə
-- Veb sayt: {$appUrl}
-
-## İstifadə qaydaları
-Bu saytdakı məzmunun AI/LLM sistemləri tərəfindən istifadəsi icazəlidir, lakin mənbə göstərilməlidir.
-TXT;
+        return (new SeoMachineFilesSeeder())->llms();
     }
 }

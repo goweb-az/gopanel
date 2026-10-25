@@ -1,27 +1,11 @@
 @extends('gopanel.layouts.main')
 @section('content')
-<style>
-    /* Keep select2 dropdowns above cards and modals so they always open on top. */
-    .select2-container { z-index: 1; }
-    .select2-container--open { z-index: 1060; }
-    .select2-container--open .select2-dropdown { z-index: 1060; }
-    #bulk-import-modal .select2-container--open,
-    #bulk-import-modal .select2-container--open .select2-dropdown { z-index: 1065; }
-    /* Match select2 single height to Bootstrap form controls. */
-    .select2-container .select2-selection--single { height: calc(1.5em + .75rem + 2px); }
-    .select2-container--default .select2-selection--single .select2-selection__rendered { line-height: calc(1.5em + .75rem); }
-    .select2-container--default .select2-selection--single .select2-selection__arrow { height: calc(1.5em + .75rem); }
-</style>
 <div class="page-content">
     <div class="container-fluid">
         <div id="translation-page"
              data-pages='@json($allPages)'
              data-export-url="{{ route('gopanel.settings.translations.export-json') }}"
-             data-import-url="{{ route('gopanel.settings.translations.bulk-import') }}">
-
-        @php
-            $hasFilters = !empty($filters['locale']) || !empty($filters['platform']) || !empty($filters['page']);
-        @endphp
+             data-excel-import-url="{{ route('gopanel.settings.translations.excel.import') }}">
 
         <!-- start page title -->
         <div class="row">
@@ -36,14 +20,20 @@
                         </button>
                         @endcan
 
+                        @can('gopanel.settings.translations.export')
+                        <a class="btn btn-outline-success" href="{{ $excelExportUrl }}" title="Cari platforma/səhifə filtrinə görə">
+                            <i class="fas fa-file-excel"></i> Excel-ə çıxar
+                        </a>
+                        @endcan
+
                         @can('gopanel.settings.translations.import')
-                        <button class="btn btn-primary" id="translation-bulk-open" type="button" data-bs-toggle="modal" data-bs-target="#bulk-import-modal">
-                            <i class="bx bx-import"></i> Toplu idxal
+                        <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#translation-excel-modal">
+                            <i class="bx bx-import"></i> Excel-dən yüklə
                         </button>
                         @endcan
 
                         @can('gopanel.settings.translations.export')
-                        <button class="btn btn-outline-secondary" id="translation-export" type="button">
+                        <button class="btn btn-outline-secondary" id="translation-export" type="button" title="database/seeders/json-data/translations/ altına seeder faylları yazır">
                             <span class="button-label"><i class="bx bx-export"></i> JSON-a çıxar</span>
                             <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                         </button>
@@ -92,12 +82,9 @@
                                     <label class="form-label">Səhifə</label>
                                     <select id="filter-page" class="form-select translation-filter-select" data-placeholder="Səhifə seçin...">
                                         <option></option>
-                                        @php $filterPlatform = $filters['platform'] ?? null; @endphp
-                                        @if ($filterPlatform && isset($allPages[$filterPlatform]))
-                                            @foreach ($allPages[$filterPlatform] as $pageValue => $pageLabel)
-                                                <option value="{{ $pageValue }}" @selected(($filters['page'] ?? '') === $pageValue)>{{ $pageLabel }}</option>
-                                            @endforeach
-                                        @endif
+                                        @foreach ($filterPages as $pageValue => $pageLabel)
+                                            <option value="{{ $pageValue }}" @selected(($filters['page'] ?? '') === $pageValue)>{{ $pageLabel }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
 
@@ -131,9 +118,15 @@
 </div>
 <!-- End Page-content -->
 @include('gopanel.pages.settings.translations.inc.modal')
-@include('gopanel.pages.settings.translations.modals.bulk-import')
+@can('gopanel.settings.translations.import')
+@include('gopanel.pages.settings.translations.modals.excel-import')
+@endcan
 @endsection
 
+@push('styles')
+<link rel="stylesheet" href="{{ asset_v('assets/gopanel/css/translations.css') }}">
+@endpush
+
 @push('scripts')
-<script src="{{asset("/assets/gopanel/js/modules/translations.js?v=" . time())}}"></script>
+<script src="{{ asset_v('assets/gopanel/js/modules/translations.js') }}"></script>
 @endpush

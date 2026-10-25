@@ -23,26 +23,78 @@ final class StatCard
      *     current?: float|int|null,
      *     previous?: float|int|null,
      *     series?: array<int, int|float>,
-     *     money?: bool
+     *     money?: bool,
+     *     format?: 'int'|'money'|'percent',
+     *     suffix?: string,
+     *     delta?: float|int|null,
+     *     url?: string|null,
+     *     key?: string|null
      * }  $args
      * @return array<string, mixed>
+     *
+     * `format` - `money` (₼) / `percent` (%) / `int`. Köhnə `money: true` də işləyir.
+     * `delta`  - faiz HAZIR gəlirsə (hesabat sorğusu özü hesablayıb) `current/previous`
+     *            əvəzinə verilir; yenidən hesablanmır.
+     * `key`    - AJAX yeniləməsində kartı tapmaq üçün (`data-stat-key`).
      */
     public static function make(array $args): array
     {
         $current  = $args['current'] ?? null;
         $previous = $args['previous'] ?? null;
-        $money    = (bool) ($args['money'] ?? false);
+        $format   = (string) ($args['format'] ?? (($args['money'] ?? false) ? 'money' : 'int'));
+        $money    = $format === 'money';
+        $suffix   = (string) ($args['suffix'] ?? '');
 
         return [
-            'label' => (string) $args['label'],
-            'value' => self::formatValue($args['value'], $money),
-            'icon'  => (string) ($args['icon'] ?? 'fas fa-chart-bar'),
-            'color' => (string) ($args['color'] ?? 'primary'),
-            'hint'  => $args['hint'] ?? null,
-            'trend' => self::trend($current, $previous, $money),
-            'spark' => array_values(array_map('floatval', $args['series'] ?? [])),
+            'label'  => (string) $args['label'],
+            'value'  => self::formatValue($args['value'], $money)
+                . ($format === 'percent' && !is_string($args['value']) ? '%' : '')
+                . $suffix,
+            'icon'   => (string) ($args['icon'] ?? 'fas fa-chart-bar'),
+            'color'  => (string) ($args['color'] ?? 'primary'),
+            'hint'   => $args['hint'] ?? null,
+            'trend'  => array_key_exists('delta', $args)
+                ? self::trendFromDelta($args['delta'])
+                : self::trend($current, $previous, $money),
+            'spark'  => array_values(array_map('floatval', $args['series'] ?? [])),
             // Kart üzərinə klik - uyğun bölməyə (filtrlənmiş) keçid
-            'url'   => $args['url'] ?? null,
+            'url'    => $args['url'] ?? null,
+            'key'    => $args['key'] ?? null,
+            'format' => $format,
+        ];
+    }
+
+    /**
+     * Hazır faizdən müqayisə nişanı (hesabat sorğuları `delta` qaytaranda).
+     *
+     * @return array<string, mixed>|null
+     */
+    private static function trendFromDelta(float|int|null $delta): ?array
+    {
+        if ($delta === null) {
+            return null;
+        }
+
+        $delta = (float) $delta;
+
+        if (abs($delta) < 0.05) {
+            return [
+                'direction' => 'flat',
+                'percent'   => '0%',
+                'class'     => 'secondary',
+                'icon'      => 'fas fa-minus',
+                'note'      => 'əvvəlki dövrlə eyni',
+            ];
+        }
+
+        $up = $delta > 0;
+
+        return [
+            'direction' => $up ? 'up' : 'down',
+            'percent'   => ($up ? '+' : '−') . self::trimNumber(abs($delta)) . '%',
+            'class'     => $up ? 'success' : 'danger',
+            'icon'      => $up ? 'fas fa-arrow-up' : 'fas fa-arrow-down',
+            'note'      => 'əvvəlki dövrlə müqayisədə',
         ];
     }
 

@@ -31,30 +31,39 @@ return [
         'home',
         'page',
         'seo',
+        'content',
+        'language',
     ],
 
     /*
      * Model → qrup xəritəsi.
      *
-     * Model `saved`/`deleted` olanda hansı qrupun təmizlənəcəyini bu təyin edir.
-     * Observer/EventServiceProvider `CacheKey::trackedModels()` siyahısını gəzib
-     * hər modelə event bağlayır:
+     * Model `saved`/`deleted`/`restored` olanda hansı qrupun təmizlənəcəyini bu
+     * təyin edir. Bağlantını `App\Providers\CacheInvalidationServiceProvider`
+     * qurur - əl ilə event yazmaq lazım deyil. Tərcümə mətni dəyişəndə də
+     * (FieldTranslation) sahib modelin qrupu təmizlənir.
      *
-     *   foreach (CacheKey::trackedModels() as $model) {
-     *       $model::saved(fn ($m) => CacheKey::flushForModelType($m::class));
-     *       $model::deleted(fn ($m) => CacheKey::flushForModelType($m::class));
-     *   }
-     *
-     * Çoxdilli layihədə tərcümə cədvəlini də bağlamaq lazımdır - mətn dəyişəndə
-     * modelin özü `saved` olmur (məs. FieldTranslation).
+     * Yeni modul keşlənirsə: modeli bura bir sətir kimi yaz, oxuyan yerdə
+     * `CacheKey::<qrup>(...)` açarını işlət. Mövcud olmayan sinif səssizcə
+     * ötürülür (class_exists), ona görə törəmə layihədə silinmiş model sınmır.
      */
     'model_groups' => [
-        // \App\Models\Common\Menu\Menu::class          => 'menu',
-        // \App\Models\Gopanel\Translation::class       => 'translation',
-        // \App\Models\Site\SiteSetting::class          => 'settings',
-        // \App\Models\Site\Slider::class               => 'home',
-        // \App\Models\Site\Page::class                 => 'page',
-        // \App\Models\Seo\SiteRedirect::class          => 'seo',
+        \App\Models\Navigation\Menu::class            => 'menu',
+        \App\Models\Navigation\Category::class        => 'category',
+        \App\Models\Translations\Translation::class   => 'translation',
+        \App\Models\Geography\Language::class         => 'language',
+        \App\Models\Settings\SiteSetting::class       => 'settings',
+        \App\Models\Contact\ContactInfo::class        => 'settings',
+        \App\Models\Contact\Social::class             => 'settings',
+        \App\Models\Site\Slider::class                => 'home',
+        \App\Models\Site\AboutUs::class               => 'page',
+        \App\Models\Site\Blog::class                  => 'page',
+        \App\Models\Site\Service::class               => 'page',
+        \App\Models\Site\Product::class               => 'page',
+        \App\Models\Seo\SiteRedirect::class           => 'seo',
+        \App\Models\Seo\PageMetaData::class           => 'seo',
+        \App\Models\Seo\SeoAnalytics::class           => 'seo',
+        \App\Models\Seo\LlmsTxt::class                => 'seo',
     ],
 
 ];

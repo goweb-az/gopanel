@@ -1,4 +1,4 @@
-# Gopanel-də Status və Tip CRUD-larının Qurulması
+# Gopanel-də Status və Tip CRUD-ları (lookup)
 
 > **Əvvəlcə oxu:** dəyər dəsti **kod** tərəfindən idarə olunursa (developer
 > deploy etmədən dəyişmirsə) o, CRUD deyil, **Enum** olmalıdır —
@@ -6,198 +6,132 @@
 > yazılır. Qərar qaydası:
 > [application-layering...md §25](application-layering-support-query-traits-helpers-enums.md).
 
-Bu sənəd başqa layihədə işləyən developer və ya süni intellekt üçün implementasiya spesifikasiyasıdır. Buradakı məqsəd konkret `ListingStatus` modeli yaratmaq deyil. Məqsəd Gopanel daxilində müxtəlif status və tip lüğətlərinin vahid arxitektura ilə necə qurulacağını izah etməkdir.
+Kiçik sorğu cədvəlləri — sifariş statusları, ödəniş statusları, məhsul tipləri,
+şikayət səbəbləri — adətən 5-10 sətirdir. Starter-də onlar üçün **hazır ortaq
+qat** var: siyahı + bölmədaxili sidebar, modal forma, sürüklə-burax sıralama,
+silmə qaydaları, icazə, menyu. Layihə yalnız **tipi əlavə edir**.
 
-Hədəf menyu adı nümunə olaraq **Status və Tiplər** ola bilər. Bu bölmənin daxilində layihənin ehtiyacına uyğun aşağıdakı CRUD-lardan hər hansı biri saxlanıla bilər:
+Starter-in özündə heç bir lookup tipi **yoxdur** (layihəyə xas iş məntiqi
+starter-ə yazılmır) — reyestr boşdursa bölmə menyuda görünmür.
 
-- elan statusları;
-- sifariş statusları;
-- ödəniş statusları;
-- tender statusları;
-- müraciət statusları;
-- elan tipləri;
-- istifadəçi tipləri;
-- məhsul tipləri;
-- tender tipləri;
-- şikayət səbəbləri;
-- layihəyə məxsus digər kiçik lookup/lüğət cədvəlləri.
+Vizual dizayn aquastores layihəsindəki `/gopanel/lookups/listing-statuses`
+səhifəsindən götürülüb; oradakı qüsurlar (bax § 12) burada düzəldilib.
 
-Başqa layihədə `listing_statuses` və ya elan modulu ümumiyyətlə olmaya bilər. Bu halda sənəddəki `OrderStatus`, `ProductType`, `RequestStatus` kimi nümunələr həmin layihənin domeninə uyğun dəyişdirilməlidir.
+---
 
-## 1. Əsas prinsip
+## 1. Yeni tip — 3 addım
 
-Status və tip CRUD-ları bir-birinə çox oxşar olur. Hər modul üçün controller, Blade və JavaScript-i sıfırdan təkrarlamaq əvəzinə iki qatlı struktur qurulmalıdır:
+```bash
+# 1) Skelet: model, miqrasiya, controller, request, 2 blade, reyestr sətri
+php artisan gopanel:make-lookup OrderStatus --title="Sifariş statusları" \
+    --fields=color,class_name --booleans=is_default,is_public,is_active
 
-1. **Ortaq lookup infrastrukturu** — siyahı, modal, form submit, delete, sortable, permission və response formatı.
-2. **Modula məxsus konfiqurasiya və biznes qaydaları** — model, başlıq, route adı, əlavə sahələr, boolean-lar, default status qaydası və s.
+# 2) Cədvəl
+php artisan migrate
 
-Sadə CRUD davranışı ortaq qatda saxlanmalıdır. Domen qaydaları generic controller-ə doldurulmamalıdır.
-
-## 2. Gopanel menyusu
-
-Əsas sol Gopanel menyusunda bir parent menyu yaradılmalıdır:
-
-```text
-Status və Tiplər
-├── Sifariş statusları
-├── Ödəniş statusları
-├── Müraciət statusları
-├── Məhsul tipləri
-└── İstifadəçi tipləri
+# 3) İcazələr (reyestrdən avtomatik) → sonra vəzifələrə ver
+php artisan db:seed --class=PermissionSeeder
 ```
 
-Parent menyunun adı layihədən asılı olaraq bunlardan biri ola bilər:
+Route, icazə sətirləri, əsas menyu və bölmədaxili sidebar **ayrıca yazılmır** —
+hamısı `config/gopanel/lookups.php` reyestrindəki bir sətirdən qurulur.
 
-- `Status və Tiplər`;
-- `Statuslar və Tiplər`;
-- `Sistem lüğətləri`;
-- `Lookup-lar`.
+Generator seçimləri:
 
-Tövsiyə edilən ad **Status və Tiplər**-dir, çünki texniki olmayan admin üçün daha aydındır.
+| Seçim | Standart | Mənası |
+|---|---|---|
+| `--title` | `Str::headline` | Paneldə görünən ad (Azərbaycan dilində ver) |
+| `--fields` | — | `color`, `class_name`, `icon` (ortaq forma/siyahı bunları tanıyır) |
+| `--booleans` | `is_active` | `is_` ilə başlayan bayraqlar; `is_default` xüsusi qaydalı |
+| `--translated` | `name,description` | `field_translations`-a gedən sahələr |
+| `--icon` | `bx bx-list-ul` | Bölmədaxili sidebar ikonu |
+| `--force` / `--dry-run` | — | Üzərinə yaz / heç nə yazmadan göstər |
 
-Menyu nümunəsi:
+Komanda idempotentdir: mövcud fayl üzərinə yazılmır, reyestr sətri təkrar
+əlavə olunmur, eyni cədvəlin ikinci miqrasiyası yaranmır.
+
+Əl ilə də əlavə etmək olar: model + miqrasiya + `BaseLookupController` və
+`BaseLookupSaveRequest` törəmələri + reyestr sətri. Blade faylı **məcburi
+deyil** — tipin öz qovluğunda blade yoxdursa ortaq səhifə işlədilir.
+
+İstifadə olunan tip üçün controller-də `$usedBy` doldur (bax § 7) — əks
+halda istifadədə olan status silinə bilər.
+
+---
+
+## 2. Fayl xəritəsi
+
+| Nə | Harada |
+|---|---|
+| Reyestr (tiplər, menyu adı) | `config/gopanel/lookups.php` |
+| Reyestr oxuyucusu (route/icazə/menyu formatı) | `App\Services\Gopanel\Lookup\LookupRegistry` |
+| Tip təsviri (sahələr, bayraqlar, etiketlər) | `App\Services\Gopanel\Lookup\LookupDefinition` |
+| Yazma qaydaları (default, silmə, sıralama, keş) | `App\Services\Gopanel\Lookup\LookupService` |
+| Tək sorğulu sıralama | `App\Services\Gopanel\SortOrderService` |
+| Ortaq controller | `App\Http\Controllers\Gopanel\Lookups\BaseLookupController` |
+| Bölmənin giriş nöqtəsi (ilk icazəli tipə yönləndirir) | `App\Http\Controllers\Gopanel\Lookups\LookupSectionController` |
+| Forma validasiyası + add/edit icazəsi | `App\Http\Requests\Gopanel\Lookups\BaseLookupSaveRequest` |
+| Sıralama / keçid sorğuları | `LookupSortRequest`, `LookupToggleRequest` (eyni qovluq) |
+| Server tərəfi icazə middleware-i | `App\Http\Middleware\Gopanel\GopanelPermissionMiddleware` (`gopanel.can`) |
+| Route-lar | `routes/gopanel/lookups.php` (`routes/gopanel.php` qoşur) |
+| Blade | `resources/views/gopanel/pages/lookups/{index,form,sidebar}.blade.php`, `partials/{index,form}`, `inc/modal` |
+| JS | `public/assets/gopanel/js/modules/lookups/lookups.js` |
+| CSS | `public/assets/gopanel/css/lookups.css` |
+| Generator | `App\Console\Commands\MakeLookupCommand` (`gopanel:make-lookup`) |
+| Test | `tests/Feature/Gopanel/Lookups/LookupModuleTest.php` |
+
+Generator-in yaratdığı (layihədə):
+
+```text
+app/Models/Lookups/OrderStatus.php
+app/Http/Controllers/Gopanel/Lookups/OrderStatusController.php
+app/Http/Requests/Gopanel/Lookups/OrderStatusSaveRequest.php
+database/migrations/xxxx_create_order_statuses_table.php
+resources/views/gopanel/pages/lookups/order-statuses/{index,form}.blade.php   (fərdiləşdirmə üçün; silinə bilər)
+config/gopanel/lookups.php   ← 'order-statuses' sətri
+```
+
+---
+
+## 3. Reyestr
 
 ```php
-[
-    'title' => 'Status və Tiplər',
-    'icon' => 'bx bx-category-alt',
-    'permission' => 'gopanel.lookups.view',
-    'children' => [
-        [
-            'title' => 'Sifariş statusları',
-            'route' => 'gopanel.lookups.order-statuses.index',
-            'permission' => 'gopanel.lookups.view',
-        ],
-        [
-            'title' => 'Məhsul tipləri',
-            'route' => 'gopanel.lookups.product-types.index',
-            'permission' => 'gopanel.lookups.view',
-        ],
+// config/gopanel/lookups.php
+'types' => [
+    'order-statuses' => [
+        'title'      => 'Sifariş statusları',
+        'controller' => \App\Http\Controllers\Gopanel\Lookups\OrderStatusController::class,
+        'icon'       => 'bx bx-list-check',
     ],
-]
+    // gopanel:make-lookup:types   ← generator bu markerin üstünə yazır, silmə
+],
 ```
 
-Qaydalar:
+Açar (`order-statuses`) kebab-case-dir və URL seqmenti, route və icazə adının
+hissəsidir. Yanlış formatlı açar və ya controller-siz sətir sükutla ötürülür
+(bir səhv sətir bütün paneli yıxmasın).
 
-- parent menyu yalnız istifadəçinin görə bildiyi ən az bir child olduqda göstərilməlidir;
-- aktiv child route olduqda parent menyu açıq və aktiv görünməlidir;
-- route adları hardcoded URL deyil, named route olmalıdır;
-- bütün child-lar eyni permission istifadə edə bilər, yaxud layihə tələb edirsə ayrıca permission ala bilər;
-- çox sayda lookup olduqda menyu həddən artıq uzadılmamalı, daxili sidebar istifadə edilməlidir.
+Reyestrdən qurulanlar:
 
-## 3. Bölmədaxili sidebar
+- **route-lar** — § 5;
+- **icazələr** — `permission_list.php`-ə hər tip üçün ayrıca qrup
+  (`Status və Tiplər: Sifariş statusları`) qoşulur;
+- **əsas sol menyu** — «Status və Tiplər» qrupu, hər tip öz `index` icazəsi
+  ilə alt sətir; reyestr boşdursa qrup ümumiyyətlə yoxdur, admin heç bir
+  tipi görə bilmirsə qrup gizlənir;
+- **bölmədaxili sidebar** — yalnız adminin `index` icazəsi olan tiplər.
 
-İstifadəçi “Status və Tiplər” bölməsinə daxil olduqda səhifə iki sütunlu ola bilər:
+---
 
-```text
-┌──────────────────────┬──────────────────────────────────────────┐
-│ Status və Tiplər     │ Sifariş statusları            [+ Əlavə] │
-│                      │                                          │
-│ Sifariş statusları   │  ↕  Key       Ad       Aktiv  Əməliyyat │
-│ Ödəniş statusları    │  ↕  pending   Gözləyir   ✓      ✎  🗑   │
-│ Müraciət statusları  │  ↕  approved  Təsdiq     ✓      ✎  🗑   │
-│ Məhsul tipləri       │                                          │
-│ İstifadəçi tipləri   │                                          │
-└──────────────────────┴──────────────────────────────────────────┘
-```
-
-Desktop görünüşü:
-
-- sidebar: `col-xl-3`;
-- əsas kontent: `col-xl-9`;
-- sidebar ayrıca card/list-group kimi göstərilir;
-- cari route aktiv class alır;
-- hər elementin uyğun ikonu ola bilər.
-
-Mobil görünüş:
-
-- sidebar əsas cədvəlin üstünə keçir;
-- çox element olduqda collapse və ya select formasına çevrilə bilər;
-- cədvəl `table-responsive` daxilində olmalıdır.
-
-Sidebar Blade nümunəsi:
-
-```blade
-<div class="card lookup-sidebar-card">
-    <div class="card-header">
-        <h5 class="mb-0">Status və Tiplər</h5>
-    </div>
-
-    <div class="list-group list-group-flush lookup-sidebar">
-        @foreach ($lookupMenu as $menu)
-            @can($menu['permission'] ?? 'gopanel.lookups.view')
-                <a href="{{ route($menu['route']) }}"
-                   class="list-group-item list-group-item-action
-                          {{ $activeLookupRoute === $menu['route'] ? 'active' : '' }}">
-                    <i class="{{ $menu['icon'] }}"></i>
-                    <span>{{ $menu['title'] }}</span>
-                </a>
-            @endcan
-        @endforeach
-    </div>
-</div>
-```
-
-Sidebar elementləri view daxilində əl ilə təkrarlanmamalıdır. Siyahı config, menu service və ya `BaseLookupController::lookupMenu()` kimi ortaq mənbədən gəlməlidir.
-
-## 4. Tövsiyə olunan qovluq strukturu
-
-```text
-app/
-├── Http/Controllers/Gopanel/Lookups/
-│   ├── BaseLookupController.php
-│   ├── OrderStatusController.php
-│   └── ProductTypeController.php
-├── Http/Requests/Gopanel/Lookups/
-│   ├── BaseLookupSaveRequest.php
-│   ├── LookupSortRequest.php
-│   ├── OrderStatusSaveRequest.php
-│   └── ProductTypeSaveRequest.php
-├── Models/Lookups/
-│   ├── OrderStatus.php
-│   └── ProductType.php
-└── Services/Lookups/
-    └── OrderStatusService.php       # yalnız biznes qaydası çoxdursa
-
-resources/views/gopanel/pages/lookups/
-├── partials/
-│   ├── index.blade.php
-│   └── form.blade.php
-├── inc/
-│   └── modal.blade.php
-├── sidebar.blade.php
-├── order-statuses/
-│   ├── index.blade.php
-│   └── form.blade.php
-└── product-types/
-    ├── index.blade.php
-    └── form.blade.php
-
-public/assets/gopanel/js/
-├── crud.js
-└── sortable-lookups.js
-
-routes/
-└── gopanel.php
-
-tests/Feature/Gopanel/Lookups/
-├── OrderStatusControllerTest.php
-└── ProductTypeControllerTest.php
-```
-
-Model namespace layihənin mövcud konvensiyasına uyğun dəyişə bilər. Əsas tələb bütün lookup modullarının proqnozlaşdırılan, eyni struktura sahib olmasıdır.
-
-## 5. Database strukturu
-
-Status və tip cədvəlləri üçün baza schema:
+## 4. Database strukturu
 
 ```php
 Schema::create('order_statuses', function (Blueprint $table) {
     $table->id();
     $table->uuid('uid')->unique();
     $table->string('key', 50)->unique();
-    $table->string('color', 30)->nullable();
-    $table->string('class_name', 100)->nullable();
+    $table->string('color', 30)->nullable();        // --fields=color
+    $table->string('class_name', 100)->nullable();  // --fields=class_name
     $table->unsignedInteger('sort_order')->default(0);
     $table->boolean('is_default')->default(false);
     $table->boolean('is_public')->default(false);
@@ -207,740 +141,218 @@ Schema::create('order_statuses', function (Blueprint $table) {
 });
 ```
 
-Tip cədvəli daha sadə ola bilər:
-
-```php
-Schema::create('product_types', function (Blueprint $table) {
-    $table->id();
-    $table->uuid('uid')->unique();
-    $table->string('key', 50)->unique();
-    $table->unsignedInteger('sort_order')->default(0);
-    $table->boolean('is_active')->default(true);
-    $table->timestamps();
-    $table->softDeletes();
-});
-```
-
-Sahələrin mənası:
-
 | Sahə | Məqsəd |
 |---|---|
-| `id` | Daxili primary key və foreign key əlaqələri |
-| `uid` | URL və frontend-də təhlükəsiz identifikator |
-| `key` | Kod və API üçün dəyişməz texniki açar |
-| `sort_order` | Admin və API-də göstərilmə sırası |
-| `color` | Status badge rəngi |
-| `class_name` | Hazır CSS class istifadə edilirsə onun adı |
-| `is_default` | Yeni obyekt üçün başlanğıc status |
-| `is_public` | Son istifadəçiyə göstərilə bilən status |
-| `is_active` | Yeni seçimlərdə istifadə edilə bilməsi |
-| `deleted_at` | Tarixi məlumatı qoruyan soft-delete |
+| `uid` | URL və DOM-dakı identifikator (`data-id`) — daxili `id` açılmır |
+| `key` | Kod və API üçün dəyişməz texniki açar (`^[a-z][a-z0-9_]*$`, unikal) |
+| `sort_order` | Göstərilmə sırası. Yeni sətir avtomatik **sona** düşür (`BaseModel`) |
+| `color` / `class_name` | Badge önizləməsi (siyahıda görünür) |
+| `icon` | İkon sinfi — formada ikon seçici (`IconPickerHelper`) |
+| `is_default` | Yeni obyekt üçün başlanğıc dəyər — **yalnız bir** sətir |
+| `is_public` | Son istifadəçiyə göstərilə bilər |
+| `is_active` | Yeni seçimlərdə istifadə oluna bilər |
+| `deleted_at` | Silmə = arxivləmə (soft-delete) |
 
-`name` və `description` çoxdilli layihədə ayrıca translation cədvəlində saxlanmalıdır. Layihə çoxdilli deyilsə birbaşa əsas cədvəldə `name` və `description` sütunları istifadə edilə bilər.
+`name` / `description` `field_translations`-dadır (`Translation` trait).
 
-## 6. Model strukturu
-
-Çoxdilli status modeli nümunəsi:
-
-```php
-class OrderStatus extends BaseModel
-{
-    use SoftDeletes, Translation, AddUuid;
-
-    public $translatedAttributes = ['name', 'description'];
-
-    protected $fillable = [
-        'uid',
-        'key',
-        'color',
-        'class_name',
-        'sort_order',
-        'is_default',
-        'is_public',
-        'is_active',
-    ];
-
-    protected $casts = [
-        'sort_order' => 'integer',
-        'is_default' => 'boolean',
-        'is_public' => 'boolean',
-        'is_active' => 'boolean',
-    ];
-
-    public function orders(): HasMany
-    {
-        return $this->hasMany(Order::class);
-    }
-
-    public function scopeActive(Builder $query): Builder
-    {
-        return $query->where('is_active', true);
-    }
-
-    public function scopePublic(Builder $query): Builder
-    {
-        return $query->where('is_public', true);
-    }
-
-    public function scopeOrdered(Builder $query): Builder
-    {
-        return $query->orderBy('sort_order')->orderBy('id');
-    }
-}
-```
-
-`key` texniki müqavilədir. Məsələn `pending`, `approved`, `cancelled`. Kod daxilində bu açara müraciət edilə biləcəyi üçün status istifadə olunmağa başladıqdan sonra `key` nəzarətsiz dəyişdirilməməlidir.
-
-## 7. Route strukturu
-
-Hər lookup eyni route müqaviləsini istifadə etməlidir:
+Model: `BaseModel` + `AddUuid` + `SoftDeletes` + `Translation`;
+`scopeActive()`, `scopePublic()`, `scopeOrdered()` generator tərəfindən
+yazılır. Admin seçimi ilə public API sorğusu eyni deyil:
 
 ```php
-Route::prefix('lookups')->name('lookups.')->group(function () {
-    Route::prefix('order-statuses')->name('order-statuses.')->group(function () {
-        Route::get('/', [OrderStatusController::class, 'index'])
-            ->name('index');
-
-        Route::get('/get/form/{id?}', [OrderStatusController::class, 'getForm'])
-            ->name('get.form');
-
-        Route::post('/save/{id?}', [OrderStatusController::class, 'save'])
-            ->name('save');
-
-        Route::delete('/delete/{id}', [OrderStatusController::class, 'destroy'])
-            ->name('destroy');
-
-        Route::patch('/sort', [OrderStatusController::class, 'sort'])
-            ->name('sort');
-    });
-});
+OrderStatus::active()->ordered()->get();             // admin daxili seçim
+OrderStatus::active()->public()->ordered()->get();   // istifadəçi API-si
 ```
 
-Nəticə URL-lər:
+`BaseModel::boot()` — `sort_order` fillable-dadırsa və dəyər verilməyibsə
+(`null`) yeni sətrə `max + 1` yazır. Açıq verilən dəyər (0 daxil) toxunulmur.
 
-```text
-GET     /gopanel/lookups/order-statuses
-GET     /gopanel/lookups/order-statuses/get/form/{uid?}
-POST    /gopanel/lookups/order-statuses/save/{uid?}
-DELETE  /gopanel/lookups/order-statuses/delete/{uid}
-PATCH   /gopanel/lookups/order-statuses/sort
-```
+---
 
-Bütün route-lar admin authentication və server-side permission middleware ilə qorunmalıdır. Blade `@can` yalnız UI elementini gizlədir, endpoint-i qorumur.
+## 5. Route-lar və icazələr
 
-## 8. Base controller
+Hər tip eyni 6 route-u alır (`routes/gopanel/lookups.php`):
 
-Ortaq controller aşağıdakı məsuliyyətləri daşımalıdır:
+| Metod | URL (`/gopanel/lookups/{tip}/...`) | Ad (`gopanel.lookups.{tip}.`) | Server icazəsi |
+|---|---|---|---|
+| GET | `/` | `index` | `index` |
+| GET | `/get/form/{id?}` | `get.form` | `add` və ya `edit` |
+| POST | `/save/{id?}` | `save` | `add` və ya `edit` |
+| DELETE | `/delete/{id}` | `destroy` | `delete` |
+| PATCH | `/sort` | `sort` | `sort` |
+| POST | `/toggle` | `toggle` | `edit` |
 
-- modeli `sort_order` ilə gətirmək;
-- form Blade-ni AJAX üçün render etmək;
-- validated məlumatı saxlamaq;
-- translation-ları saxlamaq;
-- delete etmək;
-- sıralamanı yeniləmək;
-- vahid JSON response qaytarmaq;
-- sidebar menyusunu view-a ötürmək.
+Əlavə: `GET /gopanel/lookups` (`gopanel.lookups.index`) — adminin görə
+bildiyi ilk tipə yönləndirir.
 
-Konseptual struktur:
+İcazə adları: `gopanel.lookups.{tip}.index|add|edit|delete|sort` — route adı
+ilə **eynidir** (01-umumi.md § 5). Yoxlama üç səviyyədədir:
 
-```php
-abstract class BaseLookupController extends GoPanelController
-{
-    protected string $model;
-    protected string $title;
-    protected string $viewPath;
-    protected string $routeName;
-    protected array $extraFields = [];
-    protected array $booleans = [];
+1. **Route** — `gopanel.can:a,b` middleware-i («hər hansı biri», Spatie,
+   `gopanel` guard). Əsas müdafiə budur.
+2. **Controller / FormRequest** — forma və saxlama route-u `add|edit` ilə
+   açılır; konkret əməliyyat (yeni → `add`, mövcud → `edit`) burada
+   yoxlanılır. Yalnız `add` icazəsi olan admin mövcud sətri redaktə edə bilmir.
+3. **Blade** — `@can($definition->permission('add'))` düymələri gizlədir.
 
-    public function index(): View
-    {
-        $items = ($this->model)::query()
-            ->orderBy('sort_order')
-            ->orderBy('id')
-            ->get();
+İcazə xətası 403 qaytarır (`AccessDeniedHttpException`).
 
-        return view($this->viewPath . '.index', [
-            'items' => $items,
-            'definition' => $this->definition(),
-            'routeName' => $this->routeName,
-            'lookupMenu' => $this->lookupMenu(),
-            'activeLookupRoute' => $this->routeName . '.index',
-        ]);
-    }
+---
 
-    public function getForm(?string $id = null): JsonResponse
-    {
-        $item = $id
-            ? ($this->model)::resolveByKey($id)
-            : new $this->model();
-
-        abort_unless($item, 404);
-
-        $html = view($this->viewPath . '.form', [
-            'item' => $item,
-            'definition' => $this->definition(),
-            'route' => route($this->routeName . '.save', $item->identifier_id),
-            'languages' => $this->activeLanguages(),
-        ])->render();
-
-        return response()->json([
-            'status' => 'success',
-            'html' => $html,
-        ]);
-    }
-}
-```
-
-## 9. Modul controller-i
-
-Sadə tip controller-i yalnız konfiqurasiya verməlidir:
-
-```php
-class ProductTypeController extends BaseLookupController
-{
-    protected string $model = ProductType::class;
-    protected string $title = 'Məhsul tipləri';
-    protected string $viewPath = 'gopanel.pages.lookups.product-types';
-    protected string $routeName = 'gopanel.lookups.product-types';
-    protected array $booleans = ['is_active'];
-
-    public function save(ProductTypeSaveRequest $request, ?string $id = null)
-    {
-        return $this->saveItem($request, $id);
-    }
-}
-```
-
-Status controller-i əlavə sahələr verə bilər:
+## 6. Controller
 
 ```php
 class OrderStatusController extends BaseLookupController
 {
+    protected string $model       = OrderStatus::class;
+    protected string $request     = OrderStatusSaveRequest::class;
+    protected array  $extraFields = ['color', 'class_name'];
+    protected array  $booleans    = ['is_default', 'is_public', 'is_active'];
+    protected array  $usedBy      = ['orders' => 'order_status_id'];
+}
+```
+
+Tip açarı, başlıq, route və icazə adları **yazılmır** — cari route-dan və
+reyestrdən çıxarılır. Genişləndirmə nöqtələri:
+
+| Nə | Necə |
+|---|---|
+| Başlığı reyestrdən fərqli et | `protected ?string $title` |
+| Öz blade qovluğu | `protected ?string $viewPath` (standart: `gopanel.pages.lookups.{tip}`; yoxdursa ortaq) |
+| Mürəkkəb istifadə sayı (polimorf, JSON) | `protected function inUseCount(Model $item): int` override |
+| Formaya əlavə dəyişən (select siyahısı) | `protected function formData(Model $item): array` override |
+
+Cavab formatı panelin müqaviləsidir (`crud.js`): `{status, message, data}`;
+yaratma `201`, qalanı `200`; biznes qaydası və validasiya `422`
+(`errors` ilə); tapılmadı `404`; icazə `403`.
+
+## 7. Request
+
+```php
+class OrderStatusSaveRequest extends BaseLookupSaveRequest
+{
     protected string $model = OrderStatus::class;
-    protected string $title = 'Sifariş statusları';
-    protected string $viewPath = 'gopanel.pages.lookups.order-statuses';
-    protected string $routeName = 'gopanel.lookups.order-statuses';
-    protected array $extraFields = ['color', 'class_name'];
-    protected array $booleans = ['is_default', 'is_public', 'is_active'];
-}
-```
 
-Default status, qorunan key və istifadə olunan statusun silinməsi kimi qaydalar varsa onlar modul controller-i və ya service daxilində yazılmalıdır.
-
-## 10. Request validasiyası
-
-Generic request bütün mümkün sahələr üçün zəif qaydalar verməməlidir. Hər modul öz domeninə uyğun qaydaları sərtləşdirməlidir.
-
-```php
-public function rules(): array
-{
-    return [
-        'key' => [
-            'required',
-            'string',
-            'max:50',
-            'regex:/^[a-z][a-z0-9_]*$/',
-            Rule::unique('order_statuses', 'key')->ignore($this->modelId()),
-        ],
-        'color' => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'],
-        'class_name' => ['nullable', 'string', 'max:100'],
-        'is_default' => ['sometimes', 'boolean'],
-        'is_public' => ['sometimes', 'boolean'],
-        'is_active' => ['sometimes', 'boolean'],
-        'name' => ['required', 'array'],
-        'name.*' => ['nullable', 'string', 'max:255'],
-        'description' => ['nullable', 'array'],
-        'description.*' => ['nullable', 'string', 'max:2000'],
-    ];
-}
-```
-
-Ən azı default dilin adı tələb olunmalıdır. Request-də gələn dil kodları aktiv dil siyahısı ilə whitelist edilməlidir.
-
-## 11. Index Blade və HTML strukturu
-
-Modulun `index.blade.php` faylı nazik wrapper olmalıdır:
-
-```blade
-@extends('gopanel.layouts.main')
-
-@section('content')
-    @include('gopanel.pages.lookups.partials.index')
-@endsection
-```
-
-Ortaq index partial:
-
-```blade
-<div class="page-content">
-    <div class="container-fluid">
-        <div class="page-title-box d-flex justify-content-between">
-            <h4>{{ $definition['title'] }}</h4>
-
-            @can('gopanel.lookups.add')
-                <button id="open-create-modal"
-                        class="btn btn-success"
-                        data-route="{{ route($routeName . '.get.form') }}">
-                    <i class="fas fa-plus"></i> Əlavə et
-                </button>
-            @endcan
-        </div>
-
-        <div class="row g-3">
-            <aside class="col-xl-3">
-                @include('gopanel.pages.lookups.sidebar')
-            </aside>
-
-            <main class="col-xl-9">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle">
-                                <thead>
-                                    <tr>
-                                        <th class="lookup-sort-column"></th>
-                                        <th>Key</th>
-                                        <th>Ad</th>
-                                        <th>Status</th>
-                                        <th class="text-end">Əməliyyatlar</th>
-                                    </tr>
-                                </thead>
-
-                                <tbody id="lookup-sortable"
-                                       data-url="{{ route($routeName . '.sort') }}">
-                                    @foreach ($items as $item)
-                                        <tr data-id="{{ $item->identifier_id }}">
-                                            <td>
-                                                <button type="button"
-                                                        class="lookup-drag-handle btn btn-link"
-                                                        aria-label="Sıranı dəyiş">
-                                                    <i class="fas fa-grip-vertical"></i>
-                                                </button>
-                                            </td>
-                                            <td><code>{{ $item->key }}</code></td>
-                                            <td>{{ $item->name ?? $item->key }}</td>
-                                            <td><!-- active switch --></td>
-                                            <td class="text-end">
-                                                <!-- edit/delete buttons -->
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </main>
-        </div>
-    </div>
-</div>
-```
-
-Status CRUD-da əlavə sütunlar lazım ola bilər:
-
-- rəng preview-i;
-- default badge;
-- public/private badge;
-- həmin statusdan istifadə edən obyektlərin sayı.
-
-Belə halda generic partial çoxlu `if` ilə mürəkkəbləşdirilməməlidir. Modul üçün ayrıca `partials/table.blade.php` yaradılmalıdır.
-
-## 12. Form Blade strukturu
-
-Form AJAX ilə modal daxilinə yüklənir:
-
-```blade
-<form action="{{ $route }}" id="data-form">
-    <div class="row">
-        <div class="col-12 mb-3">
-            <label for="lookup-key" class="form-label">Key</label>
-            <input id="lookup-key"
-                   name="key"
-                   value="{{ old('key', $item->key) }}"
-                   class="form-control"
-                   placeholder="pending_review">
-            <div class="form-text">
-                Bu texniki açardır. Kodda istifadə olunduqdan sonra dəyişdirilməməlidir.
-            </div>
-        </div>
-
-        <!-- Dil tabları: name[az], name[en], description[az] və s. -->
-        <!-- Konfiqurasiyaya əsasən color/class_name kimi əlavə sahələr -->
-        <!-- Konfiqurasiyaya əsasən boolean switch-lər -->
-    </div>
-</form>
-```
-
-Yeni status üçün boolean default-ları:
-
-```text
-is_active  = true
-is_public  = false
-is_default = false
-```
-
-Bütün checkbox-ları yeni qeyddə avtomatik aktiv etmək olmaz.
-
-Modal strukturu:
-
-```blade
-<div id="lookup-form-modal" class="modal fade" tabindex="-1">
-    <div class="modal-dialog modal-right-side">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Status və ya tip</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div id="form-wrap" class="modal-body"></div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    İmtina et
-                </button>
-                <button type="button" id="save-form-btn" class="btn btn-primary">
-                    Yadda saxla
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-```
-
-Create və edit vəziyyətində modal title uyğun dəyişməlidir.
-
-## 13. JavaScript strukturu
-
-JavaScript üç məsuliyyətə ayrılmalıdır:
-
-```text
-main.js
-└── CSRF, alert, loader və ümumi helper-lər
-
-crud.js
-├── create modalını açmaq
-├── edit formunu açmaq
-├── AJAX form submit
-└── validasiya xətalarını göstərmək
-
-sortable-lookups.js
-├── drag-and-drop
-├── yeni sıranı serverə göndərmək
-├── xəta zamanı əvvəlki sıraya qayıtmaq
-└── delete confirm və DELETE request
-```
-
-Create/edit axını:
-
-```text
-Create/Edit klik
-→ GET get/form/{uid?}
-→ server {status, html} qaytarır
-→ HTML #form-wrap daxilinə yazılır
-→ modal açılır
-→ #save-form-btn klik
-→ #data-form FormData ilə POST edilir
-→ uğurlu response-dan sonra redirect və ya siyahı refresh edilir
-```
-
-Statusa məxsus JavaScript generic `crud.js` daxilinə yazılmamalıdır. Xüsusi davranış varsa `modules/order-statuses.js` kimi ayrıca fayl yaradılmalıdır.
-
-## 14. Sortable davranışı
-
-DOM müqaviləsi:
-
-```html
-<tbody id="lookup-sortable" data-url="/gopanel/lookups/order-statuses/sort">
-    <tr data-id="UUID-1">...</tr>
-    <tr data-id="UUID-2">...</tr>
-</tbody>
-```
-
-JavaScript:
-
-```javascript
-$(function () {
-    var $list = $('#lookup-sortable');
-    var previousOrder = [];
-    var sorting = false;
-
-    function readOrder() {
-        return $list.find('tr[data-id]').map(function () {
-            return $(this).data('id');
-        }).get();
+    protected function extraRules(): array
+    {
+        return ['price' => ['nullable', 'numeric', 'min:0']];
     }
-
-    function restoreOrder(order) {
-        order.forEach(function (id) {
-            $list.append($list.find('tr[data-id="' + id + '"]'));
-        });
-    }
-
-    $list.sortable({
-        items: '> tr',
-        axis: 'y',
-        handle: '.lookup-drag-handle',
-        start: function () {
-            previousOrder = readOrder();
-        },
-        update: function () {
-            if (sorting) return;
-            sorting = true;
-            $list.sortable('disable');
-
-            $.ajax({
-                url: $list.data('url'),
-                type: 'PATCH',
-                data: { orders: readOrder() }
-            }).fail(function (xhr) {
-                restoreOrder(previousOrder);
-                showError(xhr);
-            }).always(function () {
-                sorting = false;
-                $list.sortable('enable');
-            });
-        }
-    });
-});
-```
-
-Server request validasiyası:
-
-```php
-return [
-    'orders' => ['required', 'array', 'min:1'],
-    'orders.*' => [
-        'required',
-        'distinct',
-        'uuid',
-        Rule::exists($this->table, 'uid')->whereNull('deleted_at'),
-    ],
-];
-```
-
-Controller:
-
-```php
-DB::transaction(function () use ($request) {
-    foreach ($request->validated('orders') as $index => $uid) {
-        ($this->model)::where('uid', $uid)->update([
-            'sort_order' => $index + 1,
-        ]);
-    }
-});
-```
-
-Sortable qaydaları:
-
-- drag yalnız handle üzərindən başlamalıdır;
-- request gedərkən sortable müvəqqəti bloklanmalıdır;
-- xəta olarsa DOM əvvəlki sıraya qaytarılmalıdır;
-- UID-lər serverdə validasiya edilməlidir;
-- təkrarlanan UID qəbul edilməməlidir;
-- update transaction daxilində olmalıdır;
-- permission server tərəfində yoxlanmalıdır;
-- uğurlu sort-dan sonra cache təmizlənməlidir;
-- böyük siyahıda loop əvəzinə bulk `upsert` istifadə edilə bilər.
-
-## 15. Statuslara məxsus biznes qaydaları
-
-Bu bölmə yalnız status CRUD-larına aiddir. Sadə tip CRUD-larında lazım olmaya bilər.
-
-### Yalnız bir default status
-
-Eyni domen üçün eyni anda yalnız bir `is_default=true` status olmalıdır.
-
-```php
-DB::transaction(function () use ($status, $data) {
-    if ($data['is_default']) {
-        OrderStatus::whereKeyNot($status->getKey())
-            ->update(['is_default' => false]);
-    }
-
-    $status->fill($data)->save();
-});
-```
-
-Default status:
-
-- başqa default seçilmədən silinməməlidir;
-- deaktiv edilməməlidir;
-- bütün statuslar içində ən azı bir default qalmalıdır.
-
-### İstifadə olunan statusun silinməsi
-
-Status foreign key ilə obyektlərə bağlıdırsa istifadə olunan status silinməməlidir:
-
-```php
-if ($status->orders()->exists()) {
-    throw ValidationException::withMessages([
-        'status' => 'Bu status istifadə olunur. Silmək əvəzinə deaktiv edin.',
-    ]);
 }
 ```
 
-Soft-delete foreign key problemini tam həll etmir. Əlaqəli model soft-delete olunmuş statusu adi `belongsTo` ilə gətirməyə bilər. Ona görə istifadə olunan status üçün əsas əməliyyat deaktiv etməkdir.
+Ortaq qaydalar: `key` formatı + unikallıq (redaktədə özü istisna), `name`
+ən azı standart dildə (`TranslatedRequired`), tərcümə massivlərində yalnız
+**aktiv dil kodları**, `color` `#RRGGBB`, `class_name`/`icon` yalnız
+`[A-Za-z0-9 _-]`. Tərcümə sahələri modelin `$translatedAttributes`-dən gəlir —
+iki siyahı saxlanmır.
 
-### Public və active fərqi
+---
 
-- `is_active`: statusun yeni seçimlərdə istifadə oluna bilməsi;
-- `is_public`: statusun son istifadəçiyə göstərilə bilməsi.
+## 8. Biznes qaydaları (`LookupService`)
 
-Admin üçün aktiv status query-si və public API query-si eyni olmamalıdır:
+### Yalnız bir default
 
-```php
-// Admin daxili seçim
-OrderStatus::active()->ordered()->get();
+- Sətir default seçiləndə qalanlarının `is_default`-u **eyni tranzaksiyada**
+  sıfırlanır.
+- Default sətir avtomatik aktivdir; siyahıdan da deaktiv edilə bilməz.
+- Default-dan əl ilə çıxarmaq olmaz — yalnız başqası default seçilərək
+  (ən azı bir default qalır). Hər iki hal `422`.
 
-// İstifadəçi API-si
-OrderStatus::active()->public()->ordered()->get();
-```
+### Silmə
 
-## 16. Delete davranışı
+- Silmə = soft-delete (arxiv).
+- Default sətir silinmir.
+- İstifadə olunan sətir silinmir: `$usedBy` (`cədvəl => xarici açar`) üzrə
+  sayılır; soft-delete olunmuş istinadlar da sayılır. Mesaj adminə «deaktiv
+  edin» təklif edir.
 
-Delete klikində SweetAlert və ya uyğun confirm göstərilməlidir. Server aşağıdakıları yoxlamalıdır:
+### Sıralama
 
-- istifadəçinin delete permission-u varmı;
-- model mövcuddurmu;
-- status default-durmu;
-- status/type başqa cədvəldə istifadə olunurmu;
-- qorunan sistem key-i varmı;
-- silmə soft-delete, yoxsa hard-delete olmalıdır.
+- Bütün sıra **bir HTTP sorğusu**, **bir `UPDATE ... CASE`** sorğusu, bir
+  tranzaksiya ilə yazılır (`SortOrderService`).
+- Tanınmayan / silinmiş / təkrarlanan `uid` varsa heç nə yazılmır (`422`).
+- Sətir başına model event-i işləmir; keş sonda **bir dəfə** təmizlənir.
 
-Server uğurlu olduqda sətir DOM-dan silinə və ya səhifə yenilənə bilər. Xəta olduqda backend mesajı göstərilməlidir.
+### Keş
 
-## 17. Permission strukturu
+Hər yazmadan (save / toggle / delete / sort) sonra `lookup` keş qrupu
+`CacheKey::flushGroup(CacheKey::GROUP_LOOKUP)` ilə köhnəlir. Saytda lookup
+oxuyan yer açarı `CacheKey::lookup('order-statuses')` ilə qurmalıdır.
+`Cache::flush()` çağırılmır.
 
-Minimum permission-lar:
+---
+
+## 9. Ekran
 
 ```text
-gopanel.lookups.view
-gopanel.lookups.add
-gopanel.lookups.edit
-gopanel.lookups.delete
+┌──────────────────────┬──────────────────────────────────────────────┐
+│ Status və Tiplər     │ Sifariş statusları                [+ Əlavə]  │
+│                      │                                              │
+│ Sifariş statusları ◄ │  ↕  Açar      Ad        Görünüş  Default  Status  ✎ 🗑 │
+│ Ödəniş statusları    │  ↕  pending   Gözləyir  [badge]  Bəli     [on]       │
+│ Məhsul tipləri       │  ↕  approved  Təsdiq    [badge]  Xeyr     [on]       │
+└──────────────────────┴──────────────────────────────────────────────┘
 ```
 
-Layihə daha granular icazə istəyirsə:
+- Sütunlar `LookupDefinition`-dan gəlir: `color`/`class_name` varsa
+  «Görünüş» (badge önizləməsi, rəng `--lookup-color` CSS dəyişəni ilə),
+  `icon` varsa ikon, `is_active`-dən başqa bayraqlar «Bəli/Xeyr» badge,
+  `is_active` keçid düyməsi (`edit` icazəsi yoxdursa sadə badge).
+- Desktop: sidebar `col-xl-3`, cədvəl `col-xl-9`. Mobil: sidebar cədvəlin
+  üstündə üfüqi sürüşən zolaq, cədvəl `table-responsive`.
+- Yeni sətirdə yalnız `is_active` açıq gəlir; `is_default`/`is_public` bağlı.
+- Blade-də hesablama, `<style>`, `<script>` yoxdur — dəyərlər `data-*` ilə.
 
-```text
-gopanel.order-statuses.view
-gopanel.order-statuses.add
-gopanel.order-statuses.edit
-gopanel.order-statuses.delete
-```
+## 10. JavaScript
 
-Yoxlama üç yerdə düşünülməlidir:
+Yaratma/redaktə **mövcud `crud.js` axını** ilədir (`#open-create-modal`,
+`.edit`, `#save-form-btn`, modal `#cerate-modal`). Modal id-sinin yazılışı
+crud.js-in müqaviləsidir — düzəltmək bütün panelin modallarını sındırar.
 
-1. Gopanel əsas menyusu;
-2. Blade düymələri və sidebar elementləri;
-3. route/controller səviyyəsi.
+`modules/lookups/lookups.js` yalnız:
 
-Əsas təhlükəsizlik üçüncü səviyyədir.
+1. sürüklə-burax (jQuery UI sortable, yalnız `.lookup-drag-handle` ilə;
+   sorğu gedərkən bloklanır; xətada sətirlər əvvəlki yerinə qayıdır);
+2. silmə təsdiqi (SweetAlert2) və `DELETE` — xətada server mesajı göstərilir;
+3. formadakı rəng seçicisinin mətn sahəsi ilə sinxronu;
+4. keçid düyməsini server rədd edəndə səhifəni yeniləyir (real vəziyyət görünsün).
 
-## 18. Response formatı
+Tipə xas JS lazımdırsa `modules/lookups/<tip>.js` yaradılır və tipin öz
+`index.blade.php`-sində `@push('scripts')` ilə qoşulur — ortaq fayla yazılmır.
 
-Form HTML response:
+---
 
-```json
-{
-  "status": "success",
-  "message": "Form yaradıldı",
-  "html": "<form id=\"data-form\">...</form>"
-}
-```
+## 11. Test
 
-Save response:
+`tests/Feature/Gopanel/Lookups/LookupModuleTest.php` atılan `test_statuses`
+lookup-u üzərində (yaddaşda SQLite) yoxlayır: index render, tərcüməli
+saxlama, validasiya (açar, standart dil, dil whitelist-i, rəng), tək default
+qaydası, bir sorğulu sıralama + rollback, icazəsiz admin üçün bütün
+endpoint-lərdə 403, silmə qadağaları, reyestr → icazə/menyu, generator.
 
-```json
-{
-  "status": "success",
-  "message": "Məlumat yadda saxlanıldı",
-  "redirect": "/gopanel/lookups/order-statuses"
-}
-```
+Layihədə yeni tip əlavə edəndə adətən əlavə test lazım deyil; tipə xas qayda
+(`inUseCount()`, `extraRules()`) yazılıbsa onun üçün test yazılır.
 
-Sort/delete response:
+## 12. aquastores-dan fərqlər (düzəldilmiş qüsurlar)
 
-```json
-{
-  "status": "success",
-  "message": "Əməliyyat uğurla tamamlandı"
-}
-```
+| aquastores | Starter |
+|---|---|
+| `@can('gopanel.lookups.add')` — mövcud olmayan icazə | Tip başına `gopanel.lookups.{tip}.*`, route adı = icazə adı |
+| Server tərəfi icazə yox idi | `gopanel.can` hər route-da + FormRequest-də add/edit |
+| Formada dillər `code != 'az'` ilə sabit, `Currency`/`PortfolioCategory` controller-də | Aktiv dillər paylaşılan siyahıdan; biznes modeli yoxdur, `formData()` hook-u |
+| `is_default` tək saxlanmırdı | Tranzaksiyada tək default, deaktiv/silinmə qadağası |
+| Silmə istifadəni yoxlamırdı | `$usedBy` / `inUseCount()` hook-u |
+| Sıralama: N `find()` + N `update()`, tranzaksiyasız, N keş təmizlənməsi | 1 `UPDATE ... CASE`, tranzaksiya, 1 keş təmizlənməsi |
+| Menyu controller-də sabit massiv | `config/gopanel/lookups.php` reyestri |
+| `@push('styles')` içində inline CSS | `css/lookups.css` |
+| Hər yeni sətirdə bütün checkbox-lar açıq | Yalnız `is_active` açıq |
 
-HTTP statusları düzgün istifadə edilməlidir:
+## 13. Qəbul meyarları
 
-- `200` — uğurlu read/update;
-- `201` — yaradılma;
-- `403` — permission yoxdur;
-- `404` — model tapılmadı;
-- `422` — validasiya və biznes qaydası xətası;
-- `500` — gözlənilməyən server xətası.
-
-## 19. Yeni status və ya tip CRUD əlavə etmə təlimatı
-
-Başqa layihədə yeni modul yaradarkən bu ardıcıllıq izlənməlidir:
-
-1. Domenə uyğun cədvəl adı müəyyən et: məsələn `request_statuses`.
-2. Migration yarat və baza sahələrini əlavə et.
-3. Model yarat; fillable, casts, translation və relation-ları yaz.
-4. Seeder yarat; texniki `key`-ləri və ilkin sıralamanı əlavə et.
-5. Save request yarat və modulun real qaydalarını yaz.
-6. Status/type controller-i `BaseLookupController`-dən extend et.
-7. Beş standart route-u əlavə et: index, form, save, delete, sort.
-8. Modul üçün nazik `index.blade.php` və `form.blade.php` wrapper-ları yarat.
-9. Modulu “Status və Tiplər” sidebar siyahısına əlavə et.
-10. Modulu Gopanel əsas menyusuna ayrıca child kimi yalnız həqiqətən lazımdırsa əlavə et.
-11. Permission-ları seed et və route-lara tətbiq et.
-12. Cache istifadə olunursa save/delete/sort zamanı invalidate et.
-13. Feature test və frontend smoke test yaz.
-
-AI yeni modul yaradanda əvvəlcə layihənin mövcud model, route, response, translation, permission və menu konvensiyalarını yoxlamalıdır. Bu sənəddəki namespace və class adlarını kor-koranə kopyalamamalıdır.
-
-## 20. Test checklist
-
-Backend:
-
-- admin olmayan şəxs bölməyə daxil ola bilmir;
-- permission olmayan admin mutasiya edə bilmir;
-- siyahı `sort_order`, sonra `id` ilə sıralanır;
-- create və edit işləyir;
-- eyni `key` qəbul edilmir;
-- `key` yalnız düzgün formatda qəbul edilir;
-- translation-lar düzgün saxlanılır;
-- checkbox olmayan boolean `false` kimi saxlanılır;
-- yalnız bir default status qalır;
-- default status silinmir və deaktiv edilmir;
-- istifadədə olan status silinmir;
-- sort yalnız mövcud və unikal UID qəbul edir;
-- sort transaction rollback edir;
-- delete soft-delete qaydasına uyğundur;
-- API yalnız active/public qeydləri düzgün sıra ilə qaytarır.
-
-Frontend:
-
-- əsas “Status və Tiplər” menyusu düzgün açılır;
-- daxili sidebar cari səhifəni aktiv göstərir;
-- create modalı açılır;
-- edit formu mövcud məlumatla gəlir;
-- validasiya xətaları input yanında görünür;
-- save sonrası siyahı yenilənir;
-- sortable yalnız handle ilə işləyir;
-- sort xətasında əvvəlki sıra bərpa olunur;
-- delete confirm işləyir;
-- mobil görünüşdə sidebar, cədvəl və modal istifadə olunur;
-- klaviatura ilə düymələrə və sort alternativinə çatmaq mümkündür.
-
-## 21. Yekun qəbul meyarları
-
-Implementasiya hazır sayılır, əgər:
-
-- Gopanel-də “Status və Tiplər” parent menyusu görünür;
-- bölmə daxilində status/type səhifələri sidebar ilə dəyişdirilə bilir;
-- bütün səhifələr eyni vizual və texniki CRUD müqaviləsindən istifadə edir;
-- create/edit AJAX modal ilə işləyir;
-- delete təhlükəsiz biznes qaydaları ilə qorunur;
-- drag-and-drop sıralama qalıcıdır və xəta zamanı geri qayıdır;
-- backend permission və request validasiyası mövcuddur;
-- statuslara məxsus default/public/active qaydaları tətbiq olunur;
-- yeni lookup minimal təkrar kodla əlavə edilə bilir;
-- başqa layihədə elan modulu olmasa belə struktur həmin layihənin status və tiplərinə uyğunlaşdırıla bilir.
+- Reyestr boşdursa bölmə menyuda görünmür; tip əlavə olunanda «Status və
+  Tiplər» qrupu və bölmədaxili sidebar avtomatik görünür.
+- Create/edit AJAX modal ilə, validasiya xətaları göstərilir.
+- Sürüklə-burax qalıcıdır və xətada geri qayıdır.
+- Default/silmə qaydaları serverdə tətbiq olunur.
+- İcazəsiz admin heç bir endpoint-i çağıra bilmir (403).
+- Yeni tip 3 addımda əlavə olunur (§ 1).
