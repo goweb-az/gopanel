@@ -138,12 +138,31 @@ altındadır:
 
 ```text
 public/assets/front/
-├── css/      saytın stilləri
-├── js/       saytın skriptləri (səhifəyə xas kod js/pages/<səhifə>.js)
+├── css/
+│   ├── style.css     şablondan gələn (toxunulmur)
+│   └── custom.css    BİZİM yazdığımız bütün CSS
+├── js/
+│   ├── main.js       şablondan gələn (toxunulmur)
+│   └── custom.js     BİZİM yazdığımız bütün JS
 ├── images/   şablonun şəkilləri, ikonlar
 ├── fonts/    şriftlər
 └── libs/     kənar kitabxanalar (swiper, fancybox...)
 ```
+
+### Şablon faylları dəyişdirilmir
+
+- Dizaynerdən/şablondan gələn CSS və JS faylları (`style.css`, `main.js` və s.)
+  **redaktə edilmir** - olduğu kimi qalır.
+- Öz yazdığımız bütün CSS **`css/custom.css`**-ə, bütün JS **`js/custom.js`**-ə
+  yazılır. Düzəliş lazımdırsa (rəng, ölçü, mobil) şablon faylında yox,
+  `custom.css`-də üstələnir.
+- `custom.css` şablon CSS-lərindən **sonra**, `custom.js` şablon JS-lərindən
+  **sonra** qoşulur - üstələmə və şablon funksiyalarına müraciət işləsin.
+
+**Niyə:** şablonun yeni versiyası gələndə (yeni səhifə, düzəliş) onun faylları
+sadəcə üzərinə yazılır. Bizim kod şablon faylının içində olsaydı ya itərdi, ya da
+iki versiyanı əl ilə sətir-sətir birləşdirmək lazım gələrdi. Ayrıca fayl həm də
+«bu sətri kim yazıb, nəyə görə» sualına dərhal cavab verir.
 
 - Blade-də qoşulma `asset_v('assets/front/...')` iləndir - fayl dəyişəndə
   brauzer keşi avtomatik yenilənir.
