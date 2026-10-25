@@ -6,6 +6,7 @@ use App\Helpers\Gopanel\FileUploader;
 use App\Http\Controllers\GoPanelController;
 use App\Http\Requests\Gopanel\Admin\ChangePasswordRequest;
 use App\Http\Requests\Gopanel\Admin\ProfileUpdateRequest;
+use App\Support\Settings\AdminSettingDefinitions;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
@@ -22,7 +23,10 @@ class ProfileController extends GoPanelController
     public function index()
     {
         $item = Auth::guard('gopanel')->user();
-        return view('gopanel.pages.profile.index', compact('item'));
+        // «Şəxsi tənzimləmələr» linki yalnız tərif varsa göstərilir (starter-də boşdur)
+        $hasPersonalSettings = AdminSettingDefinitions::keys() !== [];
+
+        return view('gopanel.pages.profile.index', compact('item', 'hasPersonalSettings'));
     }
 
     public function update(ProfileUpdateRequest $request)

@@ -75,6 +75,21 @@ return [
     'cdn_url' => env('CDN_URL'),
 
     /*
+    | Panelin öz domeni (canlıda məs. https://go.example.dev).
+    | Doludursa panel YALNIZ bu host-dan açılır (GopanelHostMiddleware), növbədən
+    | gedən panel linkləri də bu kökdən qurulur (App\Support\Url\GopanelUrl).
+    | Boşdursa yoxlama yoxdur - lokalda panel hər host-da açılır.
+    */
+    'gopanel_url' => env('GOPANEL_URL'),
+
+    /*
+    | Ayrıca ictimai sayt (headless: Next.js/Nuxt) ünvanı - App\Support\Url\FrontendUrl.
+    | Boşdursa `APP_URL`-in `api.` prefiksi atılaraq çıxarılır; prefiks də
+    | yoxdursa sayt Laravel-in özüdür.
+    */
+    'frontend_url' => env('FRONTEND_URL'),
+
+    /*
     |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
@@ -186,6 +201,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\TranslationServiceProvider::class,
         App\Providers\ViewServiceProvider::class,
+        App\Providers\CacheInvalidationServiceProvider::class,
     ])->toArray(),
 
     /*

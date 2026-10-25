@@ -22,6 +22,12 @@
 
         <div class="row">
             <div class="col-xl-12">
+                @include("gopanel.pages.seo.seo-analytics.partials.machine-files")
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xl-12">
                 <div class="card">
                     <div class="card-body">
                         @include("gopanel.pages.seo.seo-analytics.partials.form")

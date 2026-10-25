@@ -17,6 +17,11 @@
         <a class="dropdown-item" href="{{route('gopanel.profile.change-password.index')}}">
             <i class="bx bx-lock-open font-size-16 align-middle me-1"></i> <span>Şifrəni dəyiş</span>
         </a>
+        @if (config('custom.security.admin_pin.enabled'))
+            <a class="dropdown-item" href="{{route('gopanel.profile.pin.index')}}">
+                <i class="bx bx-hash font-size-16 align-middle me-1"></i> <span>PIN kodum</span>
+            </a>
+        @endif
         <div class="dropdown-divider"></div>
         <a class="dropdown-item text-danger" href="{{route("gopanel.auth.logout")}}">
             <i class="bx bx-power-off font-size-16 align-middle me-1 text-danger"></i> <span key="t-logout">Çıxış</span>

@@ -47,18 +47,65 @@ final class ExportBranding
     }
 
     /**
+     * Loqonun MÜTLƏQ fayl yolu (tapılmazsa `null`) - PDF üçün.
+     *
+     * NİYƏ URL yox: Dompdf `<img src>`-də URL görəndə şəbəkə sorğusu atır -
+     * bu PDF qurulmasını yavaşladır, növbə işçisində isə CDN/sayta çıxış
+     * olmaya bilər. `logo()` nisbi yolu verir (geriyə uyğunluq üçün olduğu
+     * kimi saxlanılıb), bu metod onu `public/` altında axtarır.
+     *
+     * Mütləq yol verilibsə (`/var/www/.../logo.png`) olduğu kimi yoxlanılır.
+     */
+    public static function logoPath(): ?string
+    {
+        $logo = trim(self::logo());
+
+        if ($logo === '') {
+            return null;
+        }
+
+        if (is_file($logo)) {
+            return $logo;
+        }
+
+        $path = public_path(ltrim($logo, '/'));
+
+        return is_file($path) ? $path : null;
+    }
+
+    /**
+     * Brend rəngi (HEX, `#` olmadan) - `config/custom/export.php` → `colors`.
+     *
+     * Excel `RRGGBB` gözləyir, CSS isə `#RRGGBB`; ona görə dəyər `#`-siz
+     * saxlanılır və PDF-də `cssColor()` ilə verilir.
+     */
+    public static function color(string $key, string $default = '000000'): string
+    {
+        return ltrim((string) config('custom.export.colors.' . $key, $default), '#');
+    }
+
+    /** `#RRGGBB` - PDF/mail şablonları üçün. */
+    public static function cssColor(string $key, string $default = '000000'): string
+    {
+        return '#' . self::color($key, $default);
+    }
+
+    /**
      * Blade-lərə ötürmək üçün hazır massiv.
      *
-     * @return array<string, string>
+     * `logo_path` sonradan əlavə olunub (PDF üçün); köhnə açarlar dəyişməyib.
+     *
+     * @return array<string, string|null>
      */
     public static function toArray(): array
     {
         return [
-            'title'   => self::title(),
-            'phone'   => self::phone(),
-            'website' => self::website(),
-            'logo'    => self::logo(),
-            'contact' => self::contactLine(),
+            'title'     => self::title(),
+            'phone'     => self::phone(),
+            'website'   => self::website(),
+            'logo'      => self::logo(),
+            'contact'   => self::contactLine(),
+            'logo_path' => self::logoPath(),
         ];
     }
 }

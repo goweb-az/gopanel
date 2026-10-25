@@ -1,0 +1,79 @@
+/* ── İxrac düymələri və «Mailə göndər» pəncərəsi (js/modules/export.js) ──
+ * Format seçimi radio dairəsi ilə yox, kartlarla verilir: dar pəncərədə
+ * dairə görünmür və adam hansı formatın seçildiyini anlamır.
+ */
+.gp-export .dropdown-menu {
+    min-width: 12rem;
+}
+
+.gp-export-mail__input {
+    margin: 6px 0 14px;
+    height: 46px;
+    font-size: 15px;
+}
+
+.gp-export-mail__formats {
+    display: flex;
+    gap: 12px;
+}
+
+.gp-export-mail__format {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 10px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    color: #475569;
+    background: #fff;
+    transition: border-color .15s ease, background .15s ease;
+}
+
+.gp-export-mail__format i {
+    font-size: 20px;
+}
+
+.gp-export-mail__format:hover {
+    border-color: #cbd5e1;
+}
+
+.gp-export-mail__format.is-active {
+    border-color: #556ee6;
+    background: #f3f5ff;
+    color: #2b3674;
+}
+
+.gp-export-mail__format input[type="radio"] {
+    margin: 0;
+    accent-color: #556ee6;
+    width: 16px;
+    height: 16px;
+}
+
+.gp-export-mail__note {
+    margin-top: 12px;
+    font-size: 14px;
+    resize: vertical;
+}
+
+/* Mobil: kartlar alt-alta düşür. Düymə qrupuna `overflow` verilmir -
+ * açılan menyunu kəsərdi; əvəzinə qrup ekranın enindən çıxmır. */
+@media (max-width: 575.98px) {
+    .gp-export-mail__formats {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .gp-export {
+        max-width: 100%;
+    }
+
+    .gp-export .dropdown-menu {
+        max-width: calc(100vw - 32px);
+    }
+}

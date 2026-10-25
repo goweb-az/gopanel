@@ -29,6 +29,11 @@
         <!-- END layout-wrapper -->
 
         
+        {{-- PIN təsdiqi modalı - yalnız ADMIN_PIN_ENABLED=true olanda --}}
+        @if (config('custom.security.admin_pin.enabled'))
+            @include('gopanel.blocks.pin-confirm')
+        @endif
+
         <!-- JAVASCRIPT -->
         @include('gopanel.assets.scripts')
     </body>

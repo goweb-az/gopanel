@@ -1,0 +1,22 @@
+/* Tərcümələr səhifəsi (gopanel/pages/settings/translations) */
+
+/* select2 açılanda kart və modalın üstündə qalsın */
+#translation-page .select2-container { z-index: 1; }
+.select2-container--open,
+.select2-container--open .select2-dropdown { z-index: 1060; }
+#translation-excel-modal .select2-container--open,
+#translation-excel-modal .select2-container--open .select2-dropdown { z-index: 1065; }
+
+/* select2 hündürlüyü Bootstrap form elementləri ilə eyni */
+#translation-page .select2-container .select2-selection--single { height: calc(1.5em + .75rem + 2px); }
+#translation-page .select2-container--default .select2-selection--single .select2-selection__rendered { line-height: calc(1.5em + .75rem); }
+#translation-page .select2-container--default .select2-selection--single .select2-selection__arrow { height: calc(1.5em + .75rem); }
+
+.translation-toolbar { display: flex; flex-wrap: wrap; gap: .5rem; }
+
+.translation-excel-format code { white-space: nowrap; }
+.translation-excel-result .list-group { max-height: 240px; overflow-y: auto; }
+
+@media (max-width: 575.98px) {
+    .translation-toolbar .btn { flex: 1 1 calc(50% - .5rem); }
+}

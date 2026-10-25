@@ -15,6 +15,7 @@ class SeoAnalytics extends BaseModel
         'footer',
         'robots_txt',
         'ai_txt',
+        'ads_txt',
         'other',
     ];
 

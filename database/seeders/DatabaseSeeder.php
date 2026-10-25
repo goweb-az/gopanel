@@ -22,5 +22,7 @@ class DatabaseSeeder extends Seeder
         $this->call(LlmsTxtSeeder::class);
         $this->call(SeoAnalyticsSeeder::class);
         $this->call(SeoAnalyticsSeeder::class);
+        // Köhnə default robots/ai/llms mətnlərini yeniləyir (paneldən yazılanlara toxunmur)
+        $this->call(SeoMachineFilesSeeder::class);
     }
 }

@@ -8,11 +8,11 @@ use App\Enums\Gopanel\BackupStatus;
 use App\Enums\Gopanel\BackupType;
 use App\Models\BaseModel;
 use App\Models\Gopanel\Admin;
-use App\Support\Files\ByteSize;
 use App\Traits\System\AddUuid;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
 use RuntimeException;
+use App\Traits\Presentable\Backup\HasBackupPresentation;
 
 /**
  * Paneldən çıxarılan backup qeydi.
@@ -27,7 +27,7 @@ use RuntimeException;
  */
 class Backup extends BaseModel
 {
-    use AddUuid;
+    use AddUuid, HasBackupPresentation;
 
     protected $table = 'backups';
 
@@ -95,28 +95,6 @@ class Backup extends BaseModel
     public function manifestPath(): ?string
     {
         return $this->path ? $this->path . '.files.json' : null;
-    }
-
-    /** Oxunaqlı ölçü: 5.4 GB, 12 MB... Format `ByteSize`-dədir. */
-    public function readableSize(): string
-    {
-        return ByteSize::humanOrDash((int) $this->size);
-    }
-
-    /** Nə qədər çəkib. */
-    public function duration(): ?string
-    {
-        if (!$this->started_at || !$this->finished_at) {
-            return null;
-        }
-
-        $seconds = (int) $this->finished_at->diffInSeconds($this->started_at);
-
-        if ($seconds < 60) {
-            return $seconds . ' san.';
-        }
-
-        return intdiv($seconds, 60) . ' dəq. ' . ($seconds % 60) . ' san.';
     }
 
     /**

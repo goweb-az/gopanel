@@ -490,6 +490,10 @@ app/Traits/
   Presentation/        # use carefully; prefer ViewModels/components
 ```
 
+> **Gopanel-də qəbul olunmuş forma:** `app/Traits/Presentable/<Domen>/Has<Model>Presentation`
+> - yalnız oxu/formatlama accessor-ları, sorğu və icazəsiz, HTML əvəzinə
+> `*_label` + `*_class`. Tam qayda: [presentable-traits.md](presentable-traits.md).
+
 Avoid `CommonTrait`, `BaseTrait` or a trait used only once without a strong semantic reason.
 
 # Part IV — Helpers

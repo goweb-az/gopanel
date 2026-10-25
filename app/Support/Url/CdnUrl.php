@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Storage;
  * MARŞRUTLAMA SİYASƏTİ:
  * ```text
  * boş dəyər            → null
- * http/https ilə başlayır → toxunulmur (kənar URL)
+ * http/https/`//` ilə başlayır → toxunulmur (kənar URL)
  * assets/...           → CDN (və ya app.url) + yol      → public/ altındakı statik fayl
  * storage/...          → CDN (və ya app.url) + yol      → symlink olunmuş public disk
  * digər nisbi yol      → Storage::disk('public')->url() → yüklənmiş fayl
@@ -38,11 +38,19 @@ final class CdnUrl
         return rtrim((string) (config('app.cdn_url') ?: config('app.url')), '/');
     }
 
-    /** Yol onsuz da tam URL-dirmi? */
+    /**
+     * Yol onsuz da tam URL-dirmi?
+     *
+     * Protokolsuz `//cdn.site.az/x.png` da tam ünvan sayılır: əks halda
+     * `normalize()` baş slash-ları atıb onu nisbi yola (`cdn.site.az/x.png`)
+     * çevirir və öz domenimizə yapışdırırdı - sınıq ünvan alınırdı.
+     */
     public static function isAbsolute(?string $path): bool
     {
         return !empty($path) && (
-            str_starts_with($path, 'http://') || str_starts_with($path, 'https://')
+            str_starts_with($path, 'http://')
+            || str_starts_with($path, 'https://')
+            || str_starts_with($path, '//')
         );
     }
 

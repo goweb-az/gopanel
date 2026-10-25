@@ -2,8 +2,6 @@
 
 namespace App\Models\Navigation;
 
-use App\Enums\Common\Menu\MenuTypeEnum;
-use App\Enums\Common\Menu\MenuPositionEnum;
 use App\Helpers\Site\MenuHelper;
 use App\Models\BaseModel;
 use App\Models\Translations\FieldTranslation;
@@ -12,12 +10,12 @@ use App\Traits\Content\Translation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
+use App\Traits\Presentable\Navigation\HasMenuPresentation;
 
 class Menu extends BaseModel
 {
-    use HasFactory, SoftDeletes, Translation, MetaData;
+    use HasFactory, SoftDeletes, Translation, MetaData, HasMenuPresentation;
 
     protected $fillable = [
         'parent_id',
@@ -38,7 +36,6 @@ class Menu extends BaseModel
         'is_active'     => 'boolean',
         'is_dropdown'   => 'boolean',
     ];
-
 
     protected static function booted()
     {
@@ -101,24 +98,12 @@ class Menu extends BaseModel
         });
     }
 
-
     public static function getByRouteName($route_name, $locale = null)
     {
         $locale = $locale ?? app()->getLocale();
         return Cache::rememberForever("site_menu_by_route_name_{$locale}_{$route_name}", function () use ($route_name, $locale) {
             return self::where("route_name", $route_name)->first();
         });
-    }
-
-
-    public function getMenuTypeAttribute()
-    {
-        return MenuTypeEnum::from($this->type)->label() ?? $this->type;
-    }
-
-    public function getMenuPositionAttribute()
-    {
-        return MenuPositionEnum::from($this->position)->label() ?? $this->position;
     }
 
     public static function getView()
@@ -131,7 +116,6 @@ class Menu extends BaseModel
                 ->get();
         });
     }
-
 
     public static function getRoutes($locale)
     {
@@ -170,7 +154,6 @@ class Menu extends BaseModel
         });
     }
 
-
     /**
      * Sayt üçün menyu itemləri (header/footer göstərmək üçün)
      */
@@ -194,45 +177,10 @@ class Menu extends BaseModel
         });
     }
 
-
     public function getConfigAttribute(): ?array
     {
         $routes = config("site.menu_routes");
         return $routes[$this->route_name] ?? null;
-    }
-
-
-    public function getRouteAttribute()
-    {
-        $language = app()->currentLocale();
-
-        // 1. Config-dən registered route tap
-        $config = $this->config;
-        if ($config) {
-            $name = $config['name'] ?? null;
-            if ($name) {
-                $path = "site.{$language}.{$name}";
-                if (Route::has($path)) {
-                    return route($path);
-                }
-            }
-        }
-
-        // 2. Slug-dan URL genera et
-        $slug = $this->getTranslation('slug', $language, true)
-            ?? $this->route_slug  // getRoutes() join-ından gələn attribute
-            ?? null;
-
-        if ($slug) {
-            return url("{$language}/{$slug}");
-        }
-
-        // 3. home route
-        if ($this->route_name === 'home') {
-            return url($language);
-        }
-
-        return url('/');
     }
 
     public function callFunction($type = 'desktop')

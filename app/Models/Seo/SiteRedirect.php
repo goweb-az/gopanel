@@ -2,11 +2,10 @@
 
 namespace App\Models\Seo;
 
-use App\Enums\Gopanel\Seo\RedirectMatchTypeEnum;
-use App\Helpers\Gopanel\GoPanelHelper;
 use App\Models\BaseModel;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use App\Traits\Presentable\Seo\HasSiteRedirectPresentation;
 
 /* 
  * @var SiteRedirect $this
@@ -15,6 +14,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 class SiteRedirect extends BaseModel
 {
+    use HasSiteRedirectPresentation;
+
     protected $table = 'site_redirects';
 
     protected $logEnabled = false;
@@ -97,16 +98,5 @@ class SiteRedirect extends BaseModel
     {
         $this->increment('hits');
         $this->forceFill(['last_hit_at' => now()])->saveQuietly();
-    }
-
-
-    public function getMatchTypeNameAttribute()
-    {
-        return RedirectMatchTypeEnum::from($this->match_type)->label() ?? $this->match_type;
-    }
-
-    public function getIsActiveButtonAttribute()
-    {
-        return (new GoPanelHelper)->is_active_btn($this, "is_active", ($this->is_active == "1" ? true : false));
     }
 }

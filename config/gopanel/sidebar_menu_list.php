@@ -145,6 +145,8 @@ return [
         'route' => 'gopanel.slider.index',
         'can'   => 'gopanel.slider.index',
     ],
+    // «Status və Tiplər» - yalnız config/gopanel/lookups.php-də tip olanda görünür
+    ...\App\Services\Gopanel\Lookup\LookupRegistry::sidebarItems(require __DIR__ . '/lookups.php'),
     [
         'title' => 'Monitorinq'
     ],

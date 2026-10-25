@@ -33,10 +33,13 @@ class RouteServiceProvider extends ServiceProvider
                 ->prefix('api')
                 ->group(base_path('routes/api.php'));
 
-            Route::middleware(['web', 'site.redirects', 'track.analytics'])
+            // site.status: SITE_STATUS_ENFORCE=false (default) olanda heç nə etmir
+            Route::middleware(['web', 'site.status', 'site.redirects', 'track.analytics'])
                 ->group(base_path('routes/web.php'));
 
-            Route::middleware(['web'])
+            // gopanel.host: GOPANEL_URL boşdursa heç nə etmir (lokal), doludursa yad host-da 404
+            // ip.restrict: IP_RESTRICTION_ENABLED=false (default) olanda heç nə etmir
+            Route::middleware(['web', 'gopanel.host', 'ip.restrict'])
                 ->namespace($this->namespace)
                 ->prefix('gopanel')
                 ->name('gopanel.')

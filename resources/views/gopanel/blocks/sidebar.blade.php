@@ -8,6 +8,7 @@
             <ul class="metismenu list-unstyled" id="side-menu">
 
                 @foreach ($sidebarItems as $item)
+                    @continue(!$item->get('showFlag', true))
                     @if (!$item->get('route') and $item->get('inner') === null)
                         <li class="menu-title" key="t-menu">{!! $item['title'] !!}</li>
                     @elseif($item->get('route') and !is_array($item->get('inner')))
@@ -36,6 +37,7 @@
                             </a>
                             <ul class="sub-menu">
                                 @foreach ($item->get('inner') as $inner)
+                                    @continue(!$inner->get('showFlag', true))
                                     {{-- @if(!sidebarGuardCheck($inner->get('guards')))
                                         @continue
                                     @endif --}}

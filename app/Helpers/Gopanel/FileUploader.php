@@ -7,6 +7,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Services\Activity\LogService;
+use App\Support\Url\CdnUrl;
 
 /**
  * ============================================================
@@ -41,9 +42,14 @@ use App\Services\Activity\LogService;
  *   $url = FileUploader::url('site/blogs/post.png');          // public path üçün
  *   $url = FileUploader::url('admins/admin-5.png', 'storage'); // storage path üçün
  *
+ *   $url = FileUploader::url($model->image, 'auto');          // disk avtomatik (fayl yoxdursa null)
+ *   $url = FileUploader::storageUrl('/storage/admins/a.png'); // diskə baxmadan, yol normallaşdırılır
+ *   $url = FileUploader::storageUrlOrFallback($path, 'assets/site/no-avatar.png');
+ *
  *   // Faylı silmək
  *   FileUploader::deleteFile('site/blogs/old.png');             // public-dən
  *   FileUploader::deleteFile('admins/old.png', 'storage');      // storage-dan
+ *   FileUploader::deleteFile($model->image, 'auto');            // hansı diskdədirsə
  *
  *   // Fayl adı generasiya (request data-dan)
  *   $name = FileUploader::nameGenerate($data, 'blog');          // → blog-menim-meqalem-681baf3d1e2a7
@@ -181,6 +187,13 @@ class FileUploader
     /** @var string VirusTotal API scanner (online, API key lazımdır) */
     public const SCAN_VIRUSTOTAL = 'virustotal';
 
+    /**
+     * `url()` / `deleteFile()` / `deleteOld()` üçün disk dəyəri: fayl hansı
+     * diskdədirsə (əvvəl storage, sonra public). Bazada həm `toStorage()`, həm
+     * `toPublic()` ilə yazılmış yollar qarışıq qalanda disk əl ilə seçilmir.
+     */
+    public const DISK_AUTO = 'auto';
+
 
     /*
     |==========================================================================
@@ -261,15 +274,28 @@ class FileUploader
     }
 
     /**
-     * Faylın tam URL-ni qaytarır
+     * Faylın tam URL-ni qaytarır - fayl diskdə YOXDURSA null.
+     *
+     * Ünvan `App\Support\Url\CdnUrl` ilə qurulur (əvvəl `asset()` idi): `asset()`
+     * cari sorğunun host-unu götürür, panel/API ayrı subdomendə işləyəndə və ya
+     * `CDN_URL` qoşulanda fayla yanlış host verirdi. `CDN_URL` boşdursa nəticə
+     * əvvəlki kimidir (`APP_URL` + yol).
+     *
+     * Tam ünvan (`https://...`, `//...`) olduğu kimi qaytarılır - xarici şəkil
+     * diskdə axtarılmır.
+     *
+     * Fayl mövcudluğu YOXLANILMADAN ünvan lazımdırsa (API, siyahı - hər sətir
+     * üçün disk sorğusu bahalıdır) `storageUrl()` / `publicUrl()` işlədilir.
      *
      * @param  string|null  $path  Faylın relative path-i (məs: 'site/blogs/post.png' və ya 'admins/a.png')
-     * @param  string       $disk  'public' (default) — public_path, 'storage' — storage URL
+     * @param  string       $disk  'public' (default) — public_path, 'storage' — storage URL,
+     *                             'auto' — əvvəl storage, sonra public (fayl hansı diskdədirsə)
      * @return string|null  Tam URL və ya null (fayl yoxdursa)
      *
      * İstifadə:
      *   FileUploader::url('site/blogs/post.png');              // → https://domain.com/site/blogs/post.png
      *   FileUploader::url('admins/admin-5.png', 'storage');    // → https://domain.com/storage/admins/admin-5.png
+     *   FileUploader::url($model->image, 'auto');              // → hansı diskdə tapılsa
      */
     public static function url(?string $path, string $disk = 'public'): ?string
     {
@@ -277,27 +303,147 @@ class FileUploader
             return null;
         }
 
+        if (CdnUrl::isAbsolute($path)) {
+            return $path;
+        }
+
+        if ($disk === self::DISK_AUTO) {
+            // Yüklənən fayllar ya `storage/app/public`-dədir (toStorage), ya da
+            // `public/site/...`-dədir (toPublic) - bazadakı yoldan disk bilinmir.
+            return static::url($path, 'storage') ?? static::url($path, 'public');
+        }
+
         if ($disk === 'storage') {
             // Storage disk — symlink ilə əlçatan
             if (Storage::disk('public')->exists($path)) {
-                return asset('storage/' . $path);
+                return CdnUrl::storage($path);
             }
             return null;
         }
 
         // Public path — birbaşa URL
         if (file_exists(public_path($path))) {
-            return asset($path);
+            return CdnUrl::asset($path);
         }
 
         return null;
     }
 
     /**
+     * Storage yolunu təmiz nisbi yola çevirir.
+     *
+     * Niyə: bazada eyni fayl müxtəlif formada qalır - `/storage/x.png`,
+     * `storage/x.png`, `public/storage/x.png`, hətta tam `APP_URL`/`CDN_URL`
+     * ilə. Belə yol `CdnUrl::storage()`-ə birbaşa verilsə `storage/storage/...`
+     * kimi ikiqat prefiks və ya köhnə domen alınır.
+     *
+     * @return string|null  məs. 'admins/admin-5.png'; boş yolda null
+     */
+    public static function normalizePath(?string $path): ?string
+    {
+        if (empty($path)) {
+            return null;
+        }
+
+        $path = str_replace('\\', '/', trim($path));
+
+        // Tətbiqin və CDN-in öz domeni atılır (kənar URL-ə toxunulmur)
+        foreach ([config('app.url'), config('app.cdn_url')] as $base) {
+            $base = rtrim((string) $base, '/');
+
+            if ($base !== '' && str_starts_with($path, $base . '/')) {
+                $path = substr($path, strlen($base));
+                break;
+            }
+        }
+
+        $path = ltrim($path, '/');
+
+        // Tanınan storage prefiksləri (uzundan qısaya)
+        foreach (['public/storage/', 'storage/app/public/', 'storage/'] as $prefix) {
+            if (str_starts_with($path, $prefix)) {
+                $path = substr($path, strlen($prefix));
+                break;
+            }
+        }
+
+        $path = (string) preg_replace('#/{2,}#', '/', $path);
+
+        return $path === '' ? null : $path;
+    }
+
+    /**
+     * Storage faylının URL-i - diskə BAXMADAN.
+     *
+     * `url()` hər çağırışda diskə müraciət edir; siyahı/API cavabında yüzlərlə
+     * sətir üçün bu bahalıdır, S3 kimi uzaq diskdə isə hər biri şəbəkə sorğusudur.
+     * Fayl yoxdursa brauzer 404 alır - bu, UI-da placeholder ilə həll olunur.
+     */
+    public static function storageUrl(?string $path): ?string
+    {
+        if (CdnUrl::isAbsolute($path) && !self::isOwnUrl((string) $path)) {
+            return $path;
+        }
+
+        $clean = static::normalizePath($path);
+
+        return $clean !== null ? CdnUrl::storage($clean) : null;
+    }
+
+    /**
+     * `public/` altındakı faylın URL-i (məs. `site/blogs/post.png`) - diskə BAXMADAN.
+     */
+    public static function publicUrl(?string $path): ?string
+    {
+        if (empty($path)) {
+            return null;
+        }
+
+        $path = ltrim(str_replace('\\', '/', trim($path)), '/');
+
+        return $path !== '' ? CdnUrl::asset($path) : null;
+    }
+
+    /**
+     * `storageUrl()`, yol boşdursa ehtiyat şəkil.
+     *
+     * Ehtiyat şəkil çağıran tərəfindən verilir (`assets/site/no-avatar.png` və ya
+     * tam URL) - starter hansısa konkret placeholder faylına bağlanmır, hər
+     * layihənin öz dizaynı var.
+     */
+    public static function storageUrlOrFallback(?string $path, string $fallback): string
+    {
+        return static::storageUrl($path) ?? (string) CdnUrl::asset($fallback);
+    }
+
+    /**
+     * `publicUrl()`, yol boşdursa ehtiyat şəkil (bax: `storageUrlOrFallback()`).
+     */
+    public static function publicUrlOrFallback(?string $path, string $fallback): string
+    {
+        return static::publicUrl($path) ?? (string) CdnUrl::asset($fallback);
+    }
+
+    /** Tam URL bizim `APP_URL`/`CDN_URL`-ə aiddirmi (normallaşdırıla bilərmi)? */
+    private static function isOwnUrl(string $url): bool
+    {
+        foreach ([config('app.url'), config('app.cdn_url')] as $base) {
+            $base = rtrim((string) $base, '/');
+
+            if ($base !== '' && str_starts_with($url, $base . '/')) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Faylı silir
      *
      * @param  string|null  $path  Faylın relative path-i
-     * @param  string       $disk  'public' (default) — public_path, 'storage' — storage disk
+     * @param  string       $disk  'public' (default) — public_path, 'storage' — storage disk,
+     *                             'auto' — fayl hansı diskdədirsə oradan
      * @return bool Uğurlu olub-olmadığı
      *
      * İstifadə:
@@ -311,6 +457,12 @@ class FileUploader
         }
 
         try {
+            if ($disk === self::DISK_AUTO) {
+                return Storage::disk('public')->exists($path)
+                    ? static::deleteFile($path, 'storage')
+                    : static::deleteFile($path, 'public');
+            }
+
             if ($disk === 'storage') {
                 return Storage::disk('public')->delete($path);
             }

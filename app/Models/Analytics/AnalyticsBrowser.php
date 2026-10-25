@@ -3,9 +3,12 @@
 namespace App\Models\Analytics;
 
 use App\Models\BaseModel;
+use App\Traits\Presentable\Analytics\HasAnalyticsBrowserPresentation;
 
 class AnalyticsBrowser extends BaseModel
 {
+    use HasAnalyticsBrowserPresentation;
+
     protected $table = 'analytics_browsers';
 
     public $logEnabled = false;
@@ -40,13 +43,5 @@ class AnalyticsBrowser extends BaseModel
         }
 
         $this->save();
-    }
-
-
-    public function getIconImgAttribute()
-    {
-        if (is_null($this->icon))
-            return null;
-        return '<img src="' . $this->icon . '" width="25" alt="">';
     }
 }

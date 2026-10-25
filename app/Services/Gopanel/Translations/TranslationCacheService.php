@@ -2,10 +2,31 @@
 
 namespace App\Services\Gopanel\Translations;
 
+use App\Support\Cache\CacheKey;
 use Illuminate\Support\Facades\Cache;
 
+/**
+ * Tərcümə keşinin invalidasiyası - iki keş bir yerdən təmizlənir:
+ *
+ *  1. `CacheKey::translation($platform, $page)` lüğətləri (API, JS) - qrup
+ *     versiyası artırılır, bütün platforma/səhifə/dil açarları bir anda yararsız olur;
+ *  2. Blade saytının runtime lüğəti `site_translations_{locale}`
+ *     (TranslationServiceProvider doldurur, özü heç vaxt təmizləmir).
+ */
 class TranslationCacheService
 {
+    /**
+     * Hər iki keşi təmizləyir. Yazma əməliyyatından sonra çağırılır.
+     *
+     * @param  iterable<int, string>  $locales
+     */
+    public function flush(iterable $locales = []): void
+    {
+        CacheKey::flushGroup(CacheKey::GROUP_TRANSLATION);
+
+        $this->forgetLocales($locales);
+    }
+
     /**
      * Forget the runtime translation cache for the given locales.
      *

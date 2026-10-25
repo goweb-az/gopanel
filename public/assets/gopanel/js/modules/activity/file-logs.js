@@ -96,9 +96,12 @@ $(document).ready(function () {
         $.get(url, function (html) {
             $('#viewLogOffcanvasBody').html(html);
 
-            // JSON datalarını render etmək üçün blade-dən window-a oturulan dəyərlərə baxırıq
-            var contextData = window.logContextData || {};
-            var detailsData = window.logDetailsData || {};
+            // JSON datası blade-dən data-* atributu ilə gəlir (inline <script> yoxdur)
+            var $data = $('#file-log-data');
+            window.logContextData = $data.data('context') || {};
+            window.logDetailsData = $data.data('details') || {};
+            var contextData = window.logContextData;
+            var detailsData = window.logDetailsData;
 
             if (Object.keys(contextData).length > 0) {
                 $('#json-context').jsonViewer(contextData, { collapsed: true, withQuotes: true, withLinks: true });

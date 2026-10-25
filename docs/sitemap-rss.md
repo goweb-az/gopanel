@@ -1,34 +1,51 @@
-# Sitemap and RSS
+# Sitemap və RSS
 
-## Sitemap
-
-Endpoints:
+## Ünvanlar (route adları dəyişməyib)
 
 ```text
-/sitemap.xml
-/{locale}/sitemap.xml
+/sitemap.xml          sitemap.index               indeks - hər dilin sitemap-ı
+/{dil}/sitemap.xml    site.{dil}.sitemap.single   həmin dilin URL-ləri
+/rss-index.opml       site.rss.index              bütün dillərin feed-ləri (OPML)
+/{dil}/rss.xml        site.{dil}.rss.single       həmin dilin RSS 2.0 feed-i
 ```
 
-The sitemap includes:
+Hamısı `application/xml; charset=UTF-8`, XML prologu faylın ən əvvəlindədir.
+Route-lar aktiv dillər üzrə `routes/web.php`-də qeyd olunur (`->defaults('locale', ...)`)
+və `site.redirects` / `track.analytics`-dən çıxarılıb.
 
-- home pages
-- active menu pages
-- active blog pages
+## Məntiq harada
 
-To add a new model to the sitemap:
+| Fayl | Nə edir |
+|---|---|
+| `App\Services\Seo\SitemapService` | URL siyahısı: ana səhifə + menyu səhifələri + məzmun modelləri |
+| `App\Services\Seo\RssService` | Tarixli yazılar (ən yenisi başda, limit `config('seo.content.rss_limit')`) |
+| `App\Services\Seo\PublicContentService` | «Hansı səhifə publikdir, ünvanı nədir» - Markdown ilə ortaq |
+| `config/seo/content.php` | Məzmun modellərinin siyahısı |
+| `resources/views/site/feed/*.blade.php` | Yalnız çap - sorğu və şərt yoxdur |
 
-1. Add a cached list method, such as `getCachedAll()`.
-2. Add a single URL accessor, such as `getSingleUrlAttribute`.
-3. Register the model in the sitemap controller/view.
+Əvvəl sorğu controller-də, filtr və döngü blade-də idi; RSS isə 12 saatlıq
+sabit keşdə qalırdı. İndi nəticə `CacheKey::seo(...)` altında keşlənir və açar
+bütün keş qruplarının versiyasını daşıyır - paneldə yazı dəyişəndə feed də yenilənir.
 
-## RSS
+## Yeni model əlavə etmək
 
-Endpoints:
+Kod yazılmır - `config/seo/content.php`-ə bir sətir:
 
-```text
-/rss-index.opml
-/{locale}/rss.xml
+```php
+\App\Models\Site\News::class => [
+    'changefreq' => 'daily',
+    'priority'   => '0.80',
+    'rss'        => true,      // tarixli məzmundursa
+    'list_menu'  => 'news',    // siyahı menyusunun route_name-i (Markdown siyahısı üçün)
+    'limit'      => 1000,
+],
 ```
 
-RSS currently uses active blog posts and exposes title, description, link, publish date, and guid.
+Model üçün tələblər: `Translation` + `slug` tərcümə sahəsi, `public $controller`
+(detal səhifəsini `DynamicContentController` açır), `is_active` sütunu.
+Eyni sətir sitemap, RSS, `/markdown-index.md` və `/llms-full.txt`-ə birdən düşür.
 
+Menyu səhifələri avtomatik daxil olur - yalnız `config/site/menu_routes.php`-də
+route-u olan (HTML-də açılan) aktiv menyular.
+
+Test: `tests/Feature/Site/FeedEndpointsTest.php`.

@@ -199,6 +199,16 @@ return [
             'manual'    => true,
             'name'      => 'Export logları'
         ],
+
+        // App\Helpers\Common\Timer::cronStart()/cronEnd() - scheduler command-ləri
+        'cron' => [
+            'driver'    => 'daily',
+            'path'      => storage_path('logs/cron/cron-day.log'),
+            'level'     => env('LOG_LEVEL', 'debug'),
+            'days'      => 14,
+            'manual'    => true,
+            'name'      => 'Cron (planlı işlər)'
+        ],
     ],
 
 ];

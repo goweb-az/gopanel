@@ -198,3 +198,117 @@ if (!function_exists("get_today")) {
         return $date->translatedFormat('d F Y');
     }
 }
+
+
+if (!function_exists('markdown_url')) {
+    /**
+     * Cari (və ya verilmiş) səhifənin Markdown variantının tam ünvanı.
+     *
+     * Qayda: canonical yolun sonuna `.md` (`/az/bloqlar` → `/az/bloqlar.md`).
+     * Sorğu parametri və `#fraqment` daşınmır - Markdown sənədi statik məzmundur.
+     *
+     * Səhifənin Markdown variantı yoxdursa (panel, texniki ünvanlar, tanınmayan
+     * yol, deaktiv qeyd) `null` qaytarılır - beləliklə `<head>`-də və `Link:`
+     * başlığında heç vaxt 404 verən keçid çap olunmur. Cari sorğu üçün nəticə
+     * request daxilində yadda saxlanılır (middleware + head eyni yoxlamanı təkrarlamasın).
+     *
+     * @see \App\Services\Seo\Markdown\MarkdownPageService
+     */
+    function markdown_url(?string $url = null): ?string
+    {
+        $service = app(\App\Services\Seo\Markdown\MarkdownPageService::class);
+        $path    = trim((string) (parse_url($url ?? request()->getPathInfo(), PHP_URL_PATH) ?? ''), '/');
+        $split   = $service->splitPath($path);
+
+        if ($split === null) {
+            return null;
+        }
+
+        $memoKey  = 'seo.markdown_url.' . $path;
+        $memo     = $url === null ? request()->attributes : null;
+
+        if ($memo !== null && $memo->has($memoKey)) {
+            return $memo->get($memoKey);
+        }
+
+        $result = $service->supports($split[0], $split[1]) ? url($path) . '.md' : null;
+
+        $memo?->set($memoKey, $result);
+
+        return $result;
+    }
+}
+
+
+if (!function_exists('asset_v')) {
+    /**
+     * Versiyalanmış asset ünvanı - faylın dəyişmə vaxtı ilə (`?v=filemtime`).
+     *
+     * Niyə: `asset('...js?v=' . time())` hər səhifə açılışında yeni ünvan yaradır
+     * və brauzer keşi heç vaxt işləmir; versiyasız ünvanda isə deploy-dan sonra
+     * istifadəçi köhnə JS/CSS ilə qalır. Fayl dəyişəndə ünvan dəyişir, dəyişməyəndə
+     * keşdən gəlir.
+     *
+     * @param  string  $path  public/ qovluğundan başlayan yol
+     */
+    function asset_v(string $path): string
+    {
+        $clean = ltrim(parse_url($path, PHP_URL_PATH) ?? $path, '/');
+        $file  = public_path($clean);
+
+        // Fayl tapılmasa (CDN/simvolik yol) versiyasız qaytarılır
+        $version = is_file($file) ? (string) filemtime($file) : null;
+
+        return $version === null ? asset($clean) : asset($clean) . '?v=' . $version;
+    }
+}
+
+
+if (!function_exists('form_date')) {
+    /**
+     * Tarixi `<input type="date">` üçün `Y-m-d` formatına salır.
+     *
+     * Niyə: model `datetime` cast-ı ilə Carbon qaytarır, input isə yalnız `Y-m-d`
+     * qəbul edir. `{{ $item->start_date }}` yazılanda «2026-05-01 00:00:00» düşür,
+     * brauzer onu tanımır - sahə boş görünür, redaktədə tarix səssizcə itir.
+     */
+    function form_date(mixed $value): string
+    {
+        if (blank($value)) {
+            return '';
+        }
+
+        if ($value instanceof \DateTimeInterface) {
+            return $value->format('Y-m-d');
+        }
+
+        return substr((string) $value, 0, 10);
+    }
+}
+
+
+if (!function_exists('selected')) {
+    /** `<option {{ selected($a, $b) }}>` - Blade-in `@selected` direktivi işləməyən yerlər üçün. */
+    function selected($key, $value): string
+    {
+        return $key == $value ? 'selected' : '';
+    }
+}
+
+
+if (!function_exists('file_url')) {
+    /**
+     * Yüklənmiş faylın tam URL-i - fayl hansı diskdədirsə (storage və ya public).
+     *
+     * Niyə: `asset($path)` faylı yalnız `public/` altında axtarır, `toStorage()`
+     * ilə yüklənən fayl üçün 404 verən ünvan qurur; `toPublic()` ilə yazılmış
+     * köhnə `site/...` yolları isə storage-da yoxdur. Disk bazadakı yoldan
+     * bilinmir, ona görə hər ikisi yoxlanılır (`FileUploader::url(..., 'auto')`).
+     *
+     * Fayl tapılmasa `$fallback` (məs. placeholder şəkil) qaytarılır.
+     */
+    function file_url(?string $path, ?string $fallback = null): ?string
+    {
+        return \App\Helpers\Gopanel\FileUploader::url($path, \App\Helpers\Gopanel\FileUploader::DISK_AUTO) ?? $fallback;
+    }
+}

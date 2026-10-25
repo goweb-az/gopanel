@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Helpers\Timer;
+use App\Helpers\Common\Timer;
 use App\Models\Activity\FileLog;
 use App\Services\Activity\LogService;
 use Illuminate\Console\Command;

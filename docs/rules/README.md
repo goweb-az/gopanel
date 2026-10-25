@@ -27,6 +27,7 @@ dashboard, istifadəçi idarəetməsi, kateqoriya ağacı, status/tip lüğətl�
 | [gopanel-category-crud-architecture.md](gopanel-category-crud-architecture.md) | Parent/child ağac strukturlu CRUD lazım olanda. |
 | [gopanel-dashboard-architecture.md](gopanel-dashboard-architecture.md) | Dashboard/widget bölməsi qurulanda (AJAX widget-lər, dövr müqayisəsi). |
 | [gopanel-user-management-architecture.md](gopanel-user-management-architecture.md) | Son istifadəçi (`users`) idarəetmə bölməsi qurulanda. |
+| [presentable-traits.md](presentable-traits.md) | Modelə göstəriş accessor-u (`*_label`, `*_class`, `*_formatted`) lazım olanda - `app/Traits/Presentable/<Domen>/Has<Model>Presentation`. |
 
 ### Arxitektura və arxa plan (qərar verərkən)
 

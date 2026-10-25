@@ -39,7 +39,7 @@
                 @foreach($languages as $lang)
                     <li class="nav-item">
                         <a class="nav-link {{ $currentLocale === $lang->code ? 'active fw-bold' : '' }}" 
-                           href="{{ $lang->switchLanguage() }}">{{ $lang->upper_code }}</a>
+                           href="{{ $language_urls[$lang->code] ?? $lang->switchLanguage() }}">{{ $lang->upper_code }}</a>
                     </li>
                 @endforeach
             </ul>

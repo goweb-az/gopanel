@@ -29,6 +29,7 @@ class SeoAnalyticsSaveRequest extends GopanelFormRequest
             'footer'     => ['nullable', 'string'],
             'robots_txt' => ['nullable', 'string'],
             'ai_txt'     => ['nullable', 'string'],
+            'ads_txt'    => ['nullable', 'string'],
             'other'      => ['nullable', 'string'],
         ];
     }

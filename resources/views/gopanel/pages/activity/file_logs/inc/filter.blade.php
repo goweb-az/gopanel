@@ -16,7 +16,7 @@
                 <select class="form-select" id="filter-channel">
                     <option value="">Hamısı</option>
                     @foreach ($channels as $key => $channelItem)
-                        <option value="{{$key}}" @selected($channel == $key)>{{ $channelItem['show_name'] ?? ucfirst($key) }}</option>
+                        <option value="{{$key}}" @selected($channel == $key)>{{ $channelItem['name'] ?? $channelItem['show_name'] ?? ucfirst($key) }}</option>
                     @endforeach
                 </select>
             </div>

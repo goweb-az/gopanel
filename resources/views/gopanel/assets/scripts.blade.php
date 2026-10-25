@@ -18,5 +18,8 @@
 <script src="/assets/gopanel/js/main.js?={{time()}}"></script>
 <script src="/assets/gopanel/js/functions.js?={{time()}}"></script>
 <script src="/assets/gopanel/js/crud.js?={{time()}}"></script>
+@if (config('custom.security.admin_pin.enabled'))
+<script src="/assets/gopanel/js/modules/security/admin-pin.js?={{time()}}"></script>
+@endif
 @stack('scripts')
 @stack('js_stack')

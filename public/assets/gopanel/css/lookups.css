@@ -1,0 +1,129 @@
+/*
+ * Status və Tiplər (lookup) bölməsi.
+ * Blade-də <style> yazılmır (01-umumi.md § 3) - bölmənin bütün stili buradadır.
+ */
+
+/* --- Bölmədaxili sidebar ------------------------------------------------ */
+.lookup-sidebar-card {
+    border: 1px solid #e9edf3;
+    box-shadow: 0 10px 28px rgba(15, 23, 42, .04);
+}
+
+.lookup-sidebar .list-group-item {
+    align-items: center;
+    border-color: #eef2f7;
+    color: #344054;
+    display: flex;
+    font-weight: 500;
+    gap: .5rem;
+    padding: 14px 16px;
+}
+
+.lookup-sidebar .list-group-item i {
+    color: #556ee6;
+    font-size: 18px;
+}
+
+.lookup-sidebar .list-group-item.active {
+    background: #556ee6;
+    border-color: #556ee6;
+    color: #fff;
+}
+
+.lookup-sidebar .list-group-item.active i {
+    color: #fff;
+}
+
+/* --- Cədvəl -------------------------------------------------------------- */
+.lookup-table-wrap {
+    position: relative;
+}
+
+/* Sıralama sorğusu gedərkən cədvəl kliklənməsin */
+.lookup-table-wrap.is-busy {
+    opacity: .6;
+    pointer-events: none;
+}
+
+.lookup-sort-column {
+    width: 42px;
+}
+
+.lookup-drag-handle {
+    color: #74788d;
+    cursor: grab;
+    padding: .25rem .5rem;
+}
+
+.lookup-drag-handle:active {
+    cursor: grabbing;
+}
+
+.lookup-drag-handle:focus-visible {
+    outline: 2px solid #556ee6;
+    outline-offset: 2px;
+}
+
+.lookup-sort-placeholder {
+    background: #eef2ff;
+    outline: 2px dashed #556ee6;
+}
+
+/* Rəng önizləməsi: rəng sətirdən `--lookup-color` dəyişəni ilə gəlir */
+.lookup-badge {
+    font-size: 12px;
+    padding: .4em .7em;
+}
+
+.lookup-badge--color {
+    background-color: var(--lookup-color);
+    color: #fff;
+}
+
+.lookup-icon {
+    color: #495057;
+    font-size: 18px;
+}
+
+/* --- Forma --------------------------------------------------------------- */
+.lookup-form .form-control-color {
+    flex: 0 0 52px;
+    max-width: 52px;
+    padding: .25rem;
+}
+
+.lookup-icon-preview {
+    justify-content: center;
+    min-width: 44px;
+}
+
+/* --- Mobil --------------------------------------------------------------- */
+@media (max-width: 1199.98px) {
+    /* Sidebar cədvəlin üstündə üfüqi sürüşən zolaq olur */
+    .lookup-sidebar {
+        flex-direction: row;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .lookup-sidebar .list-group-item {
+        border-bottom: 0;
+        border-right: 1px solid #eef2f7;
+        flex: 0 0 auto;
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .lookup-page .page-title-box {
+        gap: .75rem;
+    }
+
+    .lookup-page .page-title-right .btn {
+        width: 100%;
+    }
+
+    .lookup-table {
+        font-size: 13px;
+    }
+}

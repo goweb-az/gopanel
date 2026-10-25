@@ -32,14 +32,6 @@
 </div>
 
 <!-- Mesaj -->
-@php
-    $alertIcon = match($history->event) {
-        'created' => 'fas fa-plus-circle',
-        'updated' => 'fas fa-edit',
-        'deleted' => 'fas fa-trash-alt',
-        default   => 'fas fa-info-circle',
-    };
-@endphp
 <div class="alert alert-{{ $history->event_color }} border-{{ $history->event_color }} mb-4 d-flex align-items-start" role="alert">
     <div class="flex-shrink-0 me-3 mt-1">
         <i class="{{ $alertIcon }} fa-2x"></i>
@@ -50,11 +42,45 @@
     </div>
 </div>
 
-@php
-    $properties = $history->properties ?? collect();
-    $oldData = $properties->get('old', []);
-    $newData = $properties->get('attributes', []);
-@endphp
+{{-- Kontekst: modelin `activityContext()` verdiyi əlavə məlumat (bax: ActivityLogHelper::attachContext) --}}
+@if(!empty($context))
+<div class="log-meta-grid mb-4">
+    @foreach($context as $row)
+    <div class="log-meta-item">
+        <div class="label">{{ $row['label'] }}</div>
+        <div class="value">{{ $row['value'] }}</div>
+    </div>
+    @endforeach
+</div>
+@endif
+
+{{-- Nə dəyişdi: ActivityChangeFormatter ilə oxunaqlı fərq --}}
+@if(!empty($changes))
+<div class="table-responsive mb-4">
+    <table class="table table-sm table-bordered align-middle mb-0">
+        <thead class="table-light">
+            <tr>
+                <th>Sahə</th>
+                <th>Əvvəl</th>
+                <th>Sonra</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($changes as $row)
+            <tr>
+                <td class="fw-semibold">{{ $row['label'] }}</td>
+                <td class="text-muted">{{ $row['has_old'] ? $row['old'] : '—' }}</td>
+                <td>{{ $row['new'] }}</td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
+@endif
+
+<div id="activity-log-data" class="d-none"
+     data-old="{{ json_encode((object) $oldData, JSON_UNESCAPED_UNICODE) }}"
+     data-new="{{ json_encode((object) $newData, JSON_UNESCAPED_UNICODE) }}"></div>
 
 <!-- Əvvəlki vəziyyət (Old) -->
 <div class="json-viewer-section" id="old-section">
@@ -87,8 +113,3 @@
         <div id="json-new"></div>
     </div>
 </div>
-
-<script>
-    window.activityOldData = @json($oldData);
-    window.activityNewData = @json($newData);
-</script>

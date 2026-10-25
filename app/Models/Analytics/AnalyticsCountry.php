@@ -3,9 +3,12 @@
 namespace App\Models\Analytics;
 
 use App\Models\BaseModel;
+use App\Traits\Presentable\Analytics\HasAnalyticsCountryPresentation;
 
 class AnalyticsCountry extends BaseModel
 {
+    use HasAnalyticsCountryPresentation;
+
     protected $table = 'analytics_countries';
 
     public $logEnabled = false;
@@ -50,13 +53,5 @@ class AnalyticsCountry extends BaseModel
         }
 
         $this->save();
-    }
-
-
-    public function getFlagImgAttribute()
-    {
-        if (is_null($this->flag))
-            return null;
-        return '<img src="' . $this->flag . '" width="25" alt="">';
     }
 }

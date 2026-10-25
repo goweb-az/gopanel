@@ -7,10 +7,11 @@ use App\Traits\Content\Translation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
+use App\Traits\Presentable\Contact\HasContactInfoPresentation;
 
 class ContactInfo extends BaseModel
 {
-    use HasFactory, SoftDeletes, Translation;
+    use HasFactory, SoftDeletes, Translation, HasContactInfoPresentation;
 
     protected $table = 'contact_info';
 
@@ -36,27 +37,5 @@ class ContactInfo extends BaseModel
         return Cache::rememberForever('contact_info', function () {
             return self::with('translations')->first();
         });
-    }
-
-
-    public function getMapEmbedUrlAttribute(): ?string
-    {
-        if (empty($this->map)) {
-            return null;
-        }
-
-        // artıq embed linkdirsə
-        if (str_contains($this->map, '/maps/embed')) {
-            return $this->map;
-        }
-
-        // koordinatlı Google Maps linki
-        if (preg_match('/@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/', $this->map, $matches)) {
-            $lat = $matches[1];
-            $lng = $matches[2];
-
-            return "https://www.google.com/maps?q={$lat},{$lng}&hl=az&z=16&output=embed";
-        }
-        return null;
     }
 }

@@ -5,18 +5,17 @@ namespace App\Models\Site;
 use App\Models\BaseModel;
 use App\Traits\Content\MetaData;
 use App\Traits\Content\Translation;
-use Carbon\Carbon;
 use DateInterval;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Str;
+use App\Traits\Presentable\Site\HasBlogPresentation;
 
 class Blog extends BaseModel
 {
-    use HasFactory, SoftDeletes, Translation, MetaData;
+    use HasFactory, SoftDeletes, Translation, MetaData, HasBlogPresentation;
 
     protected $logEnabled = false;
 
@@ -32,30 +31,6 @@ class Blog extends BaseModel
     public $slug_key = 'title';
     public $translatedAttributes = ['title', 'description', 'slug'];
     public $controller = \App\Http\Controllers\Site\BlogController::class;
-
-    public function getShortDescriptionAttribute()
-    {
-        return Str::limit(strip_tags($this->description), 50);
-    }
-
-    public function getShortDescriptionSiteAttribute()
-    {
-        return Str::limit(html_entity_decode(strip_tags($this->description)), 100);
-    }
-
-    public function getImageViewAttribute(): string
-    {
-        if (empty($this->image_url)) {
-            return '<span class="text-muted">Şəkil yoxdur</span>';
-        }
-
-        return '<img src="' . e($this->image_url) . '" alt="' . e($this->title ?? 'Blog') . '" style="width:50px;height:50px;object-fit:cover;border-radius:8px;">';
-    }
-
-    public function getIsActiveBtnAttribute(): string
-    {
-        return app('gopanel')->toggle_btn($this, 'is_active', $this->is_active == 1);
-    }
 
     public static function getBySlug($slug, $locale = null)
     {
@@ -74,27 +49,6 @@ class Blog extends BaseModel
     {
         $this->increment('views');
         $this->save();
-    }
-
-    public function getFormattedDateTimeAttribute()
-    {
-        if (empty($this->date_time)) {
-            return $this->date_time;
-        }
-
-        return Carbon::parse($this->date_time)->locale(app()->getLocale())->isoFormat('D MMMM YYYY');
-    }
-
-    public function getSingleUrlAttribute(): ?string
-    {
-        $locale = app()->getLocale();
-        $slug = $this->getTranslation('slug', $locale, true);
-
-        if (!$slug) {
-            return null;
-        }
-
-        return url("{$locale}/{$slug}");
     }
 
     public static function getCachedAll(DateTimeInterface|DateInterval|int|null $ttl = null): Collection

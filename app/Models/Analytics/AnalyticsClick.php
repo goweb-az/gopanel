@@ -3,9 +3,12 @@
 namespace App\Models\Analytics;
 
 use App\Models\BaseModel;
+use App\Traits\Presentable\Analytics\HasAnalyticsClickPresentation;
 
 class AnalyticsClick extends BaseModel
 {
+    use HasAnalyticsClickPresentation;
+
     protected $table = 'analytics_clicks';
 
     public $logEnabled = false;
@@ -104,74 +107,5 @@ class AnalyticsClick extends BaseModel
     public function eventLogs()
     {
         return $this->hasMany(AnalyticsEventLog::class, 'click_id');
-    }
-
-
-    public function getUrlLinkAttribute()
-    {
-        if (empty($this->url)) {
-            return null;
-        }
-
-        $url = $this->url;
-        $max = 35;
-
-        $short = strlen($url) > $max
-            ? substr($url, 0, $max) . '...'
-            : $url;
-
-        return '<a href="' . e($url) . '" target="_blank" rel="noopener noreferrer">' . e($short) . '</a>';
-    }
-
-    public function getRefererLinkAttribute()
-    {
-        if (empty($this->referer)) {
-            return null;
-        }
-
-        $referer = $this->referer;
-        $max = 35;
-
-        $short = strlen($referer) > $max
-            ? substr($referer, 0, $max) . '...'
-            : $referer;
-
-        return '<a href="' . e($referer) . '" target="_blank" rel="noopener noreferrer">' . e($short) . '</a>';
-    }
-
-
-    public function getDeviceLinkAttribute()
-    {
-        return '<a href="' . route("gopanel.analytics.detail.clicks", ['device_id' => $this->device_id]) . '">' . $this?->device?->device_type . '</a>';
-    }
-
-    public function getOperatingLinkAttribute()
-    {
-        return '<a href="' . route("gopanel.analytics.detail.clicks", ['os_id' => $this->os_id]) . '">' . $this?->operatingSystem?->name . '</a>';
-    }
-
-    public function getBrowserLinkAttribute()
-    {
-        return '<a href="' . route("gopanel.analytics.detail.clicks", ['browser_id' => $this->browser_id]) . '">' . $this?->browser?->name . '</a>';
-    }
-
-    public function getCountryLinkAttribute()
-    {
-        return '<a href="' . route("gopanel.analytics.detail.clicks", ['country_id' => $this->country_id]) . '">' . $this?->country?->name . '</a>';
-    }
-
-    public function getCityLinkAttribute()
-    {
-        return '<a href="' . route("gopanel.analytics.detail.clicks", ['city_id' => $this->city_id]) . '">' . $this?->city?->name . '</a>';
-    }
-
-    public function getLanguageLinkAttribute()
-    {
-        return '<a href="' . route("gopanel.analytics.detail.clicks", ['language_id' => $this->language_id]) . '">' . $this?->language?->name . '</a>';
-    }
-
-    public function getIpAddressClickAttribute()
-    {
-        return '<span class="toSearch">' . $this?->ip_address . '</span>';
     }
 }

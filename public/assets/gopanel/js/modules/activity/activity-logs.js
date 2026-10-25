@@ -85,9 +85,12 @@ $(document).ready(function () {
         $.get(url, function (html) {
             $('#viewLogOffcanvasBody').html(html);
 
-            // JSON datalarını render etmək
-            var oldData = window.activityOldData || {};
-            var newData = window.activityNewData || {};
+            // JSON datası blade-dən data-* atributu ilə gəlir (inline <script> yoxdur)
+            var $data = $('#activity-log-data');
+            window.activityOldData = $data.data('old') || {};
+            window.activityNewData = $data.data('new') || {};
+            var oldData = window.activityOldData;
+            var newData = window.activityNewData;
 
             if (Object.keys(oldData).length > 0) {
                 $('#json-old').jsonViewer(oldData, { collapsed: false, withQuotes: true, withLinks: true });

@@ -1,0 +1,87 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Qeyd müəllifi / məsulu (HasAuthors) - App\Helpers\Gopanel\AuthorCell
+   Sinif adları dəyişəndə PHP helper da dəyişir.
+   ───────────────────────────────────────────────────────────────────────── */
+
+.gp-author-tag {
+    /* `flex` (inline-flex yox) - nişan nömrənin yanına deyil, ALTINA düşsün;
+       `fit-content` isə onun sütunun bütün enini tutmasının qarşısını alır. */
+    display: flex;
+    width: fit-content;
+    max-width: 100%;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+    padding: 1px 7px;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    background: #f8fafc;
+    font-size: 11px;
+    line-height: 1.7;
+    color: #64748b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.gp-author-tag i {
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+.gp-author-tag__label {
+    font-weight: 600;
+    color: #94a3b8;
+}
+
+/* Aktiv təyinat seçilsin - köhnəlmiş olan boz qalır. */
+.gp-author-tag--active {
+    border-color: #bfdbfe;
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.gp-author-tag--active .gp-author-tag__label {
+    color: #60a5fa;
+}
+
+/* Tarixçə sətri */
+.gp-assignment-line {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid #eff2f7;
+}
+
+.gp-assignment-line:last-child {
+    border-bottom: 0;
+}
+
+.gp-assignment-line__main {
+    flex-grow: 1;
+    /* uzun ad sətri sığışsın, qonşu «bitmə səbəbi» sıxışdırılmasın */
+    min-width: 0;
+}
+
+/* Təsdiq pəncərəsindəki izah siyahısı (gp-assignment.js) */
+.gp-assign-explain {
+    text-align: left;
+    margin: 10px 0 0;
+    padding-left: 20px;
+}
+
+.gp-assign-note {
+    margin-top: 10px;
+}
+
+/* Mobil: zolağın düyməsi mətnin altına tam enlə düşsün */
+@media (max-width: 575.98px) {
+    .gp-assignment-banner .card-body > .btn {
+        width: 100%;
+    }
+
+    .gp-assignment-line {
+        flex-wrap: wrap;
+    }
+}

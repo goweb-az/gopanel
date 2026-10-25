@@ -5,6 +5,7 @@ namespace App\Helpers\Gopanel;
 
 use App\Helpers\Common\Singleton;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Route;
 
 class GoPanelSidebar extends Singleton
 {
@@ -35,9 +36,65 @@ class GoPanelSidebar extends Singleton
      */
     public function addItem(array $item): void
     {
+        $item = $this->withExistingRoutesOnly($item);
+
+        if ($item === null) {
+            return;
+        }
+
         $menuItem = $this->validateInputItems($item);
 
         $this->list->add($menuItem);
+    }
+
+    /**
+     * Qeydiyyatdan keçməmiş route-a işarə edən bəndi menyudan çıxarır.
+     *
+     * Niyə: sidebar blade-i hər bənd üçün `route()` çağırır - konfiqurasiyada
+     * hələ yazılmamış (və ya törəmə layihədə silinmiş) modulun route-u qalsa
+     * `RouteNotFoundException` BÜTÜN paneli 500-ə salır. Bənd sadəcə görünmür.
+     *
+     * Alt bəndlərin hamısı düşsə qrup başlığı da göstərilmir. Route-suz kök
+     * bəndlər (bölmə başlıqları) toxunulmur.
+     *
+     * @return array|null  null = bənd göstərilmir
+     */
+    private function withExistingRoutesOnly(array $item): ?array
+    {
+        if (!$this->isTurnedOn($item)) {
+            return null;
+        }
+
+        if (array_key_exists('inner', $item) && is_array($item['inner'])) {
+            $item['inner'] = array_values(array_filter(
+                $item['inner'],
+                fn ($inner) => is_array($inner)
+                    && !empty($inner['route'])
+                    && Route::has($inner['route'])
+                    && $this->isTurnedOn($inner)
+            ));
+
+            return $item['inner'] === [] ? null : $item;
+        }
+
+        if (!empty($item['route']) && !Route::has($item['route'])) {
+            return null;
+        }
+
+        return $item;
+    }
+
+    /**
+     * `when` açarı konfiqurasiya bayrağına işarə edir (məs. `custom.sms.enabled`).
+     *
+     * Söndürülmüş modulun bəndi menyuda görünmür. İcazə ilə qarışdırılmır:
+     * super admin icazələrdən azaddır, bayraq isə hamıya aiddir.
+     */
+    private function isTurnedOn(array $item): bool
+    {
+        $flag = $item['when'] ?? null;
+
+        return $flag === null || (bool) config($flag, false);
     }
 
     /**
@@ -74,21 +131,25 @@ class GoPanelSidebar extends Singleton
                 'badge' => array_key_exists('badge', $item) ? $item['badge'] : null, // Default target is '_self'
             ]);
 
-            // $menuItem->put('showFlag', $menuItem['can'] == '*' ? true : auth()->user()->can($menuItem['can']));
-            $menuItem->put('showFlag', true);
+            /*
+             * Menyu sətri yalnız icazəsi olan adminə görünür (əvvəl yoxlama
+             * söndürülmüşdü - hər admin bütün menyunu görürdü, keçid isə 403 verirdi).
+             * Server tərəf yenə də route-da yoxlayır - bu yalnız görünüşdür.
+             */
+            $menuItem->put('showFlag', $this->canSee($menuItem['can']));
 
             if ($isRoot and array_key_exists('inner', $item)) {
                 $innerMenu = collect();
                 $innerRoutes = [];
                 foreach ($item['inner'] as $innerItem) {
-                    $menuItem['showFlag'] = false;
                     $innerMenu->add($this->validateInputItems($innerItem, false));
                     array_push($innerRoutes, $innerItem['route']);
                 }
 
-                if ($innerMenu->where('showFlag', true)->first()) {
-                    $menuItem['showFlag'] = true;
-                }
+                // Qrup başlığı görünən ən azı bir alt sətir varsa açılır. Qrupun öz
+                // `can`-ı (gopanel.seo.index) burada tələb olunmur: bəzi qrup
+                // icazələri permission_list-də yoxdur və heç bir rola verilə bilmir.
+                $menuItem['showFlag'] = (bool) $innerMenu->where('showFlag', true)->first();
 
                 $menuItem->put('inner', $innerMenu);
                 $menuItem->put('isActiveGroup', request()->routeIs($innerRoutes));
@@ -99,6 +160,43 @@ class GoPanelSidebar extends Singleton
         }
     }
 
+
+    /**
+     * Menyu sətrinin icazəsi.
+     *
+     * - `*` / boş → hamıya açıq (başlıq sətirləri);
+     * - `is_super` admin `Gate::before` ilə hər şeyi keçir;
+     * - `config/gopanel/permission_list.php`-də QEYDİYYATDA OLMAYAN icazə gizlətmir:
+     *   belə icazəni heç bir rola vermək mümkün deyil, gizlətsək sətir super
+     *   admindən başqa hamıdan itər (məs. dashboard `gopanel.index`).
+     *
+     * Yoxlama açıq şəkildə `gopanel` guard-ı ilə aparılır - default guard `web`-dir.
+     */
+    private function canSee(?string $permission): bool
+    {
+        if (empty($permission) || $permission === '*') {
+            return true;
+        }
+
+        if (!in_array($permission, $this->registeredPermissions(), true)) {
+            return true;
+        }
+
+        return (bool) auth('gopanel')->user()?->can($permission);
+    }
+
+    /** @return array<int, string> */
+    private function registeredPermissions(): array
+    {
+        static $names = null;
+
+        return $names ??= collect(config('gopanel.permission_list.gopanel', []))
+            ->flatten(1)
+            ->pluck('name')
+            ->filter()
+            ->values()
+            ->all();
+    }
 
     public function clearItems(): void
     {

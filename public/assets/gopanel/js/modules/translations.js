@@ -100,36 +100,17 @@ $(function () {
         window.location.search = params.toString();
     });
 
-    // --- Bulk modal select2 (searchable, opens on top inside the modal) ------
-    // dropdownParent must be the modal so the dropdown layers above the modal
-    // content instead of rendering behind it / getting clipped. Init on first
-    // open so width is measured while the modal is visible.
-    $('#bulk-import-modal').on('shown.bs.modal', function () {
-        if (!$.fn.select2) {
-            return;
-        }
-        var $modal = $(this);
-        $modal.find('.bulk-select2').each(function () {
-            if (!$(this).data('select2')) {
-                $(this).select2({
-                    theme: 'bootstrap-5',
-                    width: '100%',
-                    dropdownParent: $modal
-                });
-            }
-        });
-    });
-
-    // --- Bulk import ---------------------------------------------------------
+    // --- Excel idxalı -------------------------------------------------------
+    // Nəticə: açar sayı + yazılan dil sətirləri (yeni / yenilənən / toxunulmayan) + xətalar.
     function renderImportResult(data) {
-        var $box = $('#bulk-import-result');
+        var $box = $('#translation-excel-result');
         var rows = ''
             + '<div class="alert alert-info mb-2">'
-            + '  Ümumi: ' + escapeHtml(data.total_rows)
-            + ' · Yaradıldı: ' + escapeHtml(data.created)
-            + ' · Yeniləndi: ' + escapeHtml(data.updated)
-            + ' · Ötürüldü: ' + escapeHtml(data.skipped)
-            + ' · Uğursuz: ' + escapeHtml(data.failed)
+            + '  Fayldakı açar: ' + escapeHtml(data.total)
+            + ' · Yeni sətir: ' + escapeHtml(data.created)
+            + ' · Yenilənən: ' + escapeHtml(data.updated)
+            + ' · Toxunulmayan: ' + escapeHtml(data.skipped)
+            + ' · Xətalı: ' + escapeHtml(data.failed)
             + '</div>';
 
         if (data.errors && data.errors.length) {
@@ -142,16 +123,16 @@ $(function () {
         $box.html(rows);
     }
 
-    $('#bulk-import-submit').on('click', function () {
+    $('#translation-excel-submit').on('click', function () {
         var $button = $(this);
-        var form = document.getElementById('bulk-import-form');
-        var $result = $('#bulk-import-result');
+        var form = document.getElementById('translation-excel-form');
+        var $result = $('#translation-excel-result');
         $result.empty();
 
         toggleButtonLoading($button, true);
 
         $.ajax({
-            url: $root.attr('data-import-url'),
+            url: $root.attr('data-excel-import-url'),
             type: 'POST',
             data: new FormData(form),
             processData: false,

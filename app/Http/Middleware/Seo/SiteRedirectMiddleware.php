@@ -16,8 +16,27 @@ use Symfony\Component\HttpFoundation\Response;
 
 class SiteRedirectMiddleware
 {
+    /**
+     * Maşın faylları yönləndirilmir. Route-lar onsuz da `withoutMiddleware()`
+     * ilə çıxarılıb - bu siyahı ikinci qorumadır: geniş `prefix`/`regex`
+     * qaydası (`/az` → ...) `/az/bloqlar.md`-ni də tutub botu HTML səhifəyə
+     * aparardı.
+     *
+     * @var array<int, string>
+     */
+    protected array $except = [
+        '*.md',
+        '*.txt',
+        '*.xml',
+        '*.opml',
+    ];
+
     public function handle(Request $request, Closure $next): Response
     {
+        if ($request->is(...$this->except)) {
+            return $next($request);
+        }
+
         $response = $this->maybeRedirect($request);
         return $response ?: $next($request);
     }

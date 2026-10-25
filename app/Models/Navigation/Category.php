@@ -9,10 +9,11 @@ use App\Traits\Content\Translation;
 use App\Traits\System\AddUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\Presentable\Navigation\HasCategoryPresentation;
 
 class Category extends BaseModel
 {
-    use AddUuid, HasFactory, SoftDeletes, Translation, MetaData;
+    use AddUuid, HasFactory, SoftDeletes, Translation, MetaData, HasCategoryPresentation;
 
     protected $logEnabled = false;
 
@@ -98,25 +99,5 @@ class Category extends BaseModel
     public function news()
     {
         return $this->belongsToMany(News::class, 'news_categories');
-    }
-
-    public function getIconViewAttribute(): string
-    {
-        if (empty($this->icon)) {
-            return '<i class="fas fa-tag text-muted"></i>';
-        }
-
-        if ($this->icon_type === SocialIconTypeEnum::Image) {
-            return '<img src="' . e(asset($this->icon)) . '" alt="category" style="width:20px;height:20px;object-fit:contain;">';
-        }
-
-        return '<i class="' . e($this->icon) . '"></i>';
-    }
-
-    public function getIconValueAttribute(): string
-    {
-        return $this->icon_type === SocialIconTypeEnum::Image
-            ? asset($this->icon)
-            : (string) $this->icon;
     }
 }

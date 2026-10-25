@@ -5,7 +5,9 @@ use App\Http\Controllers\Gopanel\Activity\ActivityLogController;
 use App\Http\Controllers\Gopanel\System\SystemStatusController;
 use App\Http\Controllers\Gopanel\System\UpdateController;
 use App\Http\Controllers\Gopanel\Admins\AdminController;
+use App\Http\Controllers\Gopanel\Admins\AdminPinController;
 use App\Http\Controllers\Gopanel\Admins\ProfileController;
+use App\Http\Controllers\Gopanel\Admins\ProfileSettingsController;
 use App\Http\Controllers\Gopanel\Admins\RoleController;
 use App\Http\Controllers\Gopanel\AuthController;
 use App\Http\Controllers\Gopanel\Backup\BackupController;
@@ -118,13 +120,13 @@ Route::group(['middleware' => 'gopanel'], function () {
             Route::get('/get/form/{item?}', [TranslationController::class, 'getForm'])->name('get.form');
             Route::post('/save/form/{item?}', [TranslationController::class, 'save'])->name('save.form');
 
-            Route::post('/bulk-import', [TranslationController::class, 'bulkImport'])
-                ->name('bulk-import')
+            // Excel: ixrac edilən fayl eyni formatda geri idxal olunur (prod ↔ lokal köçürmə)
+            Route::get('/excel/export', [TranslationController::class, 'excelExport'])
+                ->name('excel.export')
+                ->middleware('can:gopanel.settings.translations.export');
+            Route::post('/excel/import', [TranslationController::class, 'excelImport'])
+                ->name('excel.import')
                 ->middleware('can:gopanel.settings.translations.import');
-            Route::get('/bulk-template/json', [TranslationController::class, 'jsonTemplate'])
-                ->name('bulk-template.json');
-            Route::get('/bulk-template/xlsx', [TranslationController::class, 'xlsxTemplate'])
-                ->name('bulk-template.xlsx');
             Route::post('/export-json', [TranslationController::class, 'exportJson'])
                 ->name('export-json')
                 ->middleware('can:gopanel.settings.translations.export');
@@ -209,6 +211,23 @@ Route::group(['middleware' => 'gopanel'], function () {
         Route::post('/update', [ProfileController::class, 'update'])->name('update');
         Route::get('/change-password', [ProfileController::class, 'changePasswordIndex'])->name('change-password.index');
         Route::post('/change-password', [ProfileController::class, 'changePassword'])->name('change-password');
+
+        // Şəxsi key-value tənzimləmələr (config/gopanel/admin_settings.php) -
+        // hər admin yalnız özününkünü dəyişir, ona görə ayrıca icazə yoxdur.
+        Route::get('/settings', [ProfileSettingsController::class, 'index'])->name('settings.index');
+        Route::post('/settings', [ProfileSettingsController::class, 'update'])->name('settings.update');
+        // Öz PIN-i - icazəsiz: hesabın sahibi öz PIN-ini həmişə idarə edir
+        Route::get('/pin', [AdminPinController::class, 'edit'])->name('pin.index');
+        Route::post('/pin', [AdminPinController::class, 'update'])->name('pin.update');
+    });
+
+    // Həssas əməliyyatın PIN təsdiqi (gopanel.pin middleware-i bura göndərir).
+    // throttle: servisdəki admin üzrə limitə əlavə olaraq IP üzrə ikinci sərhəd.
+    Route::prefix('pin')->name('pin.')->group(function () {
+        Route::get('/confirm', [AdminPinController::class, 'prompt'])->name('prompt');
+        Route::post('/confirm', [AdminPinController::class, 'confirm'])
+            ->name('confirm')
+            ->middleware('throttle:30,1');
     });
 
     //Categories 
@@ -275,6 +294,15 @@ Route::group(['middleware' => 'gopanel'], function () {
         });
     });
 
+    // İxrac (Excel/PDF + mail) - ortaq endpoint. Sənəd `key` ilə seçilir
+    // (`config/custom/export.php` → `definitions`), icazə həmin açarın öz
+    // icazəsidir və FormRequest/servisdə yoxlanılır - `can:` buraya yazıla
+    // bilmir, çünki icazə açardan asılıdır. Bax docs/export-import.md
+    Route::prefix('exports')->name('exports.')->group(function () {
+        Route::get('/download', [\App\Http\Controllers\Gopanel\Export\ExportController::class, 'download'])->name('download');
+        Route::post('/mail', [\App\Http\Controllers\Gopanel\Export\ExportController::class, 'mail'])->name('mail');
+    });
+
     // Backup - arxivlər `storage/app/backups` altındadır, endirmə yalnız buradan
     Route::prefix('backup')->name("backup.")->group(function () {
         Route::get('/', [BackupController::class, 'index'])
@@ -284,7 +312,10 @@ Route::group(['middleware' => 'gopanel'], function () {
         Route::get('/status', [BackupController::class, 'status'])
             ->name('status')
             ->middleware('can:gopanel.backup.index');
-        Route::get('/download/{item}', [BackupController::class, 'download'])->name('download');
+        // gopanel.pin: ADMIN_PIN_ENABLED=false (default) və ya PIN-i olmayan admin üçün heç nə etmir
+        Route::get('/download/{item}', [BackupController::class, 'download'])
+            ->name('download')
+            ->middleware('gopanel.pin');
         Route::post('/delete/{item}', [BackupController::class, 'delete'])->name('delete');
     });
 
@@ -307,4 +338,7 @@ Route::group(['middleware' => 'gopanel'], function () {
             Route::post('/rollback-file', [UpdateController::class, 'rollbackFile'])->name('rollback-file');
         });
     });
+
+    // Status və Tiplər (lookup) - route-lar config/gopanel/lookups.php reyestrindən qurulur
+    require __DIR__ . '/gopanel/lookups.php';
 });

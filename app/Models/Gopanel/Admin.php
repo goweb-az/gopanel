@@ -11,16 +11,16 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Storage;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Permission\PermissionRegistrar;
 use Spatie\Permission\Traits\HasRoles;
+use App\Traits\Presentable\Gopanel\HasAdminPresentation;
 
 class Admin extends Authenticatable
 {
-    use AddUuid, HasRouteKey, Notifiable, HasFactory, SoftDeletes, HasRoles, LogsActivity;
+    use AddUuid, HasRouteKey, Notifiable, HasFactory, SoftDeletes, HasRoles, LogsActivity, HasAdminPresentation;
 
     protected $fillable = [
         'uid',
@@ -32,14 +32,26 @@ class Admin extends Authenticatable
         'image',
     ];
 
+    /*
+     * `pin` $fillable-a salınmır: kütləvi doldurma ilə yazıla bilməsin -
+     * yalnız `AdminPinService` `forceFill()` ilə yazır.
+     */
     protected $hidden = [
         'password',
         'remember_token',
+        'pin',
     ];
 
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'pin_updated_at'    => 'datetime',
     ];
+
+    /** Admin həssas əməliyyatlar üçün PIN təyin edibmi (bax AdminPinService). */
+    public function hasPin(): bool
+    {
+        return filled($this->pin);
+    }
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -61,48 +73,6 @@ class Admin extends Authenticatable
         ActivityLogHelper::resolveDescription($this, $activity, $eventName);
     }
 
-    public function getIsActiveBtnAttribute()
-    {
-        return app('gopanel')->toggle_btn($this, 'is_active', $this->is_active == 1);
-    }
-
-    public function getIsSuperBtnAttribute()
-    {
-        return app('gopanel')->toggle_btn($this, 'is_super', $this->is_super == 1, [], null, 'Beli', 'Xeyr');
-    }
-
-    public function getRoleSummaryAttribute(): string
-    {
-        $roles = $this->relationLoaded('roles') ? $this->roles : $this->roles()->get();
-        $roleNames = $roles->pluck('name')->filter()->values();
-
-        if ($roleNames->isEmpty()) {
-            return '<span class="text-muted">Vəzifə verilməyib</span>';
-        }
-
-        $primaryRole = e($roleNames->first());
-        $extraCount = max($roleNames->count() - 1, 0);
-
-        if ($extraCount === 0) {
-            return "<span class=\"fw-semibold\">{$primaryRole}</span>";
-        }
-
-        return "<span class=\"fw-semibold\" title=\"" . e($roleNames->join(', ')) . "\">{$primaryRole}</span> <span class=\"text-muted\">(+{$extraCount})</span>";
-    }
-
-    public function getPermissionSummaryAttribute(): string
-    {
-        $grantedCount = $this->granted_permissions_count;
-        $totalCount = $this->getTotalPermissionsCount();
-
-        return "<span class=\"fw-semibold\">{$totalCount}</span><span class=\"text-muted\"> / {$grantedCount}</span>";
-    }
-
-    public function getGrantedPermissionsCountAttribute(): int
-    {
-        return $this->getAllPermissions()->count();
-    }
-
     public function getTotalPermissionsCount(): int
     {
         return Cache::rememberForever('gopanel_permissions_total_count', function () {
@@ -111,18 +81,6 @@ class Admin extends Authenticatable
             return $permissionClass::query()
                 ->where('guard_name', $this->getDefaultGuardName())
                 ->count();
-        });
-    }
-
-    public function getAvatarUrlAttribute(): string
-    {
-        if (!empty($this->image) && Storage::disk('public')->exists($this->image)) {
-            return Storage::disk('public')->url($this->image);
-        }
-
-        return Cache::rememberForever("admin_avatar_{$this->id}", function () {
-            $name = urlencode($this->full_name ?? 'Admin');
-            return "https://ui-avatars.com/api/?name={$name}&background=556ee6&color=fff&size=128&font-size=0.4&rounded=true";
         });
     }
 }

@@ -3,9 +3,12 @@
 namespace App\Models\Analytics;
 
 use App\Models\BaseModel;
+use App\Traits\Presentable\Analytics\HasAnalyticsLanguagePresentation;
 
 class AnalyticsLanguage extends BaseModel
 {
+    use HasAnalyticsLanguagePresentation;
+
     protected $table = 'analytics_languages';
 
     public $logEnabled = false;
@@ -41,12 +44,5 @@ class AnalyticsLanguage extends BaseModel
         }
 
         $this->save();
-    }
-
-    public function getFlagImgAttribute()
-    {
-        if (is_null($this->flag))
-            return null;
-        return '<img src="' . $this->flag . '" width="25" alt="">';
     }
 }

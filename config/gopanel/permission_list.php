@@ -122,6 +122,7 @@ return [
             ['name' => 'gopanel.activity.activity-logs.view', 'title' => 'Əməliyyat logu detallı baxış'],
             ['name' => 'gopanel.activity.activity-logs.delete', 'title' => 'Əməliyyat logu silmə'],
             ['name' => 'gopanel.activity.activity-logs.cleanup', 'title' => 'Əməliyyat logları təmizlə'],
+            ['name' => 'gopanel.activity.activity-logs.export', 'title' => 'Əməliyyat logları ixrac (Excel/PDF/mail)'],
         ],
 
         'Loglar' => [
@@ -166,6 +167,11 @@ return [
             ['name' => 'gopanel.system.updates.index', 'title' => 'Yeniləmələri gör'],
             ['name' => 'gopanel.system.updates.apply', 'title' => 'Yeniləmələri tətbiq et'],
         ],
+
+        // Status və Tiplər: hər lookup tipi öz qrupunu alır
+        // (gopanel.lookups.{tip}.index|add|edit|delete|sort). Sətirlər
+        // config/gopanel/lookups.php reyestrindən qurulur - burada əl ilə yazılmır.
+        ...\App\Services\Gopanel\Lookup\LookupRegistry::permissionGroups(require __DIR__ . '/lookups.php'),
 
     ],
 

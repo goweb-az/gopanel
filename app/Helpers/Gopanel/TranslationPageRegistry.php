@@ -2,14 +2,35 @@
 
 namespace App\Helpers\Gopanel;
 
+/**
+ * `config/gopanel/translation_pages.php` kataloqunun tək giriş nöqtəsi.
+ *
+ * Səhifə adları nə controller-də, nə Blade-də, nə də JS-də hardcode edilmir -
+ * hər yer bu registry-dən oxuyur. İkinci registry/helper yaradılmır.
+ */
 class TranslationPageRegistry
 {
+    /**
+     * Konfiqurasiya boş qalsa belə səhifə seçimi işlək qalsın deyə fallback.
+     */
+    public const FALLBACK = ['general' => 'Ümumi'];
+
     /**
      * All configured pages, keyed by platform.
      */
     public function all(): array
     {
         return config('gopanel.translation_pages', []);
+    }
+
+    /**
+     * Kataloqda elan olunmuş platformalar.
+     *
+     * @return array<int, string>
+     */
+    public function platforms(): array
+    {
+        return array_keys($this->all());
     }
 
     /**
@@ -20,7 +41,17 @@ class TranslationPageRegistry
     {
         $pages = $this->all();
 
-        return $pages[$platform] ?? ($pages['website'] ?? ['general' => 'Ümumi']);
+        return $pages[$platform] ?? ($pages['website'] ?? self::FALLBACK);
+    }
+
+    /**
+     * Platformanın səhifə açarları - validasiya (`Rule::in`) üçün.
+     *
+     * @return array<int, string>
+     */
+    public function keys(?string $platform): array
+    {
+        return array_keys($this->forPlatform($platform));
     }
 
     /**
@@ -29,5 +60,16 @@ class TranslationPageRegistry
     public function exists(string $platform, string $page): bool
     {
         return array_key_exists($page, $this->forPlatform($platform));
+    }
+
+    /**
+     * Səhifənin oxunaqlı adı. Kataloqda yoxdursa açarın özü qaytarılır -
+     * config-dən silinmiş səhifəyə aid köhnə sətir siyahıda boş görünməsin.
+     */
+    public function label(?string $platform, ?string $page): string
+    {
+        $page = $page ?: 'general';
+
+        return $this->forPlatform($platform)[$page] ?? $page;
     }
 }
